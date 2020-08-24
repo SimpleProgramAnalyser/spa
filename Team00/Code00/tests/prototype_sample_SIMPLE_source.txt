@@ -1,0 +1,24 @@
+procedure ABC
+{
+  i=1;	\\1
+ read b ;	\\2
+	c= a   ;\\3
+if (a <  beta) then{	\\4
+   while beta {	\\5
+        oSCar  = 1 * beta + tmp;	\\6
+        while tmp {	\\7
+          oSCar = I - (k + j1k * chArlie); }}	\\8
+	while (x!=1) {	\\9
+        x = x + 1;	\\10
+        if (left==0) then {	\\11
+          while (right== 5){	\\12
+            print Romeo;	\\13
+            b = 0;	\\14
+            c = delta    + l  * width + Romeo; }}	\\15
+        else {	
+            while (c>1) {	\\16
+              c = c -1;} 	\\17
+            x = x+ 1; }}}	\\18
+else{	
+	a= 2;}	\\19
+}
