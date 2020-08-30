@@ -19,6 +19,3 @@ jobs:
     # Runs a single command using the runners shell
     - name: Send greeting
       run: echo "Hello ${{ github.event.inputs.name }}"
-    - name: clang-tidy check
-      uses: muxee/clang-tidy-action@0.0.1-rc1
-      args: "-checks=*"
