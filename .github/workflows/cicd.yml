@@ -1,0 +1,48 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+
+on: [push, pull_request]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # Our first job, Checkstyle (using clang-tidy)
+  Checkstyle:
+    # The type of runner that the job will run on, windows in our case.
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout code from Github
+        uses: actions/checkout@v2
+      - name: Clang tidy
+        run: |
+          sudo apt-get install clang-tidy
+          cd Team12/Code12/
+          rm -f -r build
+          mkdir build
+          cd build
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+          make
+          curl https://raw.githubusercontent.com/llvm-mirror/clang-tools-extra/master/clang-tidy/tool/run-clang-tidy.py -o run-clang-tidy.py
+          python run-clang-tidy.py -header-filter='.*' -checks='-*,cppcoreguidelines-*' | tee result.txt
+          if grep -w "error:\|warning:\|Error while processing" result.txt; then
+          exit 1
+          else
+          exit 0
+          fi
+      - name: Autotester
+        run: |
+          cd Team12/Code12/build/src/autotester/
+          cp ../../../../Tests12/Sample_source.txt .
+          cp ../../../../Tests12/Sample_queries.txt .
+          ./autotester Sample_source.txt Sample_queries.txt out.xml
+          if grep -w "failed" out.xml; then
+          exit 0
+          else
+          exit 0
+          fi
+
