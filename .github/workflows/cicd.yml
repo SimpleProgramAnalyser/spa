@@ -9,13 +9,16 @@ on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
-  greet:
-    # The type of runner that the job will run on
+  # Our first job, Checkstyle (using clang-tidy
+  Checkstyle:
+    # The type of runner that the job will run on, windows in our case.
     runs-on: windows-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ github.event.inputs.name }}"
+      - uses: actions/checkout@v2
+      - uses: ZedThree/clang-tidy-review@v0.2.0
+        id: review
+      # If there are any comments, fail the check
+      - if: steps.review.outpus.total_comments > 0
+        run: exit 1
