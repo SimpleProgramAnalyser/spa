@@ -9,6 +9,7 @@ add_library(spa
 
     # lexer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
 )
 
 # this makes the headers accessible for other projects which uses spa lib
