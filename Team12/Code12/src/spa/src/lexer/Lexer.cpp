@@ -14,7 +14,7 @@
  *
  * @return True, if the character represents some whitespace.
  */
-bool isWhitespace(const char* c) noexcept
+static inline bool isWhitespace(const char* c) noexcept
 {
     return *c == ' ' || *c == '\n' || *c == '\t';
 }
@@ -35,7 +35,7 @@ bool isWhitespace(const char* c) noexcept
  *
  * @return List of the split strings.
  */
-StringList* splitWithPredicate(
+static StringList* splitWithPredicate(
         const String& str,
         const std::function<bool(const char*)>& predicate)
 {
