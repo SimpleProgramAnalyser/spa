@@ -5,8 +5,7 @@ name: Manual workflow
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
 
-on:
-  pull_request:
+on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,3 +21,4 @@ jobs:
       run: echo "Hello ${{ github.event.inputs.name }}"
     - name: clang-tidy check
       uses: muxee/clang-tidy-action@0.0.1-rc1
+      args: "-checks=*"
