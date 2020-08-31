@@ -30,7 +30,6 @@ jobs:
         env:
           CACHE_HIT: ${{ steps.cache-deps.outputs.cache-hit }}
         run: |
-            set -x
             if [[ "$CACHE_HIT" == 'true' ]]; then
               sudo cp --verbose --force --recursive ~/cache/* /
             else
@@ -56,7 +55,6 @@ jobs:
           
       - name: clang-format
         run: |
-          set -x
           projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
           exitcode=0
           for f in $projectfiles;
@@ -103,4 +101,3 @@ jobs:
           else
             exit 0
           fi
-
