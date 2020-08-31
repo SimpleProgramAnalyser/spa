@@ -30,7 +30,6 @@ jobs:
         env:
           CACHE_HIT: ${{ steps.cache-deps.outputs.cache-hit }}
         run: |
-            set -x
             if [[ "$CACHE_HIT" == 'true' ]]; then
               sudo cp --verbose --force --recursive ~/cache/* /
             else
@@ -56,7 +55,6 @@ jobs:
           
       - name: clang-format
         run: |
-          set -x
           projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
           exitcode=0
           for f in $projectfiles;
@@ -83,7 +81,7 @@ jobs:
           cd Team12/Code12/build
           curl https://raw.githubusercontent.com/llvm/llvm-project/master/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py -o run-clang-tidy.py
           python run-clang-tidy.py -header-filter='.*' \
-            -checks='-*,cppcoreguidelines-*,-cppcoreguidelines-owning-memory' \
+            -checks='-*,cppcoreguidelines-*,-cppcoreguidelines-owning-memory,-cppcoreguidelines-pro-bounds-pointer-arithmetic' \
             files src/spa | tee result.txt
           if grep -w "error:\|warning:\|Error while processing" result.txt; then
             exit 1
@@ -103,4 +101,3 @@ jobs:
           else
             exit 0
           fi
-
