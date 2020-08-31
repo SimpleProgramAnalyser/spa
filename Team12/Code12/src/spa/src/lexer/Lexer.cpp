@@ -2,9 +2,9 @@
  * Implementation of Lexer shared library
  */
 
-#include <functional>
-
 #include "Lexer.h"
+
+#include <functional>
 
 /**
  * Checks if a given char should be treated as
@@ -35,9 +35,7 @@ static inline bool isWhitespace(const char* c) noexcept
  *
  * @return List of the split strings.
  */
-static StringList* splitWithPredicate(
-        const String& str,
-        const std::function<bool(const char*)>& predicate)
+static StringList* splitWithPredicate(const String& str, const std::function<bool(const char*)>& predicate)
 {
     auto* splitStrings = new StringList();
     const char* currentChar = str.c_str();
@@ -67,16 +65,10 @@ StringList* splitByWhitespace(const String& programFragment) noexcept
     return splitWithPredicate(programFragment, isWhitespace);
 }
 
-
 StringList* splitByDelimiter(const String& str, const String& delimiter)
 {
     if (delimiter.size() == 1) {
-        return splitWithPredicate(str,
-                [delimiter](const char* c) -> bool
-                {
-                    return *c == delimiter.at(0);
-                }
-        );
+        return splitWithPredicate(str, [delimiter](const char* c) -> bool { return *c == delimiter.at(0); });
     }
 
     auto* splitStrings = new StringList();
