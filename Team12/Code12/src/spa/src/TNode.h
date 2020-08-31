@@ -1,3 +1,3 @@
 class TNode {
-    public:
+public:
 };
