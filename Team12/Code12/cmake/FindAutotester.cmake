@@ -30,7 +30,7 @@ SET(AUTOTESTER_LIBRARY
     debug ${AUTOTESTER_LIBRARY_DEBUG}
         optimized ${AUTOTESTER_LIBRARY_RELEASE}
           )
-find_package_handle_standard_args(AUTOTESTER DEFAULT_MSG
+find_package_handle_standard_args(Autotester DEFAULT_MSG
     # AUTOTESTER_INCLUDE_DIR
     AUTOTESTER_LIBRARY)
 
