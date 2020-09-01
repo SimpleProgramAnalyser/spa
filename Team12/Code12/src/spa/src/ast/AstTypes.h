@@ -61,6 +61,13 @@ public:
     virtual ~BasicDataType() = 0;
     virtual String toString() = 0;
     virtual Boolean isConstant() noexcept = 0;
+
+protected:
+    BasicDataType() = default;
+    BasicDataType(const BasicDataType&) = default;
+    BasicDataType& operator=(const BasicDataType&) = default;
+    BasicDataType(BasicDataType&&) = default;
+    BasicDataType& operator=(BasicDataType&&) = default;
 };
 
 class Constant: public BasicDataType {
@@ -96,14 +103,14 @@ public:
 class ReadStatementNode: public StatementNode {
 public:
     const Variable var;
-    ReadStatementNode(StatementNumber stmtNum, Variable  v);
+    ReadStatementNode(StatementNumber stmtNum, Variable v);
     StatementType getStatementType() override;
 };
 
 class PrintStatementNode: public StatementNode {
 public:
     const Variable var;
-    PrintStatementNode(StatementNumber stmtNum, Variable  v);
+    PrintStatementNode(StatementNumber stmtNum, Variable v);
     StatementType getStatementType() override;
 };
 
@@ -125,6 +132,13 @@ class ConditionalExpression {
 public:
     virtual ~ConditionalExpression() = 0;
     virtual ConditionalExpressionType getConditionalType() noexcept = 0;
+
+protected:
+    ConditionalExpression() = default;
+    ConditionalExpression(const ConditionalExpression&) = default;
+    ConditionalExpression& operator=(const ConditionalExpression&) = default;
+    ConditionalExpression(ConditionalExpression&&) = default;
+    ConditionalExpression& operator=(ConditionalExpression&&) = default;
 };
 
 class NotExpression: public ConditionalExpression {
@@ -183,6 +197,13 @@ class Expression {
 public:
     virtual ~Expression() = 0;
     virtual Boolean isArithmetic() noexcept = 0;
+
+protected:
+    Expression(    ) = default;
+    Expression(const Expression&) = default;
+    Expression& operator=(const Expression&) = default;
+    Expression(Expression&&) = default;
+    Expression& operator=(Expression&&) = default;
 };
 
 class ArithmeticExpression: public Expression {
