@@ -199,7 +199,7 @@ public:
     virtual Boolean isArithmetic() noexcept = 0;
 
 protected:
-    Expression(    ) = default;
+    Expression() = default;
     Expression(const Expression&) = default;
     Expression& operator=(const Expression&) = default;
     Expression(Expression&&) = default;
