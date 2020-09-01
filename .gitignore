@@ -33,6 +33,7 @@
 
 # IDE
 .idea/
+.vs/
 
 # CMake
 cmake-build-debug/
