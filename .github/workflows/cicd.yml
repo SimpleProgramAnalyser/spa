@@ -62,10 +62,10 @@ jobs:
           CACHE_HIT: ${{ steps.cache-build.outputs.cache-hit }}
         run: |
             if [[ "$CACHE_HIT" == 'true' ]]; then
-              sudo cp --verbose --force --recursive ~/cache-build/* /
+              cp --verbose --force --recursive ~/cache-build/* /
               cd Team12/Code12/build
-              sudo cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-              sudo make
+              cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+              make
             else
               mkdir -p ~/cache-build
               cd Team12/Code12/
