@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/cache
-          key: ${{ runner.os }}-spa-clang-checks-deps
+          key: ${{ runner.os }}-spa-clang-checks-deps-v3
 
       - name: Generate dependencies
         env:
@@ -39,7 +39,13 @@ jobs:
               sudo dpkg -L clang-format-10 \
                 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done \
                 | xargs cp --parents --target-directory ~/cache/
+              sudo dpkg -L libclang-cpp10 \
+                | while IFS= read -r f; do if test -f $f; then echo $f; fi; done \
+                | xargs cp --parents --target-directory ~/cache/
               sudo dpkg -L clang-tidy \
+                | while IFS= read -r f; do if test -f $f; then echo $f; fi; done \
+                | xargs cp --parents --target-directory ~/cache/
+              sudo dpkg -L clang-tidy-6.0 \
                 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done \
                 | xargs cp --parents --target-directory ~/cache/
             fi
