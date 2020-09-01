@@ -63,7 +63,6 @@ jobs:
         continue-on-error: true
         run: |
           projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
-          errorfile=""
           for f in $projectfiles;
           do
               outputname=$(echo "$f" | rev | cut -f 1 -d '/' | rev)
@@ -78,13 +77,8 @@ jobs:
                   echo "clang-format errors in $f";
                   echo "$result";
                   echo "";
-                  errorfile=$f
               fi
           done
-          if [ ! -z $errorfile ];
-          then
-              echo "::error file=$f::clang-format errors:";
-          fi
             
       - name: clang-tidy
         run: |
