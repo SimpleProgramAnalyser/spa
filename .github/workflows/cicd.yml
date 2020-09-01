@@ -64,8 +64,8 @@ jobs:
             if [[ "$CACHE_HIT" == 'true' ]]; then
               sudo cp --verbose --force --recursive ~/cache-build/* /
               cd Team12/Code12/build
-              cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-              make
+              sudo cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+              sudo make
             else
               mkdir -p ~/cache-build
               cd Team12/Code12/
