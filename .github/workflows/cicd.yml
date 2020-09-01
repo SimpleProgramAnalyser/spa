@@ -62,7 +62,6 @@ jobs:
       - name: clang-format
         run: |
           projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
-          exitcode=0
           for f in $projectfiles;
           do
               outputname=$(echo "$f" | rev | cut -f 1 -d '/' | rev)
@@ -74,13 +73,10 @@ jobs:
                   echo "$f formatted correctly!"
                   echo ""
               else
-                  echo "clang-format errors in $f"
-                  echo "$result"
+                  echo -e "::error file=$f::clang-format errors:\n\n$result\n"
                   echo ""
-                  exitcode=1
               fi
           done
-          exit "$exitcode"
             
       - name: clang-tidy
         run: |
