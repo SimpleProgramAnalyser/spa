@@ -60,6 +60,7 @@ jobs:
           make
           
       - name: clang-format
+        continue-on-error: true
         run: |
           projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
           for f in $projectfiles;
