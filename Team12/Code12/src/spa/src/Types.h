@@ -18,4 +18,6 @@ using List = std::vector<std::unique_ptr<T>>;
 
 typedef List<String> StringList;
 
+typedef void Void;
+
 #endif // SPA_TYPES_H

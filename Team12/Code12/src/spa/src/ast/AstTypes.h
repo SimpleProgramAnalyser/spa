@@ -35,17 +35,17 @@ private:
     StatementNumber stmtNum;
 };
 
-class StatementListNode {
+class StmtlstNode {
 public:
     List<StatementNode> statementList;
-    explicit StatementListNode(List<StatementNode> stmtLst);
+    explicit StmtlstNode(List<StatementNode> stmtLst);
 };
 
 class ProcedureNode {
 public:
     const Name procedureName;
-    const StatementListNode* const statementList;
-    ProcedureNode(Name n, const StatementListNode* stmtLst);
+    const StmtlstNode* const statementList;
+    ProcedureNode(Name n, const StmtlstNode* stmtLst);
     ~ProcedureNode();
 };
 
@@ -192,10 +192,10 @@ public:
 class IfStatementNode: public StatementNode {
 public:
     const ConditionalExpression* const predicate;
-    const StatementListNode* const ifStatementList;
-    const StatementListNode* const elseStatementList;
-    IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StatementListNode* ifs,
-                    const StatementListNode* elses);
+    const StmtlstNode* const ifStatementList;
+    const StmtlstNode* const elseStatementList;
+    IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StmtlstNode* ifs,
+                    const StmtlstNode* elses);
     ~IfStatementNode() override;
     StatementType getStatementType() override;
 };
@@ -203,8 +203,8 @@ public:
 class WhileStatementNode: public StatementNode {
 public:
     const ConditionalExpression* const predicate;
-    const StatementListNode* const statementList;
-    WhileStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StatementListNode* stmts);
+    const StmtlstNode* const statementList;
+    WhileStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StmtlstNode* stmts);
     ~WhileStatementNode() override;
     StatementType getStatementType() override;
 };
@@ -217,5 +217,8 @@ public:
     ~AssignmentStatementNode() override;
     StatementType getStatementType() override;
 };
+
+typedef List<ProcedureNode> ProcedureNodeList;
+typedef List<StatementNode> StatementNodeList;
 
 #endif // SPA_AST_TYPES_H
