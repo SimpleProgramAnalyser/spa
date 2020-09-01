@@ -14,9 +14,7 @@ StatementNode::StatementNode(StatementNumber n): stmtNum(n) {}
 
 StmtlstNode::StmtlstNode(List<StatementNode> stmtLst): statementList(std::move(stmtLst)) {}
 
-ProcedureNode::ProcedureNode(Name n, const StmtlstNode* stmtLst):
-    procedureName(std::move(n)), statementList(stmtLst)
-{}
+ProcedureNode::ProcedureNode(Name n, const StmtlstNode* stmtLst): procedureName(std::move(n)), statementList(stmtLst) {}
 
 ProcedureNode::~ProcedureNode()
 {
@@ -158,8 +156,8 @@ ConditionalExpressionType RelationalExpression::getConditionalType() noexcept
     return RelationalConditionalExpression;
 }
 
-IfStatementNode::IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred,
-                                 const StmtlstNode* ifs, const StmtlstNode* elses):
+IfStatementNode::IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StmtlstNode* ifs,
+                                 const StmtlstNode* elses):
     StatementNode(stmtNum),
     predicate(pred), ifStatementList(ifs), elseStatementList(elses)
 {}

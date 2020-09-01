@@ -61,12 +61,11 @@ jobs:
           
       - name: clang-format
         run: |
-          set -x
           projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
           exitcode=0
           for f in $projectfiles;
           do
-              outputname=$(echo "$f" | rev | cut -f 2 -d '.' | cut -f 1 -d '/' | rev)
+              outputname=$(echo "$f" | rev | cut -f 1 -d '/' | rev)
               rm -f $outputname.out.temp
               clang-format-10 $f >> $outputname.out.temp
               result=$(diff $f $outputname.out.temp)
