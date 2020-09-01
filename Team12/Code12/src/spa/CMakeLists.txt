@@ -12,6 +12,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
 
     # ast library
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
 )
