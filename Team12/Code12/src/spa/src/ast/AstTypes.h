@@ -12,16 +12,6 @@
 typedef String Name;
 typedef Integer StatementNumber;
 
-enum StatementType {
-    AnyStatement = 0,
-    AssignmentStatement = 1,
-    CallStatement = 2,
-    IfStatement = 4,
-    PrintStatement = 8,
-    ReadStatement = 16,
-    WhileStatement = 32
-};
-
 class StatementNode {
 public:
     virtual ~StatementNode() = 0;
@@ -60,22 +50,25 @@ class BasicDataType {
 public:
     virtual ~BasicDataType() = 0;
     virtual String toString() = 0;
+    virtual Boolean isConstant() noexcept = 0;
 };
 
 class Constant: public BasicDataType {
 public:
     const Integer value;
-    String toString() override;
     explicit Constant(Integer val);
     ~Constant() override = default;
+    String toString() override;
+    Boolean isConstant() noexcept override;
 };
 
 class Variable: public BasicDataType {
 public:
     const Name varName;
-    String toString() override;
     explicit Variable(Name n);
     ~Variable() override = default;
+    String toString() override;
+    Boolean isConstant() noexcept override;
 };
 
 class ReadStatementNode: public StatementNode {
@@ -149,7 +142,7 @@ enum ExpressionOperator : char {
 class Expression {
 public:
     virtual ~Expression() = 0;
-    virtual bool isArithmetic() noexcept = 0;
+    virtual Boolean isArithmetic() noexcept = 0;
 };
 
 class ArithmeticExpression: public Expression {
@@ -159,7 +152,7 @@ public:
     const ExpressionOperator opr;
     ArithmeticExpression(const Expression* left, const Expression* right, ExpressionOperator op);
     ~ArithmeticExpression() override;
-    bool isArithmetic() noexcept override;
+    Boolean isArithmetic() noexcept override;
 };
 
 class ReferenceExpression: public Expression {
@@ -167,7 +160,7 @@ public:
     const BasicDataType* const basicData;
     explicit ReferenceExpression(const BasicDataType* bd);
     ~ReferenceExpression() override;
-    bool isArithmetic() noexcept override;
+    Boolean isArithmetic() noexcept override;
 };
 
 enum RelationalOperator : char {

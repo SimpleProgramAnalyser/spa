@@ -34,12 +34,22 @@ String Constant::toString()
     return std::to_string(static_cast<int>(value));
 }
 
+Boolean Constant::isConstant() noexcept
+{
+    return true;
+}
+
+Variable::Variable(Name n): varName(std::move(n)) {}
+
 String Variable::toString()
 {
     return static_cast<String>(varName);
 }
 
-Variable::Variable(Name n): varName(std::move(n)) {}
+Boolean Variable::isConstant() noexcept
+{
+    return false;
+}
 
 ReadStatementNode::ReadStatementNode(StatementNumber stmtNum, const Variable& v): StatementNode(stmtNum), var(v) {}
 
@@ -116,7 +126,7 @@ ArithmeticExpression::~ArithmeticExpression()
     delete rightFactor;
 }
 
-bool ArithmeticExpression::isArithmetic() noexcept
+Boolean ArithmeticExpression::isArithmetic() noexcept
 {
     return true;
 }
@@ -128,7 +138,7 @@ ReferenceExpression::~ReferenceExpression()
     delete basicData;
 }
 
-bool ReferenceExpression::isArithmetic() noexcept
+Boolean ReferenceExpression::isArithmetic() noexcept
 {
     return false;
 }

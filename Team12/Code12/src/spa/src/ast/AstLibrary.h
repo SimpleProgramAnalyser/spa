@@ -9,16 +9,16 @@
 #include "AstTypes.h"
 
 // Nodes
-ProgramNode* createProgramNode(ProcedureNodeList& procedureNodes);
-ProcedureNode* createProcedureNode(StmtlstNode* stmtlstNode);
+ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes);
+ProcedureNode* createProcedureNode(Name procedureName, StmtlstNode* stmtlstNode);
 StmtlstNode* createStmtlstNode(StatementNodeList& statementNodes);
-AssignmentStatementNode* createAssignNode(Variable var, Expression* expr);
-ReadStatementNode* createReadNode(Variable var);
-PrintStatementNode* createPrintNode(Variable var);
-WhileStatementNode* createWhileNode(ConditionalExpression* predicate, StmtlstNode* statementList);
-IfStatementNode* createIfNode(ConditionalExpression* predicate, StmtlstNode* leftStatementList,
+AssignmentStatementNode* createAssignNode(StatementNumber sn, const Variable& var, Expression* expr);
+ReadStatementNode* createReadNode(StatementNumber sn, const Variable& var);
+PrintStatementNode* createPrintNode(StatementNumber sn, const Variable& var);
+WhileStatementNode* createWhileNode(StatementNumber sn, ConditionalExpression* predicate, StmtlstNode* statementList);
+IfStatementNode* createIfNode(StatementNumber sn, ConditionalExpression* predicate, StmtlstNode* leftStatementList,
                               StmtlstNode* rightStatementList);
-CallStatementNode* createCallNode(Name procName);
+CallStatementNode* createCallNode(StatementNumber sn, Name procName);
 
 // Expressions
 RelationalExpression* createGtExpr(Expression* leftRelFactor, Expression* rightRelFactor);
