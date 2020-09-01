@@ -6,7 +6,7 @@
 
 ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes)
 {
-    return new ProgramNode(std::move(programName), procedureNodes);
+    return new ProgramNode(std::move(programName), std::move(procedureNodes));
 }
 
 ProcedureNode* createProcedureNode(Name procedureName, StmtlstNode* stmtlstNode)
@@ -16,7 +16,7 @@ ProcedureNode* createProcedureNode(Name procedureName, StmtlstNode* stmtlstNode)
 
 StmtlstNode* createStmtlstNode(StatementNodeList& statementNodes)
 {
-    return new StmtlstNode(statementNodes);
+    return new StmtlstNode(std::move(statementNodes));
 }
 
 AssignmentStatementNode* createAssignNode(StatementNumber sn, const Variable& var, Expression* expr)
