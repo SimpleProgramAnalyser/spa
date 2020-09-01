@@ -78,6 +78,7 @@ jobs:
                   echo "";
               fi
           done
+          exit 0
             
       - name: clang-tidy
         run: |
