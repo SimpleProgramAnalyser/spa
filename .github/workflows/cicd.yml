@@ -74,7 +74,6 @@ jobs:
                   echo "$f formatted correctly!";
                   echo "";
               else
-                  echo "clang-format errors in $f";
                   echo $(diff $f $outputname.out.temp)
                   echo "";
               fi
