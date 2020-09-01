@@ -55,6 +55,7 @@ jobs:
           
       - name: clang-format
         run: |
+          set -x
           projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
           exitcode=0
           for f in $projectfiles;
