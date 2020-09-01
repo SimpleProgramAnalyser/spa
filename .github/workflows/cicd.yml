@@ -62,10 +62,10 @@ jobs:
           CACHE_HIT: ${{ steps.cache-build.outputs.cache-hit }}
         run: |
             if [[ "$CACHE_HIT" == 'true' ]]; then
-              cp --verbose --force --recursive ~/cache-build/* /
+              sudo cp --verbose --force --recursive ~/cache-build/* /
               cd Team12/Code12/build
-              cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-              make
+              sudo cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+              sudo make
             else
               mkdir -p ~/cache-build
               cd Team12/Code12/
@@ -84,11 +84,11 @@ jobs:
             
       - name: clang-tidy
         run: |
-          cd Team12/Code12/build
+          cd Team12/Code12
           curl https://raw.githubusercontent.com/llvm/llvm-project/master/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py -o run-clang-tidy.py
           python run-clang-tidy.py -header-filter='.*' \
             -checks='-*,cppcoreguidelines-*,-cppcoreguidelines-owning-memory,-cppcoreguidelines-pro-bounds-pointer-arithmetic' \
-            files src/spa | tee result.txt
+            files build/src/spa | tee result.txt
           if grep -w "error:\|warning:\|Error while processing" result.txt; then
             exit 1
           else
@@ -98,10 +98,10 @@ jobs:
       - name: Run SPA autotester
         run: |
           cd Team12/Code12/build/src/autotester/
-          cp ../../../../Tests12/Sample_source.txt .
-          cp ../../../../Tests12/Sample_queries.txt .
-          ./autotester Sample_source.txt Sample_queries.txt out.xml
-          if grep -w "failed" out.xml; then
+          sudo cp ../../../../Tests12/Sample_source.txt .
+          sudo cp ../../../../Tests12/Sample_queries.txt .
+          sudo ./autotester Sample_source.txt Sample_queries.txt out.xml
+          if sudo grep -w "failed" out.xml; then
             echo "Autotester failed"
             exit 0
           else
