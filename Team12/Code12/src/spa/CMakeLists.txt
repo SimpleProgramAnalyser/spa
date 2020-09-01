@@ -18,6 +18,9 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
 )
 
+# flags for debug
+target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
