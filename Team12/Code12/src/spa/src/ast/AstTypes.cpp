@@ -49,14 +49,15 @@ Boolean Variable::isConstant() noexcept
     return false;
 }
 
-ReadStatementNode::ReadStatementNode(StatementNumber stmtNum, const Variable& v): StatementNode(stmtNum), var(v) {}
+ReadStatementNode::ReadStatementNode(StatementNumber stmtNum, Variable v): StatementNode(stmtNum), var(std::move(v)) {}
 
 StatementType ReadStatementNode::getStatementType()
 {
     return ReadStatement;
 }
 
-PrintStatementNode::PrintStatementNode(StatementNumber stmtNum, const Variable& v): StatementNode(stmtNum), var(v) {}
+PrintStatementNode::PrintStatementNode(StatementNumber stmtNum, Variable v): StatementNode(stmtNum), var(std::move(v))
+{}
 
 StatementType PrintStatementNode::getStatementType()
 {

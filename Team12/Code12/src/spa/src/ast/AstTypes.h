@@ -15,6 +15,11 @@ typedef Integer StatementNumber;
 class StatementNode {
 public:
     virtual ~StatementNode() = 0;
+    StatementNode(const StatementNode&) = delete;
+    StatementNode& operator=(const StatementNode&) = delete;
+    StatementNode(StatementNode&&) = delete;
+    StatementNode& operator=(StatementNode&&) = delete;
+
     virtual StatementType getStatementType() = 0;
     virtual StatementNumber getStatementNumber();
 
@@ -35,8 +40,13 @@ class ProcedureNode {
 public:
     const Name procedureName;
     const StmtlstNode* const statementList;
+
     ProcedureNode(Name n, const StmtlstNode* stmtLst);
     ~ProcedureNode();
+    ProcedureNode(const ProcedureNode&) = delete;
+    ProcedureNode& operator=(const ProcedureNode&) = delete;
+    ProcedureNode(ProcedureNode&&) = delete;
+    ProcedureNode& operator=(ProcedureNode&&) = delete;
 };
 
 class ProgramNode {
@@ -56,8 +66,14 @@ public:
 class Constant: public BasicDataType {
 public:
     const Integer value;
+
     explicit Constant(Integer val);
     ~Constant() override = default;
+    Constant(const Constant&) = default;
+    Constant& operator=(const Constant&) = delete;
+    Constant(Constant&&) = default;
+    Constant& operator=(Constant&&) = delete;
+
     String toString() override;
     Boolean isConstant() noexcept override;
 };
@@ -65,8 +81,14 @@ public:
 class Variable: public BasicDataType {
 public:
     const Name varName;
+
     explicit Variable(Name n);
     ~Variable() override = default;
+    Variable(const Variable&) = default;
+    Variable& operator=(const Variable&) = delete;
+    Variable(Variable&&) = default;
+    Variable& operator=(Variable&&) = delete;
+
     String toString() override;
     Boolean isConstant() noexcept override;
 };
@@ -74,14 +96,14 @@ public:
 class ReadStatementNode: public StatementNode {
 public:
     const Variable var;
-    ReadStatementNode(StatementNumber stmtNum, const Variable& v);
+    ReadStatementNode(StatementNumber stmtNum, Variable  v);
     StatementType getStatementType() override;
 };
 
 class PrintStatementNode: public StatementNode {
 public:
     const Variable var;
-    PrintStatementNode(StatementNumber stmtNum, const Variable& v);
+    PrintStatementNode(StatementNumber stmtNum, Variable  v);
     StatementType getStatementType() override;
 };
 
@@ -108,8 +130,14 @@ public:
 class NotExpression: public ConditionalExpression {
 public:
     const ConditionalExpression* expression;
+
     explicit NotExpression(const ConditionalExpression* exp);
     ~NotExpression() override;
+    NotExpression(const NotExpression&) = delete;
+    NotExpression& operator=(const NotExpression&) = delete;
+    NotExpression(NotExpression&&) = delete;
+    NotExpression& operator=(NotExpression&&) = delete;
+
     ConditionalExpressionType getConditionalType() noexcept override;
 };
 
@@ -117,8 +145,14 @@ class AndExpression: public ConditionalExpression {
 public:
     const ConditionalExpression* const leftExpression;
     const ConditionalExpression* const rightExpression;
+
     AndExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp);
     ~AndExpression() override;
+    AndExpression(const AndExpression&) = delete;
+    AndExpression& operator=(const AndExpression&) = delete;
+    AndExpression(AndExpression&&) = delete;
+    AndExpression& operator=(AndExpression&&) = delete;
+
     ConditionalExpressionType getConditionalType() noexcept override;
 };
 
@@ -126,8 +160,14 @@ class OrExpression: public ConditionalExpression {
 public:
     const ConditionalExpression* const leftExpression;
     const ConditionalExpression* const rightExpression;
+
     ~OrExpression() override;
     OrExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp);
+    OrExpression(const OrExpression&) = delete;
+    OrExpression& operator=(const OrExpression&) = delete;
+    OrExpression(OrExpression&&) = delete;
+    OrExpression& operator=(OrExpression&&) = delete;
+
     ConditionalExpressionType getConditionalType() noexcept override;
 };
 
@@ -150,16 +190,28 @@ public:
     const Expression* const leftFactor;
     const Expression* const rightFactor;
     const ExpressionOperator opr;
+
     ArithmeticExpression(const Expression* left, const Expression* right, ExpressionOperator op);
     ~ArithmeticExpression() override;
+    ArithmeticExpression(const ArithmeticExpression&) = delete;
+    ArithmeticExpression& operator=(const ArithmeticExpression&) = delete;
+    ArithmeticExpression(ArithmeticExpression&&) = delete;
+    ArithmeticExpression& operator=(ArithmeticExpression&&) = delete;
+
     Boolean isArithmetic() noexcept override;
 };
 
 class ReferenceExpression: public Expression {
 public:
     const BasicDataType* const basicData;
+
     explicit ReferenceExpression(const BasicDataType* bd);
     ~ReferenceExpression() override;
+    ReferenceExpression(const ReferenceExpression&) = delete;
+    ReferenceExpression& operator=(const ReferenceExpression&) = delete;
+    ReferenceExpression(ReferenceExpression&&) = delete;
+    ReferenceExpression& operator=(ReferenceExpression&&) = delete;
+
     Boolean isArithmetic() noexcept override;
 };
 
@@ -177,8 +229,14 @@ public:
     const Expression* const leftFactor;
     const Expression* const rightFactor;
     const RelationalOperator opr;
+
     RelationalExpression(const Expression* left, const Expression* right, RelationalOperator ro);
     ~RelationalExpression() override;
+    RelationalExpression(const RelationalExpression&) = delete;
+    RelationalExpression& operator=(const RelationalExpression&) = delete;
+    RelationalExpression(RelationalExpression&&) = delete;
+    RelationalExpression& operator=(RelationalExpression&&) = delete;
+
     ConditionalExpressionType getConditionalType() noexcept override;
 };
 
@@ -187,9 +245,15 @@ public:
     const ConditionalExpression* const predicate;
     const StmtlstNode* const ifStatementList;
     const StmtlstNode* const elseStatementList;
+
     IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StmtlstNode* ifs,
                     const StmtlstNode* elses);
     ~IfStatementNode() override;
+    IfStatementNode(const IfStatementNode&) = delete;
+    IfStatementNode& operator=(const IfStatementNode&) = delete;
+    IfStatementNode(IfStatementNode&&) = delete;
+    IfStatementNode& operator=(IfStatementNode&&) = delete;
+
     StatementType getStatementType() override;
 };
 
@@ -197,8 +261,14 @@ class WhileStatementNode: public StatementNode {
 public:
     const ConditionalExpression* const predicate;
     const StmtlstNode* const statementList;
+
     WhileStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StmtlstNode* stmts);
     ~WhileStatementNode() override;
+    WhileStatementNode(const WhileStatementNode&) = delete;
+    WhileStatementNode& operator=(const WhileStatementNode&) = delete;
+    WhileStatementNode(WhileStatementNode&&) = delete;
+    WhileStatementNode& operator=(WhileStatementNode&&) = delete;
+
     StatementType getStatementType() override;
 };
 
@@ -206,8 +276,14 @@ class AssignmentStatementNode: public StatementNode {
 public:
     const Variable variable;
     const Expression* expression;
+
     AssignmentStatementNode(StatementNumber stmtNum, const Variable& v, const Expression* expr);
     ~AssignmentStatementNode() override;
+    AssignmentStatementNode(const AssignmentStatementNode&) = delete;
+    AssignmentStatementNode& operator=(const AssignmentStatementNode&) = delete;
+    AssignmentStatementNode(AssignmentStatementNode&&) = delete;
+    AssignmentStatementNode& operator=(AssignmentStatementNode&&) = delete;
+
     StatementType getStatementType() override;
 };
 
