@@ -5,12 +5,29 @@
 
 #include "AstTypes.h"
 
-#include <string>
+StatementNumber StatementNode::getStatementNumber()
+{
+    return stmtNum;
+}
+
+StatementNode::StatementNode(StatementNumber n): stmtNum(n) {}
+
+StatementListNode::StatementListNode(List<StatementNode> stmtLst): statementList(std::move(stmtLst)) {}
+
+ProcedureNode::ProcedureNode(Name n, const StatementListNode* stmtLst):
+    procedureName(std::move(n)), statementList(stmtLst)
+{}
 
 ProcedureNode::~ProcedureNode()
 {
     delete statementList;
 }
+
+ProgramNode::ProgramNode(Name n, List<ProcedureNode> procLst):
+    programName(std::move(n)), procedureList(std::move(procLst))
+{}
+
+Constant::Constant(Integer val): value(val) {}
 
 String Constant::toString()
 {
@@ -22,35 +39,32 @@ String Variable::toString()
     return static_cast<String>(varName);
 }
 
+Variable::Variable(Name n): varName(std::move(n)) {}
+
+ReadStatementNode::ReadStatementNode(StatementNumber stmtNum, const Variable& v): StatementNode(stmtNum), var(v) {}
+
 StatementType ReadStatementNode::getStatementType()
 {
     return ReadStatement;
 }
 
-StatementNumber ReadStatementNode::getStatementNumber()
-{
-    return stmtNum;
-}
+PrintStatementNode::PrintStatementNode(StatementNumber stmtNum, const Variable& v): StatementNode(stmtNum), var(v) {}
 
 StatementType PrintStatementNode::getStatementType()
 {
     return PrintStatement;
 }
 
-StatementNumber PrintStatementNode::getStatementNumber()
-{
-    return stmtNum;
-}
+CallStatementNode::CallStatementNode(StatementNumber stmtNum, Name n):
+    StatementNode(stmtNum), procedureName(std::move(n))
+{}
 
 StatementType CallStatementNode::getStatementType()
 {
     return CallStatement;
 }
 
-StatementNumber CallStatementNode::getStatementNumber()
-{
-    return stmtNum;
-}
+NotExpression::NotExpression(const ConditionalExpression* exp): expression(exp) {}
 
 NotExpression::~NotExpression()
 {
@@ -61,6 +75,10 @@ ConditionalExpressionType NotExpression::getConditionalType() noexcept
 {
     return NotConditionalExpression;
 }
+
+AndExpression::AndExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp):
+    leftExpression(leftExp), rightExpression(rightExp)
+{}
 
 AndExpression::~AndExpression()
 {
@@ -73,6 +91,10 @@ ConditionalExpressionType AndExpression::getConditionalType() noexcept
     return AndConditionalExpression;
 }
 
+OrExpression::OrExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp):
+    leftExpression(leftExp), rightExpression(rightExp)
+{}
+
 OrExpression::~OrExpression()
 {
     delete leftExpression;
@@ -84,8 +106,8 @@ ConditionalExpressionType OrExpression::getConditionalType() noexcept
     return OrConditionalExpression;
 }
 
-ArithmeticExpression::ArithmeticExpression(Expression* const left, Expression* const right, ExpressionOperator op):
-    leftFactor(left), rightFactor(right), op(op)
+ArithmeticExpression::ArithmeticExpression(const Expression* left, const Expression* right, ExpressionOperator op):
+    leftFactor(left), rightFactor(right), opr(op)
 {}
 
 ArithmeticExpression::~ArithmeticExpression()
@@ -99,6 +121,8 @@ bool ArithmeticExpression::isArithmetic() noexcept
     return true;
 }
 
+ReferenceExpression::ReferenceExpression(const BasicDataType* bd): basicData(bd) {}
+
 ReferenceExpression::~ReferenceExpression()
 {
     delete basicData;
@@ -109,10 +133,9 @@ bool ReferenceExpression::isArithmetic() noexcept
     return false;
 }
 
-ConditionalExpressionType RelationalExpression::getConditionalType() noexcept
-{
-    return RelationalConditionalExpression;
-}
+RelationalExpression::RelationalExpression(const Expression* left, const Expression* right, RelationalOperator ro):
+    leftFactor(left), rightFactor(right), opr(ro)
+{}
 
 RelationalExpression::~RelationalExpression()
 {
@@ -120,8 +143,20 @@ RelationalExpression::~RelationalExpression()
     delete rightFactor;
 }
 
+ConditionalExpressionType RelationalExpression::getConditionalType() noexcept
+{
+    return RelationalConditionalExpression;
+}
+
+IfStatementNode::IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred,
+                                 const StatementListNode* ifs, const StatementListNode* elses):
+    StatementNode(stmtNum),
+    predicate(pred), ifStatementList(ifs), elseStatementList(elses)
+{}
+
 IfStatementNode::~IfStatementNode()
 {
+    delete predicate;
     delete ifStatementList;
     delete elseStatementList;
 }
@@ -131,13 +166,15 @@ StatementType IfStatementNode::getStatementType()
     return IfStatement;
 }
 
-StatementNumber IfStatementNode::getStatementNumber()
-{
-    return stmtNum;
-}
+WhileStatementNode::WhileStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred,
+                                       const StatementListNode* stmts):
+    StatementNode(stmtNum),
+    predicate(pred), statementList(stmts)
+{}
 
 WhileStatementNode::~WhileStatementNode()
 {
+    delete predicate;
     delete statementList;
 }
 
@@ -146,21 +183,16 @@ StatementType WhileStatementNode::getStatementType()
     return WhileStatement;
 }
 
-StatementNumber WhileStatementNode::getStatementNumber()
-{
-    return stmtNum;
-}
+AssignmentStatementNode::AssignmentStatementNode(StatementNumber stmtNum, const Variable& v, const Expression* expr):
+    StatementNode(stmtNum), variable(v), expression(expr)
+{}
 
-AssignmentStatementNode::~AssignmentStatementNode() {
+AssignmentStatementNode::~AssignmentStatementNode()
+{
     delete expression;
 }
 
 StatementType AssignmentStatementNode::getStatementType()
 {
     return AssignmentStatement;
-}
-
-StatementNumber AssignmentStatementNode::getStatementNumber()
-{
-    return stmtNum;
 }

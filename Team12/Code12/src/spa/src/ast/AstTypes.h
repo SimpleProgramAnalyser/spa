@@ -7,6 +7,7 @@
 #define SPA_AST_TYPES_H
 
 #include <Types.h>
+#include <utility>
 
 typedef String Name;
 typedef Integer StatementNumber;
@@ -25,18 +26,26 @@ class StatementNode {
 public:
     virtual ~StatementNode() = 0;
     virtual StatementType getStatementType() = 0;
-    virtual StatementNumber getStatementNumber() = 0;
+    virtual StatementNumber getStatementNumber();
+
+protected:
+    explicit StatementNode(StatementNumber n);
+
+private:
+    StatementNumber stmtNum;
 };
 
 class StatementListNode {
 public:
     List<StatementNode> statementList;
+    explicit StatementListNode(List<StatementNode> stmtLst);
 };
 
 class ProcedureNode {
 public:
     const Name procedureName;
     const StatementListNode* const statementList;
+    ProcedureNode(Name n, const StatementListNode* stmtLst);
     ~ProcedureNode();
 };
 
@@ -44,6 +53,7 @@ class ProgramNode {
 public:
     const Name programName;
     List<ProcedureNode> procedureList;
+    ProgramNode(Name n, List<ProcedureNode> procLst);
 };
 
 class BasicDataType {
@@ -56,6 +66,7 @@ class Constant: public BasicDataType {
 public:
     const Integer value;
     String toString() override;
+    explicit Constant(Integer val);
     ~Constant() override = default;
 };
 
@@ -63,37 +74,29 @@ class Variable: public BasicDataType {
 public:
     const Name varName;
     String toString() override;
+    explicit Variable(Name n);
     ~Variable() override = default;
 };
 
 class ReadStatementNode: public StatementNode {
 public:
     const Variable var;
+    ReadStatementNode(StatementNumber stmtNum, const Variable& v);
     StatementType getStatementType() override;
-    StatementNumber getStatementNumber() override;
-
-private:
-    StatementNumber stmtNum;
 };
 
 class PrintStatementNode: public StatementNode {
 public:
     const Variable var;
+    PrintStatementNode(StatementNumber stmtNum, const Variable& v);
     StatementType getStatementType() override;
-    StatementNumber getStatementNumber() override;
-
-private:
-    StatementNumber stmtNum;
 };
 
 class CallStatementNode: public StatementNode {
 public:
     const Name procedureName;
+    CallStatementNode(StatementNumber stmtNum, Name n);
     StatementType getStatementType() override;
-    StatementNumber getStatementNumber() override;
-
-private:
-    StatementNumber stmtNum;
 };
 
 enum ConditionalExpressionType {
@@ -111,24 +114,27 @@ public:
 
 class NotExpression: public ConditionalExpression {
 public:
-    ~NotExpression() override;
     const ConditionalExpression* expression;
+    explicit NotExpression(const ConditionalExpression* exp);
+    ~NotExpression() override;
     ConditionalExpressionType getConditionalType() noexcept override;
 };
 
 class AndExpression: public ConditionalExpression {
 public:
-    ~AndExpression() override;
     const ConditionalExpression* const leftExpression;
     const ConditionalExpression* const rightExpression;
+    AndExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp);
+    ~AndExpression() override;
     ConditionalExpressionType getConditionalType() noexcept override;
 };
 
 class OrExpression: public ConditionalExpression {
 public:
-    ~OrExpression() override;
     const ConditionalExpression* const leftExpression;
     const ConditionalExpression* const rightExpression;
+    ~OrExpression() override;
+    OrExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp);
     ConditionalExpressionType getConditionalType() noexcept override;
 };
 
@@ -151,7 +157,7 @@ public:
     const Expression* const leftFactor;
     const Expression* const rightFactor;
     const ExpressionOperator opr;
-    ArithmeticExpression(Expression* left, Expression* right, ExpressionOperator op);
+    ArithmeticExpression(const Expression* left, const Expression* right, ExpressionOperator op);
     ~ArithmeticExpression() override;
     bool isArithmetic() noexcept override;
 };
@@ -159,6 +165,7 @@ public:
 class ReferenceExpression: public Expression {
 public:
     const BasicDataType* const basicData;
+    explicit ReferenceExpression(const BasicDataType* bd);
     ~ReferenceExpression() override;
     bool isArithmetic() noexcept override;
 };
@@ -177,6 +184,7 @@ public:
     const Expression* const leftFactor;
     const Expression* const rightFactor;
     const RelationalOperator opr;
+    RelationalExpression(const Expression* left, const Expression* right, RelationalOperator ro);
     ~RelationalExpression() override;
     ConditionalExpressionType getConditionalType() noexcept override;
 };
@@ -186,36 +194,28 @@ public:
     const ConditionalExpression* const predicate;
     const StatementListNode* const ifStatementList;
     const StatementListNode* const elseStatementList;
+    IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StatementListNode* ifs,
+                    const StatementListNode* elses);
     ~IfStatementNode() override;
     StatementType getStatementType() override;
-    StatementNumber getStatementNumber() override;
-
-private:
-    StatementNumber stmtNum;
 };
 
 class WhileStatementNode: public StatementNode {
 public:
     const ConditionalExpression* const predicate;
     const StatementListNode* const statementList;
+    WhileStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StatementListNode* stmts);
     ~WhileStatementNode() override;
     StatementType getStatementType() override;
-    StatementNumber getStatementNumber() override;
-
-private:
-    StatementNumber stmtNum;
 };
 
 class AssignmentStatementNode: public StatementNode {
 public:
     const Variable variable;
     const Expression* expression;
+    AssignmentStatementNode(StatementNumber stmtNum, const Variable& v, const Expression* expr);
     ~AssignmentStatementNode() override;
     StatementType getStatementType() override;
-    StatementNumber getStatementNumber() override;
-
-private:
-    StatementNumber stmtNum;
 };
 
 #endif // SPA_AST_TYPES_H
