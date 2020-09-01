@@ -42,9 +42,8 @@ jobs:
               sudo dpkg -L clang-tidy \
                 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done \
                 | xargs cp --parents --target-directory ~/cache/
-              sudo dpkg -L clang-10 \
-                | while IFS= read -r f; do if test -f $f; then echo $f; fi; done \
-                | xargs cp --parents --target-directory ~/cache/
+              mkdir -p ~/cache/usr/lib/llvm-10/lib/
+              cp /usr/lib/llvm-10/lib/libclang-cpp.so.10 ~/cache/usr/lib/llvm-10/lib/libclang-cpp.so.10
             fi
             
       - name: Build SPA
