@@ -10,7 +10,7 @@ add_library(spa
     # lexer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
-)
+        src/pql/PqlManager.h src/pql/PqlManager.cpp)
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
