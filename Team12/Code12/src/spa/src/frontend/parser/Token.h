@@ -1,6 +1,7 @@
-//
-// Created by Alden on 2/9/2020.
-//
+/**
+ * Types and methods used for tokenising of
+ * SIMPLE program strings.
+ */
 
 #ifndef SPA_FRONTEND_TOKEN_H
 #define SPA_FRONTEND_TOKEN_H
@@ -50,7 +51,6 @@ public:
 };
 
 typedef List<Token> TokenList;
-
 TokenList tokeniseSimple(StringList lexedSimpleProgram);
 
 }
