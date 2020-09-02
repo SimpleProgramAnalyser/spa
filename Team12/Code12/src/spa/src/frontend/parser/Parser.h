@@ -10,7 +10,7 @@
 #include "Error.h"
 #include "ast/AstTypes.h"
 
-Void parseSimple(String rawProgram);
+Void parseSimple(const String& rawProgram);
 ArithmeticExpression* parseArithmeticExpression(StringList lexedArithmeticExpression);
 
 #endif // SPA_FRONTEND_PARSER_H
