@@ -26,6 +26,13 @@ jobs:
           path: ~/cache
           key: ${{ runner.os }}-spa-clang-checks-deps-v3
 
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v2
+        with:
+          path: ~/cache-build
+          key: ${{ runner.os }}-spa-clang-checks-build-v1
+
       - name: Generate dependencies
         env:
           CACHE_HIT: ${{ steps.cache-deps.outputs.cache-hit }}
@@ -49,46 +56,39 @@ jobs:
                 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done \
                 | xargs cp --parents --target-directory ~/cache/
             fi
-            
+
       - name: Build SPA
+        env:
+          CACHE_HIT: ${{ steps.cache-build.outputs.cache-hit }}
         run: |
-          cd Team12/Code12/
-          rm -f -r build
-          mkdir build
-          cd build
-          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-          make
+            if [[ "$CACHE_HIT" == 'true' ]]; then
+              sudo cp --verbose --force --recursive ~/cache-build/* /
+              cd Team12/Code12/build
+              sudo cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+              sudo make
+            else
+              mkdir -p ~/cache-build
+              cd Team12/Code12/
+              rm -f -r build
+              mkdir build
+              cd build
+              cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+              make
+              cp --parents -r --target-directory ~/cache-build/ "$(realpath ./)"
+            fi
           
       - name: clang-format
+        continue-on-error: false
         run: |
-          projectfiles=$(find ./Team12/Code12/src/spa/src -iname "*.h" -o -iname "*.cpp")
-          exitcode=0
-          for f in $projectfiles;
-          do
-              outputname=$(echo "$f" | rev | cut -f 2 -d '.' | cut -f 1 -d '/' | rev)
-              rm -f $outputname.out.temp
-              clang-format-10 $f >> $outputname.out.temp
-              result=$(diff $f $outputname.out.temp)
-              if [ -z "$result" ];
-              then
-                  echo "$f formatted correctly!"
-                  echo ""
-              else
-                  echo "clang-format errors in $f"
-                  echo "$result"
-                  echo ""
-                  exitcode=1
-              fi
-          done
-          exit "$exitcode"
+          ./.github/workflows/clang-format.sh
             
       - name: clang-tidy
         run: |
-          cd Team12/Code12/build
+          cd Team12/Code12
           curl https://raw.githubusercontent.com/llvm/llvm-project/master/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py -o run-clang-tidy.py
           python run-clang-tidy.py -header-filter='.*' \
             -checks='-*,cppcoreguidelines-*,-cppcoreguidelines-owning-memory,-cppcoreguidelines-pro-bounds-pointer-arithmetic' \
-            files src/spa | tee result.txt
+            files build/src/spa | tee result.txt
           if grep -w "error:\|warning:\|Error while processing" result.txt; then
             exit 1
           else
@@ -98,10 +98,10 @@ jobs:
       - name: Run SPA autotester
         run: |
           cd Team12/Code12/build/src/autotester/
-          cp ../../../../Tests12/Sample_source.txt .
-          cp ../../../../Tests12/Sample_queries.txt .
-          ./autotester Sample_source.txt Sample_queries.txt out.xml
-          if grep -w "failed" out.xml; then
+          sudo cp ../../../../Tests12/Sample_source.txt .
+          sudo cp ../../../../Tests12/Sample_queries.txt .
+          sudo ./autotester Sample_source.txt Sample_queries.txt out.xml
+          if sudo grep -w "failed" out.xml; then
             echo "Autotester failed"
             exit 0
           else
