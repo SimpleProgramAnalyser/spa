@@ -5,9 +5,59 @@
 
 #include "Token.h"
 
+#include "StringMatcher.h"
+
 using namespace frontend;
 
-Token::Token(String s, frontend::Tag t): rawString(std::move(s)), tokenTag(t) {}
+Token::Token(String s, Tag t): rawString(std::move(s)), tokenTag(t) {}
+
+
+
+/**
+ * Generates a trie for SIMPLE program keywords.
+ * The caller of this function has to remember
+ * to delete the trie created, after usage.
+ *
+ * @return A trie that can be used to identify SIMPLE
+ *         program keywords efficiently.
+ */
+str_match::Trie<Tag>* generateSimpleTrie() {
+    auto* trie = new str_match::Trie<Tag>();
+//    // populate trie with SIMPLE program keywords
+//    // statement syntax
+//    AssignmentTag = '=',
+//    BracesOpenTag = '{',
+//    BracesClosedTag = '}',
+//    BracketOpenTag = '(',
+//    BracketClosedTag = ')',
+//    ConstantTag = 'c',
+//    SemicolonTag = ';',
+//    // keywords
+//    CallKeywordTag = 'C',
+//    ElseKeywordTag = 'E',
+//    IfKeywordTag = 'F',
+//    ProcedureKeywordTag = 'O',
+//    PrintKeywordTag = 'P',
+//    ReadKeywordTag = 'R',
+//    ThenKeywordTag = 'T',
+//    WhileKeywordTag = 'W',
+//    // expression operators
+//    GtTag = '>',
+//    GteTag = 'g',
+//    LtTag = '<',
+//    LteTag = 'l',
+//    NeqTag = 'n',
+//    EqTag = 'q',
+//    PlusTag = '+',
+//    MinusTag = '-',
+//    TimesTag = '*',
+//    DivideTag = '/',
+//    ModuloTag = '%',
+//    NotConditionalTag = '!',
+//    AndConditionalTag = '&',
+//    OrConditionalTag = '|',
+    return trie;
+}
 
 Boolean isPossibleIdentifier(Tag tag)
 {

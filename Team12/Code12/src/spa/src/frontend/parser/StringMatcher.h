@@ -26,9 +26,9 @@ public:
     const Character value;
     TrieNode* child{}; // points to next character in string
     TrieNode* next{};  // points to an alternative character
-    T* reference;      // to store items in the trie
+    T storedItem;      // to store items in the trie
 
-    TrieNode(Character value, TrieNode* child, TrieNode* next, T* reference);
+    TrieNode(Character value, TrieNode* child, TrieNode* next, T item);
     ~TrieNode();
     TrieNode(const TrieNode&) = delete;
     TrieNode& operator=(const TrieNode&) = delete;
@@ -52,11 +52,11 @@ public:
     Trie();
     ~Trie();
 
-    Void addEntryToTrie(const String& str, T* reference);
-    T* matchString(const String& str);
+    Void addEntryToTrie(const String& str, T item, T nonEndNodeValue = NULL);
+    T matchString(const String& str, T notFoundValue = NULL);
 
 private:
-    TrieNode<T>* getNodeIfNull(char c, TrieNode<T>* node, T* ref = nullptr);
+    TrieNode<T>* getNodeIfNull(char c, TrieNode<T>* node, T ref = NULL);
 };
 
 } // namespace str_match

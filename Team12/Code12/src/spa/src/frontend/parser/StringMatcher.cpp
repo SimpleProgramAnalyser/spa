@@ -17,8 +17,8 @@ template <typename T>
 TrieNode<T>::~TrieNode() = default;
 
 template <typename T>
-TrieNode<T>::TrieNode(Character value, TrieNode* child, TrieNode* next, T* reference):
-    value(value), child(child), next(next), reference(reference)
+TrieNode<T>::TrieNode(Character value, TrieNode* child, TrieNode* next, T item):
+    value(value), child(child), next(next), storedItem(item)
 {}
 
 template <typename T>
@@ -48,10 +48,10 @@ Trie<T>::~Trie()
  *            (default value is nullptr)
  */
 template <typename T>
-TrieNode<T>* Trie<T>::getNodeIfNull(const char c, TrieNode<T>* node, T* ref)
+TrieNode<T>* Trie<T>::getNodeIfNull(const char c, TrieNode<T>* node, T item)
 {
     if (node == nullptr) {
-        auto* newNode = new TrieNode<T>(c, nullptr, nullptr, ref);
+        auto* newNode = new TrieNode<T>(c, nullptr, nullptr, item);
         ownedNodes.push_back(newNode);
         return newNode;
     } else {
@@ -61,7 +61,7 @@ TrieNode<T>* Trie<T>::getNodeIfNull(const char c, TrieNode<T>* node, T* ref)
 }
 
 template <typename T>
-Void Trie<T>::addEntryToTrie(const String& str, T* newReference)
+Void Trie<T>::addEntryToTrie(const String& str, T item, T nonEndNodeValue)
 {
     const char* strChar = str.c_str();
     // ignore empty strings
@@ -69,12 +69,12 @@ Void Trie<T>::addEntryToTrie(const String& str, T* newReference)
         return;
     }
     // navigate hash table for first character
-    firstCharMap.at(*strChar) = getNodeIfNull(*strChar, firstCharMap.at(*strChar));
+    firstCharMap.at(*strChar) = getNodeIfNull(*strChar, firstCharMap.at(*strChar), nonEndNodeValue);
     // traverse the trie
     TrieNode<T>* currentNode = firstCharMap.at(*strChar);
     strChar++;
     while (*strChar != '\0') {
-        currentNode->child = getNodeIfNull(*strChar, currentNode->child);
+        currentNode->child = getNodeIfNull(*strChar, currentNode->child, nonEndNodeValue);
         currentNode = currentNode->child;
         if (currentNode->value != *strChar) {
             // loop through "next"s
@@ -87,7 +87,7 @@ Void Trie<T>::addEntryToTrie(const String& str, T* newReference)
             }
             if (!matchFound) {
                 // currentNode->next == nullptr
-                currentNode->next = getNodeIfNull(*strChar, currentNode->next);
+                currentNode->next = getNodeIfNull(*strChar, currentNode->next, nonEndNodeValue);
                 currentNode = currentNode->next;
             }
         }
@@ -95,7 +95,7 @@ Void Trie<T>::addEntryToTrie(const String& str, T* newReference)
     }
     // store the end of the string
     if (currentNode->child == nullptr) {
-        currentNode->child = getNodeIfNull(*strChar, currentNode->child, newReference);
+        currentNode->child = getNodeIfNull(*strChar, currentNode->child, item);
     } else {
         currentNode = currentNode->child;
         // loop through "next"s
@@ -109,34 +109,34 @@ Void Trie<T>::addEntryToTrie(const String& str, T* newReference)
             currentNode = currentNode->next;
         }
         if (!matchFound) {
-            currentNode->next = getNodeIfNull(*strChar, currentNode->next, newReference);
+            currentNode->next = getNodeIfNull(*strChar, currentNode->next, item);
         } else {
             // string was already stored in the trie
             // just replace old value with new one
-            currentNode->next->reference = newReference;
+            currentNode->next->storedItem = item;
         }
     }
 }
 
 template <typename T>
-T* Trie<T>::matchString(const String& str)
+T Trie<T>::matchString(const String& str, T notFoundValue)
 {
     const char* strChar = str.c_str();
     // ignore empty strings
     if (*strChar == '\0') {
-        return nullptr;
+        return notFoundValue;
     }
     // check for first character
     TrieNode<T>* firstNode = firstCharMap.at(*strChar);
     if (firstNode == nullptr) {
-        return nullptr;
+        return notFoundValue;
     }
     // traverse the trie
     TrieNode<T>* currentNode = firstNode->child;
     strChar++;
     while (*strChar != '\0') {
         if (currentNode == nullptr) {
-            return nullptr;
+            return notFoundValue;
         }
         bool currentMatches = currentNode->value == *strChar;
         if (!currentMatches) {
@@ -148,15 +148,15 @@ T* Trie<T>::matchString(const String& str)
     }
     // check last character
     if (currentNode->value == *strChar) {
-        return currentNode->reference;
+        return currentNode->storedItem;
     } else {
         // loop through "next"s
         while (currentNode->next != nullptr) {
             if (currentNode->next->value == *strChar) {
-                return currentNode->next->reference;
+                return currentNode->next->storedItem;
             }
             currentNode = currentNode->next;
         }
-        return nullptr;
+        return notFoundValue;
     }
 }
