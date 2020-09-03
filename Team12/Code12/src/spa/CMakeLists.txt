@@ -20,7 +20,11 @@ add_library(spa
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
-        src/Error.h src/Ui.h src/frontend/parser/Token.cpp src/frontend/parser/Token.h src/frontend/parser/StringMatcher.cpp src/frontend/parser/StringMatcher.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+)
 
 # flags for debug
 target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
