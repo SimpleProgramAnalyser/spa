@@ -5,6 +5,8 @@
 
 #include "Token.h"
 
+#include <regex>
+
 #include "Parser.h"
 #include "StringMatcher.h"
 
@@ -20,7 +22,8 @@ Token::Token(String s, Tag t): rawString(std::move(s)), tokenTag(t) {}
  * @return A trie that can be used to identify SIMPLE
  *         program keywords efficiently.
  */
-str_match::Trie<Tag>* generateSimpleTrie() {
+str_match::Trie<Tag>* generateSimpleTrie()
+{
     auto* trie = new str_match::Trie<Tag>();
     // populate trie with SIMPLE program keywords
     // statement syntax
@@ -58,24 +61,29 @@ str_match::Trie<Tag>* generateSimpleTrie() {
     return trie;
 }
 
-Boolean isIdentifierTag(Tag tag)
+Boolean frontend::isIdentifierTag(Tag tag)
 {
     // match the bit pattern 010xxxxx
     uint8_t firstThreeBits = static_cast<uint8_t>(tag) >> 5u;
     return firstThreeBits == 0x02;
 }
 
-Boolean isPossibleIdentifier(String str) {
-    // TODO: implement
-    return true;
+Boolean isMatchingRegex(const String& rawInput, const String& regex)
+{
+    return std::regex_match(rawInput, std::regex(regex));
 }
 
-Boolean isPossibleConstant(String str) {
-    // TODO: implement
-    return true;
+Boolean frontend::isPossibleIdentifier(const String& str)
+{
+    return isMatchingRegex(str, "[A-Za-z]([A-Za-z]|[\\d])*");
 }
 
-TokenList tokeniseSimple(StringList lexedSimpleProgram)
+Boolean frontend::isPossibleConstant(const String& str)
+{
+    return isMatchingRegex(str, "\\d+");
+}
+
+TokenList frontend::tokeniseSimple(StringList lexedSimpleProgram)
 {
     TokenList tokens;
     int numberOfStrings = lexedSimpleProgram.size();

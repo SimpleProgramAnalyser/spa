@@ -58,8 +58,8 @@ public:
 };
 
 Boolean isIdentifierTag(Tag tag);
-Boolean isPossibleIdentifier(String str);
-Boolean isPossibleConstant(String str);
+Boolean isPossibleIdentifier(const String& str);
+Boolean isPossibleConstant(const String& str);
 
 typedef List<Token> TokenList;
 TokenList tokeniseSimple(StringList lexedSimpleProgram);
