@@ -17,15 +17,19 @@ enum Tag: char {
     BracesClosedTag = '}',
     BracketOpenTag = '(',
     BracketClosedTag = ')',
-    CallKeywordTag = 'a',
     ConstantTag = 'c',
-    IfKeywordTag = 'i',
-    IdentifierTag = 'd',
-    ProcedureTag = 'o',
-    PrintKeywordTag = 'p',
-    ReadKeywordTag = 'r',
-    WhileKeywordTag = 'w',
     SemicolonTag = ';',
+    // keywords 010xxxxx
+    CallKeywordTag = 'C',
+    ElseKeywordTag = 'E',
+    IfKeywordTag = 'F',
+    ProcedureKeywordTag = 'O',
+    PrintKeywordTag = 'P',
+    ReadKeywordTag = 'R',
+    ThenKeywordTag = 'T',
+    WhileKeywordTag = 'W',
+    // identifiers
+    IdentifierTag = 'I',
     // expression operators
     GtTag = '>',
     GteTag = 'g',
@@ -49,6 +53,8 @@ public:
     const Tag tokenTag;
     Token(String s, Tag t);
 };
+
+Boolean isPossibleIdentifier(Tag tag);
 
 typedef List<Token> TokenList;
 TokenList tokeniseSimple(StringList lexedSimpleProgram);
