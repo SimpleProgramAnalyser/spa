@@ -15,12 +15,11 @@ using namespace str_match;
 template <typename T>
 TrieNode<T>::~TrieNode()
 {
-    // checks to avoid deleting nullNode prematurely
-    if (child != nullptr && child->value != '\0') {
+    if (child != nullptr) {
         delete child;
     }
 
-    if (next != nullptr && next->value != '\0') {
+    if (next != nullptr) {
         delete next;
     }
 }
@@ -156,7 +155,7 @@ T* Trie<T>::matchString(const String& str)
     }
     // check last character
     if (currentNode->value == *strChar) {
-        return currentNode->next->reference;
+        return currentNode->reference;
     } else {
         // loop through "next"s
         while (currentNode->next != nullptr) {

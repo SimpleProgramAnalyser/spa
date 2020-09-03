@@ -24,7 +24,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
-)
+        src/lexer/trieTest.cpp)
 
 # flags for debug
 target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
