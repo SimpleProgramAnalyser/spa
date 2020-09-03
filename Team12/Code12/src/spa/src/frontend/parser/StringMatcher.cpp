@@ -12,8 +12,6 @@
 
 using namespace str_match;
 
-TrieNode::TrieNode(Character value): value(value), child(nullptr), next(nullptr) {}
-
 TrieNode::TrieNode(Character value, TrieNode* child, TrieNode* next): value(value), child(child), next(next) {}
 
 TrieNode::~TrieNode()
@@ -28,36 +26,36 @@ TrieNode::~TrieNode()
     }
 }
 
-/**
- * There should only be one null node created for each trie.
- *
- * Null node is a trie node representing the
- * null character. It will signify that there
- * are no further characters after this node.
- */
-Trie::Trie(): nullNode(new TrieNode('\0')), firstCharMap(), ownedNodes()
+Trie::Trie(): firstCharMap(), ownedNodes() {}
+
+Trie::~Trie()
 {
-    firstCharMap.fill(nullptr);
+    for (TrieNode* node : ownedNodes) {
+        delete node;
+    }
 }
 
 /**
  * Helper function to check whether a TrieNode
- * pointer is the nullNode, and change it to point
- * to a new node for the given character if it is.
+ * pointer is the nullNode, and return a new
+ * node for the given character if it is.
  * Also, store this new nodes in the ownedNodes.
  *
  * If it is not, do not do anything as the node
- * already exists in the trie.
+ * already exists in the trie. Return the original node.
  *
  * @param c The character for the new node.
- * @param location The location of the TrieNode pointer.
+ * @param location The original TrieNode pointer.
  */
-void Trie::replaceNullNode(const char c, TrieNode** location) {
-    if (*location == nullptr) {
-        *location = new TrieNode(c, nullptr, nullptr);
-        ownedNodes.push_back(*location);
+TrieNode* Trie::getNodeIfNull(const char c, TrieNode* node)
+{
+    if (node == nullptr) {
+        auto* newNode = new TrieNode(c, nullptr, nullptr);
+        ownedNodes.push_back(newNode);
+        return newNode;
     } else {
         // node already exists
+        return node;
     }
 }
 
@@ -69,23 +67,48 @@ Void Trie::addEntryToTrie(const String& str)
         return;
     }
     // navigate hash table for first character
-    TrieNode** firstNode = &firstCharMap.at(*strChar);
-    replaceNullNode(*strChar, firstNode);
+    firstCharMap.at(*strChar) = getNodeIfNull(*strChar, firstCharMap.at(*strChar));
     // traverse the trie
-    TrieNode** currentNode = &((*firstNode)->child);
+    TrieNode* currentNode = firstCharMap.at(*strChar);
     strChar++;
     while (*strChar != '\0') {
-        replaceNullNode(*strChar, currentNode);
-        if ((*currentNode)->value == *strChar) {
-            *currentNode = (*currentNode)->child;
-        } else {
-            // (*currentNode)->value != *strChar
-            *currentNode = (*currentNode)->next;
+        currentNode->child = getNodeIfNull(*strChar, currentNode->child);
+        currentNode = currentNode->child;
+        if (currentNode->value != *strChar) {
+            // loop through "nexts"
+            bool matchFound = false;
+            while (!matchFound && currentNode->next != nullptr) {
+                if (currentNode->next->value == *strChar) {
+                    matchFound = true;
+                }
+                currentNode = currentNode->next;
+            }
+            if (!matchFound) {
+                // currentNode->next == nullptr
+                currentNode->next = getNodeIfNull(*strChar, currentNode->next);
+                currentNode = currentNode->next;
+            }
         }
         strChar++;
     }
     // store the end of the string
-    (*currentNode)->child = nullNode;
+    if (currentNode->child == nullptr) {
+        currentNode->child = getNodeIfNull(*strChar, currentNode->child);
+    } else {
+        currentNode = currentNode->child;
+        // loop through "nexts"
+        bool matchFound = false;
+        while (currentNode->next != nullptr) {
+            if (currentNode->next->value == *strChar) {
+                matchFound = true;
+                break;
+            }
+            currentNode = currentNode->next;
+        }
+        if (!matchFound) {
+            currentNode->next = getNodeIfNull(*strChar, currentNode->next);
+        }
+    }
 }
 
 Boolean Trie::matchString(const String& str)
@@ -116,14 +139,16 @@ Boolean Trie::matchString(const String& str)
         }
     }
     // check last character
-    return currentNode == nullNode;
-}
-
-Trie::~Trie()
-{
-    for (TrieNode* node : ownedNodes) {
-        delete node;
+    if (currentNode->value == *strChar) {
+        return true;
+    } else {
+        // loop through "nexts"
+        while (currentNode->next != nullptr) {
+            if (currentNode->next->value == *strChar) {
+                return true;
+            }
+            currentNode = currentNode->next;
+        }
+        return false;
     }
-    // nullNode is deleted last
-    delete nullNode;
 }

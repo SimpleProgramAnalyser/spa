@@ -26,7 +26,6 @@ public:
     TrieNode* child{};     // points to next character in string
     TrieNode* next{};      // points to an alternative character
 
-    explicit TrieNode(Character value);
     TrieNode(Character value, TrieNode* child, TrieNode* next);
     ~TrieNode();
     TrieNode(const TrieNode&) = delete;
@@ -42,8 +41,6 @@ public:
  */
 class Trie {
 public:
-    // create only one null node for pointer comparison
-    TrieNode* const nullNode;
     // table for easy matching of first character
     std::array<TrieNode*, CHAR_MAX> firstCharMap;
     // directly owned nodes by this trie that it has to delete
@@ -56,7 +53,7 @@ public:
     Boolean matchString(const String& str);
 
 private:
-    void replaceNullNode(char newNode, TrieNode** location);
+    TrieNode* getNodeIfNull(char c, TrieNode* node);
 };
 
 } // namespace str_match
