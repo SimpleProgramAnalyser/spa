@@ -45,6 +45,9 @@ enum Tag : char {
     NotConditionalTag = '!',
     AndConditionalTag = '&',
     OrConditionalTag = '|',
+    // unknown tag, indicating something the
+    // tokeniser could not identify
+    UnknownTag = '?',
     // null tag, only used to indicate
     // an empty value for Tag
     NullTag = '\0'
@@ -62,7 +65,7 @@ Boolean isPossibleIdentifier(const String& str);
 Boolean isPossibleConstant(const String& str);
 
 typedef List<Token> TokenList;
-TokenList tokeniseSimple(StringList lexedSimpleProgram);
+TokenList* tokeniseSimple(StringList* lexedSimpleProgram);
 
 } // namespace frontend
 

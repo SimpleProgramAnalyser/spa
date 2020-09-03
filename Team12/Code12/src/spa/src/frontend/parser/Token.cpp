@@ -7,7 +7,6 @@
 
 #include <regex>
 
-#include "Parser.h"
 #include "StringMatcher.h"
 
 using namespace frontend;
@@ -83,27 +82,26 @@ Boolean frontend::isPossibleConstant(const String& str)
     return isMatchingRegex(str, "\\d+");
 }
 
-TokenList frontend::tokeniseSimple(StringList lexedSimpleProgram)
+TokenList* frontend::tokeniseSimple(StringList* lexedSimpleProgram)
 {
-    TokenList tokens;
-    int numberOfStrings = lexedSimpleProgram.size();
+    auto* tokens = new TokenList();
+    int numberOfStrings = lexedSimpleProgram->size();
     str_match::Trie<Tag>* lookupTrie = generateSimpleTrie();
 
     for (int i = 0; i < numberOfStrings; i++) {
-        String currentString = *lexedSimpleProgram.at(i);
+        String currentString = *lexedSimpleProgram->at(i);
         Tag tokenTag = lookupTrie->matchString(currentString, NullTag);
         if (tokenTag == NullTag) {
             if (isPossibleIdentifier(currentString)) {
-                tokens.push_back(std::unique_ptr<Token>(new Token(currentString, IdentifierTag)));
+                tokens->push_back(std::unique_ptr<Token>(new Token(currentString, IdentifierTag)));
             } else if (isPossibleConstant(currentString)) {
-                tokens.push_back(std::unique_ptr<Token>(new Token(currentString, ConstantTag)));
+                tokens->push_back(std::unique_ptr<Token>(new Token(currentString, ConstantTag)));
             } else {
-                // invalid word!
-                postSyntaxError();
-                return tokens;
+                // tokeniser is not sure what the item is
+                tokens->push_back(std::unique_ptr<Token>(new Token(currentString, UnknownTag)));
             }
         } else {
-            tokens.push_back(std::unique_ptr<Token>(new Token(currentString, tokenTag)));
+            tokens->push_back(std::unique_ptr<Token>(new Token(currentString, tokenTag)));
         }
     }
 

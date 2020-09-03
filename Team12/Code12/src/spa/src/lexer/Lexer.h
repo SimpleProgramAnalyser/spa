@@ -9,5 +9,6 @@
 
 StringList* splitByWhitespace(const String& programFragment) noexcept;
 StringList* splitByDelimiter(const String& str, const String& delimiter);
+StringList* splitProgram(const String& program) noexcept;
 
 #endif // SPA_LEXER_H
