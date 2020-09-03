@@ -51,6 +51,10 @@ public:
 
     Trie();
     ~Trie();
+    Trie(const Trie&) = delete;
+    Trie& operator=(const Trie&) = delete;
+    Trie(Trie&&) = delete;
+    Trie& operator=(Trie&&) = delete;
 
     Void addEntryToTrie(const String& str, T item, T nonEndNodeValue = NULL);
     T matchString(const String& str, T notFoundValue = NULL);
