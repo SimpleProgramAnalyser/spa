@@ -9,10 +9,6 @@
 Void parseSimple(String rawProgram)
 {
     StringList* splitProgram = splitByWhitespace(rawProgram);
-
 }
 
-ArithmeticExpression* parseArithmeticExpression(StringList lexedArithmeticExpression)
-{
-
-}
+ArithmeticExpression* parseArithmeticExpression(StringList lexedArithmeticExpression) {}

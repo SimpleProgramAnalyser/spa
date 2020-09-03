@@ -5,6 +5,6 @@
 #ifndef SPA_ERROR_H
 #define SPA_ERROR_H
 
-class InputError{};
+class InputError {};
 
 #endif // SPA_ERROR_H

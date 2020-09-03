@@ -10,7 +10,7 @@
 
 namespace frontend {
 
-enum Tag: char {
+enum Tag : char {
     // statement syntax
     AssignmentTag = '=',
     BracesOpenTag = '{',
@@ -64,6 +64,6 @@ Boolean isPossibleConstant(const String& str);
 typedef List<Token> TokenList;
 TokenList tokeniseSimple(StringList lexedSimpleProgram);
 
-}
+} // namespace frontend
 
 #endif // SPA_FRONTEND_TOKEN_H
