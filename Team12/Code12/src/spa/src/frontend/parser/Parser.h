@@ -12,5 +12,6 @@
 
 Void parseSimple(const String& rawProgram);
 ArithmeticExpression* parseArithmeticExpression(StringList lexedArithmeticExpression);
+Void postSyntaxError();
 
 #endif // SPA_FRONTEND_PARSER_H

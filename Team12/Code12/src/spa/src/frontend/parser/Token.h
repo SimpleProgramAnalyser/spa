@@ -45,6 +45,9 @@ enum Tag: char {
     NotConditionalTag = '!',
     AndConditionalTag = '&',
     OrConditionalTag = '|',
+    // null tag, only used to indicate
+    // an empty value for Tag
+    NullTag = '\0'
 };
 
 class Token {
@@ -54,7 +57,9 @@ public:
     Token(String s, Tag t);
 };
 
-Boolean isPossibleIdentifier(Tag tag);
+Boolean isIdentifierTag(Tag tag);
+Boolean isPossibleIdentifier(String str);
+Boolean isPossibleConstant(String str);
 
 typedef List<Token> TokenList;
 TokenList tokeniseSimple(StringList lexedSimpleProgram);
