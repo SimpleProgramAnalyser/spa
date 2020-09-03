@@ -20,13 +20,15 @@ typedef char Character;
 /**
  * Object representing a single node for the trie.
  */
+template <typename T>
 class TrieNode {
 public:
     const Character value;
-    TrieNode* child{};     // points to next character in string
-    TrieNode* next{};      // points to an alternative character
+    TrieNode* child{}; // points to next character in string
+    TrieNode* next{};  // points to an alternative character
+    T* reference;      // to store items in the trie
 
-    TrieNode(Character value, TrieNode* child, TrieNode* next);
+    TrieNode(Character value, TrieNode* child, TrieNode* next, T* reference);
     ~TrieNode();
     TrieNode(const TrieNode&) = delete;
     TrieNode& operator=(const TrieNode&) = delete;
@@ -39,21 +41,22 @@ public:
  * encapsulating methods to add strings to the trie
  * and to search the entire trie.
  */
+template <typename T>
 class Trie {
 public:
     // table for easy matching of first character
-    std::array<TrieNode*, CHAR_MAX> firstCharMap;
+    std::array<TrieNode<T>*, CHAR_MAX> firstCharMap;
     // directly owned nodes by this trie that it has to delete
-    std::vector<TrieNode*> ownedNodes;
+    std::vector<TrieNode<T>*> ownedNodes;
 
     Trie();
     ~Trie();
 
-    Void addEntryToTrie(const String& str);
-    Boolean matchString(const String& str);
+    Void addEntryToTrie(const String& str, T* reference);
+    T* matchString(const String& str);
 
 private:
-    TrieNode* getNodeIfNull(char c, TrieNode* node);
+    TrieNode<T>* getNodeIfNull(char c, TrieNode<T>* node, T* ref = nullptr);
 };
 
 } // namespace str_match

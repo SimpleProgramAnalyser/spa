@@ -12,9 +12,8 @@
 
 using namespace str_match;
 
-TrieNode::TrieNode(Character value, TrieNode* child, TrieNode* next): value(value), child(child), next(next) {}
-
-TrieNode::~TrieNode()
+template <typename T>
+TrieNode<T>::~TrieNode()
 {
     // checks to avoid deleting nullNode prematurely
     if (child != nullptr && child->value != '\0') {
@@ -26,11 +25,18 @@ TrieNode::~TrieNode()
     }
 }
 
-Trie::Trie(): firstCharMap(), ownedNodes() {}
+template <typename T>
+TrieNode<T>::TrieNode(Character value, TrieNode* child, TrieNode* next, T* reference):
+    value(value), child(child), next(next), reference(reference)
+{}
 
-Trie::~Trie()
+template <typename T>
+Trie<T>::Trie(): firstCharMap(), ownedNodes() {}
+
+template <typename T>
+Trie<T>::~Trie()
 {
-    for (TrieNode* node : ownedNodes) {
+    for (TrieNode<T>* node : ownedNodes) {
         delete node;
     }
 }
@@ -46,11 +52,14 @@ Trie::~Trie()
  *
  * @param c The character for the new node.
  * @param location The original TrieNode pointer.
+ * @param ref The reference to T to link with the node.
+ *            (default value is nullptr)
  */
-TrieNode* Trie::getNodeIfNull(const char c, TrieNode* node)
+template <typename T>
+TrieNode<T>* Trie<T>::getNodeIfNull(const char c, TrieNode<T>* node, T* ref)
 {
     if (node == nullptr) {
-        auto* newNode = new TrieNode(c, nullptr, nullptr);
+        auto* newNode = new TrieNode<T>(c, nullptr, nullptr, ref);
         ownedNodes.push_back(newNode);
         return newNode;
     } else {
@@ -59,7 +68,8 @@ TrieNode* Trie::getNodeIfNull(const char c, TrieNode* node)
     }
 }
 
-Void Trie::addEntryToTrie(const String& str)
+template <typename T>
+Void Trie<T>::addEntryToTrie(const String& str, T* newReference)
 {
     const char* strChar = str.c_str();
     // ignore empty strings
@@ -69,13 +79,13 @@ Void Trie::addEntryToTrie(const String& str)
     // navigate hash table for first character
     firstCharMap.at(*strChar) = getNodeIfNull(*strChar, firstCharMap.at(*strChar));
     // traverse the trie
-    TrieNode* currentNode = firstCharMap.at(*strChar);
+    TrieNode<T>* currentNode = firstCharMap.at(*strChar);
     strChar++;
     while (*strChar != '\0') {
         currentNode->child = getNodeIfNull(*strChar, currentNode->child);
         currentNode = currentNode->child;
         if (currentNode->value != *strChar) {
-            // loop through "nexts"
+            // loop through "next"s
             bool matchFound = false;
             while (!matchFound && currentNode->next != nullptr) {
                 if (currentNode->next->value == *strChar) {
@@ -93,42 +103,48 @@ Void Trie::addEntryToTrie(const String& str)
     }
     // store the end of the string
     if (currentNode->child == nullptr) {
-        currentNode->child = getNodeIfNull(*strChar, currentNode->child);
+        currentNode->child = getNodeIfNull(*strChar, currentNode->child, newReference);
     } else {
         currentNode = currentNode->child;
-        // loop through "nexts"
+        // loop through "next"s
         bool matchFound = false;
         while (currentNode->next != nullptr) {
             if (currentNode->next->value == *strChar) {
+                // could be an error, string is already stored in trie
                 matchFound = true;
                 break;
             }
             currentNode = currentNode->next;
         }
         if (!matchFound) {
-            currentNode->next = getNodeIfNull(*strChar, currentNode->next);
+            currentNode->next = getNodeIfNull(*strChar, currentNode->next, newReference);
+        } else {
+            // string was already stored in the trie
+            // just replace old value with new one
+            currentNode->next->reference = newReference;
         }
     }
 }
 
-Boolean Trie::matchString(const String& str)
+template <typename T>
+T* Trie<T>::matchString(const String& str)
 {
     const char* strChar = str.c_str();
     // ignore empty strings
     if (*strChar == '\0') {
-        return false;
+        return nullptr;
     }
     // check for first character
-    TrieNode* firstNode = firstCharMap.at(*strChar);
+    TrieNode<T>* firstNode = firstCharMap.at(*strChar);
     if (firstNode == nullptr) {
-        return false;
+        return nullptr;
     }
     // traverse the trie
-    TrieNode* currentNode = firstNode->child;
+    TrieNode<T>* currentNode = firstNode->child;
     strChar++;
     while (*strChar != '\0') {
         if (currentNode == nullptr) {
-            return false;
+            return nullptr;
         }
         bool currentMatches = currentNode->value == *strChar;
         if (!currentMatches) {
@@ -140,15 +156,15 @@ Boolean Trie::matchString(const String& str)
     }
     // check last character
     if (currentNode->value == *strChar) {
-        return true;
+        return currentNode->next->reference;
     } else {
-        // loop through "nexts"
+        // loop through "next"s
         while (currentNode->next != nullptr) {
             if (currentNode->next->value == *strChar) {
-                return true;
+                return currentNode->next->reference;
             }
             currentNode = currentNode->next;
         }
-        return false;
+        return nullptr;
     }
 }
