@@ -12,17 +12,9 @@
 
 using namespace str_match;
 
+// deletion of TrieNodes will be handled by the parent Trie
 template <typename T>
-TrieNode<T>::~TrieNode()
-{
-    if (child != nullptr) {
-        delete child;
-    }
-
-    if (next != nullptr) {
-        delete next;
-    }
-}
+TrieNode<T>::~TrieNode() = default;
 
 template <typename T>
 TrieNode<T>::TrieNode(Character value, TrieNode* child, TrieNode* next, T* reference):
@@ -30,7 +22,8 @@ TrieNode<T>::TrieNode(Character value, TrieNode* child, TrieNode* next, T* refer
 {}
 
 template <typename T>
-Trie<T>::Trie(): firstCharMap(), ownedNodes() {}
+Trie<T>::Trie(): firstCharMap(), ownedNodes()
+{}
 
 template <typename T>
 Trie<T>::~Trie()

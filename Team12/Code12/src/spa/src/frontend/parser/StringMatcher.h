@@ -46,7 +46,7 @@ class Trie {
 public:
     // table for easy matching of first character
     std::array<TrieNode<T>*, CHAR_MAX> firstCharMap;
-    // directly owned nodes by this trie that it has to delete
+    // all owned nodes by this trie that it has to delete
     std::vector<TrieNode<T>*> ownedNodes;
 
     Trie();
