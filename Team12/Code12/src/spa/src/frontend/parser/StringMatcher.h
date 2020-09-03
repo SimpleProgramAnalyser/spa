@@ -8,6 +8,11 @@
 #ifndef SPA_FRONTEND_STRING_MATCHER_H
 #define SPA_FRONTEND_STRING_MATCHER_H
 
+#include <climits>
+#include <unordered_map>
+
+#include "Types.h"
+
 namespace str_match {
 
 typedef char Character;
@@ -18,8 +23,8 @@ typedef char Character;
 class TrieNode {
 public:
     const Character value;
-    TrieNode* child{}; // points to next character in string
-    TrieNode* next{};  // points to an alternative character
+    TrieNode* child{};     // points to next character in string
+    TrieNode* next{};      // points to an alternative character
 
     explicit TrieNode(Character value);
     TrieNode(Character value, TrieNode* child, TrieNode* next);
@@ -35,7 +40,24 @@ public:
  * encapsulating methods to add strings to the trie
  * and to search the entire trie.
  */
-class Trie {};
+class Trie {
+public:
+    // create only one null node for pointer comparison
+    TrieNode* const nullNode;
+    // table for easy matching of first character
+    std::array<TrieNode*, CHAR_MAX> firstCharMap;
+    // directly owned nodes by this trie that it has to delete
+    std::vector<TrieNode*> ownedNodes;
+
+    Trie();
+    ~Trie();
+
+    Void addEntryToTrie(const String& str);
+    Boolean matchString(const String& str);
+
+private:
+    void replaceNullNode(char newNode, TrieNode** location);
+};
 
 } // namespace str_match
 
