@@ -123,13 +123,10 @@ StringList* splitByDelimiter(const String& str, const String& delimiter)
     return splitStrings;
 }
 
-enum LexerState: char {
-    DefaultLexerState = '\0',
-    AlphanumericLexerState = 'a',
-    SymbolicLexerState = '='
-};
+enum LexerState : char { DefaultLexerState = '\0', AlphanumericLexerState = 'a', SymbolicLexerState = '=' };
 
-StringList* splitProgram(const String& program) noexcept {
+StringList* splitProgram(const String& program) noexcept
+{
     auto* splitStrings = new StringList();
     const char* currentChar = program.c_str();
     std::unique_ptr<String> currentString(new String());
@@ -156,11 +153,11 @@ StringList* splitProgram(const String& program) noexcept {
             currentString->push_back(*currentChar);
             state = AlphanumericLexerState;
         } else if (state == SymbolicLexerState && expectedNextChar == *currentChar) {
-                // we managed to find a two character symbol
-                currentString->push_back(*currentChar);
-                splitStrings->push_back(std::move(currentString));
-                currentString.reset(new String());
-                state = DefaultLexerState;
+            // we managed to find a two character symbol
+            currentString->push_back(*currentChar);
+            splitStrings->push_back(std::move(currentString));
+            currentString.reset(new String());
+            state = DefaultLexerState;
         } else {
             if (state == AlphanumericLexerState) {
                 // change state from alphanumeric to symbolic
