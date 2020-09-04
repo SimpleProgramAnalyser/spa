@@ -67,6 +67,11 @@ Boolean frontend::isIdentifierTag(Tag tag)
     return firstThreeBits == 0x02;
 }
 
+Boolean frontend::isRelationalOperatorTag(Tag tag)
+{
+    return tag == GtTag || tag == GteTag || tag == LtTag || tag == LteTag || tag == NeqTag || tag == EqTag;
+}
+
 Boolean isMatchingRegex(const String& rawInput, const String& regex)
 {
     return std::regex_match(rawInput, std::regex(regex));

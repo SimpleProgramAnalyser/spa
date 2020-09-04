@@ -23,6 +23,48 @@ public:
     ParserReturnType(T ast, TokenListIndex next): astNode(std::move(ast)), nextUnparsedToken(next) {}
 };
 
+/**
+ * Given the index of the first bracket "(" in a list of
+ * tokens, find the index of the matching closing bracket ")".
+ * This may not necessarily be the closest ")".
+ *
+ * @param programTokens The tokens representing the program.
+ * @param indexOfFirstBracket Index of the opening bracket.
+ *
+ * @return Index of the closed bracket, or -1 if not found.
+ *         Return -2 if the given index is not an opening bracket,
+ *         or if the index is invalid.
+ */
+TokenListIndex getBracketEnd(frontend::TokenList* programTokens, TokenListIndex indexOfFirstBracket)
+{
+    TokenListIndex numberOfTokens = programTokens->size();
+    // boundary checks
+    if (indexOfFirstBracket < 0 || indexOfFirstBracket >= numberOfTokens
+        || programTokens->at(indexOfFirstBracket)->tokenTag != frontend::BracketOpenTag) {
+        // indexOfFirstBracket out of bounds, or not an opening bracket
+        return -2;
+    }
+
+    BracketsDepth bracketsSeen = 1;
+    TokenListIndex endBracket = indexOfFirstBracket + 1;
+    while (endBracket < numberOfTokens && bracketsSeen > 0) {
+        frontend::Tag currentToken = programTokens->at(endBracket)->tokenTag;
+        if (currentToken == frontend::BracketOpenTag) {
+            bracketsSeen++;
+        } else if (currentToken == frontend::BracketClosedTag) {
+            bracketsSeen--;
+        }
+        endBracket++;
+    }
+
+    if (endBracket >= numberOfTokens) {
+        // did not find the closing bracket in the entire program
+        return -1;
+    } else {
+        return endBracket - 1;
+    }
+}
+
 ParserReturnType<std::unique_ptr<ArithmeticExpression>>
 parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex startIndex, TokenListIndex endIndex)
 {}
@@ -44,9 +86,188 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
                                                          arithmeticExp.nextUnparsedToken);
 }
 
+ParserReturnType<std::unique_ptr<RelationalExpression>>
+parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex startIndex, TokenListIndex endIndex)
+{
+    return ParserReturnType<std::unique_ptr<RelationalExpression>>(std::unique_ptr<RelationalExpression>{}, -1);
+}
+
 ParserReturnType<std::unique_ptr<ConditionalExpression>>
 parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex startIndex, TokenListIndex endIndex)
-{}
+{
+    // boundary check
+    TokenListIndex numberOfTokens = programTokens->size();
+    if (startIndex >= endIndex || endIndex >= numberOfTokens) {
+        // bounds error in indexes
+        return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{}, -1);
+    }
+
+    Boolean isRelational = false;
+    Boolean isNegated = false;
+    // cache result of bracket matching if possible
+    TokenListIndex possibleEndBracketForExpression = -1;
+    frontend::Tag firstToken = programTokens->at(startIndex)->tokenTag;
+    if (firstToken == frontend::NotConditionalTag) {
+        // conditional expression is of form "!" "(" "cond_expression" ")"
+        isNegated = true;
+    } else if (frontend::isIdentifierTag(firstToken) || firstToken == frontend::ConstantTag) {
+        // conditional expression is of form "expr" "operator" "expr"
+        isRelational = true;
+    } else if (firstToken == frontend::BracketOpenTag) {
+        // conditional expression could be of form "expr" "relational_operator" "expr"
+        // or could be of form "cond_expr" "&&_or_||" "cond_expr"
+        // (cannot be of form "(" "cond_expr" ")" according to SIMPLE syntax rules)
+        TokenListIndex endBracket = getBracketEnd(programTokens, startIndex);
+        if (endBracket < 0 || endIndex - endBracket <= 1 /* must have at least 1 operator after brackets */) {
+            // syntax error in brackets, or no operator after brackets
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
+                                                                            -1);
+        }
+        frontend::Tag operatorToken = programTokens->at(endBracket + 1)->tokenTag;
+        switch (operatorToken) {
+        case frontend::AndConditionalTag:
+        case frontend::OrConditionalTag:
+            // is not relational
+            possibleEndBracketForExpression = endBracket; // cache location of end bracket
+            break;
+        case frontend::GtTag:
+        case frontend::GteTag:
+        case frontend::LtTag:
+        case frontend::LteTag:
+        case frontend::NeqTag:
+        case frontend::EqTag:
+            isRelational = true;
+            break;
+        default:
+            // wrong operator after brackets
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
+                                                                            -1);
+        }
+    } else {
+        // unrecognised token, syntax error in conditional
+        return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{}, -1);
+    }
+
+    if (isRelational) {
+        // "expr" "rel_operator" "expr"
+        // find the relational operator
+        TokenListIndex relationalOperator = startIndex;
+        frontend::Tag currentToken = programTokens->at(relationalOperator)->tokenTag;
+        while (relationalOperator <= endIndex && !frontend::isRelationalOperatorTag(currentToken)) {
+            relationalOperator++;
+            currentToken = programTokens->at(relationalOperator)->tokenTag;
+        }
+        // check if found
+        if (relationalOperator >= numberOfTokens) {
+            // error, name or constant without relational operator
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
+                                                                            -1);
+        }
+        // parse first expression
+        ParserReturnType<std::unique_ptr<Expression>> firstExpr
+            = parseExpression(programTokens, startIndex, relationalOperator - 1);
+        if (firstExpr.nextUnparsedToken < 0) {
+            // syntax error in first expression
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
+                                                                            -1);
+        }
+        // parse second expression, assume it is until the endIndex
+        ParserReturnType<std::unique_ptr<Expression>> secondExpr
+            = parseExpression(programTokens, firstExpr.nextUnparsedToken + 1 /* skip over operator */, endIndex);
+        if (secondExpr.nextUnparsedToken < 0) {
+            // syntax error in second expression
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
+                                                                            -1);
+        }
+        RelationalExpression* (*createExpressionFunction)(Expression*, Expression*);
+        // find out which function to use
+        switch (programTokens->at(firstExpr.nextUnparsedToken)->tokenTag) {
+        case frontend::GtTag:
+            createExpressionFunction = &createGtExpr;
+            break;
+        case frontend::GteTag:
+            createExpressionFunction = &createGteExpr;
+            break;
+        case frontend::LtTag:
+            createExpressionFunction = &createLtExpr;
+            break;
+        case frontend::LteTag:
+            createExpressionFunction = &createLteExpr;
+            break;
+        case frontend::NeqTag:
+            createExpressionFunction = &createNeqExpr;
+            break;
+        case frontend::EqTag:
+            createExpressionFunction = &createEqExpr;
+            break;
+        default:
+            throw std::runtime_error("invalid relational operator in parseConditionalExpression");
+        }
+        // create the conditional expression
+        return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
+            std::unique_ptr<ConditionalExpression>(
+                createExpressionFunction(firstExpr.astNode.release(), secondExpr.astNode.release())),
+            secondExpr.nextUnparsedToken);
+    } else if (isNegated) {
+        // "!" "(" "cond_expr" ")"
+        TokenListIndex endBracket = getBracketEnd(programTokens, startIndex + 1);
+        if (endBracket < 0) {
+            // error with not conditional syntax, or expression bracket syntax
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
+                                                                            -1);
+        }
+        ParserReturnType<std::unique_ptr<ConditionalExpression>> negatedCondition
+            = parseConditionalExpression(programTokens, startIndex + 2, endBracket - 1);
+        if (negatedCondition.nextUnparsedToken < 0) {
+            // syntax error in sub-conditional expression
+            return negatedCondition;
+        }
+        return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
+            std::unique_ptr<ConditionalExpression>(createNotExpr(negatedCondition.astNode.release())),
+            /* add one to skip closed bracket */
+            negatedCondition.nextUnparsedToken + 1);
+    } else {
+        // "(" "cond_expr" ")" "&&_or_||" "(" "cond_expr" ")"
+        assert(possibleEndBracketForExpression != -1);
+        // parse first condition
+        ParserReturnType<std::unique_ptr<ConditionalExpression>> firstCondition
+            = parseConditionalExpression(programTokens, startIndex + 1, possibleEndBracketForExpression - 1);
+        if (firstCondition.nextUnparsedToken < 0) {
+            // syntax error in first sub-conditional expression
+            return firstCondition;
+        }
+        assert(programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::AndConditionalTag
+               || programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::OrConditionalTag);
+        // match brackets for second condition
+        TokenListIndex secondEndBracket = getBracketEnd(programTokens, firstCondition.nextUnparsedToken + 2);
+        if (secondEndBracket < 0) {
+            // syntax error with second condition brackets
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
+                                                                            -1);
+        }
+        // parse second condition
+        ParserReturnType<std::unique_ptr<ConditionalExpression>> secondCondition
+            = parseConditionalExpression(programTokens, firstCondition.nextUnparsedToken + 3, secondEndBracket - 1);
+        if (secondCondition.nextUnparsedToken < 0) {
+            // syntax error in second sub-conditional expression
+            return secondCondition;
+        }
+        assert(secondCondition.nextUnparsedToken == endIndex - 1);
+        // finally, create the conditional expression
+        if (programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::AndConditionalTag) {
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
+                std::unique_ptr<ConditionalExpression>(
+                    createAndExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
+                secondCondition.nextUnparsedToken);
+        } else {
+            // programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::OrConditionalTag
+            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
+                std::unique_ptr<ConditionalExpression>(
+                    createOrExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
+                secondCondition.nextUnparsedToken);
+        }
+    }
+}
 
 // global variable to help in numbering statements
 static int statementsSeen = 0;
@@ -132,17 +353,7 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
         && programTokens->at(startIndex + 1)->tokenTag == frontend::BracketOpenTag) {
 
         // find conditional expression and parse
-        BracketsDepth bracketsSeen = 1;
-        TokenListIndex tokenPointer = startIndex + 2;
-        while (tokenPointer < numberOfTokens && bracketsSeen > 0) {
-            frontend::Tag currentToken = programTokens->at(tokenPointer)->tokenTag;
-            if (currentToken == frontend::BracketOpenTag) {
-                bracketsSeen++;
-            } else if (currentToken == frontend::BracketClosedTag) {
-                bracketsSeen--;
-            }
-            tokenPointer++;
-        }
+        TokenListIndex tokenPointer = getBracketEnd(programTokens, startIndex + 1) + 1;
         // now token pointer points to the token directly after
         // the closing bracket of if conditional
         //
@@ -207,17 +418,7 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
         && programTokens->at(startIndex + 1)->tokenTag == frontend::BracketOpenTag) {
 
         // find conditional expression and parse
-        BracketsDepth bracketsSeen = 1;
-        TokenListIndex tokenPointer = startIndex + 2;
-        while (tokenPointer < numberOfTokens && bracketsSeen > 0) {
-            frontend::Tag currentToken = programTokens->at(tokenPointer)->tokenTag;
-            if (currentToken == frontend::BracketOpenTag) {
-                bracketsSeen++;
-            } else if (currentToken == frontend::BracketClosedTag) {
-                bracketsSeen--;
-            }
-            tokenPointer++;
-        }
+        TokenListIndex tokenPointer = getBracketEnd(programTokens, startIndex + 1) + 1;
         // now token pointer points to the token directly after
         // the closing bracket of while conditional
         //
