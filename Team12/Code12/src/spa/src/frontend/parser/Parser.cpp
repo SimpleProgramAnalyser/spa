@@ -236,9 +236,11 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in first sub-conditional expression
             return firstCondition;
         }
-        assert(programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::AndConditionalTag
-               || programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag
-                      == frontend::OrConditionalTag); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        assert(programTokens // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                       ->at(firstCondition.nextUnparsedToken + 1)
+                       ->tokenTag
+                   == frontend::AndConditionalTag
+               || programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::OrConditionalTag);
         // match brackets for second condition
         TokenListIndex secondEndBracket = getBracketEnd(programTokens, firstCondition.nextUnparsedToken + 2);
         if (secondEndBracket < 0) {
@@ -253,8 +255,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in second sub-conditional expression
             return secondCondition;
         }
-        assert(secondCondition.nextUnparsedToken
-               == endIndex - 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        assert(secondCondition.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+               == endIndex - 1);
         // finally, create the conditional expression
         if (programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::AndConditionalTag) {
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
@@ -494,8 +496,8 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
                 std::unique_ptr<AssignmentStatementNode>{}, 0);
         } else {
             // next unparsed token should be the semicolon
-            assert(expression.nextUnparsedToken
-                   == tokenPointer); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+            assert(expression.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                   == tokenPointer);
             statementsSeen++;
             return ParserReturnType<std::unique_ptr<AssignmentStatementNode>>(
                 std::unique_ptr<AssignmentStatementNode>(
