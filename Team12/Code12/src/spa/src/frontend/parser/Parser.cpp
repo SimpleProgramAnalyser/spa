@@ -228,7 +228,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             negatedCondition.nextUnparsedToken + 1);
     } else {
         // "(" "cond_expr" ")" "&&_or_||" "(" "cond_expr" ")"
-        assert(possibleEndBracketForExpression != -1);
+        assert(possibleEndBracketForExpression != -1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         // parse first condition
         ParserReturnType<std::unique_ptr<ConditionalExpression>> firstCondition
             = parseConditionalExpression(programTokens, startIndex + 1, possibleEndBracketForExpression - 1);
@@ -237,7 +237,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             return firstCondition;
         }
         assert(programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::AndConditionalTag
-               || programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::OrConditionalTag);
+               || programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag
+                      == frontend::OrConditionalTag); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         // match brackets for second condition
         TokenListIndex secondEndBracket = getBracketEnd(programTokens, firstCondition.nextUnparsedToken + 2);
         if (secondEndBracket < 0) {
@@ -252,7 +253,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in second sub-conditional expression
             return secondCondition;
         }
-        assert(secondCondition.nextUnparsedToken == endIndex - 1);
+        assert(secondCondition.nextUnparsedToken
+               == endIndex - 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         // finally, create the conditional expression
         if (programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::AndConditionalTag) {
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
@@ -492,7 +494,8 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
                 std::unique_ptr<AssignmentStatementNode>{}, 0);
         } else {
             // next unparsed token should be the semicolon
-            assert(expression.nextUnparsedToken == tokenPointer);
+            assert(expression.nextUnparsedToken
+                   == tokenPointer); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             statementsSeen++;
             return ParserReturnType<std::unique_ptr<AssignmentStatementNode>>(
                 std::unique_ptr<AssignmentStatementNode>(
