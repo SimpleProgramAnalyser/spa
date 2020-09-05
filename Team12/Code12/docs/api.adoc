@@ -46,11 +46,6 @@ SIMPLE program.
 *Description*: Takes in a SIMPLE AST and walks the tree, identifying the presence of
 important relationships between program design entities. If the program contains
 semantic errors, a SEMANTIC_ERROR will be thrown. +
-*Normal behaviour*: The AST represents a semantically valid SIMPLE program, and the
-Design Extractor stores program design entity relationships in the PKB for queries. +
-*Abnormal behaviour*: If there is a semantic error in the SIMPLE program represented
-by the AST, a SEMANTIC_ERROR will be thrown. The design extractor will immediately
-cease operations, discarding the rest of the program that has not been analysed yet.
 
 == PKB
 
@@ -412,39 +407,40 @@ related to the Uses relationships in the processed SIMPLE program.
 '''
 
 [#addUsesRelationships]
-`*VOID* addUsesRelationships(*STATEMENT*/*PROCEDURE* stmt, *VARIABLE_LIST* varList);`
+`*VOID* addUsesRelationships(*INTEGER* stmt, *VARIABLE_LIST* varList);`
 
-*Description*: Adds all Uses relationships in `stmt`  // TODO don't understand what this function is suppose to do
+*Description*: Add all variables in *VARIABLES_LIST* `varList` that are modified in `stmt`
+to the Uses Table.
 
 '''
 
 [#checkIfProcedureUses]
-`(*OPTIONAL*)*PROCEDURE* checkIfProcedureUses(*STRING* proc, *STRING* var);`
+`*PROCEDURE_LIST* checkIfProcedureUses(*STRING* proc, *STRING* var);`
 
-*Description*: Returns *PROCEDURE* if `proc` uses `var`, or an empty *OPTIONAL* if
-it does not.
+*Description*: Returns the *PROCEDURE* in a *PROCEDURE_LIST* if `proc` uses `var`,
+otherwise an empty *PROCEDURE_LIST* is returned.
 
 '''
 
 [#checkIfStatementUses]
-`(*OPTIONAL*)*STATEMENT* checkIfStatementUses(*INTEGER* stmt, *STRING* var);`
+`*STATEMENT_LIST* checkIfStatementUses(*INTEGER* stmt, *STRING* var);`
 
-*Description*: Returns `*STATEMENT*` if `stmt` uses `var`, or an empty *OPTIONAL* if
-it does not.
+*Description*: Returns the `*STATEMENT*` in a STATEMENT_LIST if `stmt` uses `var`, otherwise
+an empty *STATEMENT_LIST* is returned.
 
 '''
 
 [#getAllUsesProcedures]
-`*STRING_LIST* getAllUsesProcedures();`
+`*PROCECURE_LIST* getAllUsesProcedures();`
 
-Description: // TODO is STRING_LIST = PROCECURE_LIST?
+*Description*: Returns a *PROCEDURE_LIST* of all PROCEDURE that uses a *VARIABLE*.
 
 '''
 
 [#getAllUsesStatements]
-`*INTEGER_LIST* getAllUsesStatements(*STATEMENT_TYPE* stmtType);`
+`*STATEMENT_LIST* getAllUsesStatements(*STATEMENT_TYPE* stmtType);`
 
-Description: // TODO is INTEGER_LIST = STMT_LIST?
+*Description*: Returns a *STATEMENT_LIST* of all STATEMENT that uses a *VARIABLE*.
 
 '''
 
@@ -458,21 +454,22 @@ Description: Returns a *VARIABLE_LIST* of all variables that are used in the SIM
 [#getUsesProcedures]
 `*PROCEDURE_LIST* getUsesProcedures(*VARIABLE* var);`
 
-*Description*: // TODO
+*Description*: Returns a *PROCEDURE_LIST* of all *PROCEDURE* that uses a *VARIABLE* `var`.
 
 '''
 
 [#getUsesStatements]
-`*INTEGER_LIST* getUsesStatements(*VARIABLE* var, *STATEMENT_TYPE* stmtType);`
+`*STATEMENT_LIST* getUsesStatements(*VARIABLE* var, *STATEMENT_TYPE* stmtType);`
 
-*Description*: // TODO
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* of *STATEMENT_TYPE* `stmtType`,
+that uses *VARIABLE* `var`.
 
 '''
 
 [#getUsesVariablesFromStatement]
 `*VARIABLE_LIST* getUsesVariablesFromStatement(*INTEGER* stmt);`
 
-*Description*: // TODO should it be INTEGER or STATEMENT?
+*Description*: Returns a *VARIABLE_LIST* of all *VARIABLE* that `stmt` uses.
 
 '''
 
@@ -494,85 +491,87 @@ extract information related to the Modifies relationships in the processed SIMPL
 * <<getAllModifiesVariables>>
 * <<getModifiesProcedures>>
 * <<getModifiesStatements>>
-* <<getModifiesVariablesForProcedure>>
+* <<getVariablesModifiedInProcedure>>
 * <<getVariablesModifiedByStatement>>
 
 '''
 
 [#addModifiesRelationships]
-`VOID addModifiesRelationships(INTEGER stmt, VARIABLE_LIST var);`
+`*VOID* addModifiesRelationships(*INTEGER* stmt, *VARIABLE_LIST* varList);`
 
-Description: Add all variables in VARIABLES_LIST `var` that are modified in `stmt`
+*Description*: Add all variables in *VARIABLES_LIST* `varList` that are modified in `stmt`
 to the Modifies Table.
 
 '''
 
 [#checkIfProcedureModifies]
-`(OPTIONAL)PROCEDURE checkIfProcedureModifies(STRING proc, STRING var);`
+`*PROCEDURE_LIST* checkIfProcedureModifies(*STRING* proc, *STRING* var);`
 
-Description: Returns the PROCEDURE if `proc` modifies `var`, else return nothing.
+*Description*: Returns the *PROCEDURE* in a *PROCEDURE_LIST* if `proc` modifies `var`,
+otherwise an empty *PROCEDURE_LIST* is returned.
 
 '''
 
 [#checkIfStatementModifies]
-`(OPTIONAL)STATEMENT checkIfStatementModifies(INTEGER stmt, STRING var);`
+`*STATEMENT_LIST* checkIfStatementModifies(*INTEGER* stmt, *STRING* var);`
 
-Description: Returns the STATEMENT if `stmt` modifies `var`, else return nothing.
+*Description*: Returns the *STATEMENT* in a *STATEMENT_LIST* if `stmt` modifies `var`,
+otherwise an empty *STATEMENT_LIST* is returned.
 
 '''
 
 [#getAllModifiesProcedures]
-`PROCEDURE_LIST getAllModifiesProcedures();`
+`*PROCEDURE_LIST* getAllModifiesProcedures();`
 
-Description: Returns a PROCEDURE_LIST of all PROCEDURE that modifies.
+*Description*: Returns a *PROCEDURE_LIST* of all *PROCEDURE* that modifies.
 
 '''
 
 [#getAllModifiesStatements]
-`STATEMENT_LIST getAllModifiesStatements(STATEMENT_TYPE stmtType);`
+`*STATEMENT_LIST* getAllModifiesStatements(*STATEMENT_TYPE* stmtType);`
 
-Description: Returns a STATEMENT_LIST of all STATEMENT that modifies.
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* that modifies.
 
 '''
 
 [#getAllModifiesVariables]
-`VARIABLE_LIST getAllModifiesVariables(STATEMENT_TYPE stmtType);`
+`*VARIABLE_LIST* getAllModifiesVariables(*STATEMENT_TYPE* stmtType);`
 
-Description: Returns a VARIABLE_LIST of all VARIABLE that are modified by
-STATEMENT of STATEMENT_TYPE.
+*Description*: Returns a *VARIABLE_LIST* of all *VARIABLE* that are modified by
+*STATEMENT* of *STATEMENT_TYPE*.
 
 '''
 
 [#getModifiesProcedures]
-`PROCEDURE_LIST getModifiesProcedures(VARIABLE var);`
+`*PROCEDURE_LIST* getModifiesProcedures(*VARIABLE* var);`
 
-Description: Returns a PROCEDURE_LIST of all PROCEDURE that modifies VARIABLE `var`.
+*Description*: Returns a *PROCEDURE_LIST* of all *PROCEDURE* that modifies *VARIABLE* `var`.
 
 '''
 
 [#getModifiesStatements]
-`STATEMENT_LIST getModifiesStatements(VARIABLE var, STATEMENT_TYPE stmtType) ;`
+`*STATEMENT_LIST* getModifiesStatements(*VARIABLE* var, *STATEMENT_TYPE* stmtType) ;`
 
-Description: Returns a STATEMENT_LIST of all STATEMENT of STATEMENT_TYPE, that
-modifies VARIABLE `var`.
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* of *STATEMENT_TYPE*, that
+modifies *VARIABLE* `var`.
 
 '''
 
-[#getModifiesVariablesForProcedure]
-`VARIABLE_LIST getModifiesVariablesForProcedure(PROCEDURE proc);`
+[#getVariablesModifiedInProcedure]
+`*VARIABLE_LIST* getVariablesModifiedInProcedure(*PROCEDURE* proc);`
 
-Description: Returns a VARIABLE_LIST of all VARIABLE that are modified
-by PROCEDURE `proc`.
+*Description*: Returns a *VARIABLE_LIST* of all *VARIABLE* that are modified
+by *PROCEDURE* `proc`.
 
 '''
 
 [#getVariablesModifiedByStatement]
-`VARIABLE_LIST getVariablesModifiedByStatement(INTEGER stmt);`
+`*VARIABLE_LIST* getVariablesModifiedByStatement(*INTEGER* stmt);`
 
-Description: Returns a VARIABLE_LIST of all VARIABLE that are modified by
+*Description*: Returns a *VARIABLE_LIST* of all *VARIABLE* that are modified by
 `stmt`.
 
-== Parent API
+=== Parent API
 *Overview*: The Parent API describes the methods exposed by Parent Table to insert and
 extract information related to the Parent relationships in the processed SIMPLE program.
 
@@ -581,96 +580,297 @@ extract information related to the Parent relationships in the processed SIMPLE 
 * <<checkIfParentHolds>>
 * <<getAllChildStatements>>
 * <<getAllChildStatementsStar>>
+* <<getAllChildStatementsTyped>>
+* <<getAllChildStatementsTypedStar>>
 * <<getAllParentStatements>>
 * <<getAllParentStatementsStar>>
 * <<getAllParentStatementsTyped>>
 * <<getAllParentStatementsTypedStar>>
-* <<getChildStatement>>
-* <<getParentStatement>>
 
 '''
 
 [#addParentRelationships]
-`VOID addParentRelationships(INTEGER parent, INTEGER child);`
+`*VOID* addParentRelationships(*INTEGER* parent, *INTEGER* child);`
 
-Description: Adds a Parent relationship between `parent` and `child` into
+*Description*: Adds a Parent relationship between `parent` and `child` into
 the Parent Table.
 
 '''
 
 [#addParentRelationshipsStar]
-`VOID addParentRelationshipsStar(INTEGER parent, INTEGER_LIST children);`
+`*VOID* addParentRelationshipsStar(*INTEGER* parent, *INTEGER_LIST* children);`
 
-Description: // TODO
+Description: Adds all the Parent relationship between `parent` and `children` into
+the Parent* Table.
 
 '''
 
 [#checkIfParentHolds]
-`(OPTIONAL)STATEMENT checkIfParentHolds(INTEGER parent, INTEGER child);`
+`*STATEMENT_LIST* checkIfParentHolds(*INTEGER* parent, *INTEGER* child);`
 
-Description: Returns the STATEMENT if there is a Parent relationship
-between `parent` and `child`, else return empty.
+*Description*: Returns the *STATEMENT* in a *STATEMENT_LIST* if there is a Parent
+relationship between `parent` and `child`, else return an empty *STATEMENT_LIST*.
 
 '''
 
 [#getAllChildStatements]
-`STATEMENT_LIST getAllChildStatements(INTEGER parent, STATEMENT_TYPE stmtType);`
+`*STATEMENT_LIST* getAllChildStatements(*INTEGER* parent, *STATEMENT_TYPE* stmtType);`
 
-Description: Returns a STATEMENT_LIST of all child STATEMENT of `parent`. Child
-STATEMENT are of STATEMENT_TYPE `stmtType`.
+*Description*: Returns a *STATEMENT_LIST* of all child *STATEMENT* of `parent`. Child
+*STATEMENT* are of *STATEMENT_TYPE* `stmtType`.
 
 '''
 
 [#getAllChildStatementsStar]
-`STATEMENT_LIST getAllChildStatementsStar(INTEGER parent, STATEMENT_TYPE stmtType);`
+`*STATEMENT_LIST* getAllChildStatementsStar(*INTEGER* parent, *STATEMENT_TYPE* stmtType);`
 
-Description: Returns a STATEMENT_LIST of all transitive child STATEMENT of `parent`.
-Child STATEMENT are of STATEMENT_TYPE `stmtType`.
+*Description*: Returns a *STATEMENT_LIST* of all _transitive_ child *STATEMENT* of `parent`.
+Child *STATEMENT* are of *STATEMENT_TYPE* `stmtType`.
+
+'''
+
+[#getAllChildStatementsTyped]
+`*STATEMENT_LIST* getAllChildStatementsTyped(*STATEMENT_TYPE* stmtTypeOfParent,
+*STATEMENT_TYPE* stmtTypeOfChild);`
+
+*Description*: Returns a *STATEMENT_LIST* of all children that are of *STATEMENT_TYPE*
+`stmtTypeOfChild`, with a child of *STATEMENT_TYPE* `stmtTypeOfParent`.
+
+'''
+
+[#getAllChildStatementsTypedStar]
+`*STATEMENT_LIST* getAllChildStatementsTypedStar(*STATEMENT_TYPE* stmtTypeOfParent,
+*STATEMENT_TYPE* stmtTypeOfChild);`
+
+*Description*: Returns a *STATEMENT_LIST* of all children that are of *STATEMENT_TYPE*
+`stmtTypeOfChild`, with a _transitive_ Parent of *STATEMENT_TYPE* `stmtTypeOfParent`.
 
 '''
 
 [#getAllParentStatements]
-`STATEMENT_LIST getAllParentStatements(INTEGER child, STATEMENT_TYPE stmtType);`
+`*STATEMENT_LIST* getAllParentStatements(*INTEGER* child, *STATEMENT_TYPE* stmtType);`
 
-Description: // TODO return STATEMENT_LIST or STATEMENT?
+*Description*: Returns a *STATEMENT_LIST* of Parent of *STATEMENT_TYPE* `stmtType`, of `child`.
+Returns an empty *STATEMENT_LIST* if said Parent does not exist.
+
 '''
 
 [#getAllParentStatementsStar]
-`STATEMENT_LIST getAllParentStatements(INTEGER child, STATEMENT_TYPE stmtType);`
+`*STATEMENT_LIST* getAllParentStatementsStar(*INTEGER* child, *STATEMENT_TYPE* stmtType);`
 
-Description: Returns a STATEMENT_LIST of all transitive Parent of `child`. Parents
+*Description*: Returns a *STATEMENT_LIST* of all _transitive_ Parent of `child`. Parents
 are of STATEMENT_TYPE `stmtType`.
 
 '''
 
 [#getAllParentStatementsTyped]
-`STATEMENT_LIST getAllParentStatementsTyped(STATEMENT_TYPE stmtTypeOfParent,
-STATEMENT_TYPE stmtTypeOfChild);`
+`*STATEMENT_LIST* getAllParentStatementsTyped(*STATEMENT_TYPE* stmtTypeOfParent,
+*STATEMENT_TYPE* stmtTypeOfChild);`
 
-Description: Returns a STATEMENT_LIST of all Parents that are of STATEMENT_TYPE
-`stmtTypeOfParent`, with a child of STATEMENT_TYPE `stmtTypeOfChild`.
+*Description*: Returns a *STATEMENT_LIST* of all Parents that are of *STATEMENT_TYPE*
+`stmtTypeOfParent`, with a child of *STATEMENT_TYPE* `stmtTypeOfChild`.
 
 '''
 
 [#getAllParentStatementsTypedStar]
-`STATEMENT_LIST getAllParentStatementsTypedStar(STATEMENT_TYPE stmtTypeOfParent,
-STATEMENT_TYPE stmtTypeOfChild);`
+`*STATEMENT_LIST* getAllParentStatementsTypedStar(*STATEMENT_TYPE* stmtTypeOfParent,
+*STATEMENT_TYPE* stmtTypeOfChild);`
 
-Description: Returns a STATEMENT_LIST of all Parents that are of STATEMENT_TYPE
-`stmtTypeOfParent`, with a transitive child of STATEMENT_TYPE `stmtTypeOfChild`.
+*Description*: Returns a *STATEMENT_LIST* of all Parents that are of *STATEMENT_TYPE*
+`stmtTypeOfParent`, with a _transitive_ child of *STATEMENT_TYPE* `stmtTypeOfChild`.
+
+
+=== Follows API
+*Overview*: The Follows API describes the methods exposed by Follows Table to insert and
+extract information related to the Follows relationships in the processed SIMPLE program.
+
+* <<addFollowsRelationships>>
+* <<addFollowsRelationshipsStar>>
+* <<checkIfFollowsHolds>>
+* <<getAllStatementsAfterStar>>
+* <<getAllStatementsAfterTyped>>
+* <<getAllStatementsAfterTypedStar>>
+* <<getAllStatementsBeforeStar>>
+* <<getAllStatementsBeforeTyped>>
+* <<getAllStatementsBeforeTypedStar>>
+* <<getStatementAfter>>
+* <<getStatementBefore>>
 
 '''
 
-[#getChildStatement]
-`STATEMENT_LIST getChildStatement(INTEGER parent);`
+[#addFollowsRelationships]
+`*VOID* addFollowsRelationships(*INTEGER* before, *INTEGER* after);`
 
-Description: Returns a STATEMENT_LIST of all child STATEMENT of `parent`.
+*Description*: Adds a *Follows* relationship between `before` and `after` into
+the *Follows Table*.
 
 '''
 
-[#getParentStatement]
-`STATEMENT getParentStatement(INTEGER child);`
+[#addFollowsRelationshipsStar]
+`*VOID* addFollowsRelationshipsStar(*INTEGER* before, *INTEGER_LIST* after);`
 
-Description: Returns the Parent STATEMENT of `child`.
+*Description*: Adds all *STATEMENT* that *Follows* after `before`, as an *INTEGER_LIST*.
 
-== Follows API
+'''
+
+[#checkIfFollowsHolds]
+`*BOOLEAN* checkIfFollowsHolds(*INTEGER* beforeStatement, *INTEGER* afterStatement);`
+
+*Description*: Returns true if `afterStatement` *Follows* after `beforeStatement`.
+
+'''
+
+[#getAllStatementsAfterStar]
+`*STATEMENT_LIST* getAllStatementsAfterStar(*INTEGER* statement, *STATEMENT_TYPE* stmtType);`
+
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* of *STATEMENT_TYPE* `stmtType`,
+that _transitively_ *Follows* after `statement`.
+
+'''
+
+[#getAllStatementsAfterTyped]
+`*STATEMENT_LIST* getAllStatementsAfterTyped(*STATEMENT_TYPE* stmtTypeOfBefore,
+*STATEMENT_TYPE* stmtTypeOfAfter);`
+
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* with *STATEMENT_TYPE* `stmtTypeOfAfter`,
+that *Follows* after *STATEMENT* of *STATEMENT_TYPE* `stmtTypeOfBefore`.
+
+'''
+
+[#getAllStatementsAfterTypedStar]
+`*STATEMENT_LIST* getAllStatementsAfterTypedStar(*STATEMENT_TYPE* stmtTypeOfBefore,
+*STATEMENT_TYPE* stmtTypeOfAfter);`
+
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* with *STATEMENT_TYPE* `stmtTypeOfAfter`,
+that _transitively_ *Follows* after *STATEMENT* of *STATEMENT_TYPE* `stmtTypeOfBefore`.
+
+'''
+
+[#getAllStatementsBeforeStar]
+`*STATEMENT_LIST* getAllStatementsBeforeStar(*INTEGER* statement, *STATEMENT_TYPE* stmtType));`
+
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* of *STATEMENT_TYPE* `stmtType`,
+that _transitively_ *Follows* before `statement`.
+
+'''
+
+[#getAllStatementsBeforeTyped]
+`*STATEMENT_LIST* getAllStatementsBeforeTyped(*STATEMENT_TYPE* stmtTypeOfBefore,
+*STATEMENT_TYPE* stmtTypeOfAfter);`
+
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* with *STATEMENT_TYPE* `stmtTypeOfBefore`,
+that *Follows* before *STATEMENT* of *STATEMENT_TYPE* `stmtTypeOfAfter`.
+
+'''
+
+[#getAllStatementsBeforeTypedStar]
+`*STATEMENT_LIST* getAllStatementsBeforeTypedStar(*STATEMENT_TYPE* stmtTypeOfBefore,
+*STATEMENT_TYPE* stmtTypeOfAfter);`
+
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* with *STATEMENT_TYPE* `stmtTypeOfBefore`,
+that _transitively_ *Follows* before *STATEMENT* of *STATEMENT_TYPE* `stmtTypeOfAfter`.
+
+'''
+
+[#getStatementAfter]
+`*STATEMENT_LIST* getStatementAfter(*INTEGER* statement, *STATEMENT_TYPE* stmtType);`
+
+*Description*: Returns the *STATEMENT* of *STATEMENT_TYPE* `stmtType` that *Follows* after
+`statement`, in a *STATEMENT_LIST*, otherwise an empty *STATEMENT_LIST* is returned.
+
+'''
+
+[#getStatementBefore]
+`*STATEMENT_LIST* getStatementBefore(*INTEGER* statement, *STATEMENT_TYPE* stmtType);`
+
+*Description*: Returns the *STATEMENT* of *STATEMENT_TYPE* `stmtType` that *Follows* before
+`statement`, in a *STATEMENT_LIST*, otherwise an empty *STATEMENT_LIST* is returned.
+
+== PQL
+
+=== PQLManager API
+*Overview*: Handles the business logic for processing and evaluating Processed
+Query Language (PQL) queries.
+
+* <<execute>>
+
+'''
+
+[#execute]
+`*FORMATTED_QUERY_RESULT* execute(*STRING* query);`
+
+*Description*: Returns a *FORMATTED_QUERY_RESULT* after processing and evaluating a
+`query` in *Processed Query Language* (PQL) form.
+
+=== PreProcessor API
+*Overview*: Handles the business logic for pre-processing PQL queries, including validating
+syntax and semantics.
+
+* <<processQuery>>
+
+'''
+
+[#processQuery]
+`*ABSTRACT_QUERY* processQuery(*STRING* query);`
+
+*Description*: Returns an *ABSTRACT_QUERY* after validating and breaking down the `query`.
+
+=== Evaluator API
+*Overview*: Evaluates the processed query and obtain a result for it by interacting
+with the PKB.
+
+* <<evaluateQuery>>
+
+'''
+
+[#evaluateQuery]
+`*RAW_QUERY_RESULT* evaluateQuery(*STRING* query);`
+
+*Description*: Returns a *RAW_QUERY_RESULT* after evaluating the `query` and obtaining information
+from the PKB.
+
+=== Projector API
+*Overview*: Formats query results into human readable context.
+
+* <<formatResult>>
+
+'''
+
+[#formatResult]
+`*FORMATTED_RESULT* formatResult(*RAW_QUERY_RESULT* rawQueryResult);`
+
+*Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to
+a conforming standard.
+
+== Shared Libraries (for internal use)
+
+=== Lexer API
+
+* <<splitByDelimiter>>
+* <<splitByWhitespace>>
+* <<splitProgram>>
+
+'''
+
+[#splitByDelimiter]
+`*STRING_LIST* splitByDelimiter(*STRING* str, *STRING* delimiter);`
+
+*Description*: Returns a *STRING_LIST* of tokens after splitting
+`str` by the `delimiter`.
+
+'''
+
+[#splitByWhitespace]
+`*STRING_LIST* splitByWhitespace(*STRING* stringContext);`
+
+*Description*: Returns a *STRING_LIST* of tokens after splitting
+`stringContext` by whitespaces.
+
+'''
+
+[#splitProgram]
+`*STRING_LIST* splitProgram(*STRING* simpleProgram);`
+
+*Description*: Returns a *STRING_LIST* after splitting SIMPLE program `simpleProgram`
+into strings containing the names, numbers, symbols that the Lexer can determine
+based on SIMPLE syntax. All whitespace will be truncated from the strings.
