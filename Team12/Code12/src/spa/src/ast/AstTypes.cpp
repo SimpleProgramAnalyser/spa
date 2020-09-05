@@ -25,7 +25,7 @@ ProgramNode::ProgramNode(Name n, List<ProcedureNode> procLst):
     programName(std::move(n)), procedureList(std::move(procLst))
 {}
 
-bool BasicDataType::operator==(BasicDataType& bdt)
+bool BasicDataType::operator==(const BasicDataType& bdt) const
 {
     return this->compare(bdt);
 }
@@ -38,21 +38,21 @@ String Constant::toString()
     return std::to_string(static_cast<int>(value));
 }
 
-Boolean Constant::isConstant() noexcept
+Boolean Constant::isConstant() const noexcept
 {
     return true;
 }
 
-bool Constant::operator==(BasicDataType& c) const
+bool Constant::operator==(const BasicDataType& c) const
 {
     return this->compare(c);
 }
 
-bool Constant::compare(BasicDataType& c) const
+bool Constant::compare(const BasicDataType& c) const
 {
     if (c.isConstant()) {
         // NOLINTNEXTLINE
-        return static_cast<Constant&>(c).value == this->value;
+        return static_cast<const Constant&>(c).value == this->value;
     } else {
         return false;
     }
@@ -65,21 +65,21 @@ String Variable::toString()
     return static_cast<String>(varName);
 }
 
-Boolean Variable::isConstant() noexcept
+Boolean Variable::isConstant() const noexcept
 {
     return false;
 }
 
-bool Variable::operator==(BasicDataType& v) const
+bool Variable::operator==(const BasicDataType& v) const
 {
     return this->compare(v);
 }
 
-bool Variable::compare(BasicDataType& v) const
+bool Variable::compare(const BasicDataType& v) const
 {
     if (!v.isConstant()) {
         // NOLINTNEXTLINE
-        return static_cast<Variable&>(v).varName == this->varName;
+        return static_cast<const Variable&>(v).varName == this->varName;
     } else {
         return false;
     }
@@ -180,7 +180,7 @@ Boolean ReferenceExpression::isArithmetic() noexcept
 
 bool ReferenceExpression::operator==(const ReferenceExpression& re) const
 {
-    return this->basicData == re.basicData;
+    return *(this->basicData) == *(re.basicData);
 }
 
 RelationalExpression::RelationalExpression(const Expression* left, const Expression* right, RelationalOperator ro):

@@ -142,14 +142,13 @@ ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(
     }
     frontend::Tag tokenTag = programTokens->at(index)->tokenTag;
     if (frontend::isIdentifierTag(tokenTag)) {
-        auto* var = new Variable(programTokens->at(index)->rawString);
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
-            std::unique_ptr<ReferenceExpression>(createRefExpr(var)), index + 1);
+            std::unique_ptr<ReferenceExpression>(createRefExpr(programTokens->at(index)->rawString)), index + 1);
     } else if (tokenTag == frontend::ConstantTag) {
-        auto* cons = new Constant(std::stoi(programTokens->at(index)->rawString)); // should succeed unless there is
-                                                                       // a bug in the tokeniser
+        // stoi should succeed unless there is a bug in the tokeniser
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
-            std::unique_ptr<ReferenceExpression>(createRefExpr(cons)), index + 1);
+            std::unique_ptr<ReferenceExpression>(createRefExpr(std::stoi(programTokens->at(index)->rawString))),
+            index + 1);
     } else {
         // syntax error, not a reference expression
         return getSyntaxError<ReferenceExpression>();

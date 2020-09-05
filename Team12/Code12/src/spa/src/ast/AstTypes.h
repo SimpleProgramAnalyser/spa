@@ -60,8 +60,8 @@ class BasicDataType {
 public:
     virtual ~BasicDataType() = default;
     virtual String toString() = 0;
-    virtual Boolean isConstant() noexcept = 0;
-    bool operator==(BasicDataType& c);
+    virtual Boolean isConstant() const noexcept = 0;
+    virtual bool operator==(const BasicDataType& c) const;
 
 protected:
     BasicDataType() = default;
@@ -70,7 +70,7 @@ protected:
     BasicDataType(BasicDataType&&) = default;
     BasicDataType& operator=(BasicDataType&&) = default;
 
-    virtual bool compare(BasicDataType& c) const = 0;
+    virtual bool compare(const BasicDataType& c) const = 0;
 };
 
 class Constant: public BasicDataType {
@@ -85,11 +85,11 @@ public:
     Constant& operator=(Constant&&) = delete;
 
     String toString() override;
-    Boolean isConstant() noexcept override;
-    bool operator==(BasicDataType& c) const;
+    Boolean isConstant() const noexcept override;
+    bool operator==(const BasicDataType& c) const override;
 
 protected:
-    bool compare(BasicDataType& c) const override;
+    bool compare(const BasicDataType& c) const override;
 };
 
 class Variable: public BasicDataType {
@@ -104,11 +104,11 @@ public:
     Variable& operator=(Variable&&) = delete;
 
     String toString() override;
-    Boolean isConstant() noexcept override;
-    bool operator==(BasicDataType& v) const;
+    Boolean isConstant() const noexcept override;
+    bool operator==(const BasicDataType& v) const override;
 
 protected:
-    bool compare(BasicDataType& c) const override;
+    bool compare(const BasicDataType& c) const override;
 };
 
 class ReadStatementNode: public StatementNode {

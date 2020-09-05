@@ -130,7 +130,12 @@ ArithmeticExpression* createModExpr(Expression* leftExpr, Expression* rightExpr)
     return createArithExpr(leftExpr, rightExpr, ModuloOperator);
 }
 
-ReferenceExpression* createRefExpr(BasicDataType* basicData)
+ReferenceExpression* createRefExpr(String variable)
 {
-    return new ReferenceExpression(basicData);
+    return new ReferenceExpression(new Variable(std::move(variable)));
+}
+
+ReferenceExpression* createRefExpr(Integer constant)
+{
+    return new ReferenceExpression(new Constant(constant));
 }
