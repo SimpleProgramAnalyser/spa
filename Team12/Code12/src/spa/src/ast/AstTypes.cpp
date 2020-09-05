@@ -5,6 +5,8 @@
 
 #include "AstTypes.h"
 
+#include "Util.h"
+
 StatementNumber StatementNode::getStatementNumber() const
 {
     return stmtNum;
@@ -19,6 +21,11 @@ bool StatementNode::operator==(const StatementNode& sn) const
 
 StmtlstNode::StmtlstNode(List<StatementNode> stmtLst): statementList(std::move(stmtLst)) {}
 
+bool StmtlstNode::operator==(const StmtlstNode& sln) const
+{
+    return util::checkListValuesEqual<StatementNode>(this->statementList, sln.statementList);
+}
+
 ProcedureNode::ProcedureNode(Name n, const StmtlstNode* stmtLst): procedureName(std::move(n)), statementList(stmtLst) {}
 
 ProcedureNode::~ProcedureNode()
@@ -26,9 +33,20 @@ ProcedureNode::~ProcedureNode()
     delete statementList;
 }
 
+bool ProcedureNode::operator==(const ProcedureNode& pcn) const
+{
+    return this->procedureName == pcn.procedureName && *(this->statementList) == *(pcn.statementList);
+}
+
 ProgramNode::ProgramNode(Name n, List<ProcedureNode> procLst):
     programName(std::move(n)), procedureList(std::move(procLst))
 {}
+
+bool ProgramNode::operator==(const ProgramNode& pgn) const
+{
+    return this->programName == pgn.programName
+           && util::checkListValuesEqual<ProcedureNode>(this->procedureList, pgn.procedureList);
+}
 
 bool BasicDataType::operator==(const BasicDataType& bdt) const
 {
@@ -154,11 +172,16 @@ bool CallStatementNode::compare(const StatementNode& sn) const
 {
     if (sn.getStatementType() == CallStatement) {
         return this->getStatementNumber() == sn.getStatementNumber()
-            // NOLINTNEXTLINE
-            && static_cast<const CallStatementNode&>(sn).procedureName == this->procedureName;
+               // NOLINTNEXTLINE
+               && static_cast<const CallStatementNode&>(sn).procedureName == this->procedureName;
     } else {
         return false;
     }
+}
+
+bool ConditionalExpression::operator==(const ConditionalExpression& ce) const
+{
+    return this->compare(ce);
 }
 
 NotExpression::NotExpression(const ConditionalExpression* exp): expression(exp) {}
@@ -168,9 +191,24 @@ NotExpression::~NotExpression()
     delete expression;
 }
 
-ConditionalExpressionType NotExpression::getConditionalType() noexcept
+bool NotExpression::operator==(const ConditionalExpression& ce) const
+{
+    return this->compare(ce);
+}
+
+ConditionalExpressionType NotExpression::getConditionalType() const noexcept
 {
     return NotConditionalExpression;
+}
+
+bool NotExpression::compare(const ConditionalExpression& ce) const
+{
+    if (ce.getConditionalType() == NotConditionalExpression) {
+        // NOLINTNEXTLINE
+        return *(static_cast<const NotExpression&>(ce).expression) == *(this->expression);
+    } else {
+        return false;
+    }
 }
 
 AndExpression::AndExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp):
@@ -183,9 +221,25 @@ AndExpression::~AndExpression()
     delete rightExpression;
 }
 
-ConditionalExpressionType AndExpression::getConditionalType() noexcept
+bool AndExpression::operator==(const ConditionalExpression& ce) const
+{
+    return this->compare(ce);
+}
+
+ConditionalExpressionType AndExpression::getConditionalType() const noexcept
 {
     return AndConditionalExpression;
+}
+
+bool AndExpression::compare(const ConditionalExpression& ce) const
+{
+    if (ce.getConditionalType() == AndConditionalExpression) {
+        // NOLINTNEXTLINE
+        const AndExpression& ae = static_cast<const AndExpression&>(ce);
+        return *(this->leftExpression) == *(ae.leftExpression) && *(this->rightExpression) == *(ae.rightExpression);
+    } else {
+        return false;
+    }
 }
 
 OrExpression::OrExpression(const ConditionalExpression* leftExp, const ConditionalExpression* rightExp):
@@ -198,9 +252,30 @@ OrExpression::~OrExpression()
     delete rightExpression;
 }
 
-ConditionalExpressionType OrExpression::getConditionalType() noexcept
+bool OrExpression::operator==(const ConditionalExpression& ce) const
+{
+    return this->compare(ce);
+}
+
+ConditionalExpressionType OrExpression::getConditionalType() const noexcept
 {
     return OrConditionalExpression;
+}
+
+bool OrExpression::compare(const ConditionalExpression& ce) const
+{
+    if (ce.getConditionalType() == OrConditionalExpression) {
+        // NOLINTNEXTLINE
+        const OrExpression& oe = static_cast<const OrExpression&>(ce);
+        return *(this->leftExpression) == *(oe.leftExpression) && *(this->rightExpression) == *(oe.rightExpression);
+    } else {
+        return false;
+    }
+}
+
+bool Expression::operator==(const Expression& ex) const
+{
+    return this->compare(ex);
 }
 
 ArithmeticExpression::ArithmeticExpression(const Expression* left, const Expression* right, ExpressionOperator op):
@@ -213,9 +288,26 @@ ArithmeticExpression::~ArithmeticExpression()
     delete rightFactor;
 }
 
-Boolean ArithmeticExpression::isArithmetic() noexcept
+bool ArithmeticExpression::operator==(const Expression& ex) const
+{
+    return this->compare(ex);
+}
+
+Boolean ArithmeticExpression::isArithmetic() const noexcept
 {
     return true;
+}
+
+bool ArithmeticExpression::compare(const Expression& ex) const
+{
+    if (ex.isArithmetic()) {
+        // NOLINTNEXTLINE
+        const ArithmeticExpression& ae = static_cast<const ArithmeticExpression&>(ae);
+        return this->opr == ae.opr && *(this->leftFactor) == *(ae.leftFactor)
+               && *(this->rightFactor) == *(ae.rightFactor);
+    } else {
+        return false;
+    }
 }
 
 ReferenceExpression::ReferenceExpression(const BasicDataType* bd): basicData(bd) {}
@@ -225,14 +317,24 @@ ReferenceExpression::~ReferenceExpression()
     delete basicData;
 }
 
-Boolean ReferenceExpression::isArithmetic() noexcept
+bool ReferenceExpression::operator==(const Expression& re) const
+{
+    return this->compare(re);
+}
+
+Boolean ReferenceExpression::isArithmetic() const noexcept
 {
     return false;
 }
 
-bool ReferenceExpression::operator==(const ReferenceExpression& re) const
+bool ReferenceExpression::compare(const Expression& ex) const
 {
-    return *(this->basicData) == *(re.basicData);
+    if (!ex.isArithmetic()) {
+        // NOLINTNEXTLINE
+        return *(this->basicData) == *(static_cast<const ReferenceExpression&>(ex).basicData);
+    } else {
+        return false;
+    }
 }
 
 RelationalExpression::RelationalExpression(const Expression* left, const Expression* right, RelationalOperator ro):
@@ -245,9 +347,26 @@ RelationalExpression::~RelationalExpression()
     delete rightFactor;
 }
 
-ConditionalExpressionType RelationalExpression::getConditionalType() noexcept
+bool RelationalExpression::operator==(const ConditionalExpression& ce) const
+{
+    return this->compare(ce);
+}
+
+ConditionalExpressionType RelationalExpression::getConditionalType() const noexcept
 {
     return RelationalConditionalExpression;
+}
+
+bool RelationalExpression::compare(const ConditionalExpression& ce) const
+{
+    if (ce.getConditionalType() == RelationalConditionalExpression) {
+        // NOLINTNEXTLINE
+        const RelationalExpression& oe = static_cast<const RelationalExpression&>(ce);
+        return this->opr == oe.opr && *(this->leftFactor) == *(oe.leftFactor)
+               && *(this->rightFactor) == *(oe.rightFactor);
+    } else {
+        return false;
+    }
 }
 
 IfStatementNode::IfStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred, const StmtlstNode* ifs,
@@ -273,6 +392,19 @@ StatementType IfStatementNode::getStatementType() const
     return IfStatement;
 }
 
+bool IfStatementNode::compare(const StatementNode& sn) const
+{
+    if (sn.getStatementType() == IfStatement) {
+        // NOLINTNEXTLINE
+        const IfStatementNode& isn = static_cast<const IfStatementNode&>(sn);
+        return this->getStatementNumber() == isn.getStatementNumber() && *(this->predicate) == *(isn.predicate)
+               && *(this->ifStatementList) == *(isn.ifStatementList)
+               && *(this->elseStatementList) == *(isn.elseStatementList);
+    } else {
+        return false;
+    }
+}
+
 WhileStatementNode::WhileStatementNode(StatementNumber stmtNum, const ConditionalExpression* pred,
                                        const StmtlstNode* stmts):
     StatementNode(stmtNum),
@@ -295,8 +427,20 @@ StatementType WhileStatementNode::getStatementType() const
     return WhileStatement;
 }
 
-AssignmentStatementNode::AssignmentStatementNode(StatementNumber stmtNum, const Variable& v, const Expression* expr):
-    StatementNode(stmtNum), variable(v), expression(expr)
+bool WhileStatementNode::compare(const StatementNode& sn) const
+{
+    if (sn.getStatementType() == WhileStatement) {
+        // NOLINTNEXTLINE
+        const WhileStatementNode& wsn = static_cast<const WhileStatementNode&>(sn);
+        return this->getStatementNumber() == wsn.getStatementNumber() && *(this->predicate) == *(wsn.predicate)
+               && *(this->statementList) == *(wsn.statementList);
+    } else {
+        return false;
+    }
+}
+
+AssignmentStatementNode::AssignmentStatementNode(StatementNumber stmtNum, Variable v, const Expression* expr):
+    StatementNode(stmtNum), variable(std::move(v)), expression(expr)
 {}
 
 AssignmentStatementNode::~AssignmentStatementNode()
@@ -312,4 +456,16 @@ bool AssignmentStatementNode::operator==(const StatementNode& sn) const
 StatementType AssignmentStatementNode::getStatementType() const
 {
     return AssignmentStatement;
+}
+
+bool AssignmentStatementNode::compare(const StatementNode& sn) const
+{
+    if (sn.getStatementType() == AssignmentStatement) {
+        // NOLINTNEXTLINE
+        const AssignmentStatementNode& asn = static_cast<const AssignmentStatementNode&>(sn);
+        return this->getStatementNumber() == asn.getStatementNumber() && this->variable == asn.variable
+               && *(this->expression) == *(asn.expression);
+    } else {
+        return false;
+    }
 }
