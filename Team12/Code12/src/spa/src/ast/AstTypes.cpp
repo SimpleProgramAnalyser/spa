@@ -5,12 +5,17 @@
 
 #include "AstTypes.h"
 
-StatementNumber StatementNode::getStatementNumber()
+StatementNumber StatementNode::getStatementNumber() const
 {
     return stmtNum;
 }
 
 StatementNode::StatementNode(StatementNumber n): stmtNum(n) {}
+
+bool StatementNode::operator==(const StatementNode& sn) const
+{
+    return this->compare(sn);
+}
 
 StmtlstNode::StmtlstNode(List<StatementNode> stmtLst): statementList(std::move(stmtLst)) {}
 
@@ -86,26 +91,74 @@ bool Variable::compare(const BasicDataType& v) const
 
 ReadStatementNode::ReadStatementNode(StatementNumber stmtNum, Variable v): StatementNode(stmtNum), var(std::move(v)) {}
 
-StatementType ReadStatementNode::getStatementType()
+bool ReadStatementNode::operator==(const StatementNode& sn) const
+{
+    return this->compare(sn);
+}
+
+StatementType ReadStatementNode::getStatementType() const
 {
     return ReadStatement;
+}
+
+bool ReadStatementNode::compare(const StatementNode& sn) const
+{
+    if (sn.getStatementType() == ReadStatement) {
+        return this->getStatementNumber() == sn.getStatementNumber()
+               // NOLINTNEXTLINE
+               && static_cast<const ReadStatementNode&>(sn).var == this->var;
+    } else {
+        return false;
+    }
 }
 
 PrintStatementNode::PrintStatementNode(StatementNumber stmtNum, Variable v): StatementNode(stmtNum), var(std::move(v))
 {}
 
-StatementType PrintStatementNode::getStatementType()
+bool PrintStatementNode::operator==(const StatementNode& sn) const
+{
+    return this->compare(sn);
+}
+
+StatementType PrintStatementNode::getStatementType() const
 {
     return PrintStatement;
+}
+
+bool PrintStatementNode::compare(const StatementNode& sn) const
+{
+    if (sn.getStatementType() == PrintStatement) {
+        return this->getStatementNumber() == sn.getStatementNumber()
+               // NOLINTNEXTLINE
+               && static_cast<const PrintStatementNode&>(sn).var == this->var;
+    } else {
+        return false;
+    }
 }
 
 CallStatementNode::CallStatementNode(StatementNumber stmtNum, Name n):
     StatementNode(stmtNum), procedureName(std::move(n))
 {}
 
-StatementType CallStatementNode::getStatementType()
+bool CallStatementNode::operator==(const StatementNode& sn) const
+{
+    return this->compare(sn);
+}
+
+StatementType CallStatementNode::getStatementType() const
 {
     return CallStatement;
+}
+
+bool CallStatementNode::compare(const StatementNode& sn) const
+{
+    if (sn.getStatementType() == CallStatement) {
+        return this->getStatementNumber() == sn.getStatementNumber()
+            // NOLINTNEXTLINE
+            && static_cast<const CallStatementNode&>(sn).procedureName == this->procedureName;
+    } else {
+        return false;
+    }
 }
 
 NotExpression::NotExpression(const ConditionalExpression* exp): expression(exp) {}
@@ -210,7 +263,12 @@ IfStatementNode::~IfStatementNode()
     delete elseStatementList;
 }
 
-StatementType IfStatementNode::getStatementType()
+bool IfStatementNode::operator==(const StatementNode& sn) const
+{
+    return this->compare(sn);
+}
+
+StatementType IfStatementNode::getStatementType() const
 {
     return IfStatement;
 }
@@ -227,7 +285,12 @@ WhileStatementNode::~WhileStatementNode()
     delete statementList;
 }
 
-StatementType WhileStatementNode::getStatementType()
+bool WhileStatementNode::operator==(const StatementNode& sn) const
+{
+    return this->compare(sn);
+}
+
+StatementType WhileStatementNode::getStatementType() const
 {
     return WhileStatement;
 }
@@ -241,7 +304,12 @@ AssignmentStatementNode::~AssignmentStatementNode()
     delete expression;
 }
 
-StatementType AssignmentStatementNode::getStatementType()
+bool AssignmentStatementNode::operator==(const StatementNode& sn) const
+{
+    return this->compare(sn);
+}
+
+StatementType AssignmentStatementNode::getStatementType() const
 {
     return AssignmentStatement;
 }

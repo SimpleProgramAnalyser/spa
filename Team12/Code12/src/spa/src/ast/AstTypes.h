@@ -19,12 +19,14 @@ public:
     StatementNode& operator=(const StatementNode&) = delete;
     StatementNode(StatementNode&&) = delete;
     StatementNode& operator=(StatementNode&&) = delete;
+    virtual bool operator==(const StatementNode& sn) const;
 
-    virtual StatementType getStatementType() = 0;
-    virtual StatementNumber getStatementNumber();
+    virtual StatementType getStatementType() const = 0;
+    virtual StatementNumber getStatementNumber() const;
 
 protected:
     explicit StatementNode(StatementNumber n);
+    virtual bool compare(const StatementNode& sn) const = 0;
 
 private:
     StatementNumber stmtNum;
@@ -69,7 +71,6 @@ protected:
     BasicDataType& operator=(const BasicDataType&) = default;
     BasicDataType(BasicDataType&&) = default;
     BasicDataType& operator=(BasicDataType&&) = default;
-
     virtual bool compare(const BasicDataType& c) const = 0;
 };
 
@@ -115,21 +116,33 @@ class ReadStatementNode: public StatementNode {
 public:
     const Variable var;
     ReadStatementNode(StatementNumber stmtNum, Variable v);
-    StatementType getStatementType() override;
+    bool operator==(const StatementNode& sn) const override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class PrintStatementNode: public StatementNode {
 public:
     const Variable var;
     PrintStatementNode(StatementNumber stmtNum, Variable v);
-    StatementType getStatementType() override;
+    bool operator==(const StatementNode& sn) const override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class CallStatementNode: public StatementNode {
 public:
     const Name procedureName;
     CallStatementNode(StatementNumber stmtNum, Name n);
-    StatementType getStatementType() override;
+    bool operator==(const StatementNode& sn) const override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 enum ConditionalExpressionType {
@@ -286,8 +299,12 @@ public:
     IfStatementNode& operator=(const IfStatementNode&) = delete;
     IfStatementNode(IfStatementNode&&) = delete;
     IfStatementNode& operator=(IfStatementNode&&) = delete;
+    bool operator==(const StatementNode& sn) const override;
 
-    StatementType getStatementType() override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class WhileStatementNode: public StatementNode {
@@ -301,8 +318,12 @@ public:
     WhileStatementNode& operator=(const WhileStatementNode&) = delete;
     WhileStatementNode(WhileStatementNode&&) = delete;
     WhileStatementNode& operator=(WhileStatementNode&&) = delete;
+    bool operator==(const StatementNode& sn) const override;
 
-    StatementType getStatementType() override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class AssignmentStatementNode: public StatementNode {
@@ -316,8 +337,12 @@ public:
     AssignmentStatementNode& operator=(const AssignmentStatementNode&) = delete;
     AssignmentStatementNode(AssignmentStatementNode&&) = delete;
     AssignmentStatementNode& operator=(AssignmentStatementNode&&) = delete;
+    bool operator==(const StatementNode& sn) const override;
 
-    StatementType getStatementType() override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 typedef List<ProcedureNode> ProcedureNodeList;
