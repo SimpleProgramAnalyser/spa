@@ -7,9 +7,27 @@ add_library(spa
     ${srcs}
     ${headers}
 
+    # lexer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
-        src/pql/PqlManager.h src/pql/PqlManager.cpp src/pql/Evaluator.h src/pql/Evaluator.cpp src/pql/AqTypes.h src/pql/AqTypes.cpp)
+
+    # ast library
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
+
+    # pql
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.cpp
+)
+
+# flags for debug
+target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
