@@ -5,7 +5,7 @@
 
 #include "AstTypes.h"
 
-#include "Util.h"
+#include "Util.cpp"
 
 StatementNumber StatementNode::getStatementNumber() const
 {
@@ -302,7 +302,7 @@ bool ArithmeticExpression::compare(const Expression& ex) const
 {
     if (ex.isArithmetic()) {
         // NOLINTNEXTLINE
-        const ArithmeticExpression& ae = static_cast<const ArithmeticExpression&>(ae);
+        const ArithmeticExpression& ae = static_cast<const ArithmeticExpression&>(ex);
         return this->opr == ae.opr && *(this->leftFactor) == *(ae.leftFactor)
                && *(this->rightFactor) == *(ae.rightFactor);
     } else {

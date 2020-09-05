@@ -5,16 +5,16 @@
 #include "Util.h"
 
 template <typename T>
-bool util::checkListValuesEqual(List<T> first, List<T> second)
+bool util::checkListValuesEqual(const List<T>& first, const List<T>& second)
 {
     if (first.size() != second.size()) {
         return false;
     }
 
     bool allMatch = true;
-    size_t len = first.statementList.size();
+    size_t len = first.size();
     for (size_t i = 0; i < len; i++) {
-        if (*(first.statementList.at(i)) == *(second.statementList.at(i))) {
+        if (*(first.at(i)) == *(second.at(i))) {
             allMatch = false;
             break;
         }

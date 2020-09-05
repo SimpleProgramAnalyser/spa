@@ -10,7 +10,7 @@
 namespace util {
 
 template <typename T>
-bool checkListValuesEqual(List<T> first, List<T> second);
+bool checkListValuesEqual(const List<T>& first, const List<T>& second);
 
 }
 
