@@ -30,7 +30,6 @@ bool BasicDataType::operator==(const BasicDataType& bdt) const
     return this->compare(bdt);
 }
 
-
 Constant::Constant(Integer val): value(val) {}
 
 String Constant::toString()
