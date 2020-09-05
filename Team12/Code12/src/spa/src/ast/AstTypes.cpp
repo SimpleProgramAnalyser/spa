@@ -25,6 +25,12 @@ ProgramNode::ProgramNode(Name n, List<ProcedureNode> procLst):
     programName(std::move(n)), procedureList(std::move(procLst))
 {}
 
+bool BasicDataType::operator==(BasicDataType& bdt)
+{
+    return this->compare(bdt);
+}
+
+
 Constant::Constant(Integer val): value(val) {}
 
 String Constant::toString()
@@ -37,6 +43,21 @@ Boolean Constant::isConstant() noexcept
     return true;
 }
 
+bool Constant::operator==(BasicDataType& c) const
+{
+    return this->compare(c);
+}
+
+bool Constant::compare(BasicDataType& c) const
+{
+    if (c.isConstant()) {
+        // NOLINTNEXTLINE
+        return static_cast<Constant&>(c).value == this->value;
+    } else {
+        return false;
+    }
+}
+
 Variable::Variable(Name n): varName(std::move(n)) {}
 
 String Variable::toString()
@@ -47,6 +68,21 @@ String Variable::toString()
 Boolean Variable::isConstant() noexcept
 {
     return false;
+}
+
+bool Variable::operator==(BasicDataType& v) const
+{
+    return this->compare(v);
+}
+
+bool Variable::compare(BasicDataType& v) const
+{
+    if (!v.isConstant()) {
+        // NOLINTNEXTLINE
+        return static_cast<Variable&>(v).varName == this->varName;
+    } else {
+        return false;
+    }
 }
 
 ReadStatementNode::ReadStatementNode(StatementNumber stmtNum, Variable v): StatementNode(stmtNum), var(std::move(v)) {}
@@ -140,6 +176,11 @@ ReferenceExpression::~ReferenceExpression()
 Boolean ReferenceExpression::isArithmetic() noexcept
 {
     return false;
+}
+
+bool ReferenceExpression::operator==(const ReferenceExpression& re) const
+{
+    return this->basicData == re.basicData;
 }
 
 RelationalExpression::RelationalExpression(const Expression* left, const Expression* right, RelationalOperator ro):

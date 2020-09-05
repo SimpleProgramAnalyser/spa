@@ -142,11 +142,11 @@ ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(
     }
     frontend::Tag tokenTag = programTokens->at(index)->tokenTag;
     if (frontend::isIdentifierTag(tokenTag)) {
-        Variable var(programTokens->at(index)->rawString);
+        auto* var = new Variable(programTokens->at(index)->rawString);
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
             std::unique_ptr<ReferenceExpression>(createRefExpr(var)), index + 1);
     } else if (tokenTag == frontend::ConstantTag) {
-        Constant cons(std::stoi(programTokens->at(index)->rawString)); // should succeed unless there is
+        auto* cons = new Constant(std::stoi(programTokens->at(index)->rawString)); // should succeed unless there is
                                                                        // a bug in the tokeniser
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
             std::unique_ptr<ReferenceExpression>(createRefExpr(cons)), index + 1);
@@ -268,9 +268,9 @@ parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex sta
         }
         frontend::Tag currentOperator = programTokens->at(operatorIndex)->tokenTag;
         if (currentOperator == frontend::TimesTag) {
-            createExpressionFunction = &createPlusExpr;
+            createExpressionFunction = &createTimesExpr;
         } else if (currentOperator == frontend::DivideTag) {
-            createExpressionFunction = &createMinusExpr;
+            createExpressionFunction = &createDivExpr;
         } else if (currentOperator == frontend::ModuloTag) {
             createExpressionFunction = &createModExpr;
         } else {

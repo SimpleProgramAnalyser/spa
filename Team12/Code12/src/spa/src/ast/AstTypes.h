@@ -14,7 +14,7 @@ typedef Integer StatementNumber;
 
 class StatementNode {
 public:
-    virtual ~StatementNode() = 0;
+    virtual ~StatementNode() = default;
     StatementNode(const StatementNode&) = delete;
     StatementNode& operator=(const StatementNode&) = delete;
     StatementNode(StatementNode&&) = delete;
@@ -58,9 +58,10 @@ public:
 
 class BasicDataType {
 public:
-    virtual ~BasicDataType() = 0;
+    virtual ~BasicDataType() = default;
     virtual String toString() = 0;
     virtual Boolean isConstant() noexcept = 0;
+    bool operator==(BasicDataType& c);
 
 protected:
     BasicDataType() = default;
@@ -68,6 +69,8 @@ protected:
     BasicDataType& operator=(const BasicDataType&) = default;
     BasicDataType(BasicDataType&&) = default;
     BasicDataType& operator=(BasicDataType&&) = default;
+
+    virtual bool compare(BasicDataType& c) const = 0;
 };
 
 class Constant: public BasicDataType {
@@ -83,6 +86,10 @@ public:
 
     String toString() override;
     Boolean isConstant() noexcept override;
+    bool operator==(BasicDataType& c) const;
+
+protected:
+    bool compare(BasicDataType& c) const override;
 };
 
 class Variable: public BasicDataType {
@@ -98,6 +105,10 @@ public:
 
     String toString() override;
     Boolean isConstant() noexcept override;
+    bool operator==(BasicDataType& v) const;
+
+protected:
+    bool compare(BasicDataType& c) const override;
 };
 
 class ReadStatementNode: public StatementNode {
@@ -130,7 +141,7 @@ enum ConditionalExpressionType {
 
 class ConditionalExpression {
 public:
-    virtual ~ConditionalExpression() = 0;
+    virtual ~ConditionalExpression() = default;
     virtual ConditionalExpressionType getConditionalType() noexcept = 0;
 
 protected:
@@ -195,7 +206,7 @@ enum ExpressionOperator : char {
 
 class Expression {
 public:
-    virtual ~Expression() = 0;
+    virtual ~Expression() = default;
     virtual Boolean isArithmetic() noexcept = 0;
 
 protected:
@@ -234,6 +245,7 @@ public:
     ReferenceExpression& operator=(ReferenceExpression&&) = delete;
 
     Boolean isArithmetic() noexcept override;
+    bool operator==(const ReferenceExpression& re) const;
 };
 
 enum RelationalOperator : char {

@@ -35,6 +35,6 @@ ArithmeticExpression* createMinusExpr(Expression* leftExpr, Expression* rightExp
 ArithmeticExpression* createTimesExpr(Expression* leftExpr, Expression* rightExpr);
 ArithmeticExpression* createDivExpr(Expression* leftExpr, Expression* rightExpr);
 ArithmeticExpression* createModExpr(Expression* leftExpr, Expression* rightExpr);
-ReferenceExpression* createRefExpr(BasicDataType& basicData);
+ReferenceExpression* createRefExpr(BasicDataType* basicData);
 
 #endif // SPA_AST_LIBRARY_H
