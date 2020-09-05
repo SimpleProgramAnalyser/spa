@@ -48,7 +48,7 @@ RelationshipReference Relationship::getRelationship(){ return relationshipRefere
 Reference Relationship::getLeftRef(){ return leftReference; }
 Reference Relationship::getRightRef(){ return rightReference; }
 
-SuchThatClause::SuchThatClause(Relationship r)
+SuchThatClause::SuchThatClause(Relationship& r)
     : Clause(SUCH_THAT_CLAUSE), relationship{ r }
 {}
 
@@ -68,6 +68,10 @@ Expression ExpressionSpec::getExpression(){ return expression; }
 PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec)
     : Clause(PATTERN_CLAUSE), entityReference(entRef), expressionSpec(exprSpec)
 {}
+
+PatternStatementType PatternClause::getStatementType(){ return patternStatementType; }
+EntityReference PatternClause::getEntRef(){ return entityReference; }
+ExpressionSpec PatternClause::getExprSpec(){ return expressionSpec; }
 
 void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
 {

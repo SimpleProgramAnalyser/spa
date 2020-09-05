@@ -97,7 +97,7 @@ class SuchThatClause: public Clause {
 private:
     Relationship relationship;
 public:
-    SuchThatClause(Relationship r);
+    SuchThatClause(Relationship& r);
     Relationship getRelationship();
 };
 
@@ -139,7 +139,7 @@ public:
     DesignEntity getDesignEntityOfSynonym(Synonym s);
 };
 
-typedef std::vector<std::unique_ptr<Clause>> ClauseList;
+typedef std::vector<Clause> ClauseList; // TODO: Adding unique_ptr causes compilation error
 
 class AbstractQuery {
 private:
@@ -152,6 +152,5 @@ public:
     ClauseList getClauses();
     DeclarationTable getDeclarationTable();
 };
-
 
 #endif // SPA_AQTYPES_H
