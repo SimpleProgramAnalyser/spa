@@ -9,37 +9,24 @@ Analyser (SPA). The main method, parseSimple, is the main entry point to the pro
 where a SIMPLE program string is input for analysis.
 
 * <<parseSimple>>
-* <<parseArithmeticExpressions>>
+* <<parseExpression>>
 
 '''
 
 [#parseSimple]
-*VOID* parseSimple(*STRING* rawProgram) throws *SYNTAX_ERROR*;
+`*VOID* parseSimple(*STRING* rawProgram) throws *SYNTAX_ERROR*;`
 
 *Description*: Takes in a SIMPLE program string so the PKB can be populated with entries.
 If the program string is not in valid SIMPLE syntax, or contains semantic errors,
 an ERROR will be thrown. +
-*Normal behaviour*: The program is parsed successfully, and entries stored in the PKB
-for queries. +
-*Abnormal behaviour*: If there is a syntax error in the SIMPLE program, a SYNTAX_ERROR
-will be thrown. An empty string results in a SYNTAX_ERROR as well, as SIMPLE programs
-require one or more procedures. Once Parser determines that the program is syntactically
-incorrect, parsing of the incorrect program is stopped indefinitely.
 
 '''
 
-[#parseArithmeticExpressions]
-`*ARITHMETIC_EXPRESSION* parseArithmeticExpression(*STRING_LIST* lexedArithmeticExpression) throws *SYNTAX_ERROR*;`
+[#parseExpression]
+`*EXPRESSION* parseExpression(*STRING_LIST* lexedExpression);`
 
-**Description**: Takes in a lexed SIMPLE binary expression, and returns the root node of
-the Abstract Syntax Tree (AST) that represents the binary expression. This method may
-be used to pattern-match queries. +
-**Normal behaviour**: The lexed binary expression is parsed successfully, and the AST
-representing the binary expression is returned. +
-**Abnormal behaviour**: If there is a syntax error in the SIMPLE binary expression,
-a **SYNTAX_ERROR** will be thrown. An empty list will return **SYNTAX_ERROR** as well.
-Once Parser determines that the expression is syntactically incorrect, parsing of
-the incorrect program is stopped indefinitely.
+**Description**: Takes in a lexed SIMPLE expression, and returns an Abstract Syntax Tree (AST)
+node that represents the expression. This method may be used to pattern-match queries.
 
 === Design Extractor API
 *Overview*: The Design Extractor API describes methods available to the Design
@@ -469,7 +456,7 @@ Description: Returns a *VARIABLE_LIST* of all variables that are used in the SIM
 '''
 
 [#getUsesProcedures]
-`*STRING_LIST* getUsesProcedures(*VARIABLE* var);`
+`*PROCEDURE_LIST* getUsesProcedures(*VARIABLE* var);`
 
 *Description*: // TODO
 
@@ -495,3 +482,195 @@ Description: Returns a *VARIABLE_LIST* of all variables that are used in the SIM
 *Description*: Returns a *VARIABLE_LIST* of variables that were used
 in `proc`.
 
+=== Modifies API
+*Overview*: The Modifies API describes the methods exposed by Modifies Table to insert and
+extract information related to the Modifies relationships in the processed SIMPLE program.
+
+* <<addModifiesRelationships>>
+* <<checkIfProcedureModifies>>
+* <<checkIfStatementModifies>>
+* <<getAllModifiesProcedures>>
+* <<getAllModifiesStatements>>
+* <<getAllModifiesVariables>>
+* <<getModifiesProcedures>>
+* <<getModifiesStatements>>
+* <<getModifiesVariablesForProcedure>>
+* <<getVariablesModifiedByStatement>>
+
+'''
+
+[#addModifiesRelationships]
+`VOID addModifiesRelationships(INTEGER stmt, VARIABLE_LIST var);`
+
+Description: Add all variables in VARIABLES_LIST `var` that are modified in `stmt`
+to the Modifies Table.
+
+'''
+
+[#checkIfProcedureModifies]
+`(OPTIONAL)PROCEDURE checkIfProcedureModifies(STRING proc, STRING var);`
+
+Description: Returns the PROCEDURE if `proc` modifies `var`, else return nothing.
+
+'''
+
+[#checkIfStatementModifies]
+`(OPTIONAL)STATEMENT checkIfStatementModifies(INTEGER stmt, STRING var);`
+
+Description: Returns the STATEMENT if `stmt` modifies `var`, else return nothing.
+
+'''
+
+[#getAllModifiesProcedures]
+`PROCEDURE_LIST getAllModifiesProcedures();`
+
+Description: Returns a PROCEDURE_LIST of all PROCEDURE that modifies.
+
+'''
+
+[#getAllModifiesStatements]
+`STATEMENT_LIST getAllModifiesStatements(STATEMENT_TYPE stmtType);`
+
+Description: Returns a STATEMENT_LIST of all STATEMENT that modifies.
+
+'''
+
+[#getAllModifiesVariables]
+`VARIABLE_LIST getAllModifiesVariables(STATEMENT_TYPE stmtType);`
+
+Description: Returns a VARIABLE_LIST of all VARIABLE that are modified by
+STATEMENT of STATEMENT_TYPE.
+
+'''
+
+[#getModifiesProcedures]
+`PROCEDURE_LIST getModifiesProcedures(VARIABLE var);`
+
+Description: Returns a PROCEDURE_LIST of all PROCEDURE that modifies VARIABLE `var`.
+
+'''
+
+[#getModifiesStatements]
+`STATEMENT_LIST getModifiesStatements(VARIABLE var, STATEMENT_TYPE stmtType) ;`
+
+Description: Returns a STATEMENT_LIST of all STATEMENT of STATEMENT_TYPE, that
+modifies VARIABLE `var`.
+
+'''
+
+[#getModifiesVariablesForProcedure]
+`VARIABLE_LIST getModifiesVariablesForProcedure(PROCEDURE proc);`
+
+Description: Returns a VARIABLE_LIST of all VARIABLE that are modified
+by PROCEDURE `proc`.
+
+'''
+
+[#getVariablesModifiedByStatement]
+`VARIABLE_LIST getVariablesModifiedByStatement(INTEGER stmt);`
+
+Description: Returns a VARIABLE_LIST of all VARIABLE that are modified by
+`stmt`.
+
+== Parent API
+*Overview*: The Parent API describes the methods exposed by Parent Table to insert and
+extract information related to the Parent relationships in the processed SIMPLE program.
+
+* <<addParentRelationships>>
+* <<addParentRelationshipsStar>>
+* <<checkIfParentHolds>>
+* <<getAllChildStatements>>
+* <<getAllChildStatementsStar>>
+* <<getAllParentStatements>>
+* <<getAllParentStatementsStar>>
+* <<getAllParentStatementsTyped>>
+* <<getAllParentStatementsTypedStar>>
+* <<getChildStatement>>
+* <<getParentStatement>>
+
+'''
+
+[#addParentRelationships]
+`VOID addParentRelationships(INTEGER parent, INTEGER child);`
+
+Description: Adds a Parent relationship between `parent` and `child` into
+the Parent Table.
+
+'''
+
+[#addParentRelationshipsStar]
+`VOID addParentRelationshipsStar(INTEGER parent, INTEGER_LIST children);`
+
+Description: // TODO
+
+'''
+
+[#checkIfParentHolds]
+`(OPTIONAL)STATEMENT checkIfParentHolds(INTEGER parent, INTEGER child);`
+
+Description: Returns the STATEMENT if there is a Parent relationship
+between `parent` and `child`, else return empty.
+
+'''
+
+[#getAllChildStatements]
+`STATEMENT_LIST getAllChildStatements(INTEGER parent, STATEMENT_TYPE stmtType);`
+
+Description: Returns a STATEMENT_LIST of all child STATEMENT of `parent`. Child
+STATEMENT are of STATEMENT_TYPE `stmtType`.
+
+'''
+
+[#getAllChildStatementsStar]
+`STATEMENT_LIST getAllChildStatementsStar(INTEGER parent, STATEMENT_TYPE stmtType);`
+
+Description: Returns a STATEMENT_LIST of all transitive child STATEMENT of `parent`.
+Child STATEMENT are of STATEMENT_TYPE `stmtType`.
+
+'''
+
+[#getAllParentStatements]
+`STATEMENT_LIST getAllParentStatements(INTEGER child, STATEMENT_TYPE stmtType);`
+
+Description: // TODO return STATEMENT_LIST or STATEMENT?
+'''
+
+[#getAllParentStatementsStar]
+`STATEMENT_LIST getAllParentStatements(INTEGER child, STATEMENT_TYPE stmtType);`
+
+Description: Returns a STATEMENT_LIST of all transitive Parent of `child`. Parents
+are of STATEMENT_TYPE `stmtType`.
+
+'''
+
+[#getAllParentStatementsTyped]
+`STATEMENT_LIST getAllParentStatementsTyped(STATEMENT_TYPE stmtTypeOfParent,
+STATEMENT_TYPE stmtTypeOfChild);`
+
+Description: Returns a STATEMENT_LIST of all Parents that are of STATEMENT_TYPE
+`stmtTypeOfParent`, with a child of STATEMENT_TYPE `stmtTypeOfChild`.
+
+'''
+
+[#getAllParentStatementsTypedStar]
+`STATEMENT_LIST getAllParentStatementsTypedStar(STATEMENT_TYPE stmtTypeOfParent,
+STATEMENT_TYPE stmtTypeOfChild);`
+
+Description: Returns a STATEMENT_LIST of all Parents that are of STATEMENT_TYPE
+`stmtTypeOfParent`, with a transitive child of STATEMENT_TYPE `stmtTypeOfChild`.
+
+'''
+
+[#getChildStatement]
+`STATEMENT_LIST getChildStatement(INTEGER parent);`
+
+Description: Returns a STATEMENT_LIST of all child STATEMENT of `parent`.
+
+'''
+
+[#getParentStatement]
+`STATEMENT getParentStatement(INTEGER child);`
+
+Description: Returns the Parent STATEMENT of `child`.
+
+== Follows API
