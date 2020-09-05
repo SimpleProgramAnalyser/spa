@@ -22,12 +22,12 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
         src/Util.cpp src/Util.h)
 
 # flags for debug
-target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+target_compile_options(spa PRIVATE "-Wall;-pedantic")
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

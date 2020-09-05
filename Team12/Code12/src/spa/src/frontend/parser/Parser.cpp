@@ -5,6 +5,7 @@
 #include "Parser.h"
 
 #include <cassert>
+#include <stdexcept>
 
 #include "Token.h"
 #include "ast/AstLibrary.h"
@@ -285,7 +286,7 @@ parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex sta
         return getSyntaxError<ArithmeticExpression>();
     }
     // create right expression
-    rightExpr = parseExpression(programTokens, startIndex, operatorIndex + 1);
+    rightExpr = parseExpression(programTokens, operatorIndex + 1, endIndex);
     // check validity of right expression
     if (rightExpr.nextUnparsedToken < 0) {
         // syntax error in right expression
@@ -801,7 +802,8 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
 
     if (numberOfTokens - startIndex > 1) {
         // determine statement type
-        switch (programTokens->at(startIndex)->tokenTag) {
+        frontend::Tag statementType = programTokens->at(startIndex)->tokenTag;
+        switch (statementType) {
         case frontend::CallKeywordTag: {
             ParserReturnType<std::unique_ptr<CallStatementNode>> resultCall = parseCallStmt(programTokens, startIndex);
             statement = resultCall.astNode.release();
@@ -863,7 +865,7 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
     // set up variables
     TokenListIndex numberOfTokens = programTokens->size();
     List<StatementNode> statements;
-    TokenListIndex nextUnparsed = startIndex;
+    TokenListIndex nextUnparsed = startIndex + 1; // ignore "{"
     Boolean isSyntaxError = false; // flag for syntax error
 
     if (numberOfTokens - startIndex > 1 && programTokens->at(startIndex)->tokenTag == frontend::BracesOpenTag) {
@@ -876,8 +878,8 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
             nextUnparsed = result.nextUnparsedToken;
         }
 
-        if (programTokens->at(nextUnparsed)->tokenTag != frontend::BracesClosedTag) {
-            // syntax error, unmatched brackets in statement list
+        if (nextUnparsed < 0 || programTokens->at(nextUnparsed)->tokenTag != frontend::BracesClosedTag) {
+            // syntax error in statements, or syntax error due to unmatched brackets in statement list
             isSyntaxError = true;
         } else {
             // no errors
@@ -891,7 +893,7 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
         return getSyntaxError<StmtlstNode>();
     } else {
         return ParserReturnType<std::unique_ptr<StmtlstNode>>(
-            std::unique_ptr<StmtlstNode>(createStmtlstNode(statements)), nextUnparsed);
+            std::unique_ptr<StmtlstNode>(createStmtlstNode(statements)), nextUnparsed + 1 /* ignore closing braces */);
     }
 }
 
@@ -924,7 +926,6 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
     }
 
     if (isSyntaxError) {
-        delete statementListNode;
         return getSyntaxError<ProcedureNode>();
     } else {
         return ParserReturnType<std::unique_ptr<ProcedureNode>>(
@@ -932,7 +933,15 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
     }
 }
 
-Void parseSimple(const String& rawProgram)
+/**
+ * Parses a SIMPLE program and returns the root
+ * node of the AST.
+ *
+ * @param rawProgram The raw SIMPLE program string.
+ *
+ * @return The AST representing the program.
+ */
+ProgramNode* parseSimpleReturnNode(const String& rawProgram)
 {
     StringList* programFragments = splitProgram(rawProgram);
     frontend::TokenList* tokenisedProgram = frontend::tokeniseSimple(programFragments);
@@ -943,16 +952,30 @@ Void parseSimple(const String& rawProgram)
     List<ProcedureNode> procedures;
     // reset statement numbers to 0
     statementsSeen = 0;
-    while (currentIndex < numberOfTokens) {
+    bool syntaxError = false;
+    while (currentIndex >= 0 && currentIndex < numberOfTokens) {
         if (tokenisedProgram->at(currentIndex)->tokenTag == frontend::ProcedureKeywordTag) {
             ParserReturnType<std::unique_ptr<ProcedureNode>> p = parseProcedure(tokenisedProgram, currentIndex);
             procedures.push_back(std::move(p.astNode));
             currentIndex = p.nextUnparsedToken;
         } else {
             // syntax error, SIMPLE program must consist of procedures
+            syntaxError = true;
+            break;
         }
-        createProgramNode("SIMPLE program", procedures);
     }
+
     // delete tokens once tree has been created
     delete tokenisedProgram;
+
+    if (currentIndex < 0 || syntaxError) {
+        return nullptr;
+    } else {
+        return createProgramNode("SIMPLE program", procedures);
+    }
+}
+
+Void parseSimple(const String& rawProgram)
+{
+    ProgramNode* abstractSyntaxTree = parseSimpleReturnNode(rawProgram);
 }

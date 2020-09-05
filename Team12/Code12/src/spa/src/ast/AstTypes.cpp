@@ -5,6 +5,7 @@
 
 #include "AstTypes.h"
 
+#include "Util.h"
 #include "Util.cpp"
 
 StatementNumber StatementNode::getStatementNumber() const

@@ -8,6 +8,7 @@
 #ifndef SPA_FRONTEND_STRING_MATCHER_H
 #define SPA_FRONTEND_STRING_MATCHER_H
 
+#include <array>
 #include <climits>
 #include <unordered_map>
 
@@ -60,9 +61,11 @@ public:
     T matchString(const String& str, T notFoundValue = NULL);
 
 private:
-    TrieNode<T>* getNodeIfNull(char c, TrieNode<T>* node, T ref = NULL);
+    TrieNode<T>* getNodeIfNull(char c, TrieNode<T>* node, T item = NULL);
 };
 
 } // namespace str_match
+
+#include "StringMatcher_Impl.h"
 
 #endif // SPA_FRONTEND_STRING_MATCHER_H
