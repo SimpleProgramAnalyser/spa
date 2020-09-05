@@ -74,8 +74,22 @@ TokenListIndex getBracketEnd(frontend::TokenList* programTokens, TokenListIndex 
     }
 }
 
-ParserReturnType<std::unique_ptr<ReferenceExpression>>
-parseReferenceExpression(frontend::TokenList* programTokens, TokenListIndex startIndex, TokenListIndex endIndex)
+/**
+ * Returns a ParserReturnType signifying a syntax error.
+ * (nextUnparsedToken is set to -1)
+ *
+ * @tparam T The type of node in ParserReturnType.
+ * @return ParserReturnType of type T, with astNode set
+ *         to nullptr and nextUnparsedToken set to -1.
+ */
+template <typename T>
+ParserReturnType<std::unique_ptr<T>> getSyntaxError()
+{
+    return ParserReturnType<std::unique_ptr<T>>(std::unique_ptr<T>{}, -1);
+}
+
+ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(frontend::TokenList* programTokens,
+                                                                                TokenListIndex index)
 {
     // TODO, implement
     return ParserReturnType<std::unique_ptr<ReferenceExpression>>(std::unique_ptr<ReferenceExpression>{}, -1);
@@ -91,7 +105,6 @@ parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex sta
 ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenList* programTokens,
                                                               TokenListIndex startIndex, TokenListIndex endIndex)
 {
-    // TODO: split to arithmetic and reference
     // possible combinations, where e is an expression:
     // ---------------------------------------------------
     //                           reference expression
@@ -99,11 +112,34 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
     //  arithmetic expression   |                   |   unwrap and call recursively
     // ^---------------------^  |                   |  ^-^
     // e+e, e-e, e*e, e/e, e%e, var_name, const_value, (e)
-    ParserReturnType<std::unique_ptr<ArithmeticExpression>> arithmeticExp
+
+    TokenListIndex numberOfTokens = programTokens->size();
+    if (startIndex > endIndex || endIndex >= numberOfTokens) {
+        // bounds error in indexes
+        return ParserReturnType<std::unique_ptr<Expression>>(std::unique_ptr<Expression>{}, -1);
+    } else if (startIndex == endIndex
+               && (frontend::isIdentifierTag(programTokens->at(startIndex)->tokenTag)
+                   || programTokens->at(startIndex)->tokenTag == frontend::ConstantTag)) {
+        ParserReturnType<std::unique_ptr<ReferenceExpression>> refExp
+            = parseReferenceExpression(programTokens, startIndex);
+        // upcast to Expression
+        return ParserReturnType<std::unique_ptr<Expression>>(std::move(refExp.astNode), refExp.nextUnparsedToken);
+    } else if (startIndex == endIndex) {
+        // syntax error in expression
+        return getSyntaxError<Expression>();
+    }
+
+    // unwrap brackets and call expression again, if possible
+    if (programTokens->at(startIndex)->tokenTag == frontend::BracketOpenTag
+        && getBracketEnd(programTokens, startIndex) == endIndex) {
+
+        return parseExpression(programTokens, startIndex + 1, endIndex - 1);
+    }
+
+    ParserReturnType<std::unique_ptr<ArithmeticExpression>> arithExp
         = parseArithmeticExpression(programTokens, startIndex, endIndex);
     // upcast to Expression
-    return ParserReturnType<std::unique_ptr<Expression>>(std::move(arithmeticExp.astNode),
-                                                         arithmeticExp.nextUnparsedToken);
+    return ParserReturnType<std::unique_ptr<Expression>>(std::move(arithExp.astNode), arithExp.nextUnparsedToken);
 }
 
 Expression* parseExpression(StringList* lexedExpression)
@@ -120,7 +156,7 @@ parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex sta
     TokenListIndex numberOfTokens = programTokens->size();
     if (startIndex >= endIndex || endIndex >= numberOfTokens) {
         // bounds error in indexes
-        return ParserReturnType<std::unique_ptr<RelationalExpression>>(std::unique_ptr<RelationalExpression>{}, -1);
+        return getSyntaxError<RelationalExpression>();
     }
     // find the relational operator
     TokenListIndex relationalOperator = startIndex;
@@ -132,21 +168,21 @@ parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex sta
     // check if found
     if (relationalOperator >= numberOfTokens) {
         // error, name or constant without relational operator
-        return ParserReturnType<std::unique_ptr<RelationalExpression>>(std::unique_ptr<RelationalExpression>{}, -1);
+        return getSyntaxError<RelationalExpression>();
     }
     // parse first expression
     ParserReturnType<std::unique_ptr<Expression>> firstExpr
         = parseExpression(programTokens, startIndex, relationalOperator - 1);
     if (firstExpr.nextUnparsedToken < 0) {
         // syntax error in first expression
-        return ParserReturnType<std::unique_ptr<RelationalExpression>>(std::unique_ptr<RelationalExpression>{}, -1);
+        return getSyntaxError<RelationalExpression>();
     }
     // parse second expression, assume it is until the endIndex
     ParserReturnType<std::unique_ptr<Expression>> secondExpr
         = parseExpression(programTokens, firstExpr.nextUnparsedToken + 1 /* skip over operator */, endIndex);
     if (secondExpr.nextUnparsedToken < 0) {
         // syntax error in second expression
-        return ParserReturnType<std::unique_ptr<RelationalExpression>>(std::unique_ptr<RelationalExpression>{}, -1);
+        return getSyntaxError<RelationalExpression>();
     }
     RelationalExpression* (*createExpressionFunction)(Expression*, Expression*);
     // find out which function to use
@@ -186,7 +222,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
     TokenListIndex numberOfTokens = programTokens->size();
     if (startIndex >= endIndex || endIndex >= numberOfTokens) {
         // bounds error in indexes
-        return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{}, -1);
+        return getSyntaxError<ConditionalExpression>();
     }
 
     Boolean isRelational = false;
@@ -207,8 +243,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
         TokenListIndex endBracket = getBracketEnd(programTokens, startIndex);
         if (endBracket < 0 || endBracket > endIndex) {
             // syntax error in brackets, or no operator after brackets
-            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
-                                                                            -1);
+            return getSyntaxError<ConditionalExpression>();
         } else if (endBracket == endIndex) {
             // case where there are double brackets
             // e.g. while ((...))
@@ -216,8 +251,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
                 = parseConditionalExpression(programTokens, startIndex + 1, endBracket - 1);
             if (innerCondition.nextUnparsedToken < 0 || innerCondition.nextUnparsedToken != endBracket) {
                 // syntax error in inner conditional
-                return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
-                    std::unique_ptr<ConditionalExpression>{}, -1);
+                return getSyntaxError<ConditionalExpression>();
             } else {
                 innerCondition.nextUnparsedToken = endBracket + 1; // ignore last bracket
                 return innerCondition;
@@ -240,12 +274,11 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             break;
         default:
             // wrong operator after brackets
-            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
-                                                                            -1);
+            return getSyntaxError<ConditionalExpression>();
         }
     } else {
         // unrecognised token, syntax error in conditional
-        return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{}, -1);
+        return getSyntaxError<ConditionalExpression>();
     }
 
     if (isRelational) {
@@ -254,8 +287,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             = parseRelationalExpression(programTokens, startIndex, endIndex);
         if (relationalExpr.nextUnparsedToken < 0) {
             // syntax error in relational expression
-            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
-                                                                            -1);
+            return getSyntaxError<ConditionalExpression>();
         } else {
             // upcast to ConditionalExpression
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
@@ -267,8 +299,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
         TokenListIndex endBracket = getBracketEnd(programTokens, startIndex + 1);
         if (endBracket < 0) {
             // error with not conditional syntax, or expression bracket syntax
-            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
-                                                                            -1);
+            return getSyntaxError<ConditionalExpression>();
         }
         ParserReturnType<std::unique_ptr<ConditionalExpression>> negatedCondition
             = parseConditionalExpression(programTokens, startIndex + 2, endBracket - 1);
@@ -299,8 +330,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
         TokenListIndex secondEndBracket = getBracketEnd(programTokens, firstCondition.nextUnparsedToken + 2);
         if (secondEndBracket < 0) {
             // syntax error with second condition brackets
-            return ParserReturnType<std::unique_ptr<ConditionalExpression>>(std::unique_ptr<ConditionalExpression>{},
-                                                                            -1);
+            return getSyntaxError<ConditionalExpression>();
         }
         // parse second condition
         ParserReturnType<std::unique_ptr<ConditionalExpression>> secondCondition
@@ -347,7 +377,7 @@ ParserReturnType<std::unique_ptr<CallStatementNode>> parseCallStmt(frontend::Tok
             startIndex + 3);
     } else {
         // syntax error in call statement
-        return ParserReturnType<std::unique_ptr<CallStatementNode>>(std::unique_ptr<CallStatementNode>{}, -1);
+        return getSyntaxError<CallStatementNode>();
     }
 }
 
@@ -368,7 +398,7 @@ ParserReturnType<std::unique_ptr<PrintStatementNode>> parsePrintStmt(frontend::T
             startIndex + 3);
     } else {
         // syntax error in print statement
-        return ParserReturnType<std::unique_ptr<PrintStatementNode>>(std::unique_ptr<PrintStatementNode>{}, -1);
+        return getSyntaxError<PrintStatementNode>();
     }
 }
 
@@ -389,7 +419,7 @@ ParserReturnType<std::unique_ptr<ReadStatementNode>> parseReadStmt(frontend::Tok
             startIndex + 3);
     } else {
         // syntax error in read statement
-        return ParserReturnType<std::unique_ptr<ReadStatementNode>>(std::unique_ptr<ReadStatementNode>{}, -1);
+        return getSyntaxError<ReadStatementNode>();
     }
 }
 
@@ -424,12 +454,12 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
             ifCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 2);
         } else {
             // syntax error in if conditional, or missing "then" keyword
-            return ParserReturnType<std::unique_ptr<IfStatementNode>>(std::unique_ptr<IfStatementNode>{}, -1);
+            return getSyntaxError<IfStatementNode>();
         }
         // check if "if" conditional parsed correctly
         if (ifCondition.nextUnparsedToken < 0) {
             // error in parsing conditional expression
-            return ParserReturnType<std::unique_ptr<IfStatementNode>>(std::unique_ptr<IfStatementNode>{}, -1);
+            return getSyntaxError<IfStatementNode>();
         }
         statementsSeen++;
         StatementNumber ifStmtNum = statementsSeen;
@@ -440,18 +470,18 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
         // check if "if" statements parsed correctly
         if (ifStatements.nextUnparsedToken < 0 || ifStatements.nextUnparsedToken > numberOfTokens) {
             // syntax error in statement list, or no else statement
-            return ParserReturnType<std::unique_ptr<IfStatementNode>>(std::unique_ptr<IfStatementNode>{}, -1);
+            return getSyntaxError<IfStatementNode>();
         }
         // now, parse the "else" statements
         if (programTokens->at(ifStatements.nextUnparsedToken)->tokenTag == frontend::ElseKeywordTag) {
             elseStatements = parseStatementList(programTokens, ifStatements.nextUnparsedToken + 1 /* skip "else" */);
         } else {
             // no "else" keyword, wrong if/else syntax
-            return ParserReturnType<std::unique_ptr<IfStatementNode>>(std::unique_ptr<IfStatementNode>{}, -1);
+            return getSyntaxError<IfStatementNode>();
         }
         // check if "else" statements parsed correctly
         if (elseStatements.nextUnparsedToken < 0) {
-            return ParserReturnType<std::unique_ptr<IfStatementNode>>(std::unique_ptr<IfStatementNode>{}, -1);
+            return getSyntaxError<IfStatementNode>();
         }
         return ParserReturnType<std::unique_ptr<IfStatementNode>>(
             std::unique_ptr<IfStatementNode>(createIfNode(ifStmtNum, ifCondition.astNode.release(),
@@ -460,7 +490,7 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
             elseStatements.nextUnparsedToken);
     }
     // if syntax is invalid
-    return ParserReturnType<std::unique_ptr<IfStatementNode>>(std::unique_ptr<IfStatementNode>{}, -1);
+    return getSyntaxError<IfStatementNode>();
 }
 
 ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::TokenList* programTokens,
@@ -488,12 +518,12 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
             loopControlCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 2);
         } else {
             // syntax error in while condition
-            return ParserReturnType<std::unique_ptr<WhileStatementNode>>(std::unique_ptr<WhileStatementNode>{}, -1);
+            return getSyntaxError<WhileStatementNode>();
         }
         // check if while condition parsed correctly
         if (loopControlCondition.nextUnparsedToken < 0) {
             // error in parsing conditional expression
-            return ParserReturnType<std::unique_ptr<WhileStatementNode>>(std::unique_ptr<WhileStatementNode>{}, -1);
+            return getSyntaxError<WhileStatementNode>();
         }
         statementsSeen++;
         StatementNumber whileStmtNum = statementsSeen;
@@ -504,7 +534,7 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
         // check if statements parsed correctly
         if (statements.nextUnparsedToken < 0) {
             // syntax error in statement list
-            return ParserReturnType<std::unique_ptr<WhileStatementNode>>(std::unique_ptr<WhileStatementNode>{}, -1);
+            return getSyntaxError<WhileStatementNode>();
         }
         return ParserReturnType<std::unique_ptr<WhileStatementNode>>(
             std::unique_ptr<WhileStatementNode>(
@@ -512,7 +542,7 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
             statements.nextUnparsedToken);
     }
     // while syntax is invalid
-    return ParserReturnType<std::unique_ptr<WhileStatementNode>>(std::unique_ptr<WhileStatementNode>{}, -1);
+    return getSyntaxError<WhileStatementNode>();
 }
 
 ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(frontend::TokenList* programTokens,
@@ -540,14 +570,12 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
             expression = parseExpression(programTokens, startIndex + 2, tokenPointer - 1);
         } else {
             // missing semicolon for assign statement
-            return ParserReturnType<std::unique_ptr<AssignmentStatementNode>>(
-                std::unique_ptr<AssignmentStatementNode>{}, 0);
+            return getSyntaxError<AssignmentStatementNode>();
         }
         // check if expression parsed correctly
         if (expression.nextUnparsedToken < 0) {
             // syntax error in expression
-            return ParserReturnType<std::unique_ptr<AssignmentStatementNode>>(
-                std::unique_ptr<AssignmentStatementNode>{}, 0);
+            return getSyntaxError<AssignmentStatementNode>();
         } else {
             // next unparsed token should be the semicolon
             assert(expression.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
@@ -560,8 +588,7 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
         }
     } else {
         // invalid assign syntax, not of form "variable" "=" ...
-        return ParserReturnType<std::unique_ptr<AssignmentStatementNode>>(std::unique_ptr<AssignmentStatementNode>{},
-                                                                          0);
+        return getSyntaxError<AssignmentStatementNode>();
     }
 }
 
@@ -625,7 +652,7 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
     }
 
     if (isSyntaxError || nextUnparsed < 0) {
-        return ParserReturnType<std::unique_ptr<StatementNode>>(std::unique_ptr<StatementNode>{}, -1);
+        return getSyntaxError<StatementNode>();
     } else {
         return ParserReturnType<std::unique_ptr<StatementNode>>(std::unique_ptr<StatementNode>(statement),
                                                                 nextUnparsed);
@@ -663,7 +690,7 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
     }
 
     if (isSyntaxError || nextUnparsed < 0) {
-        return ParserReturnType<std::unique_ptr<StmtlstNode>>(std::unique_ptr<StmtlstNode>{}, -1);
+        return getSyntaxError<StmtlstNode>();
     } else {
         return ParserReturnType<std::unique_ptr<StmtlstNode>>(
             std::unique_ptr<StmtlstNode>(createStmtlstNode(statements)), nextUnparsed);
@@ -700,7 +727,7 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
 
     if (isSyntaxError) {
         delete statementListNode;
-        return ParserReturnType<std::unique_ptr<ProcedureNode>>(std::unique_ptr<ProcedureNode>{}, -1);
+        return getSyntaxError<ProcedureNode>();
     } else {
         return ParserReturnType<std::unique_ptr<ProcedureNode>>(
             std::unique_ptr<ProcedureNode>(createProcedureNode(procedureName, statementListNode)), nextUnparsed);
