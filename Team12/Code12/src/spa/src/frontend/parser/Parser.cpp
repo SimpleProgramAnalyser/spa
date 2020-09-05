@@ -33,6 +33,50 @@ public:
 };
 
 /**
+ * Given the index of a closing bracket ")" in a list of
+ * tokens, scan the list of program tokens in reverse order,
+ * and find the index of the matching open bracket "(".
+ * This may not necessarily be the closest "(".
+ *
+ * @param programTokens The tokens representing the program.
+ * @param indexOfClosedBracket Index of the closed bracket.
+ *
+ * @return Index of the open bracket, or -1 if not found.
+ *         Return -2 if the given index is not a closed bracket,
+ *         or if the index is out-of-bounds.
+ */
+TokenListIndex getBracketStart(frontend::TokenList* programTokens, TokenListIndex indexOfClosedBracket)
+{
+    TokenListIndex numberOfTokens = programTokens->size();
+    // boundary checks
+    if (indexOfClosedBracket < 0 || indexOfClosedBracket >= numberOfTokens
+        || programTokens->at(indexOfClosedBracket)->tokenTag != frontend::BracketClosedTag) {
+        // indexOfFirstBracket out of bounds, or not an opening bracket
+        return -2;
+    }
+
+    BracketsDepth bracketsSeen = 1;
+    TokenListIndex startBracket = indexOfClosedBracket - 1;
+    while (startBracket >= 0 && bracketsSeen > 0) {
+        frontend::Tag currentToken = programTokens->at(startBracket)->tokenTag;
+        if (currentToken == frontend::BracketClosedTag) {
+            bracketsSeen++;
+        } else if (currentToken == frontend::BracketOpenTag) {
+            bracketsSeen--;
+        }
+        // go towards the start of the program
+        startBracket--;
+    }
+
+    if (bracketsSeen > 0) {
+        // did not find the closing bracket in the entire program
+        return -1;
+    } else {
+        return startBracket + 1;
+    }
+}
+
+/**
  * Given the index of the first bracket "(" in a list of
  * tokens, find the index of the matching closing bracket ")".
  * This may not necessarily be the closest ")".
@@ -66,7 +110,7 @@ TokenListIndex getBracketEnd(frontend::TokenList* programTokens, TokenListIndex 
         endBracket++;
     }
 
-    if (endBracket >= numberOfTokens) {
+    if (bracketsSeen > 0) {
         // did not find the closing bracket in the entire program
         return -1;
     } else {
@@ -91,15 +135,168 @@ ParserReturnType<std::unique_ptr<T>> getSyntaxError()
 ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(frontend::TokenList* programTokens,
                                                                                 TokenListIndex index)
 {
-    // TODO, implement
-    return ParserReturnType<std::unique_ptr<ReferenceExpression>>(std::unique_ptr<ReferenceExpression>{}, -1);
+    TokenListIndex numberOfTokens = programTokens->size();
+    if (index < 0 || index >= numberOfTokens) {
+        // bounds error in index
+        return getSyntaxError<ReferenceExpression>();
+    }
+    frontend::Tag tokenTag = programTokens->at(index)->tokenTag;
+    if (frontend::isIdentifierTag(tokenTag)) {
+        Variable var(programTokens->at(index)->rawString);
+        return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
+            std::unique_ptr<ReferenceExpression>(createRefExpr(var)), index + 1);
+    } else if (tokenTag == frontend::ConstantTag) {
+        Constant cons(std::stoi(programTokens->at(index)->rawString)); // should succeed unless there is
+                                                                       // a bug in the tokeniser
+        return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
+            std::unique_ptr<ReferenceExpression>(createRefExpr(cons)), index + 1);
+    } else {
+        // syntax error, not a reference expression
+        return getSyntaxError<ReferenceExpression>();
+    }
 }
+
+// forward declaration for parseArithmeticExpression
+ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenList* programTokens,
+                                                              TokenListIndex startIndex, TokenListIndex endIndex);
 
 ParserReturnType<std::unique_ptr<ArithmeticExpression>>
 parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex startIndex, TokenListIndex endIndex)
 {
-    // TODO, implement
-    return ParserReturnType<std::unique_ptr<ArithmeticExpression>>(std::unique_ptr<ArithmeticExpression>{}, -1);
+    // ==========================================================================================
+    // define expression => ex; parseExpression function => pE;
+    // Possible patterns for recursion:
+    // (if brackets are seen, find end bracket and ignore operators inside brackets)
+    //
+    // Single operator, consecutive:
+    // ex + ex + ex + ex  |  ex * ex * ex * ex
+    // ex + ex - ex + ex  |  ex * ex / ex * ex
+    // ex - ex - ex - ex  |  ex / ex / ex / ex
+    //                   -> left precedence
+    //                   -> pE(ex o ex o ex) o pE(ex)
+    //
+    // Multiple operator, non-consecutive
+    // ex * ex - ex / ex
+    //                   -> use operator precedence
+    //                   -> pE(ex * ex) - pE(ex / ex)
+    //                   -> create a minus expression
+    //
+    // Multiple operator, with consecutive patterns
+    // ex + ex * ex - ex / ex
+    //                   -> first, apply operator precedence
+    //                   -> pE(ex) + pE(ex * ex) - pE(ex / ex)
+    //                   -> then, apply left precedence
+    //                   -> pE(ex + ex * ex) - pE(ex / ex)
+    //                   -> create a minus expression
+    // ==========================================================================================
+    // Example expression:  ex + ex * ex / ex - ex + ex / ex * ex - ex + ex
+    //                   -> first, apply operator precedence
+    //                   -> pE(ex) + pE(ex * ex / ex) - ex + pE(ex / ex * ex) - ex + ex
+    //                   -> then, apply left precedence
+    //                   -> pE(ex + ex * ex / ex - ex + ex / ex * ex - ex) + pE(ex)
+    //                   -> create a plus expression
+    //
+    // Description of parsing algorithm for arithmetic expression:
+    // 1. Find rightmost + or - operator
+    // 2. If found
+    //     2a. Left = pE everything on the left of the operator
+    //     2b. Right = pE everything on the right of the operator
+    //     2c. Return + or - node, with left = Left and right = Right
+    // 3. If not found
+    //     3a. Find rightmost * or / operator
+    //     3b. If found
+    //         3b1. Left = pE everything on the left of the operator
+    //         3b2. Right = pE everything on the right of the operator
+    //         3b3. Return * or / node, with left = Left and right = Right
+    //     3c. If not found
+    //         3c1. Return syntax error
+
+    TokenListIndex numberOfTokens = programTokens->size();
+    if (startIndex > endIndex || endIndex >= numberOfTokens) {
+        // bounds error in indexes
+        return getSyntaxError<ArithmeticExpression>();
+    }
+
+    // set up variables
+    ArithmeticExpression* (*createExpressionFunction)(Expression*, Expression*);
+    ParserReturnType<std::unique_ptr<Expression>> leftExpr(nullptr);
+    ParserReturnType<std::unique_ptr<Expression>> rightExpr(nullptr);
+
+    // find last + or - from right
+    Boolean hasPlusOrMinus = false;
+    TokenListIndex operatorIndex = endIndex;
+    while (operatorIndex >= startIndex) {
+        frontend::Tag currentTag = programTokens->at(operatorIndex)->tokenTag;
+        if (currentTag == frontend::PlusTag || currentTag == frontend::MinusTag) {
+            hasPlusOrMinus = true;
+            break;
+        } else if (currentTag == frontend::BracketClosedTag) {
+            // jump over brackets
+            operatorIndex = getBracketStart(programTokens, operatorIndex);
+        }
+        operatorIndex--;
+    }
+    // currentIndex should now point to + or -
+    if (hasPlusOrMinus) {
+        frontend::Tag currentOperator = programTokens->at(operatorIndex)->tokenTag;
+        if (currentOperator == frontend::PlusTag) {
+            createExpressionFunction = &createPlusExpr;
+        } else if (currentOperator == frontend::MinusTag) {
+            createExpressionFunction = &createMinusExpr;
+        } else {
+            throw std::runtime_error("error in parseArithmeticExpression, programTokens list mutated");
+        }
+    } else {
+        // find last * or / or % from right
+        operatorIndex = endIndex;
+        while (operatorIndex >= startIndex) {
+            frontend::Tag currentTag = programTokens->at(operatorIndex)->tokenTag;
+            if (currentTag == frontend::TimesTag || currentTag == frontend::DivideTag
+                || currentTag == frontend::ModuloTag) {
+
+                break;
+            } else if (currentTag == frontend::BracketClosedTag) {
+                // jump over brackets
+                operatorIndex = getBracketStart(programTokens, operatorIndex);
+            }
+            operatorIndex--;
+        }
+
+        if (operatorIndex < startIndex) {
+            // syntax error, no operator in arithmetic expression
+            return getSyntaxError<ArithmeticExpression>();
+        }
+        frontend::Tag currentOperator = programTokens->at(operatorIndex)->tokenTag;
+        if (currentOperator == frontend::TimesTag) {
+            createExpressionFunction = &createPlusExpr;
+        } else if (currentOperator == frontend::DivideTag) {
+            createExpressionFunction = &createMinusExpr;
+        } else if (currentOperator == frontend::ModuloTag) {
+            createExpressionFunction = &createModExpr;
+        } else {
+            throw std::runtime_error("error in parseArithmeticExpression, programTokens list mutated");
+        }
+    }
+
+    // create left expression
+    leftExpr = parseExpression(programTokens, startIndex, operatorIndex - 1);
+    // check validity of left expression
+    if (leftExpr.nextUnparsedToken < 0) {
+        // syntax error in left expression
+        return getSyntaxError<ArithmeticExpression>();
+    }
+    // create right expression
+    rightExpr = parseExpression(programTokens, startIndex, operatorIndex + 1);
+    // check validity of right expression
+    if (rightExpr.nextUnparsedToken < 0) {
+        // syntax error in right expression
+        return getSyntaxError<ArithmeticExpression>();
+    }
+    // return final expression
+    return ParserReturnType<std::unique_ptr<ArithmeticExpression>>(
+        std::unique_ptr<ArithmeticExpression>(
+            createExpressionFunction(leftExpr.astNode.release(), rightExpr.astNode.release())),
+        endIndex + 1);
 }
 
 ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenList* programTokens,
@@ -116,16 +313,18 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
     TokenListIndex numberOfTokens = programTokens->size();
     if (startIndex > endIndex || endIndex >= numberOfTokens) {
         // bounds error in indexes
-        return ParserReturnType<std::unique_ptr<Expression>>(std::unique_ptr<Expression>{}, -1);
-    } else if (startIndex == endIndex
-               && (frontend::isIdentifierTag(programTokens->at(startIndex)->tokenTag)
-                   || programTokens->at(startIndex)->tokenTag == frontend::ConstantTag)) {
+        return getSyntaxError<Expression>();
+    }
+
+    if (startIndex == endIndex
+        && (frontend::isIdentifierTag(programTokens->at(startIndex)->tokenTag)
+            || programTokens->at(startIndex)->tokenTag == frontend::ConstantTag)) {
         ParserReturnType<std::unique_ptr<ReferenceExpression>> refExp
             = parseReferenceExpression(programTokens, startIndex);
         // upcast to Expression
         return ParserReturnType<std::unique_ptr<Expression>>(std::move(refExp.astNode), refExp.nextUnparsedToken);
     } else if (startIndex == endIndex) {
-        // syntax error in expression
+        // syntax error in expression, one token long but not constant or variable
         return getSyntaxError<Expression>();
     }
 
