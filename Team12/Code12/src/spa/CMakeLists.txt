@@ -20,10 +20,15 @@ add_library(spa
 
         # pkb
         ${pkb}
-        )
 
+        # tables library
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/tables/Tables.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/tables/Tables.cpp
+)
 # flags for debug
-target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+if(CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

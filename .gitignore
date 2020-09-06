@@ -39,3 +39,4 @@
 # CMake
 cmake-build-debug/
 build/
+build_win/
