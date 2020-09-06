@@ -16,10 +16,23 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
+
+    # error library ?
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
+
+    # design extractor
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
 )
 
 # flags for debug
-target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+if(CMAKE_COMPILER_IS_GNUCXX) 
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

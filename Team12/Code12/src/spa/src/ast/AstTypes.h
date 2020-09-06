@@ -39,7 +39,7 @@ public:
 class ProcedureNode {
 public:
     const Name procedureName;
-    const StmtlstNode* const statementList;
+    const StmtlstNode* const statementListNode;
 
     ProcedureNode(Name n, const StmtlstNode* stmtLst);
     ~ProcedureNode();
