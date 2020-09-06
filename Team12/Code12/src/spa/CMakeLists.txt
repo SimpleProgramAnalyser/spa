@@ -16,6 +16,14 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
+
+    # pql
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.cpp
 )
 
 # flags for debug

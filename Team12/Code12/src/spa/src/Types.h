@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 typedef bool Boolean;
 typedef int32_t Integer;
@@ -29,5 +30,9 @@ enum StatementType {
     ReadStatement = 16,
     WhileStatement = 32
 };
+
+// PQL
+
+
 
 #endif // SPA_TYPES_H
