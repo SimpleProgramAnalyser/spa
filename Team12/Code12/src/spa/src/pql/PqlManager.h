@@ -2,7 +2,6 @@
 #define SPA_PQLMANAGER_H
 
 #include <Types.h>
-#include "AqTypes.h"
 #include "FormattedQueryResult.h"
 
 class PqlManager {

@@ -1,4 +1,7 @@
-//
-// Created by Chester Sim on 1/9/20.
-//
+#include "PqlManager.h"
+#include "FormattedQueryResult.h"
+
+FormattedQueryResult PqlManager::evaluateQuery(String query)
+{
+}
 
