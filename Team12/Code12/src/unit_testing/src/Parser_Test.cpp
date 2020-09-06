@@ -1,6 +1,10 @@
 #include "catch.hpp"
 #include "frontend/parser/Parser.cpp"
 
+std::string getDefaultProgramName() {
+    return "SIMPLE program";
+}
+
 TEST_CASE("Parser can parse an example program correctly")
 {
     String simpleProgram = "\
@@ -32,6 +36,38 @@ procedure compute {\n\
     ProcedureNode* computeProcedure = createProcedureNode("compute", stmtLstNode);
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(computeProcedure));
-    ProgramNode* constructedAst = createProgramNode("SIMPLE program", procedureList);
+    ProgramNode* constructedAst = createProgramNode(getDefaultProgramName(), procedureList);
     REQUIRE(*(ast) == *(constructedAst));
+}
+
+TEST_CASE("Parser parses if statements correctly") {
+
+}
+
+TEST_CASE("Parser parses while statements correctly") {
+
+}
+
+TEST_CASE("Parser parses complicated arithmetic expressions statements correctly") {
+
+}
+
+TEST_CASE("Parser parses complicated conditional expressions statements correctly") {
+
+}
+
+TEST_CASE("Parser parses multiple procedures correctly") {
+
+}
+
+TEST_CASE("Parser parses keywords as identifiers correctly") {
+
+}
+
+TEST_CASE("Syntax error, mismatched braces") {
+
+}
+
+TEST_CASE("Syntax error, mismatched brackets") {
+
 }

@@ -803,48 +803,52 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
     if (numberOfTokens - startIndex > 1) {
         // determine statement type
         frontend::Tag statementType = programTokens->at(startIndex)->tokenTag;
-        switch (statementType) {
-        case frontend::CallKeywordTag: {
-            ParserReturnType<std::unique_ptr<CallStatementNode>> resultCall = parseCallStmt(programTokens, startIndex);
-            statement = resultCall.astNode.release();
-            nextUnparsed = resultCall.nextUnparsedToken;
-            break;
-        }
-        case frontend::PrintKeywordTag: {
-            ParserReturnType<std::unique_ptr<PrintStatementNode>> resultPrint
-                = parsePrintStmt(programTokens, startIndex);
-            statement = resultPrint.astNode.release();
-            nextUnparsed = resultPrint.nextUnparsedToken;
-            break;
-        }
-        case frontend::ReadKeywordTag: {
-            ParserReturnType<std::unique_ptr<ReadStatementNode>> resultRead = parseReadStmt(programTokens, startIndex);
-            statement = resultRead.astNode.release();
-            nextUnparsed = resultRead.nextUnparsedToken;
-            break;
-        }
-        case frontend::IfKeywordTag: {
-            ParserReturnType<std::unique_ptr<IfStatementNode>> resultIf = parseIfStmt(programTokens, startIndex);
-            statement = resultIf.astNode.release();
-            nextUnparsed = resultIf.nextUnparsedToken;
-            break;
-        }
-        case frontend::WhileKeywordTag: {
-            ParserReturnType<std::unique_ptr<WhileStatementNode>> resultWhile
-                = parseWhileStmt(programTokens, startIndex);
-            statement = resultWhile.astNode.release();
-            nextUnparsed = resultWhile.nextUnparsedToken;
-            break;
-        }
-        case frontend::IdentifierTag:
-            // [[fallthrough]];
-        default: {
+        if (programTokens->at(startIndex + 1)->tokenTag == frontend::AssignmentTag) {
             // assignment statement
             ParserReturnType<std::unique_ptr<AssignmentStatementNode>> resultAssign
                 = parseAssignStmt(programTokens, startIndex);
             statement = resultAssign.astNode.release();
             nextUnparsed = resultAssign.nextUnparsedToken;
-        }
+        } else {
+            switch (statementType) {
+            case frontend::CallKeywordTag: {
+                ParserReturnType<std::unique_ptr<CallStatementNode>> resultCall
+                    = parseCallStmt(programTokens, startIndex);
+                statement = resultCall.astNode.release();
+                nextUnparsed = resultCall.nextUnparsedToken;
+                break;
+            }
+            case frontend::PrintKeywordTag: {
+                ParserReturnType<std::unique_ptr<PrintStatementNode>> resultPrint
+                    = parsePrintStmt(programTokens, startIndex);
+                statement = resultPrint.astNode.release();
+                nextUnparsed = resultPrint.nextUnparsedToken;
+                break;
+            }
+            case frontend::ReadKeywordTag: {
+                ParserReturnType<std::unique_ptr<ReadStatementNode>> resultRead
+                    = parseReadStmt(programTokens, startIndex);
+                statement = resultRead.astNode.release();
+                nextUnparsed = resultRead.nextUnparsedToken;
+                break;
+            }
+            case frontend::IfKeywordTag: {
+                ParserReturnType<std::unique_ptr<IfStatementNode>> resultIf = parseIfStmt(programTokens, startIndex);
+                statement = resultIf.astNode.release();
+                nextUnparsed = resultIf.nextUnparsedToken;
+                break;
+            }
+            case frontend::WhileKeywordTag: {
+                ParserReturnType<std::unique_ptr<WhileStatementNode>> resultWhile
+                    = parseWhileStmt(programTokens, startIndex);
+                statement = resultWhile.astNode.release();
+                nextUnparsed = resultWhile.nextUnparsedToken;
+                break;
+            }
+            default: {
+                throw std::runtime_error("unknown statement type in parseStatement");
+            }
+            }
         }
     } else {
         // empty statement
@@ -866,7 +870,7 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
     TokenListIndex numberOfTokens = programTokens->size();
     List<StatementNode> statements;
     TokenListIndex nextUnparsed = startIndex + 1; // ignore "{"
-    Boolean isSyntaxError = false; // flag for syntax error
+    Boolean isSyntaxError = false;                // flag for syntax error
 
     if (numberOfTokens - startIndex > 1 && programTokens->at(startIndex)->tokenTag == frontend::BracesOpenTag) {
         // iterate through the tokens
