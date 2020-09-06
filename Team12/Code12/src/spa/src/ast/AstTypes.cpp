@@ -5,8 +5,8 @@
 
 #include "AstTypes.h"
 
-#include "Util.h"
 #include "Util.cpp"
+#include "Util.h"
 
 StatementNumber StatementNode::getStatementNumber() const
 {
@@ -27,16 +27,18 @@ bool StmtlstNode::operator==(const StmtlstNode& sln) const
     return util::checkListValuesEqual<StatementNode>(this->statementList, sln.statementList);
 }
 
-ProcedureNode::ProcedureNode(Name n, const StmtlstNode* stmtLst): procedureName(std::move(n)), statementList(stmtLst) {}
+ProcedureNode::ProcedureNode(Name n, const StmtlstNode* stmtLst):
+    procedureName(std::move(n)), statementListNode(stmtLst)
+{}
 
 ProcedureNode::~ProcedureNode()
 {
-    delete statementList;
+    delete statementListNode;
 }
 
 bool ProcedureNode::operator==(const ProcedureNode& pcn) const
 {
-    return this->procedureName == pcn.procedureName && *(this->statementList) == *(pcn.statementList);
+    return this->procedureName == pcn.procedureName && *(this->statementListNode) == *(pcn.statementListNode);
 }
 
 ProgramNode::ProgramNode(Name n, List<ProcedureNode> procLst):
