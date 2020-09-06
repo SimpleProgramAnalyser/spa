@@ -1,5 +1,6 @@
 #include "TestWrapper.h"
 #include "AbstractWrapper.h"
+#include "FrontendManager.h"
 #include "pql/FormattedQueryResult.h"
 #include "pql/PqlManager.h"
 
