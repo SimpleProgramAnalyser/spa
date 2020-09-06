@@ -1,12 +1,12 @@
-//
-// Created by Chester Sim on 3/9/20.
-//
+#ifndef SPA_EVALUATOR_H
+#define SPA_EVALUATOR_H
 
-#ifndef AUTOTESTER_EVALUATOR_H
-#define AUTOTESTER_EVALUATOR_H
+#include "AqTypes.h"
+#include "RawQueryResult.h"
 
-#include <Types.h>
+class Evaluator {
+    public:
+        RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
+};
 
-String* evaluateQuery(AbstractQuery abstractQuery);
-
-#endif // AUTOTESTER_EVALUATOR_H
+#endif // SPA_EVALUATOR_H

@@ -1,10 +1,13 @@
-//
-// Created by Chester Sim on 1/9/20.
-//
+#ifndef SPA_PQLMANAGER_H
+#define SPA_PQLMANAGER_H
 
-#ifndef AUTOTESTER_PQLMANAGER_H
-#define AUTOTESTER_PQLMANAGER_H
+#include <Types.h>
+#include "AqTypes.h"
+#include "FormattedQueryResult.h"
 
+class PqlManager {
+    public:
+        FormattedQueryResult evaluateQuery(String query);
+};
 
-
-#endif //AUTOTESTER_PQLMANAGER_H
+#endif // SPA_PQLMANAGER_H

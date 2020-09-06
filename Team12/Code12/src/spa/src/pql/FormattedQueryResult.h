@@ -1,0 +1,7 @@
+#ifndef SPA_FORMATTEDQUERYRESULT_H
+#define SPA_FORMATTEDQUERYRESULT_H
+
+class FormattedQueryResult {
+};
+
+#endif // SPA_RAW_QUERY_RESULT_H

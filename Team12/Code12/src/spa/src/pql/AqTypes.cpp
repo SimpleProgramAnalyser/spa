@@ -1,7 +1,3 @@
-//
-// Created by Chester Sim on 4/9/20.
-//
-
 #include "AqTypes.h"
 
 #include <iostream>
