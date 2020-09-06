@@ -21,6 +21,7 @@ TestWrapper::TestWrapper() {
 
 // method for parsing the SIMPLE source
 void TestWrapper::parse(std::string filename) {
+    FrontendManager* frontendManager = new FrontendManager();
 }
 
 // method to evaluating a query
