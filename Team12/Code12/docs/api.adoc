@@ -849,6 +849,7 @@ a conforming standard.
 * <<splitByDelimiter>>
 * <<splitByWhitespace>>
 * <<splitProgram>>
+* <<trimWhitespace>>
 
 '''
 
@@ -861,16 +862,26 @@ a conforming standard.
 '''
 
 [#splitByWhitespace]
-`*STRING_LIST* splitByWhitespace(*STRING* stringContext);`
+`*STRING_LIST* splitByWhitespace(*STRING* str);`
 
 *Description*: Returns a *STRING_LIST* of tokens after splitting
-`stringContext` by whitespaces.
+`str` by whitespaces.
 
 '''
 
 [#splitProgram]
-`*STRING_LIST* splitProgram(*STRING* simpleProgram);`
+`*STRING_LIST* splitProgram(*STRING* program);`
 
-*Description*: Returns a *STRING_LIST* after splitting SIMPLE program `simpleProgram`
+*Description*: Returns a *STRING_LIST* after splitting SIMPLE program `program`
 into strings containing the names, numbers, symbols that the Lexer can determine
 based on SIMPLE syntax. All whitespace will be truncated from the strings.
+
+[#trimWhitespace]
+`*STRING* trimWhitespace(*STRING* str);`
+
+*Description*: Given a string `str` that starts or ends with some whitespace
+characters, or both starts and ends with whitespace characters, returns a
+substring of 'str' with the starting and ending whitespaces truncated. If
+the string consists only of whitespaces, return an empty string. If the
+string does not contain any whitespaces (this includes the empty string),
+return the same string `str`.
