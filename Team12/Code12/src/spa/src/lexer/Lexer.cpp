@@ -95,6 +95,8 @@ StringList* splitByDelimiter(const String& str, const String& delimiter)
             bufferString.reset(new String());
             // reset delimiterChar
             delimiterChar = delimiter.c_str();
+            // add in the current character
+            currentString->push_back(*strChar);
 
         } else if (isMatchingDelimiter) {
             // failed to match the entire delimiter
