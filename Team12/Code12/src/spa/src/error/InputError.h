@@ -20,7 +20,7 @@ public:
     const ErrorType type;
 
     InputError(String msg, Integer lineNumber, Integer columnNumber, ErrorSource src, ErrorType errorType);
-    
+
     String getMessage();
     InputLocation* getLocation();
     ErrorSource getSource();

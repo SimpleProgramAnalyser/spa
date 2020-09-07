@@ -3,25 +3,26 @@
  * classes and methods.
  */
 
-#include "ast/AstTypes.h"
 #include "SemanticErrorsValidator.h"
 
+#include "ast/AstTypes.h"
 
 SemanticErrorsValidator::SemanticErrorsValidator(ProgramNode& progNode): programNode(progNode) {}
 
-Boolean SemanticErrorsValidator::checkProgramValidity() {
+Boolean SemanticErrorsValidator::checkProgramValidity()
+{
     List<ProcedureNode>* procedureList = &(programNode.procedureList);
     Boolean isProgramValid = true;
-    
-    //Use index 
-    // Use std::move() for unique_ptr 
-    //std::unique_ptr<ProcedureNode> myPtr = std::move(procedureList.at(i));
+
+    // Use index
+    // Use std::move() for unique_ptr
+    // std::unique_ptr<ProcedureNode> myPtr = std::move(procedureList.at(i));
     for (size_t i = 0; i < procedureList->size(); i++) {
         const StmtlstNode& stmtListNode = *(procedureList->at(i))->statementListNode;
 
         for (size_t j = 0; j < stmtListNode.statementList.size(); j++) {
             const List<StatementNode>& stmtList = stmtListNode.statementList;
-            // Terminate early 
+            // Terminate early
             if (!isProgramValid) {
                 return false;
             }
@@ -29,7 +30,7 @@ Boolean SemanticErrorsValidator::checkProgramValidity() {
             StatementNode* stmtNode = stmtList.at(j).get();
             isProgramValid = checkStatementValidity(stmtNode);
         }
-	}
+    }
     return isProgramValid;
 }
 
@@ -40,7 +41,7 @@ Boolean SemanticErrorsValidator::checkWhileStatementValidity(WhileStatementNode*
     Boolean isValid = true;
 
     if (predicate == nullptr) {
-        //TODO: throw error
+        // TODO: throw error
         return false;
     } else if (stmtListNode.statementList.size() == NULL) {
         // TODO: throw error
@@ -56,13 +57,13 @@ Boolean SemanticErrorsValidator::checkWhileStatementValidity(WhileStatementNode*
     return isValid;
 }
 
-Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStatementNode* stmtNode) 
+Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStatementNode* stmtNode)
 {
     Variable variable = stmtNode->variable;
     const Expression* expression = stmtNode->expression;
     Boolean expressionIsValid = true;
     if (variable.isConstant()) {
-        //Throw error
+        // Throw error
         return false;
     } else if (variable.varName == "") {
         // throw error
@@ -71,16 +72,15 @@ Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStat
         // throw error
         return false;
     } else {
-        
+
         expressionIsValid = checkExpressionValidity(expression);
     }
     return expressionIsValid;
 }
 
-
 Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtNode)
-{   
-    
+{
+
     const ConditionalExpression* predicate = stmtNode->predicate;
     const StmtlstNode& ifStmtListNode = *(stmtNode->ifStatementList);
     const StmtlstNode& elseStmtListNode = *(stmtNode->elseStatementList);
@@ -89,11 +89,11 @@ Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtN
     Boolean ifStmtlstIsValid = true;
     Boolean elseStmtlstIsValid = true;
 
-   if (predicate == nullptr) {
+    if (predicate == nullptr) {
         // throw error
         return false;
     }
-   
+
     if (ifStmtList.empty()) {
         // throw error
         return false;
@@ -112,7 +112,6 @@ Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtN
         StatementNode* statementNode = ifStmtList.at(i).get();
         ifStmtlstIsValid = checkStatementValidity(statementNode);
     }
-
 
     for (size_t i = 0; i < elseStmtList.size(); i++) {
         // Terminate early
@@ -186,7 +185,6 @@ Boolean SemanticErrorsValidator::checkStatementValidity(StatementNode* stmtNode)
     }
     return statementIsValid;
 }
-
 
 Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expression)
 {

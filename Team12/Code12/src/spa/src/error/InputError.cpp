@@ -12,20 +12,23 @@ InputError::InputError(String msg, Integer lineNumber, Integer columnNumber, Err
     type(std::move(errorType))
 {}
 
-String InputError::getMessage() {
+String InputError::getMessage()
+{
     return message;
 }
 
-InputLocation* InputError::getLocation() {
+InputLocation* InputError::getLocation()
+{
     InputLocation* inputLocation = new InputLocation(line, column);
     return inputLocation;
 }
 
-ErrorSource InputError::getSource() {
+ErrorSource InputError::getSource()
+{
     return source;
 }
 
-ErrorType InputError::getType() {
+ErrorType InputError::getType()
+{
     return type;
 }
-
