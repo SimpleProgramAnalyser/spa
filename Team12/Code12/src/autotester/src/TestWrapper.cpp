@@ -35,6 +35,5 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
   // each result must be a string.
   PqlManager pqlManager;
 
-  std::cout << "query: " << query << std::endl;
   FormattedQueryResult result = pqlManager.evaluateQuery(query);
 }

@@ -7,5 +7,5 @@ FormattedQueryResult::FormattedQueryResult(String result)
 
 String FormattedQueryResult::getResult()
 {
-    this->result = result;
+    return this->result;
 }

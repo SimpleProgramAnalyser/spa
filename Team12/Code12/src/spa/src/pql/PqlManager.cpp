@@ -3,5 +3,7 @@
 
 FormattedQueryResult PqlManager::evaluateQuery(String query)
 {
+    FormattedQueryResult formattedQueryResult(query);
+    return formattedQueryResult;
 }
 
