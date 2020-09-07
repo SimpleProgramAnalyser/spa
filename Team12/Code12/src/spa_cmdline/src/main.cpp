@@ -9,6 +9,12 @@
 const String LINEFEED_CHAR = "\n";
 const String SIMPLE_EXIT_STR = "*";
 const String PQL_EXIT_STR = "exit";
+const String GREET_MSG = "Welcome to our SIMPLE SPA!";
+const String BYE_MSG = "Thank you for using our SIMPLE SPA!";
+const String SIMPLE_PROGRAM_PROMPT_MSG =  "Please enter a SIMPLE source program (when done, enter a '*' on a new line):";
+const String SIMPLE_PROGRAM_PROCESSING_MSG = "Passing SIMPLE program to SPA frontend...";
+const String DONE_FEEDBACK_MSG = "Done....";
+const String PQL_QUERY_PROMPT_MSG = "Please enter a PQL query (enter 'exit' to end):";
 
 /*
  * Passes the SIMPLE source program to the SPA
@@ -68,23 +74,22 @@ String readProgram() {
 // Main entry-point to our SPA!
 int main(int argv, char **args)
 {
-    std::cout << "Welcome to our SIMPLE SPA!" << std::endl;
-    std::cout << "Please enter a SIMPLE source program (when done, enter a '*' on a new line):" << std::endl;
+    std::cout << GREET_MSG << std::endl;
+
+    std::cout << SIMPLE_PROGRAM_PROMPT_MSG << std::endl;
 
     String program = readProgram();
 
     std::cout << std::endl << std::endl;
 
-    // std::cout << "Program entered:" << std::endl << program << std::endl;
-
-    std::cout << "Passing SIMPLE program to SPA frontend..." << std::endl;
+    std::cout << SIMPLE_PROGRAM_PROCESSING_MSG << std::endl;
 
     parse(program);
 
-    std::cout << "Done..." << std::endl;
+    std::cout << DONE_FEEDBACK_MSG << std::endl;
     
     while (true) {
-        std::cout << "Please enter a PQL query (enter 'exit' to end)..." << std::endl;
+        std::cout << PQL_QUERY_PROMPT_MSG << std::endl;
 
         String declarations;
         String select;
@@ -92,7 +97,6 @@ int main(int argv, char **args)
         std::getline(std::cin, declarations);
 
         if (std::cin.fail()) {
-            std::cout << "failed here" << std::endl;
             //error
             break;
         }
@@ -100,7 +104,6 @@ int main(int argv, char **args)
         std::getline(std::cin, select);
 
         if (std::cin.fail()) {
-            std::cout << "failed here" << std::endl;
             //error
             break;
         }
@@ -114,7 +117,7 @@ int main(int argv, char **args)
         evaluate(query);
     }
 
-    std::cout << "Thank you for using our SIMPLE SPA!" << std::endl;
+    std::cout << BYE_MSG << std::endl;
 
     return 0;
 }
