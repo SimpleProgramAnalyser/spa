@@ -38,10 +38,7 @@
 
 # CMake
 cmake-build-debug/
-<<<<<<< HEAD
 
 # Windows
 build_win/
-=======
 build/
->>>>>>> master
