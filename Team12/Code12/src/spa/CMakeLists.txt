@@ -1,6 +1,8 @@
 file(GLOB srcs "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
 
+set(CMAKE_BUILD_TYPE Debug)
+
 add_library(spa
 
     # current directory
@@ -24,6 +26,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.cpp
 )
 
 # flags for debug
