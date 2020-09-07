@@ -14,9 +14,6 @@ Boolean SemanticErrorsValidator::checkProgramValidity()
     List<ProcedureNode>* procedureList = &(programNode.procedureList);
     Boolean isProgramValid = true;
 
-    // Use index
-    // Use std::move() for unique_ptr
-    // std::unique_ptr<ProcedureNode> myPtr = std::move(procedureList.at(i));
     for (size_t i = 0; i < procedureList->size(); i++) {
         const StmtlstNode& stmtListNode = *(procedureList->at(i))->statementListNode;
 
@@ -47,7 +44,6 @@ Boolean SemanticErrorsValidator::checkWhileStatementValidity(WhileStatementNode*
         // TODO: throw error
         return false;
     } else {
-        // Try
         const List<StatementNode>& stmtList = stmtListNode.statementList;
         for (size_t i = 0; i < stmtList.size(); i++) {
             StatementNode* statementNode = stmtList.at(i).get();
@@ -80,7 +76,6 @@ Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStat
 
 Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtNode)
 {
-
     const ConditionalExpression* predicate = stmtNode->predicate;
     const StmtlstNode& ifStmtListNode = *(stmtNode->ifStatementList);
     const StmtlstNode& elseStmtListNode = *(stmtNode->elseStatementList);
