@@ -7,6 +7,8 @@
  * Reference:
  * https://en.wikipedia.org/wiki/Trie
  */
+#ifndef SPA_FRONTEND_STRING_MATCHER_H_IMPL
+#define SPA_FRONTEND_STRING_MATCHER_H_IMPL
 
 #include "StringMatcher.h"
 
@@ -160,3 +162,5 @@ T Trie<T>::matchString(const String& str, T notFoundValue)
         return notFoundValue;
     }
 }
+
+#endif // SPA_FRONTEND_STRING_MATCHER_H_IMPL

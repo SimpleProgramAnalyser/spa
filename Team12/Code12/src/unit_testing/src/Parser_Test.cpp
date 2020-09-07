@@ -64,6 +64,10 @@ TEST_CASE("Parser parses keywords as identifiers correctly") {
 
 }
 
+TEST_CASE("Parser parses variables with same name as procedure") {
+
+}
+
 TEST_CASE("Syntax error, mismatched braces") {
 
 }
