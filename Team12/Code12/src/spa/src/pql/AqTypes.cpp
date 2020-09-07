@@ -1,3 +1,8 @@
+/**
+ * Implementation of the AbstractQueryType, and
+ * supporting substructures and their public methods.
+ */
+
 #include "AqTypes.h"
 
 #include <iostream>

@@ -1,3 +1,10 @@
+/**
+ * This class defines an AbstractQueryType (and necessary
+ * supporting substructures), which is used to represent
+ * a PQL query, and passed to the query evaluator, for
+ * further processing.
+ */
+
 #ifndef SPA_AQTYPES_H
 #define SPA_AQTYPES_H
 

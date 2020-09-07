@@ -1,3 +1,8 @@
+/**
+ * The main logic manager for PQL, invokes serveral components
+ * within PQL, and interfaces with UI too.
+ */
+
 #ifndef SPA_PQLMANAGER_H
 #define SPA_PQLMANAGER_H
 
