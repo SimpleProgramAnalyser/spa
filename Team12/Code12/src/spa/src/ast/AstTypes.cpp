@@ -34,7 +34,7 @@ String Constant::toString()
     return std::to_string(static_cast<int>(value));
 }
 
-Boolean Constant::isConstant() noexcept
+Boolean Constant::isConstant() const noexcept
 {
     return true;
 }
@@ -46,7 +46,7 @@ String Variable::toString()
     return static_cast<String>(varName);
 }
 
-Boolean Variable::isConstant() noexcept
+Boolean Variable::isConstant() const noexcept
 {
     return false;
 }
@@ -127,7 +127,7 @@ ArithmeticExpression::~ArithmeticExpression()
     delete rightFactor;
 }
 
-Boolean ArithmeticExpression::isArithmetic() noexcept
+Boolean ArithmeticExpression::isArithmetic() const noexcept
 {
     return true;
 }
@@ -139,7 +139,7 @@ ReferenceExpression::~ReferenceExpression()
     delete basicData;
 }
 
-Boolean ReferenceExpression::isArithmetic() noexcept
+Boolean ReferenceExpression::isArithmetic() const noexcept
 {
     return false;
 }

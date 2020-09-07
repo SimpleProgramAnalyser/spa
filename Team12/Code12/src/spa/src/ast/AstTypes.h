@@ -60,7 +60,7 @@ class BasicDataType {
 public:
     virtual ~BasicDataType() = 0;
     virtual String toString() = 0;
-    virtual Boolean isConstant() noexcept = 0;
+    virtual Boolean isConstant() const noexcept = 0;
 
 protected:
     BasicDataType() = default;
@@ -82,7 +82,7 @@ public:
     Constant& operator=(Constant&&) = delete;
 
     String toString() override;
-    Boolean isConstant() noexcept override;
+    Boolean isConstant() const noexcept override;
 };
 
 class Variable: public BasicDataType {
@@ -97,7 +97,7 @@ public:
     Variable& operator=(Variable&&) = delete;
 
     String toString() override;
-    Boolean isConstant() noexcept override;
+    Boolean isConstant() const noexcept override;
 };
 
 class ReadStatementNode: public StatementNode {
@@ -196,7 +196,7 @@ enum ExpressionOperator : char {
 class Expression {
 public:
     virtual ~Expression() = 0;
-    virtual Boolean isArithmetic() noexcept = 0;
+    virtual Boolean isArithmetic() const noexcept = 0;
 
 protected:
     Expression() = default;
@@ -219,7 +219,7 @@ public:
     ArithmeticExpression(ArithmeticExpression&&) = delete;
     ArithmeticExpression& operator=(ArithmeticExpression&&) = delete;
 
-    Boolean isArithmetic() noexcept override;
+    Boolean isArithmetic() const noexcept override;
 };
 
 class ReferenceExpression: public Expression {
@@ -233,7 +233,7 @@ public:
     ReferenceExpression(ReferenceExpression&&) = delete;
     ReferenceExpression& operator=(ReferenceExpression&&) = delete;
 
-    Boolean isArithmetic() noexcept override;
+    Boolean isArithmetic() const noexcept override;
 };
 
 enum RelationalOperator : char {

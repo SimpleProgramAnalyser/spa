@@ -187,23 +187,21 @@ Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expre
     Boolean leftChildIsValid = true;
     Boolean rightChildIsValid = true;
 
-    Expression* exp = const_cast<Expression*>(expression);
     // Expression is a ReferenceExpression & has either a Constant or a Variable
-    if (!(exp->isArithmetic())) {
-        const BasicDataType* data = dynamic_cast<ReferenceExpression*>(exp)->basicData;
-        BasicDataType* dataType = const_cast<BasicDataType*>(data);
-        if (dataType == nullptr) {
+    if (!(expression->isArithmetic())) {
+        const BasicDataType* data = dynamic_cast<const ReferenceExpression*>(expression)->basicData;
+        if (data == nullptr) {
             // TODO: throw error
             return false;
         }
-        if (dataType->isConstant()) {
-            Constant* constantObj = dynamic_cast<Constant*>(dataType);
+        if (data->isConstant()) {
+            const Constant* constantObj = dynamic_cast<const Constant*>(data);
             if (constantObj->value == NULL) {
                 // TODO: throw error
                 return false;
             }
         } else {
-            Variable* variableObj = dynamic_cast<Variable*>(dataType);
+            const Variable* variableObj = dynamic_cast<const Variable*>(data);
             if (variableObj->varName == "") {
                 // TODO: throw error
                 return false;
@@ -213,7 +211,7 @@ Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expre
     }
 
     // Expression is Arithmetic
-    ArithmeticExpression* arithmeticExp = dynamic_cast<ArithmeticExpression*>(exp);
+    const ArithmeticExpression* arithmeticExp = dynamic_cast<const ArithmeticExpression*>(expression);
     // Terminate early
     if (arithmeticExp->opr == NULL) {
         // TODO: throw error for no operand
@@ -222,7 +220,7 @@ Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expre
     }
 
     // If left child is Arithmetic, check validity
-    Expression* leftExp = const_cast<Expression*>(arithmeticExp->leftFactor);
+    const Expression* leftExp = arithmeticExp->leftFactor;
     leftChildIsValid = checkExpressionValidity(leftExp);
     // Terminate early
     if (!leftChildIsValid) {
@@ -230,7 +228,7 @@ Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expre
     }
 
     // If right child is Arithmetic, check validity
-    Expression* rightExp = const_cast<Expression*>(arithmeticExp->rightFactor);
+    const Expression* rightExp = arithmeticExp->rightFactor;
     rightChildIsValid = checkExpressionValidity(rightExp);
 
     return operandIsValid && leftChildIsValid && rightChildIsValid;
