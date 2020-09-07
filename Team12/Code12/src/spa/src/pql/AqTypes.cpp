@@ -97,3 +97,4 @@ AbstractQuery::AbstractQuery(Synonym synonym, ClauseList& clauseList)
 Synonym AbstractQuery::getSelectSynonym(){ return selectSynonym; }
 ClauseList AbstractQuery::getClauses(){ return clauses; }
 DeclarationTable AbstractQuery::getDeclarationTable(){ return declarationTable; }
+AbstractQuery::AbstractQuery() = default;

@@ -26,7 +26,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.cpp
-)
+        src/pql/PreProcessor.cpp src/pql/PreProcessor.h)
 
 # flags for debug
 target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")

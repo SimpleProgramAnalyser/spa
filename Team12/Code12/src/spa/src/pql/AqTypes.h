@@ -147,6 +147,7 @@ private:
     ClauseList clauses;
     DeclarationTable declarationTable;
 public:
+    AbstractQuery(); //dummy
     AbstractQuery(Synonym synonym, ClauseList& clauseList);
     Synonym getSelectSynonym();
     ClauseList getClauses();
