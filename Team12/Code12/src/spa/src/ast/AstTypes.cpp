@@ -14,7 +14,9 @@ StatementNode::StatementNode(StatementNumber n): stmtNum(n) {}
 
 StmtlstNode::StmtlstNode(List<StatementNode> stmtLst): statementList(std::move(stmtLst)) {}
 
-ProcedureNode::ProcedureNode(Name n, const StmtlstNode* stmtLst): procedureName(std::move(n)), statementListNode(stmtLst) {}
+ProcedureNode::ProcedureNode(Name n, const StmtlstNode* stmtLst):
+    procedureName(std::move(n)), statementListNode(stmtLst)
+{}
 
 ProcedureNode::~ProcedureNode()
 {
