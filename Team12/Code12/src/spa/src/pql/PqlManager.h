@@ -8,10 +8,11 @@
 
 #include <Types.h>
 #include "FormattedQueryResult.h"
+#include "QueryResultFormatType.h"
 
 class PqlManager {
     public:
-        FormattedQueryResult evaluateQuery(String query);
+        FormattedQueryResult executeQuery(String query, QueryResultFormatType format);
 };
 
 #endif // SPA_PQLMANAGER_H

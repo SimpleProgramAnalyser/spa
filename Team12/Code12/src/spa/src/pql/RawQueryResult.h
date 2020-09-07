@@ -4,4 +4,4 @@
 class RawQueryResult {
 };
 
-#endif // SPA_RAW_QUERY_RESULT_H
+#endif // SPA_RAWQUERYRESULT_H

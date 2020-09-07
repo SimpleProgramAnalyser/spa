@@ -3,6 +3,7 @@
 #include "FrontendManager.h"
 #include "pql/FormattedQueryResult.h"
 #include "pql/PqlManager.h"
+#include "pql/QueryResultFormatType.h"
 
 #include <iostream>
 
@@ -35,5 +36,5 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
   // each result must be a string.
   PqlManager pqlManager;
 
-  FormattedQueryResult result = pqlManager.evaluateQuery(query);
+  FormattedQueryResult result = pqlManager.executeQuery(query, AUTOTESTER_FORMAT);
 }

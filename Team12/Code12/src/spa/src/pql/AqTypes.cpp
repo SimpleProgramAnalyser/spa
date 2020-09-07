@@ -1,5 +1,5 @@
 /**
- * Implementation of the AbstractQueryType, and
+ * Implementation of the AbstractQuery, and
  * supporting substructures and their public methods.
  */
 
@@ -87,6 +87,9 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s)
     } else {
         return got->second;
     }
+}
+
+AbstractQuery::AbstractQuery() {
 }
 
 AbstractQuery::AbstractQuery(Synonym synonym, ClauseList& clauseList)

@@ -1,5 +1,5 @@
 /**
- * This class defines an AbstractQueryType (and necessary
+ * This class defines an AbstractQuery (and necessary
  * supporting substructures), which is used to represent
  * a PQL query, and passed to the query evaluator, for
  * further processing.
@@ -150,6 +150,7 @@ class AbstractQuery {
         ClauseList clauses;
         DeclarationTable declarationTable;
     public:
+        AbstractQuery(); // TODO: Please remove this, I added it just for testing only.
         AbstractQuery(Synonym synonym, ClauseList& clauseList);
         Synonym getSelectSynonym();
         ClauseList getClauses();
