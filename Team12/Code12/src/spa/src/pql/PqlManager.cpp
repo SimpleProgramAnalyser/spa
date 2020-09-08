@@ -39,14 +39,11 @@ FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatTyp
     FormattedQueryResult formattedQueryResult;
 
     if (format == AutotesterFormat) {
-        formattedQueryResult = projector
-            .formatAutotester(rawQueryResult);
+        formattedQueryResult = projector.formatAutotester(rawQueryResult);
     } else if (format == UiFormat) {
-        formattedQueryResult = projector
-            .formatUI(rawQueryResult);
+        formattedQueryResult = projector.formatUI(rawQueryResult);
     }
 
     // Finally, return the formatted result
     return formattedQueryResult;
 }
-

@@ -10,10 +10,9 @@
 #include "RawQueryResult.h"
 
 class Projector {
-    public:
-        FormattedQueryResult formatAutotester(RawQueryResult rawQueryResult);
-        FormattedQueryResult formatUI(RawQueryResult rawQueryResult);
+public:
+    FormattedQueryResult formatAutotester(RawQueryResult rawQueryResult);
+    FormattedQueryResult formatUI(RawQueryResult rawQueryResult);
 };
 
 #endif // SPA_PROJECTOR_H
-
