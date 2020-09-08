@@ -11,4 +11,3 @@ file(GLOB headers
 add_executable(unit_testing ${srcs} src/pql/TestPreProcessor.cpp)
 
 target_link_libraries(unit_testing spa)
-

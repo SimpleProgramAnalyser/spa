@@ -20,6 +20,15 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
 
+    # frontend/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+        src/Util.cpp src/Util.h
+
     # pkb
     ${pkb}
 
