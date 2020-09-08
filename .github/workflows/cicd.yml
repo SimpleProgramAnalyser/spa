@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/cache-build
-          key: ${{ runner.os }}-spa-clang-checks-build-v1
+          key: ${{ runner.os }}-spa-clang-checks-build-v2
 
       - name: Generate dependencies
         env:
