@@ -1,235 +1,182 @@
 /**
- * Implementation of Abstract Syntax Tree
+ * Implementation of Semantic Errors Validator
  * classes and methods.
  */
 
 #include "SemanticErrorsValidator.h"
 
+#include <unordered_map>
+#include <vector>
+
 #include "ast/AstTypes.h"
 
 SemanticErrorsValidator::SemanticErrorsValidator(ProgramNode& progNode): programNode(progNode) {}
 
-Boolean SemanticErrorsValidator::checkProgramValidity()
+Boolean SemanticErrorsValidator::isProgramValid()
 {
     List<ProcedureNode>* procedureList = &(programNode.procedureList);
-    Boolean isProgramValid = true;
+
+    // Check for duplicates
+    std::unordered_map<std::string, int> procedureNameSet;
+    int index = 0;
+    for (size_t i = 0; i < procedureList->size(); i++) {
+        ProcedureNode& procNode = *(procedureList->at(i));
+        Name procName = procNode.procedureName;
+
+        if (procedureNameSet.find(procName) != procedureNameSet.end()) {
+            // String exists in set,it is a duplicate
+            // Throw error
+
+            return false;
+        }
+        index += 1;
+        procedureNameSet.insert({procName, index});
+    }
+
+    // Fill up adj list
+    size_t numberOfProcs = procedureList->size();
+    std::vector<std::vector<int>> adjList(numberOfProcs);
 
     for (size_t i = 0; i < procedureList->size(); i++) {
-        const StmtlstNode& stmtListNode = *(procedureList->at(i))->statementListNode;
+        ProcedureNode& procNode = *(procedureList->at(i));
+        Name procName = procNode.procedureName;
+        int procIndex = getProcNameIndex(procedureNameSet, procName);
+        const StmtlstNode& stmtListNode = *procNode.statementListNode;
 
         for (size_t j = 0; j < stmtListNode.statementList.size(); j++) {
             const List<StatementNode>& stmtList = stmtListNode.statementList;
-            // Terminate early
-            if (!isProgramValid) {
-                return false;
-            }
-
             StatementNode* stmtNode = stmtList.at(j).get();
-            isProgramValid = checkStatementValidity(stmtNode);
+            populateCallGraphWithStatementNode(stmtNode, procedureNameSet, adjList, procIndex);
         }
     }
-    return isProgramValid;
+
+    return !isCyclic(adjList, numberOfProcs);
 }
 
-Boolean SemanticErrorsValidator::checkWhileStatementValidity(WhileStatementNode* stmtNode)
+Void SemanticErrorsValidator::populateCallGraphWithStatementNode(StatementNode* stmtNode,
+                                                                 std::unordered_map<std::string, int>& procedureNameSet,
+                                                                 std::vector<std::vector<int>>& adjList,
+                                                                 int currProcNameIndex)
 {
-    const ConditionalExpression* predicate = stmtNode->predicate;
-    const StmtlstNode& stmtListNode = *(stmtNode->statementList);
-    Boolean isValid = true;
-
-    if (predicate == nullptr) {
-        // TODO: throw error
-        return false;
-    } else if (stmtListNode.statementList.size() == NULL) {
-        // TODO: throw error
-        return false;
-    } else {
-        const List<StatementNode>& stmtList = stmtListNode.statementList;
-        for (size_t i = 0; i < stmtList.size(); i++) {
-            StatementNode* statementNode = stmtList.at(i).get();
-            isValid = checkStatementValidity(statementNode);
-        }
+    StatementType stmtType = stmtNode->getStatementType();
+    switch (stmtType) {
+    case WhileStatement:
+        populateCallGraphWithWhileStatement(dynamic_cast<WhileStatementNode*>(stmtNode), procedureNameSet, adjList,
+                                            currProcNameIndex);
+        break;
+    case CallStatement:
+        addCallEdge(dynamic_cast<CallStatementNode*>(stmtNode), procedureNameSet, adjList, currProcNameIndex);
+        break;
+    case IfStatement:
+        populateCallGraphWithIfStatement(dynamic_cast<IfStatementNode*>(stmtNode), procedureNameSet, adjList,
+                                         currProcNameIndex);
+        break;
+    default:
+        break;
     }
-    return isValid;
 }
 
-Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStatementNode* stmtNode)
+Void SemanticErrorsValidator::populateCallGraphWithIfStatement(IfStatementNode* stmtNode,
+                                                               std::unordered_map<std::string, int>& procedureNameSet,
+                                                               std::vector<std::vector<int>>& adjList,
+                                                               int currProcNameIndex)
 {
-    Variable variable = stmtNode->variable;
-    const Expression* expression = stmtNode->expression;
-    Boolean expressionIsValid = true;
-    if (variable.isConstant()) {
-        // Throw error
-        return false;
-    } else if (variable.varName == "") {
-        // throw error
-        return false;
-    } else if (expression == nullptr) {
-        // throw error
-        return false;
-    } else {
-
-        expressionIsValid = checkExpressionValidity(expression);
-    }
-    return expressionIsValid;
-}
-
-Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtNode)
-{
-    const ConditionalExpression* predicate = stmtNode->predicate;
     const StmtlstNode& ifStmtListNode = *(stmtNode->ifStatementList);
     const StmtlstNode& elseStmtListNode = *(stmtNode->elseStatementList);
     const List<StatementNode>& ifStmtList = ifStmtListNode.statementList;
     const List<StatementNode>& elseStmtList = elseStmtListNode.statementList;
-    Boolean ifStmtlstIsValid = true;
-    Boolean elseStmtlstIsValid = true;
-
-    if (predicate == nullptr) {
-        // throw error
-        return false;
-    }
-
-    if (ifStmtList.empty()) {
-        // throw error
-        return false;
-    }
-    if (elseStmtList.empty()) {
-        // throw error
-        return false;
-    }
 
     for (size_t i = 0; i < ifStmtList.size(); i++) {
-        // Terminate early
-        if (!ifStmtlstIsValid) {
-            return false;
-        }
-
         StatementNode* statementNode = ifStmtList.at(i).get();
-        ifStmtlstIsValid = checkStatementValidity(statementNode);
+        populateCallGraphWithStatementNode(statementNode, procedureNameSet, adjList, currProcNameIndex);
     }
 
     for (size_t i = 0; i < elseStmtList.size(); i++) {
-        // Terminate early
-        if (!elseStmtlstIsValid) {
-            return false;
-        }
         StatementNode* statementNode = elseStmtList.at(i).get();
-        elseStmtlstIsValid = checkStatementValidity(statementNode);
+        populateCallGraphWithStatementNode(statementNode, procedureNameSet, adjList, currProcNameIndex);
     }
-    return ifStmtlstIsValid && elseStmtlstIsValid;
 }
 
-Boolean SemanticErrorsValidator::checkCallStatementValidity(CallStatementNode* stmtNode)
+Void SemanticErrorsValidator::populateCallGraphWithWhileStatement(
+    WhileStatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet,
+    std::vector<std::vector<int>>& adjList, int currProcNameIndex)
+{
+    const ConditionalExpression* predicate = stmtNode->predicate;
+    const StmtlstNode& stmtListNode = *(stmtNode->statementList);
+
+    if (predicate == nullptr) {
+        // TODO: throw error
+    } else if (stmtListNode.statementList.size() == 0) {
+        // TODO: throw error
+    } else {
+        const List<StatementNode>& stmtList = stmtListNode.statementList;
+        for (size_t i = 0; i < stmtList.size(); i++) {
+            StatementNode* statementNode = stmtList.at(i).get();
+            populateCallGraphWithStatementNode(statementNode, procedureNameSet, adjList, currProcNameIndex);
+        }
+    }
+}
+
+Void SemanticErrorsValidator::addCallEdge(CallStatementNode* stmtNode,
+                                          std::unordered_map<std::string, int>& procedureNameSet,
+                                          std::vector<std::vector<int>>& adjList, int currProcNameIndex)
 {
     Name procedureName = stmtNode->procedureName;
-
     if (procedureName == "") {
         // Throw error
-        return false;
     }
-    return true;
+
+    int procIndex = getProcNameIndex(procedureNameSet, procedureName);
+
+    // Add call procedureName in graph
+    adjList[currProcNameIndex].push_back(procIndex);
 }
 
-Boolean SemanticErrorsValidator::checkReadStatementValidity(ReadStatementNode* stmtNode)
+int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, int>& procedureNameSet,
+                                              std::string procName)
 {
-    Name variable = stmtNode->var.varName;
-    if (variable == "") {
-        // Throw error
-        return false;
-    }
-    return true;
+    std::unordered_map<std::string, int>::const_iterator procedureIndexPair = procedureNameSet.find(procName);
+    int procIndex = procedureIndexPair->second;
+    return procIndex;
 }
 
-Boolean SemanticErrorsValidator::checkPrintStatementValidity(PrintStatementNode* stmtNode)
+bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack,
+                                           std::vector<std::vector<int>>& adjList)
 {
-    Name variable = stmtNode->var.varName;
-    if (variable == "") {
-        // Throw error
-        return false;
-    }
-    return true;
-}
+    if (visited[v] == false) {
+        // Mark the current node as visited and part of recursion stack
+        visited[v] = true;
+        recStack[v] = true;
 
-Boolean SemanticErrorsValidator::checkStatementValidity(StatementNode* stmtNode)
-{
-    Boolean statementIsValid = true;
-    StatementType stmtType = stmtNode->getStatementType();
-    switch (stmtType) {
-    case WhileStatement:
-        statementIsValid = checkWhileStatementValidity(dynamic_cast<WhileStatementNode*>(stmtNode));
-        break;
-    case AssignmentStatement:
-        statementIsValid = checkAssignmentStatementValidity(dynamic_cast<AssignmentStatementNode*>(stmtNode));
-        break;
-    case CallStatement:
-        statementIsValid = checkCallStatementValidity(dynamic_cast<CallStatementNode*>(stmtNode));
-        break;
-    case IfStatement:
-        statementIsValid = checkIfStatementValidity(dynamic_cast<IfStatementNode*>(stmtNode));
-        break;
-    case ReadStatement:
-        statementIsValid = checkReadStatementValidity(dynamic_cast<ReadStatementNode*>(stmtNode));
-        break;
-    case PrintStatement:
-        statementIsValid = checkPrintStatementValidity(dynamic_cast<PrintStatementNode*>(stmtNode));
-        break;
-    // Should not reach this case
-    default:
-        statementIsValid = false;
-        break;
-    }
-    return statementIsValid;
-}
-
-Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expression)
-{
-    Boolean operandIsValid = true;
-    Boolean leftChildIsValid = true;
-    Boolean rightChildIsValid = true;
-
-    // Expression is a ReferenceExpression & has either a Constant or a Variable
-    if (!(expression->isArithmetic())) {
-        const BasicDataType* data = dynamic_cast<const ReferenceExpression*>(expression)->basicData;
-        if (data == nullptr) {
-            // TODO: throw error
-            return false;
-        }
-        if (data->isConstant()) {
-            const Constant* constantObj = dynamic_cast<const Constant*>(data);
-            if (constantObj->value == NULL) {
-                // TODO: throw error
-                return false;
-            }
-        } else {
-            const Variable* variableObj = dynamic_cast<const Variable*>(data);
-            if (variableObj->varName == "") {
-                // TODO: throw error
-                return false;
+        // Recur for all the vertices adjacent to this vertex
+        std::vector<int>::iterator i;
+        for (i = adjList[v].begin(); i < adjList[v].end(); i++) {
+            if (!visited[*i] && isCyclicUtil(*i, visited, recStack, adjList)) {
+                return true;
+            } else if (recStack[*i]) {
+                return true;
             }
         }
-        return true;
+    }
+    recStack[v] = false; // remove the vertex from recursion stack
+    return false;
+}
+
+bool SemanticErrorsValidator::isCyclic(std::vector<std::vector<int>>& adjList, size_t procListSize)
+{
+    // Mark all the vertices as not visited and not part of recursion stack
+    bool* visited = new bool[procListSize];
+    bool* recStack = new bool[procListSize];
+    for (size_t i = 0; i < procListSize; i++) {
+        visited[i] = false;
+        recStack[i] = false;
     }
 
-    // Expression is Arithmetic
-    const ArithmeticExpression* arithmeticExp = dynamic_cast<const ArithmeticExpression*>(expression);
-    // Terminate early
-    if (arithmeticExp->opr == NULL) {
-        // TODO: throw error for no operand
-        operandIsValid = false;
-        return false;
-    }
-
-    // If left child is Arithmetic, check validity
-    const Expression* leftExp = arithmeticExp->leftFactor;
-    leftChildIsValid = checkExpressionValidity(leftExp);
-    // Terminate early
-    if (!leftChildIsValid) {
-        return false;
-    }
-
-    // If right child is Arithmetic, check validity
-    const Expression* rightExp = arithmeticExp->rightFactor;
-    rightChildIsValid = checkExpressionValidity(rightExp);
-
-    return operandIsValid && leftChildIsValid && rightChildIsValid;
+    // Call the recursive helper function to detect cycles
+    for (size_t i = 0; i < procListSize; i++)
+        if (isCyclicUtil(i, visited, recStack, adjList)) {
+            // throw error
+            return true;
+        }
+    return false;
 }

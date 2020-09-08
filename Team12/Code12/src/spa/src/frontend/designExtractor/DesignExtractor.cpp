@@ -14,7 +14,7 @@ using namespace std;
 Void extractDesign(ProgramNode& rootNode)
 {
     SemanticErrorsValidator seValidator(rootNode);
-    Boolean isSemanticallyValid = seValidator.checkProgramValidity();
+    Boolean isSemanticallyValid = seValidator.isProgramValid();
 
     if (!isSemanticallyValid) {
         // Terminate Program

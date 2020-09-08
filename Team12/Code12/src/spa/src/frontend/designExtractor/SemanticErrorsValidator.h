@@ -10,6 +10,8 @@
 #define SPA_FRONTEND_SEMANTIC_ERRORS_VALIDATOR_H
 
 #include <utility>
+#include <unordered_map>
+
 
 #include "ast/AstTypes.h"
 #include "error/InputError.h"
@@ -19,16 +21,24 @@ public:
     ProgramNode& programNode;
 
     SemanticErrorsValidator(ProgramNode& progNode);
-    Boolean checkProgramValidity();
-    Boolean checkWhileStatementValidity(WhileStatementNode* stmtNode);
-    Boolean checkAssignmentStatementValidity(AssignmentStatementNode* stmtNode);
-    Boolean checkIfStatementValidity(IfStatementNode* stmtNode);
-    Boolean checkCallStatementValidity(CallStatementNode* stmtNode);
-    Boolean checkReadStatementValidity(ReadStatementNode* stmtNode);
-    Boolean checkPrintStatementValidity(PrintStatementNode* stmtNode);
+    Boolean isProgramValid();
 
-    Boolean checkStatementValidity(StatementNode* stmtNode);
-    Boolean checkExpressionValidity(const Expression* expression);
+    Void populateCallGraphWithStatementNode(StatementNode* stmtNode,
+                                            std::unordered_map<std::string, int>& procedureNameSet,
+                                            std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+    Void populateCallGraphWithIfStatement(IfStatementNode* stmtNode,
+                                          std::unordered_map<std::string, int>& procedureNameSet,
+                                          std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+    Void populateCallGraphWithWhileStatement(WhileStatementNode* stmtNode,
+                                             std::unordered_map<std::string, int>& procedureNameSet,
+                                             std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+    Void addCallEdge(CallStatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet,
+                     std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+    int getProcNameIndex(std::unordered_map<std::string, int>& procedureNameSet, std::string procName);
+
+    bool isCyclic(std::vector<std::vector<int>>& adjList, size_t procListSize);
+
+    bool isCyclicUtil(int v, bool visited[], bool* recStack, std::vector<std::vector<int>>& adjList);
 };
 
 #endif // SPA_FRONTEND_SEMANTIC_ERROS_VALIDATOR_H

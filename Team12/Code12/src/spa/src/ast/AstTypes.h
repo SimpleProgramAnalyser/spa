@@ -14,7 +14,7 @@ typedef Integer StatementNumber;
 
 class StatementNode {
 public:
-    virtual ~StatementNode() = 0;
+    virtual ~StatementNode() = default;
     StatementNode(const StatementNode&) = delete;
     StatementNode& operator=(const StatementNode&) = delete;
     StatementNode(StatementNode&&) = delete;
@@ -58,7 +58,7 @@ public:
 
 class BasicDataType {
 public:
-    virtual ~BasicDataType() = 0;
+    virtual ~BasicDataType() = default;
     virtual String toString() = 0;
     virtual Boolean isConstant() const noexcept = 0;
 
@@ -130,7 +130,7 @@ enum ConditionalExpressionType {
 
 class ConditionalExpression {
 public:
-    virtual ~ConditionalExpression() = 0;
+    virtual ~ConditionalExpression() = default;
     virtual ConditionalExpressionType getConditionalType() noexcept = 0;
 
 protected:
@@ -195,7 +195,7 @@ enum ExpressionOperator : char {
 
 class Expression {
 public:
-    virtual ~Expression() = 0;
+    virtual ~Expression() = default;
     virtual Boolean isArithmetic() const noexcept = 0;
 
 protected:
