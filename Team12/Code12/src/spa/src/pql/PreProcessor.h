@@ -10,11 +10,9 @@
 class PreProcessor {
 public:
     AbstractQuery processQuery(String query);
-//private:
-    static void dummyErrorLog(String errMessage);
-    static DeclarationTable& processDeclarations(String declarations);
-    static StringList* splitByFirstWhitespace(String synonymAndClausesString);
-    static ClauseList& processClauses(String clausesString);
+private:
+    static DeclarationTable processDeclarations(String declarations);
+    static ClauseVector processClauses(String clausesString);
 
 };
 

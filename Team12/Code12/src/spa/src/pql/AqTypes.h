@@ -8,23 +8,25 @@
 #include <Types.h>
 
 enum DesignEntityType {
-    STMT_TYPE = 0,
-    READ_TYPE = 1,
-    PRINT_TYPE = 2,
-    CALL_TYPE = 4,
-    WHILE_TYPE = 8,
-    IF_TYPE = 16,
-    ASSIGN_TYPE = 32,
-    VARIABLE_TYPE = 64,
-    CONSTANT_TYPE = 128,
-    PROCEDURE_TYPE = 256
+    StatementType = 0,
+    ReadType = 1,
+    PrintType = 2,
+    CallType = 4,
+    WhileType = 8,
+    IfType = 16,
+    AssignType = 32,
+    VariableType = 64,
+    ConstantType = 128,
+    ProcedureType = 256,
+    NonExistentType = 512
 };
 
 class DesignEntity {
 private:
     DesignEntityType type;
 public:
-    explicit DesignEntity(DesignEntityType type);
+    explicit DesignEntity(DesignEntityType designEntityType);
+    explicit DesignEntity(const String& stringType);
     DesignEntityType getType();
 };
 
@@ -134,24 +136,36 @@ public:
 class DeclarationTable {
 private:
     std::unordered_map<Synonym, DesignEntity> table;
+    bool isInvalid = false;
 public:
     void addDeclaration(Synonym s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s);
+    void setInvalidDeclaration();
+    Boolean hasInvalidDeclaration();
+    Boolean hasSynonym(Synonym s);
 };
 
-typedef std::vector<Clause> ClauseList; // TODO: Adding unique_ptr causes compilation error
+typedef std::vector<Clause> ClauseVector; // TODO: Adding unique_ptr causes compilation error
 
 class AbstractQuery {
 private:
     Synonym selectSynonym;
-    ClauseList clauses;
+    ClauseVector clauses;
     DeclarationTable declarationTable;
+    Boolean hasError;
 public:
     AbstractQuery(); //dummy
-    AbstractQuery(Synonym synonym, ClauseList& clauseList);
+    AbstractQuery(Synonym synonym, ClauseVector& clauseList);
     Synonym getSelectSynonym();
-    ClauseList getClauses();
+    ClauseVector getClauses();
     DeclarationTable getDeclarationTable();
+    void setToInvalid();
+    Boolean isInvalid();
+    static AbstractQuery invalidAbstractQuery();
 };
+
+// Utils
+
+Boolean isValidSynonym(String s);
 
 #endif // SPA_AQTYPES_H

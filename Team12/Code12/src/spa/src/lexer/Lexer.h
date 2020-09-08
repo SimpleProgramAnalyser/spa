@@ -7,6 +7,7 @@
 
 #include "Types.h"
 
+Boolean isWhitespace(const char* c) noexcept;
 StringList* splitByWhitespace(const String& programFragment) noexcept;
 StringList* splitByDelimiter(const String& str, const String& delimiter);
 StringList* splitProgram(const String& program) noexcept;

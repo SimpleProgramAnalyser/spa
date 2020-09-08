@@ -3,90 +3,125 @@
 //
 
 #include "PreProcessor.h"
-#include "../lexer/Lexer.h"
+
 #include <iostream>
 
-const std::string WHITESPACE = " \n\r\t\f\v";
+#include "../lexer/Lexer.h"
 
+StringVector splitByFirstConsecutiveWhitespace(String str);
 
-
-std::string ltrim(const std::string& s)
+AbstractQuery PreProcessor::processQuery(String query)
 {
-    size_t start = s.find_first_not_of(WHITESPACE);
-    return (start == std::string::npos) ? "" : s.substr(start);
-}
-
-std::string rtrim(const std::string& s)
-{
-    size_t end = s.find_last_not_of(WHITESPACE);
-    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
-}
-
-std::string trim(const std::string& s)
-{
-    return rtrim(ltrim(s));
-}
-
-
-AbstractQuery PreProcessor::processQuery(String query) {
-
     // Split between declarations and clauses
     StringList* splitBySelectList = splitByDelimiter(query, "Select");
-    String declarationString = *(splitBySelectList->at(0));
-    String synonymAndClausesString = *(splitBySelectList->at(1));
+    // Validate both strings exists.
+    if (splitBySelectList->size() != 2) {
+        return AbstractQuery::invalidAbstractQuery();
+    }
+    String declarationString = *(splitBySelectList->at(0)); // TODO: trim
+    String synonymAndClausesString = *(splitBySelectList->at(1)); // TODO: trim
 
     // Process declarations into declaration table
-    DeclarationTable& declarationTable = processDeclarations(declarationString);
+    DeclarationTable declarationTable = processDeclarations(declarationString);
+    if (declarationTable.hasInvalidDeclaration()) {
+        return AbstractQuery::invalidAbstractQuery();
+    }
 
-    // Process select synonym and clauses
+    // Extract select synonym
+    StringVector synonymAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClausesString);
+    Synonym selectSynonym = synonymAndClausesVector.at(0);
+    if (!isValidSynonym(selectSynonym)) {
+        return AbstractQuery::invalidAbstractQuery();
+    }
 
+    // Process clauses into ClauseList
 
     // Encapsulate into AbstractQuery and return
-
-//    for (int i = 0; i < splitBySelectList->size(); i++) {
-//        std::cout << *(splitBySelectList->at(i)) << "\n";
-//    }
 
     AbstractQuery aq;
     return aq;
 }
 
-void PreProcessor::dummyErrorLog(String errMessage)
+ClauseVector PreProcessor::processClauses(String clausesString) {}
+
+DeclarationTable PreProcessor::processDeclarations(String declarationsString)
 {
-    std::cout << errMessage << "\n";
-}
+    DeclarationTable declarationTable;
 
-DeclarationTable& PreProcessor::processDeclarations(String declarationsString)
-{
-    // Split by semicolon
-    StringList* declarationsList = splitByDelimiter(declarationsString, ";");
-    for (int i = 0; i < declarationsList->size(); i++) {
-        // Trim
-        String trimmedString = trim(*(declarationsList->at(i)));
+    StringList* splitByWhiteSpacesList = splitByWhitespace(declarationsString);
+    DesignEntity* currentDesignEntityPtr;
+    bool hasCurrentDesignEntity = false;
 
-        // Split by first whitespace
+    for (auto& token : *splitByWhiteSpacesList) {
+        if (!hasCurrentDesignEntity) {
+            currentDesignEntityPtr = new DesignEntity(*token);
+            if (currentDesignEntityPtr->getType() == NonExistentType) {
+                declarationTable.setInvalidDeclaration();
+                return declarationTable;
+            }
 
-        // Split by comma
-//        StringList* splitByCommaList = splitByDelimiter(*(declarationsList->at(i)), ",");
-//        for (int i = 0; i < splitByCommaList->size(); i++) {
-//            std::cout << *(splitByCommaList->at(i)) << "\n";
-//        }
+            hasCurrentDesignEntity = true;
+        } else {
+            char lastChar = token->at(token->size() - 1);
+            if (lastChar == ';' || lastChar == ',') {
+                String synonymToken = (*token).substr(0, token->size() - 1);
 
+                if (!isValidSynonym(synonymToken) || declarationTable.hasSynonym(synonymToken)) {
+                    declarationTable.setInvalidDeclaration();
+                    return declarationTable;
+                }
 
+                declarationTable.addDeclaration(synonymToken, *currentDesignEntityPtr);
+
+                if (lastChar == ';') {
+                    hasCurrentDesignEntity = false;
+                }
+
+            } else {
+                declarationTable.setInvalidDeclaration();
+                return declarationTable;
+            }
+        }
     }
 
-    DeclarationTable declarationTable;
     return declarationTable;
-    // Iterate thru each declaration, create Declaration, store in table
 }
 
-StringList* PreProcessor::splitByFirstWhitespace(String synonymAndClausesString)
+// Utils
+
+/**
+ * Splits up the given string by the first
+ * consecutive whitespace, into two substrings.
+ *
+ * @param str String to be split
+ * @return vector of 2 strings
+ */
+StringVector splitByFirstConsecutiveWhitespace(String str)
 {
+    const char* currentChar = str.c_str();
+    String* currentToken = new String();
+    StringVector splitByFirstWhitespaceVector;
 
-}
+    // Find first whitespace
+    while (!isWhitespace(currentChar)) {
+        currentToken->push_back(*currentChar);
+        currentChar++;
+    }
 
-ClauseList& PreProcessor::processClauses(String clausesString)
-{
+    splitByFirstWhitespaceVector.push_back(*currentToken);
+    currentToken = new String();
 
+    // skip past all whitespaces
+    while (isWhitespace(currentChar)) {
+        currentChar++;
+    }
 
+    while (*currentChar != '\0') {
+        currentToken->push_back(*currentChar);
+        currentChar++;
+    }
+
+    splitByFirstWhitespaceVector.push_back(*currentToken);
+
+    return splitByFirstWhitespaceVector;
 }

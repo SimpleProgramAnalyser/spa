@@ -846,9 +846,18 @@ a conforming standard.
 
 === Lexer API
 
+* <<isWhitespace>>
 * <<splitByDelimiter>>
 * <<splitByWhitespace>>
 * <<splitProgram>>
+
+'''
+
+[#isWhitespace]
+`*BOOLEAN* isWhitespace(*CHAR** c);`
+
+*Desrciption*: Returns true if *CHAR* `c` is a whitespace character,
+and vice versa.
 
 '''
 
