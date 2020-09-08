@@ -53,6 +53,10 @@ semantic errors, a SEMANTIC_ERROR will be thrown. +
 *Overview*: The AST API describes the methods available to construct an Abstract Syntax Tree
 in the Simple Program Analyser (SPA).
 
+==== Nodes API
+*Overview*: The Nodes API describes the methods available to create Node representations
+in the Simple Program Analyser (SPA).
+
 * <<createAssignNode>>
 * <<createCallNode>>
 * <<createIfNode>>
@@ -139,7 +143,7 @@ and `sn` as its statement number.
 *Description*: Creates and returns an *WHILE_STATEMENT_NODE* with the condition `predicate`,
 `statementList` as its children, and `sn` as its statement number.
 
-=== Expressions API
+==== Expressions API
 *Overview*: The Expressions API describes the methods available to create Expression representations
 in the Simple Program Analyser (SPA).
 
@@ -152,6 +156,7 @@ in the Simple Program Analyser (SPA).
 * <<createLteExpr>>
 * <<createMinusExpr>>
 * <<createModExpr>>
+* <<createNeqExpr>>
 * <<createNotExpr>>
 * <<createOrExpr>>
 * <<createPlusExpr>>
@@ -162,7 +167,7 @@ in the Simple Program Analyser (SPA).
 `*AND_EXPRESSION* createAndExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
 *Description*: Creates and returns an *AND_EXPRESSION* where the truthy value depends on
-both `leftExpr` and the `rightExpr`.
+both `leftExpr` and the `rightExpr`. This corresponds to the "```&&```" operation in SIMPLE.
 
 '''
 
@@ -170,15 +175,15 @@ both `leftExpr` and the `rightExpr`.
 `*ARITHMETIC_EXPRESSION* createDivExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
 *Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is divided
-by the `rightExpr`.
+by the `rightExpr`. This corresponds to the "```/```" operation in SIMPLE.
 
 '''
 
 [#createEqExpr]
-`*RELATIONAL_EXPRESSION* createGtExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
+`*RELATIONAL_EXPRESSION* createEqExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
 *Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is equal
-to the `rightRelFactor`.
+to the `rightRelFactor`. This corresponds to the "```==```" operation in SIMPLE.
 
 '''
 
@@ -186,7 +191,7 @@ to the `rightRelFactor`.
 `*RELATIONAL_EXPRESSION* createGtExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
 *Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is greater
-than the `rightRelFactor`.
+than the `rightRelFactor`. This corresponds to the "```>```" operation in SIMPLE.
 
 '''
 
@@ -194,7 +199,7 @@ than the `rightRelFactor`.
 `*RELATIONAL_EXPRESSION* createGteExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
 *Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is greater
-than or equals to the `rightRelFactor`.
+than or equals to the `rightRelFactor`.  This corresponds to the "```>=```" operation in SIMPLE.
 
 '''
 
@@ -202,7 +207,7 @@ than or equals to the `rightRelFactor`.
 `*RELATIONAL_EXPRESSION* createLtExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
 *Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is lesser
-than the `rightRelFactor`.
+than the `rightRelFactor`.  This corresponds to the "```<```" operation in SIMPLE.
 
 '''
 
@@ -210,7 +215,7 @@ than the `rightRelFactor`.
 *`RELATIONAL_EXPRESSION* createLteExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
 *Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is lesser
-than or equals to the `rightRelFactor`.
+than or equals to the `rightRelFactor`.  This corresponds to the "```&lt;=```" operation in SIMPLE.
 
 '''
 
@@ -218,7 +223,7 @@ than or equals to the `rightRelFactor`.
 `*ARITHMETIC_EXPRESSION* createMinusExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
 *Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is divided
-by the `rightExpr`.
+by the `rightExpr`.  This corresponds to the "```-```" operation in SIMPLE.
 
 '''
 
@@ -226,7 +231,15 @@ by the `rightExpr`.
 `*ARITHMETIC_EXPRESSION* createModExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
 *Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is mod
-by the `rightExpr`.
+by the `rightExpr`. This corresponds to the "```%```" operation in SIMPLE.
+
+'''
+
+[#createNeqExpr]
+`*RELATIONAL_EXPRESSION* createNeqExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
+
+*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is not
+equal to the `rightRelFactor`. This corresponds to the "```!=```" operation in SIMPLE.
 
 '''
 
@@ -234,6 +247,7 @@ by the `rightExpr`.
 `*NOT_EXPRESSION* createNotExpr(*CONDITIONAL_EXPRESSION* expr);`
 
 *Description*: Creates and returns an *NOT_EXPRESSION* with the negated value of `expr`.
+This corresponds to the "```!```" operation in SIMPLE.
 
 '''
 
@@ -241,7 +255,7 @@ by the `rightExpr`.
 `*OR_EXPRESSION* createOrExpr(*CONDITIONAL_EXPRESSION* leftExpr, *CONDITIONAL_EXPRESSION* rightExpr);`
 
 *Description*: Creates and returns an *OR_EXPRESSION* where the truthy value depends on
-either `leftExpr` or the `rightExpr`.
+either `leftExpr` or the `rightExpr`. This corresponds to the "```||```" operation in SIMPLE.
 
 '''
 
@@ -249,14 +263,20 @@ either `leftExpr` or the `rightExpr`.
 `*ARITHMETIC_EXPRESSION* createPlusExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
 *Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is added
-to the `rightExpr`.
+to the `rightExpr`. This corresponds to the "```+```" operation in SIMPLE.
 
 '''
 
 [#createRefExpr]
-`*REFERENCE_EXPRESSION* createRefExpr(*BASIC_DATA_TYPE* basicData);`
+`*REFERENCE_EXPRESSION* createRefExpr(*STRING* variable);`
 
-*Description*: Creates and returns a *REFERENCE_EXPRESSION* based on `basicData`.
+`*REFERENCE_EXPRESSION* createRefExpr(*INTEGER* constant);`
+
+*Description*: Creates and returns a *REFERENCE_EXPRESSION* based on `variable`
+or `constant`. Reference expressions can be either a variable or a constant.
+To create a reference expression based on a variable, pass the variable name
+as a `STRING`, and to create a reference expression based
+on a constant, pass the constant value as an `Integer`.
 
 '''
 
@@ -264,7 +284,22 @@ to the `rightExpr`.
 `*ARITHMETIC_EXPRESSION* createTimesExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
 *Description*: Creates and returns an  *ARITHMETIC_EXPRESSION* where the `leftExpr` is multiplied
-with the `rightExpr`.
+with the `rightExpr`. This corresponds to the "```*```" operation in SIMPLE.
+
+==== AST Helper API
+*Overview*: The AST Helper API describes useful methods that are
+often used when dealing with an Abstract Syntax Tree.
+
+* <<isContainerStatement>>
+
+[#isContainerStatement]
+`*BOOLEAN* isContainerStatement(*STATEMENT_TYPE* stmtType);`
+
+*Description*: Returns true if `stmtType` corresponds to an "if" statement
+or a "while" statement in SIMPLE. These statements contain other statements
+of their own, hence they are also known as "container statements".
+
+'''
 
 
 === Statements Table API

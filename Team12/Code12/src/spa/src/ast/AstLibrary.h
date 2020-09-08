@@ -38,4 +38,7 @@ ArithmeticExpression* createModExpr(Expression* leftExpr, Expression* rightExpr)
 ReferenceExpression* createRefExpr(String variable);
 ReferenceExpression* createRefExpr(Integer constant);
 
+// Other useful functions
+inline Boolean isContainerStatement(StatementType stmtType);
+
 #endif // SPA_AST_LIBRARY_H
