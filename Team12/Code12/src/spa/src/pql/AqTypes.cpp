@@ -1,6 +1,7 @@
-//
-// Created by Chester Sim on 4/9/20.
-//
+/**
+ * Implementation of the AbstractQuery, and
+ * supporting substructures and their public methods.
+ */
 
 #include "AqTypes.h"
 
@@ -39,14 +40,20 @@ DesignEntity::DesignEntity(const String& stringType) {
     }
 }
 
-DesignEntityType DesignEntity::getType() { return type; }
+DesignEntityType DesignEntity::getType()
+{
+    return type;
+}
 
 Clause::Clause(ClauseType clauseType)
 {
     type = clauseType;
 }
 
-ClauseType Clause::getType() { return type; }
+ClauseType Clause::getType()
+{
+    return type;
+}
 
 Reference::Reference(ReferenceType refType, ReferenceValue& refValue)
 {
@@ -54,8 +61,15 @@ Reference::Reference(ReferenceType refType, ReferenceValue& refValue)
     referenceValue = refValue;
 }
 
-ReferenceType Reference::getReferenceType(){ return referenceType; }
-ReferenceValue Reference::getValue(){ return referenceValue; }
+ReferenceType Reference::getReferenceType()
+{
+    return referenceType;
+}
+
+ReferenceValue Reference::getValue()
+{
+    return referenceValue;
+}
 
 EntityReference::EntityReference(ReferenceValue& refValue)
     : Reference(ENTITY_REF, refValue)
@@ -71,15 +85,27 @@ Relationship::Relationship(RelationshipReference relationshipRef, Reference left
     relationshipReference = relationshipRef;
 }
 
-RelationshipReference Relationship::getRelationship(){ return relationshipReference; }
-Reference Relationship::getLeftRef(){ return leftReference; }
-Reference Relationship::getRightRef(){ return rightReference; }
+RelationshipReference Relationship::getRelationship()
+{
+    return relationshipReference;
+}
 
-SuchThatClause::SuchThatClause(Relationship& r)
-    : Clause(SUCH_THAT_CLAUSE), relationship{ r }
-{}
+Reference Relationship::getLeftRef()
+{
+    return leftReference;
+}
 
-Relationship SuchThatClause::getRelationship(){ return relationship; }
+Reference Relationship::getRightRef()
+{
+    return rightReference;
+}
+
+SuchThatClause::SuchThatClause(Relationship& r): Clause(SUCH_THAT_CLAUSE), relationship{r} {}
+
+Relationship SuchThatClause::getRelationship()
+{
+    return relationship;
+}
 
 ExpressionSpec::ExpressionSpec(String expr, bool any, bool beforeOrAfter)
 {
@@ -88,21 +114,43 @@ ExpressionSpec::ExpressionSpec(String expr, bool any, bool beforeOrAfter)
     hasBeforeOrAfter = beforeOrAfter;
 }
 
-bool ExpressionSpec::checkIsAny(){ return isAny; }
-bool ExpressionSpec::checkHasBeforeOrAfter(){ return hasBeforeOrAfter; }
-Expression ExpressionSpec::getExpression(){ return expression; }
+bool ExpressionSpec::checkIsAny()
+{
+    return isAny;
+}
 
-PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec)
-    : Clause(PATTERN_CLAUSE), entityReference(entRef), expressionSpec(exprSpec)
+bool ExpressionSpec::checkHasBeforeOrAfter()
+{
+    return hasBeforeOrAfter;
+}
+
+Expression ExpressionSpec::getExpression()
+{
+    return expression;
+}
+
+PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec):
+    Clause(PATTERN_CLAUSE), patternStatementType(statementType), entityReference(entRef), expressionSpec(exprSpec)
 {}
 
-PatternStatementType PatternClause::getStatementType(){ return patternStatementType; }
-EntityReference PatternClause::getEntRef(){ return entityReference; }
-ExpressionSpec PatternClause::getExprSpec(){ return expressionSpec; }
+PatternStatementType PatternClause::getStatementType()
+{
+    return patternStatementType;
+}
+
+EntityReference PatternClause::getEntRef()
+{
+    return entityReference;
+}
+
+ExpressionSpec PatternClause::getExprSpec()
+{
+    return expressionSpec;
+}
 
 void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
 {
-    table.insert({ s, designEntity });
+    table.insert({s, designEntity});
 }
 
 void DeclarationTable::setInvalidDeclaration(){ isInvalid = true; }

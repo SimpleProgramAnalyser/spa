@@ -1,6 +1,9 @@
-//
-// Created by Chester Sim on 3/9/20.
-//
+/**
+ * This class defines an AbstractQuery (and necessary
+ * supporting substructures), which is used to represent
+ * a PQL query, and passed to the query evaluator, for
+ * further processing.
+ */
 
 #ifndef SPA_AQTYPES_H
 #define SPA_AQTYPES_H
@@ -24,6 +27,7 @@ enum DesignEntityType {
 class DesignEntity {
 private:
     DesignEntityType type;
+
 public:
     explicit DesignEntity(DesignEntityType designEntityType);
     explicit DesignEntity(const String& stringType);
@@ -32,23 +36,18 @@ public:
 
 typedef String Synonym;
 
-enum ClauseType {
-    SUCH_THAT_CLAUSE = 0,
-    PATTERN_CLAUSE = 1
-};
+enum ClauseType { SUCH_THAT_CLAUSE = 0, PATTERN_CLAUSE = 1 };
 
 class Clause {
 protected:
     ClauseType type;
+
 public:
     explicit Clause(ClauseType clauseType);
     ClauseType getType();
 };
 
-enum ReferenceType {
-    STATEMENT_REF = 0,
-    ENTITY_REF = 1
-};
+enum ReferenceType { STATEMENT_REF = 0, ENTITY_REF = 1 };
 
 typedef String ReferenceValue; // TODO: more thought needs to be done on the implementation of ReferenceValue
 
@@ -56,18 +55,19 @@ class Reference {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
+
 public:
     Reference(ReferenceType refType, ReferenceValue& refValue);
     ReferenceType getReferenceType();
     ReferenceValue getValue();
 };
 
-class EntityReference : public Reference {
+class EntityReference: public Reference {
 public:
     EntityReference(ReferenceValue& refValue);
 };
 
-class StatementReference : public Reference {
+class StatementReference: public Reference {
 public:
     StatementReference(ReferenceValue& refValue);
 };
@@ -88,6 +88,7 @@ private:
     RelationshipReference relationshipReference;
     Reference leftReference;
     Reference rightReference;
+
 public:
     Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef);
     RelationshipReference getRelationship();
@@ -98,6 +99,7 @@ public:
 class SuchThatClause: public Clause {
 private:
     Relationship relationship;
+
 public:
     SuchThatClause(Relationship& r);
     Relationship getRelationship();
@@ -110,22 +112,22 @@ private:
     bool isAny;
     bool hasBeforeOrAfter;
     Expression expression;
+
 public:
-    ExpressionSpec(String expr, bool any=false, bool beforeOrAfter=false);
+    ExpressionSpec(String expr, bool any = false, bool beforeOrAfter = false);
     bool checkIsAny();
     bool checkHasBeforeOrAfter();
     Expression getExpression();
 };
 
-enum PatternStatementType {
-    ASSIGN = 0
-};
+enum PatternStatementType { ASSIGN = 0 };
 
 class PatternClause: public Clause {
 private:
     PatternStatementType patternStatementType;
     EntityReference entityReference;
     ExpressionSpec expressionSpec;
+
 public:
     PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec);
     PatternStatementType getStatementType();
@@ -137,6 +139,7 @@ class DeclarationTable {
 private:
     std::unordered_map<Synonym, DesignEntity> table;
     bool isInvalid = false;
+
 public:
     void addDeclaration(Synonym s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s);
@@ -153,8 +156,9 @@ private:
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
+
 public:
-    AbstractQuery(); //dummy
+    AbstractQuery(); // TODO: To be removed in the future
     AbstractQuery(Synonym synonym, ClauseVector& clauseList);
     Synonym getSelectSynonym();
     ClauseVector getClauses();
