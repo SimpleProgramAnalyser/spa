@@ -99,7 +99,7 @@ Expression ExpressionSpec::getExpression()
 }
 
 PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec):
-    Clause(PATTERN_CLAUSE), entityReference(entRef), expressionSpec(exprSpec)
+    Clause(PATTERN_CLAUSE), patternStatementType(statementType), entityReference(entRef), expressionSpec(exprSpec)
 {}
 
 PatternStatementType PatternClause::getStatementType()
