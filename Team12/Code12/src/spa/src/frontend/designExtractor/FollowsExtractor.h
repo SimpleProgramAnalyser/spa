@@ -15,4 +15,4 @@
  */
 Void extractFollows(ProgramNode& rootNode);
 
-#endif // SPA_FRONTEND_DESIGN_EXTRACTOR_H
+#endif // SPA_FRONTEND_FOLLOWS_EXTRACTOR_H

@@ -26,7 +26,12 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
-        src/frontend/designExtractor/FollowsExtractor.cpp src/frontend/designExtractor/FollowsExtractor.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/frontend/designExtractor/FollowsExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/frontend/designExtractor/ParentExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/frontend/designExtractor/UsesExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/frontend/designExtractor/ModifiesExtractor.h
+)
 
 # flags for debug
 if(CMAKE_COMPILER_IS_GNUCXX) 
