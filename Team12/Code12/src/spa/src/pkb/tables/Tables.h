@@ -10,8 +10,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "../ast/AstTypes.h"
 #include "Types.h"
+#include "ast/AstTypes.h"
 
 class RootNode {
 public:

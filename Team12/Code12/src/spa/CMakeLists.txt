@@ -20,10 +20,6 @@ add_library(spa
 
         # pkb
         ${pkb}
-
-        # tables library
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/tables/Tables.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/tables/Tables.cpp
 )
 # flags for debug
 if(CMAKE_COMPILER_IS_GNUCXX)

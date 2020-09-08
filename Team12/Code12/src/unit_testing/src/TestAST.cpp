@@ -2,8 +2,8 @@
 #include "TNode.h"
 #include "../src/ast/AstTypes.h"
 #include "../src/ast/AstTypes.cpp"
-#include "../src/tables/Tables.h"
-#include "../src/tables/Tables.cpp"
+#include "../src/pkb/tables/Tables.h"
+#include "../src/pkb/tables/Tables.cpp"
 #include "catch.hpp"
 
 
