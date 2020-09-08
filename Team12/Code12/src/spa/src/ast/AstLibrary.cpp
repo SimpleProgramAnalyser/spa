@@ -140,6 +140,7 @@ ReferenceExpression* createRefExpr(Integer constant)
     return new ReferenceExpression(new Constant(constant));
 }
 
-inline Boolean isContainerStatement(StatementType stmtType) {
+inline Boolean isContainerStatement(StatementType stmtType)
+{
     return stmtType == IfStatement || stmtType == WhileStatement;
 }
