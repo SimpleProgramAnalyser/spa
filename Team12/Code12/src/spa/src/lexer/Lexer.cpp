@@ -17,7 +17,7 @@
  */
 static inline bool isWhitespace(const char* c) noexcept
 {
-    return *c == ' ' || *c == '\n' || *c == '\t';
+    return *c == ' ' || *c == '\n' || *c == '\t' || *c == '\r' || *c == '\v' || *c == '\f';
 }
 
 /**
@@ -61,9 +61,9 @@ static StringList* splitWithPredicate(const String& str, const std::function<boo
     return splitStrings;
 }
 
-StringList* splitByWhitespace(const String& programFragment) noexcept
+StringList* splitByWhitespace(const String& str) noexcept
 {
-    return splitWithPredicate(programFragment, isWhitespace);
+    return splitWithPredicate(str, isWhitespace);
 }
 
 StringList* splitByDelimiter(const String& str, const String& delimiter)
@@ -204,4 +204,37 @@ StringList* splitProgram(const String& program) noexcept
     }
 
     return splitStrings;
+}
+
+String trimWhitespace(const String& str)
+{
+    // boundary check
+    if (str.length() == 0) {
+        return str;
+    }
+
+    size_t firstIndex = 0;
+    size_t lastIndex = str.length() - 1;
+
+    // find first char non-whitespace
+    const char* currentChar = &(str.at(firstIndex));
+    while (isWhitespace(currentChar) && firstIndex < lastIndex) {
+        firstIndex++;
+        currentChar = &(str.at(firstIndex));
+    }
+    // find last char non-whitespace
+    currentChar = &(str.at(lastIndex));
+    while (isWhitespace(currentChar) && firstIndex < lastIndex) {
+        lastIndex--;
+        currentChar = &(str.at(lastIndex));
+    }
+    // if not found
+    if (firstIndex > lastIndex) {
+        return str;
+    } else if (isWhitespace(currentChar)) {
+        // the string consists only of whitespaces
+        return "";
+    }
+    // copy chars
+    return str.substr(firstIndex, lastIndex - firstIndex + 1);
 }
