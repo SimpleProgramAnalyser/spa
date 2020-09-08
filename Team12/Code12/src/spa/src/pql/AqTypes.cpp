@@ -126,7 +126,8 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s)
 {
     std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
     if (got == table.end()) {
-        std::cout << "Synonym not found in Declaration Table";
+        std::cout << "Synonym not found in Declaration Table" << std::endl;
+        return DesignEntity(NON_EXISTENT_TYPE);
     } else {
         return got->second;
     }
