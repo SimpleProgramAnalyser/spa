@@ -18,7 +18,7 @@ AbstractQuery PreProcessor::processQuery(String query)
     if (splitBySelectList->size() != 2) {
         return AbstractQuery::invalidAbstractQuery();
     }
-    String declarationString = *(splitBySelectList->at(0)); // TODO: trim
+    String declarationString = *(splitBySelectList->at(0));       // TODO: trim
     String synonymAndClausesString = *(splitBySelectList->at(1)); // TODO: trim
 
     // Process declarations into declaration table

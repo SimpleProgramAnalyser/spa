@@ -4,14 +4,12 @@
 
 #include "PqlManager.h"
 
-#include <utility>
-
 #include "AqTypes.h"
 #include "Evaluator.h"
 #include "FormattedQueryResult.h"
+#include "PreProcessor.h"
 #include "Projector.h"
 #include "QueryResultFormatType.h"
-#include "PreProcessor.h"
 
 /**
  * Executes a PQL query, and interacts with the PKB,
@@ -29,7 +27,7 @@ FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatTyp
 {
     // Call the Preprocessor to parse the query
     PreProcessor preProcessor;
-    AbstractQuery abstractQuery = preProcessor.processQuery(std::move(query));
+    AbstractQuery abstractQuery = preProcessor.processQuery(query);
 
     /*
      * Pass the parsed query (AbstractQueryType to the PQL
