@@ -3,16 +3,19 @@
  */
 
 #include "Projector.h"
+
 #include "FormattedQueryResult.h"
 #include "RawQueryResult.h"
 
-FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult) {
+FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
+{
     FormattedQueryResult formattedQueryResult;
 
     return formattedQueryResult;
 }
 
-FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult) {
+FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
+{
     FormattedQueryResult formattedQueryResult;
 
     return formattedQueryResult;

@@ -2,10 +2,11 @@
  * Implementation of the PQL's logic manager.
  */
 
+#include "PqlManager.h"
+
 #include "AqTypes.h"
 #include "Evaluator.h"
 #include "FormattedQueryResult.h"
-#include "PqlManager.h"
 #include "Projector.h"
 #include "QueryResultFormatType.h"
 

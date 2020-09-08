@@ -3,7 +3,6 @@
 
 #include <Types.h>
 
-class FormattedQueryResult {
-};
+class FormattedQueryResult {};
 
 #endif // SPA_FORMATTEDQUERYRESULT_H

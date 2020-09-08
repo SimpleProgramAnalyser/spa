@@ -44,18 +44,12 @@ ReferenceValue Reference::getValue()
     return referenceValue;
 }
 
-EntityReference::EntityReference(ReferenceValue& refValue)
-    : Reference(ENTITY_REF, refValue)
-{
-}
+EntityReference::EntityReference(ReferenceValue& refValue): Reference(ENTITY_REF, refValue) {}
 
-StatementReference::StatementReference(ReferenceValue& refValue)
-    : Reference(STATEMENT_REF, refValue)
-{
-}
+StatementReference::StatementReference(ReferenceValue& refValue): Reference(STATEMENT_REF, refValue) {}
 
-Relationship::Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef)
-    : leftReference(leftRef), rightReference(rightRef)
+Relationship::Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef):
+    leftReference(leftRef), rightReference(rightRef)
 {
     relationshipReference = relationshipRef;
 }
@@ -75,10 +69,7 @@ Reference Relationship::getRightRef()
     return rightReference;
 }
 
-SuchThatClause::SuchThatClause(Relationship& r)
-    : Clause(SUCH_THAT_CLAUSE), relationship{ r }
-{
-}
+SuchThatClause::SuchThatClause(Relationship& r): Clause(SUCH_THAT_CLAUSE), relationship{r} {}
 
 Relationship SuchThatClause::getRelationship()
 {
@@ -107,10 +98,9 @@ Expression ExpressionSpec::getExpression()
     return expression;
 }
 
-PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec)
-    : Clause(PATTERN_CLAUSE), entityReference(entRef), expressionSpec(exprSpec)
-{
-}
+PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec):
+    Clause(PATTERN_CLAUSE), entityReference(entRef), expressionSpec(exprSpec)
+{}
 
 PatternStatementType PatternClause::getStatementType()
 {
@@ -129,7 +119,7 @@ ExpressionSpec PatternClause::getExprSpec()
 
 void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
 {
-    table.insert({ s, designEntity });
+    table.insert({s, designEntity});
 }
 
 DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s)
@@ -142,9 +132,7 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s)
     }
 }
 
-AbstractQuery::AbstractQuery()
-{
-}
+AbstractQuery::AbstractQuery() {}
 
 AbstractQuery::AbstractQuery(Synonym synonym, ClauseList& clauseList)
 {

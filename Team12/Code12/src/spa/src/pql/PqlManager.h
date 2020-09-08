@@ -7,6 +7,7 @@
 #define SPA_PQLMANAGER_H
 
 #include <Types.h>
+
 #include "FormattedQueryResult.h"
 #include "QueryResultFormatType.h"
 

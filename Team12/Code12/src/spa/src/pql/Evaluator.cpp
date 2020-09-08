@@ -3,6 +3,7 @@
  */
 
 #include "Evaluator.h"
+
 #include "AqTypes.h"
 #include "RawQueryResult.h"
 

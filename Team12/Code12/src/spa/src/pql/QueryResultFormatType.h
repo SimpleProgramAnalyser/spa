@@ -6,9 +6,6 @@
 #ifndef SPA_QUERYRESULTFORMATTYPES_H
 #define SPA_QUERYRESULTFORMATTYPES_H
 
-enum QueryResultFormatType {
-    AutotesterFormat = 0,
-    UiFormat = 1
-};
+enum QueryResultFormatType { AutotesterFormat = 0, UiFormat = 1 };
 
 #endif
