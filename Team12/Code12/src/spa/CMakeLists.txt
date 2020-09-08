@@ -26,7 +26,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
-)
+        src/frontend/designExtractor/FollowsExtractor.cpp src/frontend/designExtractor/FollowsExtractor.h)
 
 # flags for debug
 if(CMAKE_COMPILER_IS_GNUCXX) 
