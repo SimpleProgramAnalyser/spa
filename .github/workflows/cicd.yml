@@ -86,10 +86,11 @@ jobs:
         run: |
           cd Team12/Code12
           curl https://raw.githubusercontent.com/llvm/llvm-project/master/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py -o run-clang-tidy.py
-          python run-clang-tidy.py -header-filter='.*' \
+          cd build
+          python ../run-clang-tidy.py -header-filter='.*' \
             -checks='-*,cppcoreguidelines-*,-cppcoreguidelines-owning-memory,-cppcoreguidelines-pro-bounds-pointer-arithmetic' \
-            files build/src/spa | tee result.txt
-          if grep -w "error:\|warning:\|Error while processing" result.txt; then
+            files src/spa | sudo tee result.txt
+          if sudo grep -w "error:\|warning:\|Error while processing" result.txt; then
             exit 1
           else
             exit 0

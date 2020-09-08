@@ -3,25 +3,23 @@
  * classes and methods.
  */
 
-#include "ast/AstTypes.h"
 #include "SemanticErrorsValidator.h"
 
+#include "ast/AstTypes.h"
 
 SemanticErrorsValidator::SemanticErrorsValidator(ProgramNode& progNode): programNode(progNode) {}
 
-Boolean SemanticErrorsValidator::checkProgramValidity() {
+Boolean SemanticErrorsValidator::checkProgramValidity()
+{
     List<ProcedureNode>* procedureList = &(programNode.procedureList);
     Boolean isProgramValid = true;
-    
-    //Use index 
-    // Use std::move() for unique_ptr 
-    //std::unique_ptr<ProcedureNode> myPtr = std::move(procedureList.at(i));
+
     for (size_t i = 0; i < procedureList->size(); i++) {
         const StmtlstNode& stmtListNode = *(procedureList->at(i))->statementListNode;
 
         for (size_t j = 0; j < stmtListNode.statementList.size(); j++) {
             const List<StatementNode>& stmtList = stmtListNode.statementList;
-            // Terminate early 
+            // Terminate early
             if (!isProgramValid) {
                 return false;
             }
@@ -29,7 +27,7 @@ Boolean SemanticErrorsValidator::checkProgramValidity() {
             StatementNode* stmtNode = stmtList.at(j).get();
             isProgramValid = checkStatementValidity(stmtNode);
         }
-	}
+    }
     return isProgramValid;
 }
 
@@ -40,13 +38,12 @@ Boolean SemanticErrorsValidator::checkWhileStatementValidity(WhileStatementNode*
     Boolean isValid = true;
 
     if (predicate == nullptr) {
-        //TODO: throw error
+        // TODO: throw error
         return false;
     } else if (stmtListNode.statementList.size() == NULL) {
         // TODO: throw error
         return false;
     } else {
-        // Try
         const List<StatementNode>& stmtList = stmtListNode.statementList;
         for (size_t i = 0; i < stmtList.size(); i++) {
             StatementNode* statementNode = stmtList.at(i).get();
@@ -56,13 +53,13 @@ Boolean SemanticErrorsValidator::checkWhileStatementValidity(WhileStatementNode*
     return isValid;
 }
 
-Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStatementNode* stmtNode) 
+Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStatementNode* stmtNode)
 {
     Variable variable = stmtNode->variable;
     const Expression* expression = stmtNode->expression;
     Boolean expressionIsValid = true;
     if (variable.isConstant()) {
-        //Throw error
+        // Throw error
         return false;
     } else if (variable.varName == "") {
         // throw error
@@ -71,16 +68,14 @@ Boolean SemanticErrorsValidator::checkAssignmentStatementValidity(AssignmentStat
         // throw error
         return false;
     } else {
-        
+
         expressionIsValid = checkExpressionValidity(expression);
     }
     return expressionIsValid;
 }
 
-
 Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtNode)
-{   
-    
+{
     const ConditionalExpression* predicate = stmtNode->predicate;
     const StmtlstNode& ifStmtListNode = *(stmtNode->ifStatementList);
     const StmtlstNode& elseStmtListNode = *(stmtNode->elseStatementList);
@@ -89,11 +84,11 @@ Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtN
     Boolean ifStmtlstIsValid = true;
     Boolean elseStmtlstIsValid = true;
 
-   if (predicate == nullptr) {
+    if (predicate == nullptr) {
         // throw error
         return false;
     }
-   
+
     if (ifStmtList.empty()) {
         // throw error
         return false;
@@ -112,7 +107,6 @@ Boolean SemanticErrorsValidator::checkIfStatementValidity(IfStatementNode* stmtN
         StatementNode* statementNode = ifStmtList.at(i).get();
         ifStmtlstIsValid = checkStatementValidity(statementNode);
     }
-
 
     for (size_t i = 0; i < elseStmtList.size(); i++) {
         // Terminate early
@@ -187,30 +181,27 @@ Boolean SemanticErrorsValidator::checkStatementValidity(StatementNode* stmtNode)
     return statementIsValid;
 }
 
-
 Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expression)
 {
     Boolean operandIsValid = true;
     Boolean leftChildIsValid = true;
     Boolean rightChildIsValid = true;
 
-    Expression* exp = const_cast<Expression*>(expression);
     // Expression is a ReferenceExpression & has either a Constant or a Variable
-    if (!(exp->isArithmetic())) {
-        const BasicDataType* data = dynamic_cast<ReferenceExpression*>(exp)->basicData;
-        BasicDataType* dataType = const_cast<BasicDataType*>(data);
-        if (dataType == nullptr) {
+    if (!(expression->isArithmetic())) {
+        const BasicDataType* data = dynamic_cast<const ReferenceExpression*>(expression)->basicData;
+        if (data == nullptr) {
             // TODO: throw error
             return false;
         }
-        if (dataType->isConstant()) {
-            Constant* constantObj = dynamic_cast<Constant*>(dataType);
+        if (data->isConstant()) {
+            const Constant* constantObj = dynamic_cast<const Constant*>(data);
             if (constantObj->value == NULL) {
                 // TODO: throw error
                 return false;
             }
         } else {
-            Variable* variableObj = dynamic_cast<Variable*>(dataType);
+            const Variable* variableObj = dynamic_cast<const Variable*>(data);
             if (variableObj->varName == "") {
                 // TODO: throw error
                 return false;
@@ -220,7 +211,7 @@ Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expre
     }
 
     // Expression is Arithmetic
-    ArithmeticExpression* arithmeticExp = dynamic_cast<ArithmeticExpression*>(exp);
+    const ArithmeticExpression* arithmeticExp = dynamic_cast<const ArithmeticExpression*>(expression);
     // Terminate early
     if (arithmeticExp->opr == NULL) {
         // TODO: throw error for no operand
@@ -229,7 +220,7 @@ Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expre
     }
 
     // If left child is Arithmetic, check validity
-    Expression* leftExp = const_cast<Expression*>(arithmeticExp->leftFactor);
+    const Expression* leftExp = arithmeticExp->leftFactor;
     leftChildIsValid = checkExpressionValidity(leftExp);
     // Terminate early
     if (!leftChildIsValid) {
@@ -237,7 +228,7 @@ Boolean SemanticErrorsValidator::checkExpressionValidity(const Expression* expre
     }
 
     // If right child is Arithmetic, check validity
-    Expression* rightExp = const_cast<Expression*>(arithmeticExp->rightFactor);
+    const Expression* rightExp = arithmeticExp->rightFactor;
     rightChildIsValid = checkExpressionValidity(rightExp);
 
     return operandIsValid && leftChildIsValid && rightChildIsValid;
