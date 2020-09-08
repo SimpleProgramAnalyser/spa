@@ -1,25 +1,30 @@
 file(GLOB srcs "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
+file(GLOB_RECURSE pkb "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/*.h")
 
 add_library(spa
 
-    # current directory
-    ${srcs}
-    ${headers}
+        # current directory
+        ${srcs}
+        ${headers}
 
-    # lexer
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
+        # lexer
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
 
-    # ast library
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
+        # ast library
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
+
+        # pkb
+        ${pkb}
 )
-
 # flags for debug
-target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+if(CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
