@@ -5,7 +5,6 @@
 
 #include "AqTypes.h"
 
-#include <iostream>
 #include <regex>
 #include <utility>
 
@@ -195,7 +194,8 @@ DeclarationTable AbstractQuery::getDeclarationTable()
 {
     return declarationTable;
 }
-AbstractQuery::AbstractQuery() = default;
+AbstractQuery::AbstractQuery(): hasError(false){};
+
 void AbstractQuery::setToInvalid()
 {
     hasError = true;
