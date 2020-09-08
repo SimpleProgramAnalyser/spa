@@ -21,7 +21,7 @@ enum DesignEntityType {
     VARIABLE_TYPE = 64,
     CONSTANT_TYPE = 128,
     PROCEDURE_TYPE = 256,
-    NON_EXISTENT_TYPE = 257;
+    NON_EXISTENT_TYPE = 257
 };
 
 class DesignEntity {
