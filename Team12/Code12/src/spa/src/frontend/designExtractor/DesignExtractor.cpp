@@ -19,6 +19,4 @@ Void extractDesign(ProgramNode& rootNode)
     if (!isSemanticallyValid) {
         // Terminate Program
     }
-
-
 }
