@@ -15,7 +15,7 @@
  *
  * @return True, if the character represents some whitespace.
  */
-static inline bool isWhitespace(const char* c) noexcept
+bool isWhitespace(const char* c) noexcept
 {
     return *c == ' ' || *c == '\n' || *c == '\t' || *c == '\r' || *c == '\v' || *c == '\f';
 }

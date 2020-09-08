@@ -21,6 +21,8 @@ using List = std::vector<std::unique_ptr<T>>;
 
 typedef List<String> StringList;
 
+typedef std::vector<String> StringVector;
+
 enum StatementType {
     AnyStatement = 0,
     AssignmentStatement,
