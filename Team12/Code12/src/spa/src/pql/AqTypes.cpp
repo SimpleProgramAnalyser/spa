@@ -5,12 +5,39 @@
 
 #include "AqTypes.h"
 
-#include <iostream>
+#include <regex>
 #include <utility>
 
 DesignEntity::DesignEntity(DesignEntityType designEntityType)
 {
     type = designEntityType;
+}
+
+DesignEntity::DesignEntity(const String& stringType)
+{
+    if (stringType == "statement") {
+        type = StatementType;
+    } else if (stringType == "read") {
+        type = ReadType;
+    } else if (stringType == "print") {
+        type = PrintType;
+    } else if (stringType == "call") {
+        type = CallType;
+    } else if (stringType == "while") {
+        type = WhileType;
+    } else if (stringType == "if") {
+        type = IfType;
+    } else if (stringType == "assign") {
+        type = AssignType;
+    } else if (stringType == "variable") {
+        type = VariableType;
+    } else if (stringType == "constant") {
+        type = ConstantType;
+    } else if (stringType == "procedure") {
+        type = ProcedureType;
+    } else {
+        type = NonExistentType;
+    }
 }
 
 DesignEntityType DesignEntity::getType()
@@ -122,36 +149,81 @@ void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
     table.insert({s, designEntity});
 }
 
+void DeclarationTable::setInvalidDeclaration()
+{
+    isInvalid = true;
+}
+Boolean DeclarationTable::hasInvalidDeclaration()
+{
+    return isInvalid;
+}
+Boolean DeclarationTable::hasSynonym(Synonym s)
+{
+    std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
+    if (got == table.end()) {
+        return false;
+    }
+
+    return true;
+}
+
 DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s)
 {
     std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
     if (got == table.end()) {
-        std::cout << "Synonym not found in Declaration Table" << std::endl;
-        return DesignEntity(NON_EXISTENT_TYPE);
+        DesignEntity nonExistentType("nonExistentType");
+        return nonExistentType;
     } else {
         return got->second;
     }
 }
 
-AbstractQuery::AbstractQuery() {}
-
-AbstractQuery::AbstractQuery(Synonym synonym, ClauseList& clauseList)
-{
-    selectSynonym = std::move(synonym);
-    clauses = clauseList;
-}
+AbstractQuery::AbstractQuery(Synonym synonym, ClauseVector& clauseList):
+    selectSynonym(std::move(synonym)), clauses(clauseList), hasError(false)
+{}
 
 Synonym AbstractQuery::getSelectSynonym()
 {
     return selectSynonym;
 }
-
-ClauseList AbstractQuery::getClauses()
+ClauseVector AbstractQuery::getClauses()
 {
     return clauses;
 }
-
 DeclarationTable AbstractQuery::getDeclarationTable()
 {
     return declarationTable;
+}
+AbstractQuery::AbstractQuery(): hasError(false){};
+
+void AbstractQuery::setToInvalid()
+{
+    hasError = true;
+}
+Boolean AbstractQuery::isInvalid()
+{
+    return hasError;
+}
+AbstractQuery AbstractQuery::invalidAbstractQuery()
+{
+    AbstractQuery aq;
+    aq.setToInvalid();
+    return aq;
+}
+
+// Utils
+
+Boolean isMatchingRegex(const String& rawInput, const String& regex)
+{
+    return std::regex_match(rawInput, std::regex(regex));
+}
+
+Boolean isPossibleIdentifier(const String& str)
+{
+    return isMatchingRegex(str, "[A-Za-z]([A-Za-z]|[\\d])*");
+}
+
+Boolean isValidSynonym(String testString)
+{
+    return isPossibleIdentifier(testString);
 }
