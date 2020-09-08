@@ -45,7 +45,7 @@ Matrix* extractFollowsStmtlst(Matrix* followsMatrix, const StmtlstNode* stmtLstN
  * @return The pointer to the adjacency matrix, to allow
  *         for chaining of methods.
  */
-Matrix* extractFollowsFromContainer(Matrix* followsMatrix, std::unique_ptr<StatementNode>& containerStmt)
+Matrix* extractFollowsFromContainer(Matrix* followsMatrix, const std::unique_ptr<StatementNode>& containerStmt)
 {
     if (containerStmt->getStatementType() == IfStatement) {
         // NOLINTNEXTLINE
@@ -74,11 +74,11 @@ Matrix* extractFollowsFromContainer(Matrix* followsMatrix, std::unique_ptr<State
  */
 Matrix* extractFollowsStmtlst(Matrix* followsMatrix, const StmtlstNode* const stmtLstNode)
 {
-    List<StatementNode> statements = stmtLstNode->statementList;
+    const List<StatementNode>& statements = stmtLstNode->statementList;
     size_t numberOfStatements = statements.size();
     for (size_t i = 0; i < numberOfStatements - 1 /* last statement cannot follow another */; i++) {
-        std::unique_ptr<StatementNode>& currentStatement = statements.at(i);
-        std::unique_ptr<StatementNode>& nextStatement = statements.at(i + 1);
+        const std::unique_ptr<StatementNode>& currentStatement = statements.at(i);
+        const std::unique_ptr<StatementNode>& nextStatement = statements.at(i + 1);
         // mark an edge in followsMatrix: (currentStatement ---> nextStatement)
         markFollowsRelationship(followsMatrix, currentStatement->getStatementNumber(),
                                 nextStatement->getStatementNumber());
@@ -92,7 +92,7 @@ Matrix* extractFollowsStmtlst(Matrix* followsMatrix, const StmtlstNode* const st
 
 Void extractFollows(ProgramNode& rootNode)
 {
-    List<ProcedureNode> procedures = rootNode.procedureList;
+    const List<ProcedureNode>& procedures = rootNode.procedureList;
     StatementNumber numberOfStatements = rootNode.totalNumberOfStatements;
     size_t numberOfProcedures = procedures.size();
 
