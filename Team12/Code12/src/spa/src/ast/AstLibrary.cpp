@@ -4,9 +4,9 @@
 
 #include "AstLibrary.h"
 
-ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes)
+ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes, StatementNumber totalStmts)
 {
-    return new ProgramNode(std::move(programName), std::move(procedureNodes));
+    return new ProgramNode(std::move(programName), std::move(procedureNodes), totalStmts);
 }
 
 ProcedureNode* createProcedureNode(Name procedureName, StmtlstNode* stmtlstNode)

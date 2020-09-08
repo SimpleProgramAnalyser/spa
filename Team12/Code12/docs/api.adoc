@@ -108,10 +108,12 @@ and `procedureName` as the name of the procedure.
 '''
 
 [#createProgramNode]
-`*PROGRAM_NODE* createProgramNode(*NAME* programName, *PROCEDURE_NODE_LIST* procedureNodes);`
+`*PROGRAM_NODE* createProgramNode(*NAME* programName, *PROCEDURE_NODE_LIST* procedureNodes,
+*STATEMENT_NUMBER* totalStmts);`
 
 *Description*: Creates and returns a *PROGRAM_NODE* with `procedureNodes` as the child in a
-*PROCEDURE_NODE_LIST* form, and `programName` as the name of the program.
+*PROCEDURE_NODE_LIST* form, and `programName` as the name of the program. It also stores the
+total number of statements `totalStmts`.
 
 '''
 

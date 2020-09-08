@@ -41,13 +41,13 @@ bool ProcedureNode::operator==(const ProcedureNode& pcn) const
     return this->procedureName == pcn.procedureName && *(this->statementListNode) == *(pcn.statementListNode);
 }
 
-ProgramNode::ProgramNode(Name n, List<ProcedureNode> procLst):
-    programName(std::move(n)), procedureList(std::move(procLst))
+ProgramNode::ProgramNode(Name n, List<ProcedureNode> procLst, StatementNumber totalStmts):
+    programName(std::move(n)), procedureList(std::move(procLst)), totalNumberOfStatements(totalStmts)
 {}
 
 bool ProgramNode::operator==(const ProgramNode& pgn) const
 {
-    return this->programName == pgn.programName
+    return this->totalNumberOfStatements == pgn.totalNumberOfStatements && this->programName == pgn.programName
            && util::checkListValuesEqual<ProcedureNode>(this->procedureList, pgn.procedureList);
 }
 

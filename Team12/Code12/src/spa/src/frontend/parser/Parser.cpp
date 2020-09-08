@@ -556,7 +556,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
     }
 }
 
-// global variable to help in numbering statements
+// global variable to help in numbering statements, this
+// variable is to be incremented before a statement is numbered
 static int statementsSeen = 0;
 
 ParserReturnType<std::unique_ptr<CallStatementNode>> parseCallStmt(frontend::TokenList* programTokens,
@@ -975,7 +976,7 @@ ProgramNode* parseSimpleReturnNode(const String& rawProgram)
     if (currentIndex < 0 || syntaxError) {
         return nullptr;
     } else {
-        return createProgramNode("SIMPLE program", procedures);
+        return createProgramNode("SIMPLE program", procedures, statementsSeen);
     }
 }
 

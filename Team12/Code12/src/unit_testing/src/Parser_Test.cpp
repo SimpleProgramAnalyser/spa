@@ -36,7 +36,7 @@ procedure compute {\n\
     ProcedureNode* computeProcedure = createProcedureNode("compute", stmtLstNode);
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(computeProcedure));
-    ProgramNode* constructedAst = createProgramNode(getDefaultProgramName(), procedureList);
+    ProgramNode* constructedAst = createProgramNode(getDefaultProgramName(), procedureList, 6);
     REQUIRE(*(ast) == *(constructedAst));
 }
 

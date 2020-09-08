@@ -9,7 +9,7 @@
 #include "AstTypes.h"
 
 // Nodes
-ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes);
+ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes, StatementNumber totalStmts);
 ProcedureNode* createProcedureNode(Name procedureName, StmtlstNode* stmtlstNode);
 StmtlstNode* createStmtlstNode(StatementNodeList& statementNodes);
 AssignmentStatementNode* createAssignNode(StatementNumber sn, const Variable& var, Expression* expr);
