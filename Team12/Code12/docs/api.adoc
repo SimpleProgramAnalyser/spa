@@ -47,8 +47,6 @@ SIMPLE program.
 important relationships between program design entities. If the program contains
 semantic errors, a SEMANTIC_ERROR will be thrown. +
 
-== PKB
-
 === Abstract Syntax Tree (AST) API
 *Overview*: The AST API describes the methods available to construct an Abstract Syntax Tree
 in the Simple Program Analyser (SPA).
@@ -301,6 +299,8 @@ of their own, hence they are also known as "container statements".
 
 '''
 
+
+== PKB
 
 === Statements Table API
 *Overview*: The Statements Table API describes the methods available to extract information
