@@ -40,3 +40,9 @@
 cmake-build-debug/
 build/
 build_win/
+
+# Documentation files
+/Team12/Code12/docs/doxygen/
+
+# .DS_Store
+**/.DS_Store

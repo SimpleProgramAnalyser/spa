@@ -1,4 +1,11 @@
 #include "TestWrapper.h"
+#include "AbstractWrapper.h"
+#include "FrontendManager.h"
+#include "pql/FormattedQueryResult.h"
+#include "pql/PqlManager.h"
+#include "pql/QueryResultFormatType.h"
+
+#include <iostream>
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper* WrapperFactory::wrapper = 0;
@@ -17,8 +24,7 @@ TestWrapper::TestWrapper() {
 
 // method for parsing the SIMPLE source
 void TestWrapper::parse(std::string filename) {
-	// call your parser to do the parsing
-  // ...rest of your code...
+    FrontendManager frontendManager;
 }
 
 // method to evaluating a query
@@ -28,4 +34,7 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
 
   // store the answers to the query in the results list (it is initially empty)
   // each result must be a string.
+  PqlManager pqlManager;
+
+  FormattedQueryResult result = pqlManager.executeQuery(query, AutotesterFormat);
 }
