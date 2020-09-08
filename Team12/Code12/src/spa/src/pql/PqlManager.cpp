@@ -38,10 +38,10 @@ FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatTyp
     Projector projector;
     FormattedQueryResult formattedQueryResult;
 
-    if (format == AUTOTESTER_FORMAT) {
+    if (format == AutotesterFormat) {
         formattedQueryResult = projector
             .formatAutotester(rawQueryResult);
-    } else {
+    } else if (format == UiFormat) {
         formattedQueryResult = projector
             .formatUI(rawQueryResult);
     }

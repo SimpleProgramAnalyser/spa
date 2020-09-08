@@ -24,11 +24,11 @@ enum DesignEntityType {
 };
 
 class DesignEntity {
-    private:
-        DesignEntityType type;
-    public:
-        explicit DesignEntity(DesignEntityType type);
-        DesignEntityType getType();
+private:
+    DesignEntityType type;
+public:
+    explicit DesignEntity(DesignEntityType type);
+    DesignEntityType getType();
 };
 
 typedef String Synonym;
@@ -54,18 +54,18 @@ enum ReferenceType {
 typedef String ReferenceValue; // TODO: more thought needs to be done on the implementation of ReferenceValue
 
 class Reference {
-    protected:
-        ReferenceType referenceType;
-        ReferenceValue referenceValue;
-    public:
-        Reference(ReferenceType refType, ReferenceValue& refValue);
-        ReferenceType getReferenceType();
-        ReferenceValue getValue();
+protected:
+    ReferenceType referenceType;
+    ReferenceValue referenceValue;
+public:
+    Reference(ReferenceType refType, ReferenceValue& refValue);
+    ReferenceType getReferenceType();
+    ReferenceValue getValue();
 };
 
 class EntityReference : public Reference {
-    public:
-        EntityReference(ReferenceValue& refValue);
+public:
+    EntityReference(ReferenceValue& refValue);
 };
 
 class StatementReference : public Reference {
@@ -85,37 +85,37 @@ enum RelationshipReference {
 };
 
 class Relationship {
-    private:
-        RelationshipReference relationshipReference;
-        Reference leftReference;
-        Reference rightReference;
-    public:
-        Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef);
-        RelationshipReference getRelationship();
-        Reference getLeftRef();
-        Reference getRightRef();
+private:
+    RelationshipReference relationshipReference;
+    Reference leftReference;
+    Reference rightReference;
+public:
+    Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef);
+    RelationshipReference getRelationship();
+    Reference getLeftRef();
+    Reference getRightRef();
 };
 
 class SuchThatClause: public Clause {
-    private:
-        Relationship relationship;
-    public:
-        SuchThatClause(Relationship& r);
-        Relationship getRelationship();
+private:
+    Relationship relationship;
+public:
+    SuchThatClause(Relationship& r);
+    Relationship getRelationship();
 };
 
 typedef String Expression; // TODO: more thought is needed for the implementation of this
 
 class ExpressionSpec {
-    private:
-        bool isAny;
-        bool hasBeforeOrAfter;
-        Expression expression;
-    public:
-        ExpressionSpec(String expr, bool any=false, bool beforeOrAfter=false);
-        bool checkIsAny();
-        bool checkHasBeforeOrAfter();
-        Expression getExpression();
+private:
+    bool isAny;
+    bool hasBeforeOrAfter;
+    Expression expression;
+public:
+    ExpressionSpec(String expr, bool any=false, bool beforeOrAfter=false);
+    bool checkIsAny();
+    bool checkHasBeforeOrAfter();
+    Expression getExpression();
 };
 
 enum PatternStatementType {
@@ -123,38 +123,38 @@ enum PatternStatementType {
 };
 
 class PatternClause: public Clause {
-    private:
-        PatternStatementType patternStatementType;
-        EntityReference entityReference;
-        ExpressionSpec expressionSpec;
-    public:
-        PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec);
-        PatternStatementType getStatementType();
-        EntityReference getEntRef();
-        ExpressionSpec getExprSpec();
+private:
+    PatternStatementType patternStatementType;
+    EntityReference entityReference;
+    ExpressionSpec expressionSpec;
+public:
+    PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec);
+    PatternStatementType getStatementType();
+    EntityReference getEntRef();
+    ExpressionSpec getExprSpec();
 };
 
 class DeclarationTable {
-    private:
-        std::unordered_map<Synonym, DesignEntity> table;
-    public:
-        void addDeclaration(Synonym s, DesignEntity& designEntity);
-        DesignEntity getDesignEntityOfSynonym(Synonym s);
+private:
+    std::unordered_map<Synonym, DesignEntity> table;
+public:
+    void addDeclaration(Synonym s, DesignEntity& designEntity);
+    DesignEntity getDesignEntityOfSynonym(Synonym s);
 };
 
 typedef std::vector<Clause> ClauseList; // TODO: Adding unique_ptr causes compilation error
 
 class AbstractQuery {
-    private:
-        Synonym selectSynonym;
-        ClauseList clauses;
-        DeclarationTable declarationTable;
-    public:
-        AbstractQuery(); // TODO: Please remove this, I added it just for testing only.
-        AbstractQuery(Synonym synonym, ClauseList& clauseList);
-        Synonym getSelectSynonym();
-        ClauseList getClauses();
-        DeclarationTable getDeclarationTable();
+private:
+    Synonym selectSynonym;
+    ClauseList clauses;
+    DeclarationTable declarationTable;
+public:
+    AbstractQuery(); // TODO: Please remove this, I added it just for testing only.
+    AbstractQuery(Synonym synonym, ClauseList& clauseList);
+    Synonym getSelectSynonym();
+    ClauseList getClauses();
+    DeclarationTable getDeclarationTable();
 };
 
 #endif // SPA_AQTYPES_H

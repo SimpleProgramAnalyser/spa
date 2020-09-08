@@ -37,7 +37,7 @@ void evaluate(String query){
   // each result must be a string.
   PqlManager pqlManager;
 
-  FormattedQueryResult result = pqlManager.executeQuery(query, AUTOTESTER_FORMAT);
+  FormattedQueryResult result = pqlManager.executeQuery(query, UiFormat);
 }
 
 /**

@@ -13,8 +13,8 @@
 #include "RawQueryResult.h"
 
 class Evaluator {
-    public:
-        RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
+public:
+    RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
 };
 
 #endif // SPA_EVALUATOR_H

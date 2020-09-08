@@ -13,14 +13,20 @@ DesignEntity::DesignEntity(DesignEntityType designEntityType)
     type = designEntityType;
 }
 
-DesignEntityType DesignEntity::getType() { return type; }
+DesignEntityType DesignEntity::getType()
+{
+    return type;
+}
 
 Clause::Clause(ClauseType clauseType)
 {
     type = clauseType;
 }
 
-ClauseType Clause::getType() { return type; }
+ClauseType Clause::getType()
+{
+    return type;
+}
 
 Reference::Reference(ReferenceType refType, ReferenceValue& refValue)
 {
@@ -28,16 +34,25 @@ Reference::Reference(ReferenceType refType, ReferenceValue& refValue)
     referenceValue = refValue;
 }
 
-ReferenceType Reference::getReferenceType(){ return referenceType; }
-ReferenceValue Reference::getValue(){ return referenceValue; }
+ReferenceType Reference::getReferenceType()
+{
+    return referenceType;
+}
+
+ReferenceValue Reference::getValue()
+{
+    return referenceValue;
+}
 
 EntityReference::EntityReference(ReferenceValue& refValue)
     : Reference(ENTITY_REF, refValue)
-{}
+{
+}
 
 StatementReference::StatementReference(ReferenceValue& refValue)
     : Reference(STATEMENT_REF, refValue)
-{}
+{
+}
 
 Relationship::Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef)
     : leftReference(leftRef), rightReference(rightRef)
@@ -45,15 +60,30 @@ Relationship::Relationship(RelationshipReference relationshipRef, Reference left
     relationshipReference = relationshipRef;
 }
 
-RelationshipReference Relationship::getRelationship(){ return relationshipReference; }
-Reference Relationship::getLeftRef(){ return leftReference; }
-Reference Relationship::getRightRef(){ return rightReference; }
+RelationshipReference Relationship::getRelationship()
+{
+    return relationshipReference;
+}
+
+Reference Relationship::getLeftRef()
+{
+    return leftReference;
+}
+
+Reference Relationship::getRightRef()
+{
+    return rightReference;
+}
 
 SuchThatClause::SuchThatClause(Relationship& r)
     : Clause(SUCH_THAT_CLAUSE), relationship{ r }
-{}
+{
+}
 
-Relationship SuchThatClause::getRelationship(){ return relationship; }
+Relationship SuchThatClause::getRelationship()
+{
+    return relationship;
+}
 
 ExpressionSpec::ExpressionSpec(String expr, bool any, bool beforeOrAfter)
 {
@@ -62,17 +92,40 @@ ExpressionSpec::ExpressionSpec(String expr, bool any, bool beforeOrAfter)
     hasBeforeOrAfter = beforeOrAfter;
 }
 
-bool ExpressionSpec::checkIsAny(){ return isAny; }
-bool ExpressionSpec::checkHasBeforeOrAfter(){ return hasBeforeOrAfter; }
-Expression ExpressionSpec::getExpression(){ return expression; }
+bool ExpressionSpec::checkIsAny()
+{
+    return isAny;
+}
+
+bool ExpressionSpec::checkHasBeforeOrAfter()
+{
+    return hasBeforeOrAfter;
+}
+
+Expression ExpressionSpec::getExpression()
+{
+    return expression;
+}
 
 PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec)
     : Clause(PATTERN_CLAUSE), entityReference(entRef), expressionSpec(exprSpec)
-{}
+{
+}
 
-PatternStatementType PatternClause::getStatementType(){ return patternStatementType; }
-EntityReference PatternClause::getEntRef(){ return entityReference; }
-ExpressionSpec PatternClause::getExprSpec(){ return expressionSpec; }
+PatternStatementType PatternClause::getStatementType()
+{
+    return patternStatementType;
+}
+
+EntityReference PatternClause::getEntRef()
+{
+    return entityReference;
+}
+
+ExpressionSpec PatternClause::getExprSpec()
+{
+    return expressionSpec;
+}
 
 void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
 {
@@ -89,7 +142,8 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s)
     }
 }
 
-AbstractQuery::AbstractQuery() {
+AbstractQuery::AbstractQuery()
+{
 }
 
 AbstractQuery::AbstractQuery(Synonym synonym, ClauseList& clauseList)
@@ -98,6 +152,17 @@ AbstractQuery::AbstractQuery(Synonym synonym, ClauseList& clauseList)
     clauses = clauseList;
 }
 
-Synonym AbstractQuery::getSelectSynonym(){ return selectSynonym; }
-ClauseList AbstractQuery::getClauses(){ return clauses; }
-DeclarationTable AbstractQuery::getDeclarationTable(){ return declarationTable; }
+Synonym AbstractQuery::getSelectSynonym()
+{
+    return selectSynonym;
+}
+
+ClauseList AbstractQuery::getClauses()
+{
+    return clauses;
+}
+
+DeclarationTable AbstractQuery::getDeclarationTable()
+{
+    return declarationTable;
+}

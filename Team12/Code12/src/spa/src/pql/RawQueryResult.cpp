@@ -1,2 +1,1 @@
 #include "RawQueryResult.h"
-

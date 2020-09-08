@@ -7,8 +7,8 @@
 #define SPA_QUERYRESULTFORMATTYPES_H
 
 enum QueryResultFormatType {
-    AUTOTESTER_FORMAT = 0,
-    UI_FORMAT = 1
+    AutotesterFormat = 0,
+    UiFormat = 1
 };
 
 #endif

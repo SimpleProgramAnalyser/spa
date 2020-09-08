@@ -33,6 +33,4 @@ enum StatementType {
 
 // PQL
 
-
-
 #endif // SPA_TYPES_H

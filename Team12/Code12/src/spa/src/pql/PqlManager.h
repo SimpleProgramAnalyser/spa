@@ -11,8 +11,8 @@
 #include "QueryResultFormatType.h"
 
 class PqlManager {
-    public:
-        FormattedQueryResult executeQuery(String query, QueryResultFormatType format);
+public:
+    FormattedQueryResult executeQuery(String query, QueryResultFormatType format);
 };
 
 #endif // SPA_PQLMANAGER_H
