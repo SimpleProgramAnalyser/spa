@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 typedef bool Boolean;
@@ -22,12 +23,15 @@ typedef List<String> StringList;
 
 enum StatementType {
     AnyStatement = 0,
-    AssignmentStatement = 1,
-    CallStatement = 2,
-    IfStatement = 4,
-    PrintStatement = 8,
-    ReadStatement = 16,
-    WhileStatement = 32
+    AssignmentStatement,
+    CallStatement,
+    IfStatement,
+    PrintStatement,
+    ReadStatement,
+    WhileStatement,
+    STATEMENT_TYPE_COUNT
 };
+
+// PQL
 
 #endif // SPA_TYPES_H
