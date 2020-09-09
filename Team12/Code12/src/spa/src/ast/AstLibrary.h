@@ -39,6 +39,9 @@ ReferenceExpression* createRefExpr(String variable);
 ReferenceExpression* createRefExpr(Integer constant);
 
 // AST Helper functions
-inline Boolean isContainerStatement(StatementType stmtType);
+inline Boolean isContainerStatement(StatementType stmtType)
+{
+    return stmtType == IfStatement || stmtType == WhileStatement;
+}
 
 #endif // SPA_AST_LIBRARY_H
