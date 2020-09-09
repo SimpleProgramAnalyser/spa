@@ -93,37 +93,54 @@ FollowsList* extractFollowsStmtlst(FollowsList* followsList, const StmtlstNode* 
     return followsList;
 }
 
-Void extractFollows(const ProgramNode& rootNode)
+/**
+ * Identifies Follows relationships in a given program
+ * and stores them in a FollowsList. This method is
+ * exposed solely for unit testing purposes.
+ *
+ * @param rootNode Root node of an Abstract Syntax Tree.
+ * @return Pointer to the FollowsList created. This list must
+ *         be deleted by the caller of this function!
+ */
+FollowsList* extractFollowsReturnAdjacencyList(const ProgramNode& rootNode)
 {
     const List<ProcedureNode>& procedures = rootNode.procedureList;
     StatementNumber numberOfStatements = rootNode.totalNumberOfStatements;
     size_t numberOfProcedures = procedures.size();
 
     // initiate the Follows* list for fast lookup
-    FollowsList followsList;
-    followsList.reserve(numberOfStatements + 1);
-    for (size_t i = 0; i < numberOfStatements; i++) {
+    auto* followsList = new FollowsList();
+    followsList->reserve(numberOfStatements + 1);
+    for (size_t i = 0; i < numberOfStatements + 1; i++) {
         // initiate the adjacency list with 0
         // 0 indicates the lack of a Follows relationship
-        followsList.at(i) = 0;
+        followsList->push_back(0);
     }
 
     // loop through procedures to get Follows relationship (no star)
     for (size_t i = 0; i < numberOfProcedures; i++) {
-        extractFollowsStmtlst(&followsList, procedures.at(i)->statementListNode);
+        extractFollowsStmtlst(followsList, procedures.at(i)->statementListNode);
     }
 
     // loop through FollowsList to find Follows* relationships
     for (StatementNumber beforeStmt = 0; beforeStmt < numberOfStatements; beforeStmt++) {
-        StatementNumber currentAfterStmt = followsList.at(beforeStmt);
+        StatementNumber currentAfterStmt = followsList->at(beforeStmt);
         Vector<Integer> seenNodesList;
         while (currentAfterStmt != 0) {
             // add this edge to the seen nodes
             seenNodesList.push_back(currentAfterStmt);
             // travel the edges to the next accessible node
-            currentAfterStmt = followsList.at(currentAfterStmt);
+            currentAfterStmt = followsList->at(currentAfterStmt);
         }
         // store all Follows* in PKB
         addFollowsRelationshipsStar(beforeStmt, seenNodesList);
     }
+
+    return followsList;
+}
+
+Void extractFollows(const ProgramNode& rootNode) {
+    FollowsList* list = extractFollowsReturnAdjacencyList(rootNode);
+    // handle deletion of the adjacency list in heap
+    delete list;
 }

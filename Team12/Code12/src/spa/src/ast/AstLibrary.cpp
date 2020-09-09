@@ -39,10 +39,10 @@ WhileStatementNode* createWhileNode(StatementNumber sn, ConditionalExpression* p
     return new WhileStatementNode(sn, predicate, statementList);
 }
 
-IfStatementNode* createIfNode(StatementNumber sn, ConditionalExpression* predicate, StmtlstNode* leftStatementList,
-                              StmtlstNode* rightStatementList)
+IfStatementNode* createIfNode(StatementNumber sn, ConditionalExpression* predicate, StmtlstNode* ifStatementList,
+                              StmtlstNode* elseStatementList)
 {
-    return new IfStatementNode(sn, predicate, leftStatementList, rightStatementList);
+    return new IfStatementNode(sn, predicate, ifStatementList, elseStatementList);
 }
 
 CallStatementNode* createCallNode(StatementNumber sn, Name procName)

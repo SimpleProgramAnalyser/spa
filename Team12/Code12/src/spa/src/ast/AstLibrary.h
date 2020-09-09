@@ -16,8 +16,8 @@ AssignmentStatementNode* createAssignNode(StatementNumber sn, const Variable& va
 ReadStatementNode* createReadNode(StatementNumber sn, const Variable& var);
 PrintStatementNode* createPrintNode(StatementNumber sn, const Variable& var);
 WhileStatementNode* createWhileNode(StatementNumber sn, ConditionalExpression* predicate, StmtlstNode* statementList);
-IfStatementNode* createIfNode(StatementNumber sn, ConditionalExpression* predicate, StmtlstNode* leftStatementList,
-                              StmtlstNode* rightStatementList);
+IfStatementNode* createIfNode(StatementNumber sn, ConditionalExpression* predicate, StmtlstNode* ifStatementList,
+                              StmtlstNode* elseStatementList);
 CallStatementNode* createCallNode(StatementNumber sn, Name procName);
 
 // Expressions
