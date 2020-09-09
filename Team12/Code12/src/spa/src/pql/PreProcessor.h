@@ -2,8 +2,8 @@
 // Created by Chester Sim on 6/9/20.
 //
 
-#ifndef AUTOTESTER_PREPROCESSOR_H
-#define AUTOTESTER_PREPROCESSOR_H
+#ifndef SPA_PREPROCESSOR_H
+#define SPA_PREPROCESSOR_H
 
 #include "AqTypes.h"
 
@@ -16,4 +16,4 @@ private:
     static ClauseVector processClauses(String clausesString);
 };
 
-#endif // AUTOTESTER_PREPROCESSOR_H
+#endif // SPA_PREPROCESSOR_H

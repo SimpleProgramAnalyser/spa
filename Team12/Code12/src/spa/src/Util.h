@@ -7,11 +7,14 @@
 
 #include "Types.h"
 
+#include <regex>
+
 namespace util {
 
 template <typename T>
-bool checkListValuesEqual(const List<T>& first, const List<T>& second);
-
+Boolean checkListValuesEqual(const List<T>& first, const List<T>& second);
+Boolean isPossibleIdentifier(const String& str);
+Boolean isPossibleConstant(const String& str);
 }
 
 #endif // SPA_UTIL_H

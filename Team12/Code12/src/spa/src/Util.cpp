@@ -23,3 +23,18 @@ bool util::checkListValuesEqual(const List<T>& first, const List<T>& second)
     }
     return allMatch;
 }
+
+Boolean isMatchingRegex(const String& rawInput, const String& regex)
+{
+    return std::regex_match(rawInput, std::regex(regex));
+}
+
+Boolean util::isPossibleIdentifier(const String& str)
+{
+    return isMatchingRegex(str, "[A-Za-z]([A-Za-z]|[\\d])*");
+}
+
+Boolean util::isPossibleConstant(const String& str)
+{
+    return isMatchingRegex(str, "\\d+");
+}

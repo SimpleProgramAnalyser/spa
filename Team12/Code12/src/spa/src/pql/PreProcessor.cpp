@@ -18,8 +18,8 @@ AbstractQuery PreProcessor::processQuery(String query)
     if (splitBySelectList->size() != 2) {
         return AbstractQuery::invalidAbstractQuery();
     }
-    String declarationString = *(splitBySelectList->at(0));       // TODO: trim
-    String synonymAndClausesString = *(splitBySelectList->at(1)); // TODO: trim
+    String declarationString = trimWhitespace(*(splitBySelectList->at(0)));
+    String synonymAndClausesString = trimWhitespace(*(splitBySelectList->at(1)));
 
     // Process declarations into declaration table
     DeclarationTable declarationTable = processDeclarations(declarationString);
@@ -92,6 +92,7 @@ DeclarationTable PreProcessor::processDeclarations(String declarationsString)
 /**
  * Splits up the given string by the first
  * consecutive whitespace, into two substrings.
+ * Given string should be trimmed.
  *
  * @param str String to be split
  * @return vector of 2 strings

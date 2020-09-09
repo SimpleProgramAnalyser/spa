@@ -14,6 +14,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
 
+
     # ast library
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
@@ -27,7 +28,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
-        src/Util.cpp src/Util.h
 
     # pkb
     ${pkb}
@@ -47,8 +47,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp)
 
 # flags for debug
 if(CMAKE_COMPILER_IS_GNUCXX)

@@ -9,6 +9,7 @@
 #define SPA_AQTYPES_H
 
 #include <Types.h>
+#include <Util.h>
 
 enum DesignEntityType {
     StatementType = 0,
