@@ -14,7 +14,7 @@ procedure factorials {
     current = 0;
     factorial = 0;
     while (current < limit) {
-        if (current == 0) {
+        if (current == 0) then {
             factorial = 1;
         } else {
             factorial = current * factorial;
@@ -30,7 +30,7 @@ procedure factorials {
     current = 0;                             // 2
     factorial = 0;                           // 3
     while (current < limit) {                // 4
-        if (current == 0) {                  // 5
+        if (current == 0) then {             // 5
             factorial = 1;                   // 6
         } else {                             //
             factorial = current * factorial; // 7
