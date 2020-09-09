@@ -27,7 +27,8 @@ using Matrix = std::vector<std::vector<bool>>;
 Void markFollowsRelationship(Matrix* followsMatrix, StatementNumber before, StatementNumber after)
 {
     followsMatrix->at(before).at(after) = true;
-    // TODO: addFollowsRelationships(before, after) from PKB
+    // call PKB to add the relationship
+    addFollowsRelationships(before, after);
 }
 
 // forward declaration for extractFollowsFromContainer
