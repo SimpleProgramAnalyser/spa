@@ -9,7 +9,7 @@
 #include "AstTypes.h"
 
 // Nodes
-ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes);
+ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes, StatementNumber totalStmts);
 ProcedureNode* createProcedureNode(Name procedureName, StmtlstNode* stmtlstNode);
 StmtlstNode* createStmtlstNode(StatementNodeList& statementNodes);
 AssignmentStatementNode* createAssignNode(StatementNumber sn, const Variable& var, Expression* expr);
@@ -37,5 +37,8 @@ ArithmeticExpression* createDivExpr(Expression* leftExpr, Expression* rightExpr)
 ArithmeticExpression* createModExpr(Expression* leftExpr, Expression* rightExpr);
 ReferenceExpression* createRefExpr(String variable);
 ReferenceExpression* createRefExpr(Integer constant);
+
+// AST Helper functions
+inline Boolean isContainerStatement(StatementType stmtType);
 
 #endif // SPA_AST_LIBRARY_H

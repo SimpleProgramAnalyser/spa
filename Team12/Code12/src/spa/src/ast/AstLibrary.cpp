@@ -4,9 +4,9 @@
 
 #include "AstLibrary.h"
 
-ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes)
+ProgramNode* createProgramNode(Name programName, ProcedureNodeList& procedureNodes, StatementNumber totalStmts)
 {
-    return new ProgramNode(std::move(programName), std::move(procedureNodes));
+    return new ProgramNode(std::move(programName), std::move(procedureNodes), totalStmts);
 }
 
 ProcedureNode* createProcedureNode(Name procedureName, StmtlstNode* stmtlstNode)
@@ -138,4 +138,9 @@ ReferenceExpression* createRefExpr(String variable)
 ReferenceExpression* createRefExpr(Integer constant)
 {
     return new ReferenceExpression(new Constant(constant));
+}
+
+inline Boolean isContainerStatement(StatementType stmtType)
+{
+    return stmtType == IfStatement || stmtType == WhileStatement;
 }
