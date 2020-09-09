@@ -139,7 +139,8 @@ FollowsList* extractFollowsReturnAdjacencyList(const ProgramNode& rootNode)
     return followsList;
 }
 
-Void extractFollows(const ProgramNode& rootNode) {
+Void extractFollows(const ProgramNode& rootNode)
+{
     FollowsList* list = extractFollowsReturnAdjacencyList(rootNode);
     // handle deletion of the adjacency list in heap
     delete list;
