@@ -5,7 +5,6 @@
 #include "ast/AstLibrary.cpp"
 #include "ast/AstLibrary.h"
 #include "ast/AstTypes.h"
-#include "ast/AstTypes.cpp"
 
 #include<string>  
 

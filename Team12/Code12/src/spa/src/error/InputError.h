@@ -22,9 +22,9 @@ public:
     InputError(String msg, Integer lineNumber, Integer columnNumber, ErrorSource src, ErrorType errorType);
 
     String getMessage();
-    InputLocation* getLocation();
-    ErrorSource getSource();
-    ErrorType getType();
+    InputLocation getLocation() const;
+    ErrorSource getSource() const;
+    ErrorType getType() const;
 };
 
 #endif // SPA_INPUT_ERROR_H

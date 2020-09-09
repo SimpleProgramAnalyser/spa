@@ -3,13 +3,10 @@
  */
 #include "InputError.h"
 
-InputLocation::InputLocation(Integer lineNumber, Integer columnNumber):
-    line(std::move(lineNumber)), column(std::move(columnNumber))
-{}
+InputLocation::InputLocation(Integer lineNumber, Integer columnNumber): line(lineNumber), column(columnNumber) {}
 
 InputError::InputError(String msg, Integer lineNumber, Integer columnNumber, ErrorSource src, ErrorType errorType):
-    message(std::move(msg)), line(std::move(lineNumber)), column(std::move(columnNumber)), source(std::move(src)),
-    type(std::move(errorType))
+    message(std::move(msg)), line(lineNumber), column(columnNumber), source(src), type(errorType)
 {}
 
 String InputError::getMessage()
@@ -17,18 +14,17 @@ String InputError::getMessage()
     return message;
 }
 
-InputLocation* InputError::getLocation()
+InputLocation InputError::getLocation() const
 {
-    InputLocation* inputLocation = new InputLocation(line, column);
-    return inputLocation;
+    return {line, column};
 }
 
-ErrorSource InputError::getSource()
+ErrorSource InputError::getSource() const
 {
     return source;
 }
 
-ErrorType InputError::getType()
+ErrorType InputError::getType() const
 {
     return type;
 }

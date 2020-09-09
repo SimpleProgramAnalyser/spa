@@ -19,12 +19,14 @@ public:
     StatementNode& operator=(const StatementNode&) = delete;
     StatementNode(StatementNode&&) = delete;
     StatementNode& operator=(StatementNode&&) = delete;
+    virtual bool operator==(const StatementNode& sn) const;
 
-    virtual StatementType getStatementType() = 0;
-    virtual StatementNumber getStatementNumber();
+    virtual StatementType getStatementType() const = 0;
+    virtual StatementNumber getStatementNumber() const;
 
 protected:
     explicit StatementNode(StatementNumber n);
+    virtual bool compare(const StatementNode& sn) const = 0;
 
 private:
     StatementNumber stmtNum;
@@ -34,6 +36,7 @@ class StmtlstNode {
 public:
     List<StatementNode> statementList;
     explicit StmtlstNode(List<StatementNode> stmtLst);
+    bool operator==(const StmtlstNode& sln) const;
 };
 
 class ProcedureNode {
@@ -47,6 +50,7 @@ public:
     ProcedureNode& operator=(const ProcedureNode&) = delete;
     ProcedureNode(ProcedureNode&&) = delete;
     ProcedureNode& operator=(ProcedureNode&&) = delete;
+    bool operator==(const ProcedureNode& pcn) const;
 };
 
 class ProgramNode {
@@ -54,6 +58,7 @@ public:
     const Name programName;
     List<ProcedureNode> procedureList;
     ProgramNode(Name n, List<ProcedureNode> procLst);
+    bool operator==(const ProgramNode& pgn) const;
 };
 
 class BasicDataType {
@@ -61,6 +66,7 @@ public:
     virtual ~BasicDataType() = default;
     virtual String toString() = 0;
     virtual Boolean isConstant() const noexcept = 0;
+    virtual bool operator==(const BasicDataType& bdt) const;
 
 protected:
     BasicDataType() = default;
@@ -68,6 +74,7 @@ protected:
     BasicDataType& operator=(const BasicDataType&) = default;
     BasicDataType(BasicDataType&&) = default;
     BasicDataType& operator=(BasicDataType&&) = default;
+    virtual bool compare(const BasicDataType& bdt) const = 0;
 };
 
 class Constant: public BasicDataType {
@@ -83,6 +90,10 @@ public:
 
     String toString() override;
     Boolean isConstant() const noexcept override;
+    bool operator==(const BasicDataType& c) const override;
+
+protected:
+    bool compare(const BasicDataType& c) const override;
 };
 
 class Variable: public BasicDataType {
@@ -98,27 +109,43 @@ public:
 
     String toString() override;
     Boolean isConstant() const noexcept override;
+    bool operator==(const BasicDataType& v) const override;
+
+protected:
+    bool compare(const BasicDataType& c) const override;
 };
 
 class ReadStatementNode: public StatementNode {
 public:
     const Variable var;
     ReadStatementNode(StatementNumber stmtNum, Variable v);
-    StatementType getStatementType() override;
+    bool operator==(const StatementNode& sn) const override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class PrintStatementNode: public StatementNode {
 public:
     const Variable var;
     PrintStatementNode(StatementNumber stmtNum, Variable v);
-    StatementType getStatementType() override;
+    bool operator==(const StatementNode& sn) const override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class CallStatementNode: public StatementNode {
 public:
     const Name procedureName;
     CallStatementNode(StatementNumber stmtNum, Name n);
-    StatementType getStatementType() override;
+    bool operator==(const StatementNode& sn) const override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 enum ConditionalExpressionType {
@@ -131,7 +158,8 @@ enum ConditionalExpressionType {
 class ConditionalExpression {
 public:
     virtual ~ConditionalExpression() = default;
-    virtual ConditionalExpressionType getConditionalType() noexcept = 0;
+    virtual ConditionalExpressionType getConditionalType() const noexcept = 0;
+    virtual bool operator==(const ConditionalExpression& ce) const;
 
 protected:
     ConditionalExpression() = default;
@@ -139,6 +167,8 @@ protected:
     ConditionalExpression& operator=(const ConditionalExpression&) = default;
     ConditionalExpression(ConditionalExpression&&) = default;
     ConditionalExpression& operator=(ConditionalExpression&&) = default;
+
+    virtual bool compare(const ConditionalExpression& ce) const = 0;
 };
 
 class NotExpression: public ConditionalExpression {
@@ -151,8 +181,12 @@ public:
     NotExpression& operator=(const NotExpression&) = delete;
     NotExpression(NotExpression&&) = delete;
     NotExpression& operator=(NotExpression&&) = delete;
+    bool operator==(const ConditionalExpression& ce) const override;
 
-    ConditionalExpressionType getConditionalType() noexcept override;
+    ConditionalExpressionType getConditionalType() const noexcept override;
+
+protected:
+    bool compare(const ConditionalExpression& ce) const override;
 };
 
 class AndExpression: public ConditionalExpression {
@@ -166,8 +200,12 @@ public:
     AndExpression& operator=(const AndExpression&) = delete;
     AndExpression(AndExpression&&) = delete;
     AndExpression& operator=(AndExpression&&) = delete;
+    bool operator==(const ConditionalExpression& ce) const override;
 
-    ConditionalExpressionType getConditionalType() noexcept override;
+    ConditionalExpressionType getConditionalType() const noexcept override;
+
+protected:
+    bool compare(const ConditionalExpression& ce) const override;
 };
 
 class OrExpression: public ConditionalExpression {
@@ -181,8 +219,12 @@ public:
     OrExpression& operator=(const OrExpression&) = delete;
     OrExpression(OrExpression&&) = delete;
     OrExpression& operator=(OrExpression&&) = delete;
+    bool operator==(const ConditionalExpression& ce) const override;
 
-    ConditionalExpressionType getConditionalType() noexcept override;
+    ConditionalExpressionType getConditionalType() const noexcept override;
+
+protected:
+    bool compare(const ConditionalExpression& ce) const override;
 };
 
 enum ExpressionOperator : char {
@@ -197,6 +239,7 @@ class Expression {
 public:
     virtual ~Expression() = default;
     virtual Boolean isArithmetic() const noexcept = 0;
+    virtual bool operator==(const Expression& ex) const;
 
 protected:
     Expression() = default;
@@ -204,6 +247,8 @@ protected:
     Expression& operator=(const Expression&) = default;
     Expression(Expression&&) = default;
     Expression& operator=(Expression&&) = default;
+
+    virtual bool compare(const Expression& ex) const = 0;
 };
 
 class ArithmeticExpression: public Expression {
@@ -218,8 +263,12 @@ public:
     ArithmeticExpression& operator=(const ArithmeticExpression&) = delete;
     ArithmeticExpression(ArithmeticExpression&&) = delete;
     ArithmeticExpression& operator=(ArithmeticExpression&&) = delete;
+    bool operator==(const Expression& ex) const override;
 
     Boolean isArithmetic() const noexcept override;
+
+protected:
+    bool compare(const Expression& ex) const override;
 };
 
 class ReferenceExpression: public Expression {
@@ -234,6 +283,10 @@ public:
     ReferenceExpression& operator=(ReferenceExpression&&) = delete;
 
     Boolean isArithmetic() const noexcept override;
+    bool operator==(const Expression& re) const override;
+
+protected:
+    bool compare(const Expression& ex) const override;
 };
 
 enum RelationalOperator : char {
@@ -257,8 +310,12 @@ public:
     RelationalExpression& operator=(const RelationalExpression&) = delete;
     RelationalExpression(RelationalExpression&&) = delete;
     RelationalExpression& operator=(RelationalExpression&&) = delete;
+    bool operator==(const ConditionalExpression& ce) const override;
 
-    ConditionalExpressionType getConditionalType() noexcept override;
+    ConditionalExpressionType getConditionalType() const noexcept override;
+
+protected:
+    bool compare(const ConditionalExpression& ce) const override;
 };
 
 class IfStatementNode: public StatementNode {
@@ -274,8 +331,12 @@ public:
     IfStatementNode& operator=(const IfStatementNode&) = delete;
     IfStatementNode(IfStatementNode&&) = delete;
     IfStatementNode& operator=(IfStatementNode&&) = delete;
+    bool operator==(const StatementNode& sn) const override;
 
-    StatementType getStatementType() override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class WhileStatementNode: public StatementNode {
@@ -289,8 +350,12 @@ public:
     WhileStatementNode& operator=(const WhileStatementNode&) = delete;
     WhileStatementNode(WhileStatementNode&&) = delete;
     WhileStatementNode& operator=(WhileStatementNode&&) = delete;
+    bool operator==(const StatementNode& sn) const override;
 
-    StatementType getStatementType() override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 class AssignmentStatementNode: public StatementNode {
@@ -298,14 +363,18 @@ public:
     const Variable variable;
     const Expression* expression;
 
-    AssignmentStatementNode(StatementNumber stmtNum, const Variable& v, const Expression* expr);
+    AssignmentStatementNode(StatementNumber stmtNum, Variable v, const Expression* expr);
     ~AssignmentStatementNode() override;
     AssignmentStatementNode(const AssignmentStatementNode&) = delete;
     AssignmentStatementNode& operator=(const AssignmentStatementNode&) = delete;
     AssignmentStatementNode(AssignmentStatementNode&&) = delete;
     AssignmentStatementNode& operator=(AssignmentStatementNode&&) = delete;
+    bool operator==(const StatementNode& sn) const override;
 
-    StatementType getStatementType() override;
+    StatementType getStatementType() const override;
+
+protected:
+    bool compare(const StatementNode& sn) const override;
 };
 
 typedef List<ProcedureNode> ProcedureNodeList;

@@ -1,5 +1,8 @@
 file(GLOB srcs "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
+file(GLOB_RECURSE pkb "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/*.h")
+
+set(CMAKE_BUILD_TYPE Debug)
 
 add_library(spa
 
@@ -26,15 +29,46 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
+
+    # frontend/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+
+    # pkb
+    ${pkb}
+
+    # pql
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Projector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Projector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/QueryResultFormatType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
 )
 
 # flags for debug
-if(CMAKE_COMPILER_IS_GNUCXX) 
+if(CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
-
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 
