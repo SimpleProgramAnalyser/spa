@@ -56,6 +56,7 @@ FollowsList* extractFollowsFromContainer(FollowsList* followsList, const std::un
         extractFollowsStmtlst(followsList, ifStatement->ifStatementList);
         extractFollowsStmtlst(followsList, ifStatement->elseStatementList);
     } else {
+        // NOLINTNEXTLINE
         assert(containerStmt->getStatementType() == WhileStatement);
         // NOLINTNEXTLINE
         auto* whileStatement = static_cast<WhileStatementNode*>(containerStmt.get());
