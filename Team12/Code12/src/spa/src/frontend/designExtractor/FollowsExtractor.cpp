@@ -10,29 +10,31 @@
 #include "ast/AstLibrary.h"
 #include "pkb/relationships/Follows.h"
 
-using Matrix = std::vector<std::vector<bool>>;
+// Since only one statement can Follow another, we only need a
+// one-dimensional array to store the Follows relationships
+using FollowsList = std::vector<StatementNumber>;
 
 /**
- * Stores a Follow relationship in an adjacency matrix,
+ * Stores a Follows relationship in an adjacency matrix,
  * and also calls the PKB API to store the relationship
  * in the database. Note that this method is used for
  * Follows without a star.
  *
- * @param followsMatrix The adjacency matrix to store
+ * @param followsList The adjacency list to store
  *                      Follows relationships.
  * @param before Statement number of the before statement.
  * @param after Statement number of the after statement.
  * @return Void.
  */
-Void markFollowsRelationship(Matrix* followsMatrix, StatementNumber before, StatementNumber after)
+Void markFollowsRelationship(FollowsList* followsList, StatementNumber before, StatementNumber after)
 {
-    followsMatrix->at(before).at(after) = true;
+    followsList->at(before) = after;
     // call PKB to add the relationship
     addFollowsRelationships(before, after);
 }
 
 // forward declaration for extractFollowsFromContainer
-Matrix* extractFollowsStmtlst(Matrix* followsMatrix, const StmtlstNode* stmtLstNode);
+FollowsList* extractFollowsStmtlst(FollowsList* followsList, const StmtlstNode* stmtLstNode);
 
 /**
  * Extracts Follows relationships within a certain
@@ -40,26 +42,26 @@ Matrix* extractFollowsStmtlst(Matrix* followsMatrix, const StmtlstNode* stmtLstN
  * statement. Container statements can be if or while
  * statements in SIMPLE.
  *
- * @param followsMatrix The adjacency matrix to store
- *                      Follows relationships.
+ * @param followsList The adjacency list to store
+ *                    Follows relationships.
  * @param containerStmt The container statement node to traverse.
- * @return The pointer to the adjacency matrix, to allow
- *         for chaining of methods.
+ * @return The pointer to the adjacency list,
+ *         to allow for chaining of methods.
  */
-Matrix* extractFollowsFromContainer(Matrix* followsMatrix, const std::unique_ptr<StatementNode>& containerStmt)
+FollowsList* extractFollowsFromContainer(FollowsList* followsList, const std::unique_ptr<StatementNode>& containerStmt)
 {
     if (containerStmt->getStatementType() == IfStatement) {
         // NOLINTNEXTLINE
         auto* ifStatement = static_cast<IfStatementNode*>(containerStmt.get());
-        extractFollowsStmtlst(followsMatrix, ifStatement->ifStatementList);
-        extractFollowsStmtlst(followsMatrix, ifStatement->elseStatementList);
+        extractFollowsStmtlst(followsList, ifStatement->ifStatementList);
+        extractFollowsStmtlst(followsList, ifStatement->elseStatementList);
     } else {
         assert(containerStmt->getStatementType() == WhileStatement);
         // NOLINTNEXTLINE
         auto* whileStatement = static_cast<WhileStatementNode*>(containerStmt.get());
-        extractFollowsStmtlst(followsMatrix, whileStatement->statementList);
+        extractFollowsStmtlst(followsList, whileStatement->statementList);
     }
-    return followsMatrix;
+    return followsList;
 }
 
 /**
@@ -67,13 +69,13 @@ Matrix* extractFollowsFromContainer(Matrix* followsMatrix, const std::unique_ptr
  * list node. Statements in a statement list node
  * are within the same nesting level.
  *
- * @param followsMatrix The adjacency matrix to store
- *                      Follows relationships.
+ * @param followsList The adjacency list to store
+ *                    Follows relationships.
  * @param stmtLstNode The statement list node to traverse.
- * @return The pointer to the adjacency matrix, to allow
- *         for chaining of methods.
+ * @return The pointer to the adjacency list,
+ *         to allow for chaining of methods.
  */
-Matrix* extractFollowsStmtlst(Matrix* followsMatrix, const StmtlstNode* const stmtLstNode)
+FollowsList* extractFollowsStmtlst(FollowsList* followsList, const StmtlstNode* const stmtLstNode)
 {
     const List<StatementNode>& statements = stmtLstNode->statementList;
     size_t numberOfStatements = statements.size();
@@ -81,33 +83,47 @@ Matrix* extractFollowsStmtlst(Matrix* followsMatrix, const StmtlstNode* const st
         const std::unique_ptr<StatementNode>& currentStatement = statements.at(i);
         const std::unique_ptr<StatementNode>& nextStatement = statements.at(i + 1);
         // mark an edge in followsMatrix: (currentStatement ---> nextStatement)
-        markFollowsRelationship(followsMatrix, currentStatement->getStatementNumber(),
+        markFollowsRelationship(followsList, currentStatement->getStatementNumber(),
                                 nextStatement->getStatementNumber());
 
         if (isContainerStatement(currentStatement->getStatementType())) {
-            extractFollowsFromContainer(followsMatrix, currentStatement);
+            extractFollowsFromContainer(followsList, currentStatement);
         }
     }
-    return followsMatrix;
+    return followsList;
 }
 
-Void extractFollows(ProgramNode& rootNode)
+Void extractFollows(const ProgramNode& rootNode)
 {
     const List<ProcedureNode>& procedures = rootNode.procedureList;
     StatementNumber numberOfStatements = rootNode.totalNumberOfStatements;
     size_t numberOfProcedures = procedures.size();
 
-    // initiate the Follows* matrix for fast lookup
-    Matrix adjacencyMatrix;
-    adjacencyMatrix.reserve(numberOfStatements);
+    // initiate the Follows* list for fast lookup
+    FollowsList followsList;
+    followsList.reserve(numberOfStatements + 1);
     for (size_t i = 0; i < numberOfStatements; i++) {
-        adjacencyMatrix.push_back(std::vector<bool>(numberOfStatements));
+        // initiate the adjacency list with 0
+        // 0 indicates the lack of a Follows relationship
+        followsList.at(i) = 0;
     }
 
     // loop through procedures to get Follows relationship (no star)
     for (size_t i = 0; i < numberOfProcedures; i++) {
-        extractFollowsStmtlst(&adjacencyMatrix, procedures.at(i)->statementListNode);
+        extractFollowsStmtlst(&followsList, procedures.at(i)->statementListNode);
     }
 
-    // TODO: Follows*
+    // loop through FollowsList to find Follows* relationships
+    for (StatementNumber beforeStmt = 0; beforeStmt < numberOfStatements; beforeStmt++) {
+        StatementNumber currentAfterStmt = followsList.at(beforeStmt);
+        Vector<Integer> seenNodesList;
+        while (currentAfterStmt != 0) {
+            // add this edge to the seen nodes
+            seenNodesList.push_back(currentAfterStmt);
+            // travel the edges to the next accessible node
+            currentAfterStmt = followsList.at(currentAfterStmt);
+        }
+        // store all Follows* in PKB
+        addFollowsRelationshipsStar(beforeStmt, seenNodesList);
+    }
 }

@@ -13,6 +13,6 @@
  * @param rootNode Root node of the AST.
  * @return Void.
  */
-Void extractFollows(ProgramNode& rootNode);
+Void extractFollows(const ProgramNode& rootNode);
 
 #endif // SPA_FRONTEND_FOLLOWS_EXTRACTOR_H
