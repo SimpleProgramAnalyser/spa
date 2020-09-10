@@ -49,7 +49,7 @@ protected:
 
 public:
     virtual ~Clause() = default;
-    Clause(const Clause&) = delete;
+    Clause(const Clause&) = default;
     Clause operator=(const Clause&) = delete;
     Clause(Clause&&) = delete;
     Clause& operator=(Clause&&) = delete;
