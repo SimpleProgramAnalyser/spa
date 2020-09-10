@@ -45,7 +45,7 @@ DesignEntityType DesignEntity::getType()
     return type;
 }
 
-Clause::Clause(ClauseType clauseType)
+Clause::Clause(ClauseType clauseType): hasError{false}
 {
     type = clauseType;
 }
