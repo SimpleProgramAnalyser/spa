@@ -68,6 +68,19 @@ TEST_CASE("Parser parses variables with same name as procedure") {
 
 }
 
+TEST_CASE("parseArithmeticExpression works for plus expression") {
+    auto* arithmeticExpression = new StringList(3);
+    String x = "x";
+    String plus = "+";
+    String y = "y";
+    arithmeticExpression->at(0) = std::unique_ptr<std::string>(&x);
+    arithmeticExpression->at(1) = std::unique_ptr<std::string>(&plus);
+    arithmeticExpression->at(2) = std::unique_ptr<std::string>(&y);
+    Expression* parsed = parseExpression(arithmeticExpression);
+    Expression* expected = createPlusExpr(createRefExpr("x"), createRefExpr("y"));
+    REQUIRE(*(parsed) == *(expected));
+}
+
 TEST_CASE("Syntax error, mismatched braces") {
 
 }
