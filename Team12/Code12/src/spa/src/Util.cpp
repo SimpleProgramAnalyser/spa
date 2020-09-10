@@ -2,6 +2,9 @@
  * Implementation of utility functions for SPA.
  */
 
+#ifndef SPA_UTIL_CPP
+#define SPA_UTIL_CPP
+
 #include "Util.h"
 
 template <typename T>
@@ -53,3 +56,5 @@ Boolean util::isLiteralIdent(const String& str)
         return false;
     }
 }
+
+#endif // SPA_UTIL_CPP
