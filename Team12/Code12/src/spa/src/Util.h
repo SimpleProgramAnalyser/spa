@@ -12,7 +12,25 @@
 namespace util {
 
 template <typename T>
-Boolean checkListValuesEqual(const List<T>& first, const List<T>& second);
+bool checkListValuesEqual(const List<T>& first, const List<T>& second)
+{
+    if (first.size() != second.size()) {
+        return false;
+    }
+
+    bool allMatch = true;
+    size_t len = first.size();
+    for (size_t i = 0; i < len; i++) {
+        if (*(first.at(i)) == *(second.at(i))) {
+            continue;
+        } else {
+            allMatch = false;
+            break;
+        }
+    }
+    return allMatch;
+}
+
 Boolean isPossibleIdentifier(const String& str);
 Boolean isPossibleConstant(const String& str);
 Boolean isRelationshipReference(const String& str);

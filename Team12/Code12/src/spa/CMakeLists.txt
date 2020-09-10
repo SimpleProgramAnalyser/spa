@@ -47,12 +47,18 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
+)
 
 # flags for debug
-if(CMAKE_COMPILER_IS_GNUCXX)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # using Clang
     target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
-endif(CMAKE_COMPILER_IS_GNUCXX)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # using GCC
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+endif()
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

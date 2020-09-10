@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/cache
-          key: ${{ runner.os }}-spa-clang-checks-deps-v3
+          key: ${{ runner.os }}-spa-clang-checks-deps-v2
 
       - name: Cache build
         id: cache-build
