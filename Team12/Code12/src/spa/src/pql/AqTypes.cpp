@@ -215,7 +215,8 @@ Expression* ExpressionSpec::getExpression()
     return expression;
 }
 
-Boolean ExpressionSpec::isInvalid() {
+Boolean ExpressionSpec::isInvalid()
+{
     return hasError;
 }
 

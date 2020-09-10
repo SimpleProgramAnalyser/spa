@@ -123,8 +123,8 @@ public:
 };
 
 enum ExpressionSpecType {
-    WildcardType = 0, // _
-    LiteralType = 1, // _"x + y"_
+    WildcardType = 0,          // _
+    LiteralType = 1,           // _"x + y"_
     ExtendableLiteralType = 2, // "x + y"
     InvalidType = 4
 };
