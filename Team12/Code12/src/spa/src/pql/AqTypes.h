@@ -10,6 +10,9 @@
 
 #include <Types.h>
 #include <Util.h>
+#include <utility>
+
+typedef std::pair<String, String> StringPair;
 
 enum DesignEntityType {
     StatementType = 0,
@@ -37,18 +40,22 @@ public:
 
 typedef String Synonym;
 
-enum ClauseType { SUCH_THAT_CLAUSE = 0, PATTERN_CLAUSE = 1 };
+enum ClauseType { SuchThatClauseType = 0, PatternClauseType = 1 };
 
 class Clause {
 protected:
     ClauseType type;
+    Boolean hasError;
 
 public:
+    virtual ~Clause() = default;
     explicit Clause(ClauseType clauseType);
+    static Clause* invalidClause(ClauseType clauseType);
     ClauseType getType();
+    Boolean isInvalid();
 };
 
-enum ReferenceType { STATEMENT_REF = 0, ENTITY_REF = 1 };
+enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
 
 typedef String ReferenceValue; // TODO: more thought needs to be done on the implementation of ReferenceValue
 
@@ -56,45 +63,49 @@ class Reference {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
+    Boolean isProcedureType;
 
 public:
-    Reference(ReferenceType refType, ReferenceValue& refValue);
+    Reference(ReferenceType refType, ReferenceValue refValue);
+    Reference(ReferenceType refType, ReferenceValue refValue, Boolean isProc);
     ReferenceType getReferenceType();
     ReferenceValue getValue();
+    Boolean isValidEntityRef();
+    Boolean isValidStatementRef();
+    Boolean isWildCard();
+    Boolean isInvalid();
+    Boolean isProcedure();
+    static Reference invalidReference();
 };
 
-class EntityReference: public Reference {
-public:
-    EntityReference(ReferenceValue& refValue);
-};
-
-class StatementReference: public Reference {
-public:
-    StatementReference(ReferenceValue& refValue);
-};
-
-enum RelationshipReference {
-    FOLLOWS = 0,
-    FOLLOWS_T = 1,
-    PARENT = 2,
-    PARENT_T = 4,
-    USES_S = 8,
-    USES_P = 16,
-    MODIFIES_S = 32,
-    MODIFIES_P = 64
+enum RelationshipReferenceType {
+    FollowsType = 0,
+    FollowsStarType = 1,
+    ParentType = 2,
+    ParentStarType = 4,
+    UsesType = 8, // placeholder type for UsesStatement and UsesProcedure
+    UsesStatementType = 16,
+    UsesProcedureType = 32,
+    ModifiesType = 64, // placeholder type for ModifiesStatement and ModifiesProcedure
+    ModifiesStatementType = 128,
+    ModifiesProcedureType = 256,
+    InvalidRelationshipType = 512
 };
 
 class Relationship {
 private:
-    RelationshipReference relationshipReference;
+    RelationshipReferenceType relationshipReference;
     Reference leftReference;
     Reference rightReference;
+    Boolean hasError;
 
 public:
-    Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef);
-    RelationshipReference getRelationship();
+    Relationship(String relationshipRef, Reference leftRef, Reference rightRef);
+    RelationshipReferenceType getRelationship();
     Reference getLeftRef();
     Reference getRightRef();
+    Boolean isInvalid();
+    static RelationshipReferenceType getRelRefType(String relRef);
 };
 
 class SuchThatClause: public Clause {
@@ -126,30 +137,40 @@ enum PatternStatementType { ASSIGN = 0 };
 class PatternClause: public Clause {
 private:
     PatternStatementType patternStatementType;
-    EntityReference entityReference;
+    Reference entityReference;
     ExpressionSpec expressionSpec;
 
 public:
-    PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec);
+    PatternClause(PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
     PatternStatementType getStatementType();
-    EntityReference getEntRef();
+    Reference getEntRef();
     ExpressionSpec getExprSpec();
 };
 
 class DeclarationTable {
 private:
     std::unordered_map<Synonym, DesignEntity> table;
-    bool isInvalid = false;
+    bool hasError = false;
 
 public:
     void addDeclaration(Synonym s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s);
-    void setInvalidDeclaration();
-    Boolean hasInvalidDeclaration();
+    Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
+    static DeclarationTable invalidDeclarationTable();
 };
 
-typedef std::vector<Clause> ClauseVector; // TODO: Adding unique_ptr causes compilation error
+class ClauseVector {
+private:
+    std::vector<Clause*> clauses;
+    Boolean hasError;
+
+public:
+    static ClauseVector invalidClauseVector();
+    void add(Clause* clause);
+    Clause get(Integer index);
+    Boolean isInvalid();
+};
 
 class AbstractQuery {
 private:
@@ -160,13 +181,12 @@ private:
 
 public:
     AbstractQuery(); // TODO: To be removed in the future
-    AbstractQuery(Synonym synonym, ClauseVector& clauseList);
+    AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
+    static AbstractQuery invalidAbstractQuery();
     Synonym getSelectSynonym();
     ClauseVector getClauses();
     DeclarationTable getDeclarationTable();
-    void setToInvalid();
     Boolean isInvalid();
-    static AbstractQuery invalidAbstractQuery();
 };
 
 // Utils

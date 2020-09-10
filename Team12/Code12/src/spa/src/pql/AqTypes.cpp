@@ -15,7 +15,7 @@ DesignEntity::DesignEntity(DesignEntityType designEntityType)
 
 DesignEntity::DesignEntity(const String& stringType)
 {
-    if (stringType == "statement") {
+    if (stringType == "stmt") {
         type = StatementType;
     } else if (stringType == "read") {
         type = ReadType;
@@ -55,10 +55,56 @@ ClauseType Clause::getType()
     return type;
 }
 
-Reference::Reference(ReferenceType refType, ReferenceValue& refValue)
+Boolean Clause::isInvalid()
 {
-    referenceType = refType;
-    referenceValue = refValue;
+    return hasError;
+}
+
+Clause* Clause::invalidClause(ClauseType clauseType)
+{
+    auto* c = new Clause(clauseType);
+    (*c).hasError = true;
+    return c;
+}
+
+Reference::Reference(ReferenceType refType, ReferenceValue refValue):
+    referenceType{refType}, referenceValue{refValue}, isProcedureType{false}
+{}
+
+Reference::Reference(ReferenceType refType, ReferenceValue refValue, Boolean isProc):
+    referenceType{refType}, referenceValue{refValue}, isProcedureType{isProc}
+{}
+
+Reference Reference::invalidReference()
+{
+    Reference r(InvalidRefType, "");
+    return r;
+}
+
+Boolean Reference::isInvalid()
+{
+    return referenceType == InvalidRefType;
+}
+
+Boolean Reference::isValidEntityRef()
+{
+    return util::isLiteralIdent(referenceValue) || util::isPossibleIdentifier(referenceValue) || referenceValue == "_";
+}
+
+Boolean Reference::isValidStatementRef()
+{
+    return util::isPossibleConstant(referenceValue) || util::isPossibleIdentifier(referenceValue)
+           || referenceValue == "_";
+}
+
+Boolean Reference::isWildCard()
+{
+    return referenceValue == "_";
+}
+
+Boolean Reference::isProcedure()
+{
+    return isProcedureType;
 }
 
 ReferenceType Reference::getReferenceType()
@@ -71,17 +117,70 @@ ReferenceValue Reference::getValue()
     return referenceValue;
 }
 
-EntityReference::EntityReference(ReferenceValue& refValue): Reference(ENTITY_REF, refValue) {}
-
-StatementReference::StatementReference(ReferenceValue& refValue): Reference(STATEMENT_REF, refValue) {}
-
-Relationship::Relationship(RelationshipReference relationshipRef, Reference leftRef, Reference rightRef):
-    leftReference(leftRef), rightReference(rightRef)
+Relationship::Relationship(String relationshipRef, Reference leftRef, Reference rightRef):
+    leftReference(leftRef), rightReference(rightRef), hasError(false)
 {
-    relationshipReference = relationshipRef;
+    // Validate relationship reference type
+    relationshipReference = getRelRefType(relationshipRef);
+    if (relationshipReference == InvalidRelationshipType) {
+        hasError = true;
+        return;
+    }
+
+    // Validate semantics for Follows, Follows*, Parent, Parent*
+    if (relationshipReference == FollowsType || relationshipReference == FollowsStarType
+        || relationshipReference == ParentType || relationshipReference == ParentStarType) {
+        Boolean bothAreValidStatementRefs = leftRef.isValidStatementRef() && rightRef.isValidStatementRef();
+        Boolean leftRefIsProcedure = leftRef.isProcedure();
+
+        if (!bothAreValidStatementRefs || leftRefIsProcedure) {
+            hasError = true;
+            return;
+        }
+    }
+
+    if (relationshipReference == UsesType || relationshipReference == ModifiesType) {
+        if (leftRef.isWildCard() || !rightRef.isValidEntityRef()) {
+            hasError = true;
+            return;
+        }
+
+        if (leftRef.isProcedure() || util::isLiteralIdent(leftRef.getValue())) {
+            relationshipReference = relationshipReference == UsesType ? UsesProcedureType : ModifiesProcedureType;
+        } else {
+            relationshipReference = relationshipReference == UsesType ? UsesStatementType : ModifiesStatementType;
+        }
+    }
+
+    leftReference = leftRef;
+    rightReference = rightRef;
 }
 
-RelationshipReference Relationship::getRelationship()
+RelationshipReferenceType Relationship::getRelRefType(String relRef)
+{
+    if (relRef == "Follows") {
+        return FollowsType;
+    } else if (relRef == "Follows*") {
+        return FollowsStarType;
+    } else if (relRef == "Parent") {
+        return ParentType;
+    } else if (relRef == "Parent*") {
+        return ParentStarType;
+    } else if (relRef == "Uses") {
+        return UsesType;
+    } else if (relRef == "Modifies") {
+        return ModifiesType;
+    }
+
+    return InvalidRelationshipType;
+}
+
+Boolean Relationship::isInvalid()
+{
+    return hasError;
+}
+
+RelationshipReferenceType Relationship::getRelationship()
 {
     return relationshipReference;
 }
@@ -96,7 +195,7 @@ Reference Relationship::getRightRef()
     return rightReference;
 }
 
-SuchThatClause::SuchThatClause(Relationship& r): Clause(SUCH_THAT_CLAUSE), relationship{r} {}
+SuchThatClause::SuchThatClause(Relationship& r): Clause(SuchThatClauseType), relationship{r} {}
 
 Relationship SuchThatClause::getRelationship()
 {
@@ -125,8 +224,8 @@ Expression ExpressionSpec::getExpression()
     return expression;
 }
 
-PatternClause::PatternClause(PatternStatementType statementType, EntityReference entRef, ExpressionSpec exprSpec):
-    Clause(PATTERN_CLAUSE), patternStatementType(statementType), entityReference(entRef), expressionSpec(exprSpec)
+PatternClause::PatternClause(PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec):
+    Clause(PatternClauseType), patternStatementType(statementType), entityReference(entRef), expressionSpec(exprSpec)
 {}
 
 PatternStatementType PatternClause::getStatementType()
@@ -134,7 +233,7 @@ PatternStatementType PatternClause::getStatementType()
     return patternStatementType;
 }
 
-EntityReference PatternClause::getEntRef()
+Reference PatternClause::getEntRef()
 {
     return entityReference;
 }
@@ -149,13 +248,9 @@ void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
     table.insert({s, designEntity});
 }
 
-void DeclarationTable::setInvalidDeclaration()
+Boolean DeclarationTable::isInvalid()
 {
-    isInvalid = true;
-}
-Boolean DeclarationTable::hasInvalidDeclaration()
-{
-    return isInvalid;
+    return hasError;
 }
 Boolean DeclarationTable::hasSynonym(Synonym s)
 {
@@ -171,15 +266,44 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s)
 {
     std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
     if (got == table.end()) {
-        DesignEntity nonExistentType("nonExistentType");
+        DesignEntity nonExistentType("NonExistentType");
         return nonExistentType;
     } else {
         return got->second;
     }
 }
 
-AbstractQuery::AbstractQuery(Synonym synonym, ClauseVector& clauseList):
-    selectSynonym(std::move(synonym)), clauses(clauseList), hasError(false)
+DeclarationTable DeclarationTable::invalidDeclarationTable()
+{
+    DeclarationTable dT;
+    dT.hasError = true;
+    return dT;
+}
+
+ClauseVector ClauseVector::invalidClauseVector()
+{
+    ClauseVector* cV = new ClauseVector();
+    (*cV).hasError = true;
+    return *cV;
+}
+
+void ClauseVector::add(Clause* clause)
+{
+    clauses.push_back(clause);
+}
+
+Clause ClauseVector::get(Integer index)
+{
+    return *(clauses.at(index));
+}
+
+Boolean ClauseVector::isInvalid()
+{
+    return hasError;
+}
+
+AbstractQuery::AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector):
+    selectSynonym(std::move(synonym)), clauses(clauseVector), declarationTable(declarations), hasError(false)
 {}
 
 Synonym AbstractQuery::getSelectSynonym()
@@ -194,21 +318,20 @@ DeclarationTable AbstractQuery::getDeclarationTable()
 {
     return declarationTable;
 }
-AbstractQuery::AbstractQuery(): hasError(false){};
 
-void AbstractQuery::setToInvalid()
-{
-    hasError = true;
-}
 Boolean AbstractQuery::isInvalid()
 {
     return hasError;
 }
+
+AbstractQuery::AbstractQuery():
+    hasError{false}, selectSynonym{""}, clauses{*(new ClauseVector())}, declarationTable{*(new DeclarationTable())}
+{}
 AbstractQuery AbstractQuery::invalidAbstractQuery()
 {
-    AbstractQuery aq;
-    aq.setToInvalid();
-    return aq;
+    AbstractQuery* aq = new AbstractQuery();
+    (*aq).hasError = true;
+    return *aq;
 }
 
 // Utils
