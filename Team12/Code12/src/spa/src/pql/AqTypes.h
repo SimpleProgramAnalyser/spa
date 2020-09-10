@@ -170,6 +170,7 @@ private:
     Boolean hasError;
 
 public:
+    ClauseVector() noexcept;
     static ClauseVector invalidClauseVector();
     void add(Clause* clause);
     Clause get(Integer index);

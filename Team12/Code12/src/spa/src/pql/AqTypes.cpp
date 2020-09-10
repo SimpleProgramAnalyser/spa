@@ -280,6 +280,8 @@ DeclarationTable DeclarationTable::invalidDeclarationTable()
     return dT;
 }
 
+ClauseVector::ClauseVector() noexcept: hasError{false} {}
+
 ClauseVector ClauseVector::invalidClauseVector()
 {
     ClauseVector* cV = new ClauseVector();
