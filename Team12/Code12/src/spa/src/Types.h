@@ -34,6 +34,4 @@ enum StatementType {
     STATEMENT_TYPE_COUNT
 };
 
-// PQL
-
 #endif // SPA_TYPES_H

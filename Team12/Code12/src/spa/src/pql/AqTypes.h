@@ -49,6 +49,10 @@ protected:
 
 public:
     virtual ~Clause() = default;
+    Clause(const Clause&) = delete;
+    Clause operator=(const Clause&) = delete;
+    Clause(Clause&&) = delete;
+    Clause& operator=(Clause&&) = delete;
     explicit Clause(ClauseType clauseType);
     static Clause* invalidClause(ClauseType clauseType);
     ClauseType getType();
