@@ -202,9 +202,16 @@ Relationship SuchThatClause::getRelationship()
     return relationship;
 }
 
-ExpressionSpec::ExpressionSpec(): hasError{false} {}
+ExpressionSpec::ExpressionSpec(): hasError{false} {
+    expressionSpecType = InvalidExpressionType;
+    Expression* expressionPtr = nullptr;
+    expression = expressionPtr;
+}
 
-ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): expressionSpecType{exprSpecType}, hasError{false} {}
+ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): expressionSpecType{exprSpecType}, hasError{false} {
+    Expression* expressionPtr = nullptr;
+    expression = expressionPtr;
+}
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
     expression(expr), expressionSpecType{exprSpecType}, hasError{false}

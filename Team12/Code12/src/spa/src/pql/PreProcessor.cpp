@@ -215,7 +215,7 @@ Clause* PreProcessor::processPatternClause(String clauseConstraint)
 ExpressionSpec PreProcessor::createExpressionSpec(String ref)
 {
     if (ref == "_") {
-        ExpressionSpec expressionSpec{WildcardType};
+        ExpressionSpec expressionSpec{WildcardExpressionType};
         return expressionSpec;
     }
 
@@ -230,7 +230,7 @@ ExpressionSpec PreProcessor::createExpressionSpec(String ref)
             return ExpressionSpec::invalidExpressionSpec();
         }
 
-        ExpressionSpec expressionSpec{expression, ExtendableLiteralType};
+        ExpressionSpec expressionSpec{expression, ExtendableLiteralExpressionType};
         return expressionSpec;
     }
 
@@ -243,7 +243,7 @@ ExpressionSpec PreProcessor::createExpressionSpec(String ref)
         return ExpressionSpec::invalidExpressionSpec();
     }
 
-    ExpressionSpec expressionSpec{expression, LiteralType};
+    ExpressionSpec expressionSpec{expression, LiteralExpressionType};
     return expressionSpec;
 }
 
