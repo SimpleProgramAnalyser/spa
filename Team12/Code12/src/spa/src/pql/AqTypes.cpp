@@ -202,26 +202,28 @@ Relationship SuchThatClause::getRelationship()
     return relationship;
 }
 
-ExpressionSpec::ExpressionSpec(String expr, bool any, bool beforeOrAfter)
-{
-    expression = expr;
-    isAny = any;
-    hasBeforeOrAfter = beforeOrAfter;
-}
+ExpressionSpec::ExpressionSpec(): hasError{false} {}
 
-bool ExpressionSpec::checkIsAny()
-{
-    return isAny;
-}
+ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): expressionSpecType{exprSpecType}, hasError{false} {}
 
-bool ExpressionSpec::checkHasBeforeOrAfter()
-{
-    return hasBeforeOrAfter;
-}
+ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
+    expression(expr), expressionSpecType{exprSpecType}, hasError{false}
+{}
 
-Expression ExpressionSpec::getExpression()
+Expression* ExpressionSpec::getExpression()
 {
     return expression;
+}
+
+Boolean ExpressionSpec::isInvalid() {
+    return hasError;
+}
+
+ExpressionSpec ExpressionSpec::invalidExpressionSpec()
+{
+    ExpressionSpec* eS = new ExpressionSpec();
+    eS->hasError = true;
+    return *eS;
 }
 
 PatternClause::PatternClause(PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec):

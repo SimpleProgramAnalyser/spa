@@ -10,6 +10,7 @@
 
 #include <Types.h>
 #include <Util.h>
+#include <ast/AstTypes.h>
 #include <utility>
 
 typedef std::pair<String, String> StringPair;
@@ -121,22 +122,29 @@ public:
     Relationship getRelationship();
 };
 
-typedef String Expression; // TODO: more thought is needed for the implementation of this
+enum ExpressionSpecType {
+    WildcardType = 0, // _
+    LiteralType = 1, // _"x + y"_
+    ExtendableLiteralType = 2, // "x + y"
+    InvalidType = 4
+};
 
 class ExpressionSpec {
 private:
-    bool isAny;
-    bool hasBeforeOrAfter;
-    Expression expression;
+    ExpressionSpecType expressionSpecType;
+    Expression* expression;
+    bool hasError;
 
 public:
-    ExpressionSpec(String expr, bool any = false, bool beforeOrAfter = false);
-    bool checkIsAny();
-    bool checkHasBeforeOrAfter();
-    Expression getExpression();
+    ExpressionSpec();
+    explicit ExpressionSpec(ExpressionSpecType exprSpecType);
+    ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
+    Expression* getExpression();
+    Boolean isInvalid();
+    static ExpressionSpec invalidExpressionSpec();
 };
 
-enum PatternStatementType { ASSIGN = 0 };
+enum PatternStatementType { AssignPatternType = 0 };
 
 class PatternClause: public Clause {
 private:

@@ -5,6 +5,8 @@
 #ifndef SPA_PREPROCESSOR_H
 #define SPA_PREPROCESSOR_H
 
+#include "../frontend/parser/Parser.h"
+#include "../lexer/Lexer.h"
 #include "AqTypes.h"
 
 class PreProcessor {
@@ -17,9 +19,9 @@ public:
     ClauseVector processClauses(String clausesString);
     Clause* processSuchThatClause(String clauseConstraint);
     Clause* processPatternClause(String clauseConstraint);
-    Boolean isStatementRef(String ref);
-    Boolean isEntityRef(String ref);
     Reference createReference(String ref);
+    ExpressionSpec createExpressionSpec(String ref);
+    Expression* createExpression(String literal);
     Boolean isSynonymOfProcedureType(Synonym s);
 };
 

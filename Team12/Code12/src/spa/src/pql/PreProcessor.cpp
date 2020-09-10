@@ -4,14 +4,12 @@
 
 #include "PreProcessor.h"
 
-#include <iostream>
-
-#include "../lexer/Lexer.h"
-
 StringPair splitByFirstDelimiter(String str, char c);
 StringVector splitByFirstConsecutiveWhitespace(String str);
 Boolean containsOpenParentheses(String str);
 Boolean containsCloseParenthesesAsLastChar(String str);
+Boolean isEnclosedWith(String str, char leftEnd, char rightEnd);
+String removeCharFromBothEnds(String str);
 
 // TODO: Every class that can be invalid to inherit from an Error class
 // Todo: Error class to have `hasError` member and `isInvalid` member function
@@ -127,7 +125,6 @@ ClauseVector PreProcessor::processClauses(String clausesString)
                     Clause* clause;
 
                     if (currentClauseType == SuchThatClauseType) {
-                        // create and add such that
                         clause = processSuchThatClause(*currentClauseConstraint);
                     } else { // PatternClause
                         clause = processPatternClause(*currentClauseConstraint);
@@ -138,7 +135,6 @@ ClauseVector PreProcessor::processClauses(String clausesString)
                     }
 
                     clauseVector.add(clause);
-                    //                    SuchThatClause& suchThatClause = dynamic_cast<SuchThatClause&>(*clause);
 
                     hasCurrentClause = false;
                     hasOpenParentheses = false;
@@ -186,7 +182,77 @@ Clause* PreProcessor::processSuchThatClause(String clauseConstraint)
     return suchThatClause;
 }
 
-Clause* PreProcessor::processPatternClause(String clauseConstraint) {}
+Clause* PreProcessor::processPatternClause(String clauseConstraint)
+{
+    StringPair pair = splitByFirstDelimiter(clauseConstraint, '(');
+
+    Synonym patternSynonym = pair.first;
+    DesignEntity synonymDesignEntity = declarationTable.getDesignEntityOfSynonym(patternSynonym);
+    if (synonymDesignEntity.getType() != AssignType) {
+        return Clause::invalidClause(PatternClauseType);
+    }
+
+    String constraintVariablesString
+        = pair.second.substr(0, pair.second.size() - 1); // remove the last char which is a close parentheses
+    StringPair constraintVariablesPair = splitByFirstDelimiter(constraintVariablesString, ',');
+    String leftConstraintString = constraintVariablesPair.first;
+    String rightConstraintString = constraintVariablesPair.second;
+
+    Reference leftReference = createReference(leftConstraintString);
+    if (!leftReference.isValidEntityRef()) { // TODO: Find out other restrictions of the left reference in a pattern
+        return Clause::invalidClause(PatternClauseType);
+    }
+
+    ExpressionSpec rightExpressionSpec = createExpressionSpec(rightConstraintString);
+    if (rightExpressionSpec.isInvalid()) {
+        return Clause::invalidClause(PatternClauseType);
+    }
+
+    PatternClause* patternClause = new PatternClause(AssignPatternType, leftReference, rightExpressionSpec);
+    return patternClause;
+}
+
+ExpressionSpec PreProcessor::createExpressionSpec(String ref)
+{
+    if (ref == "_") {
+        ExpressionSpec expressionSpec{WildcardType};
+        return expressionSpec;
+    }
+
+    if (isEnclosedWith(ref, '_', '_')) {
+        String possibleLiteral = removeCharFromBothEnds(ref);
+        if (!isEnclosedWith(possibleLiteral, '\"', '\"')) {
+            return ExpressionSpec::invalidExpressionSpec();
+        }
+
+        Expression* expression = createExpression(removeCharFromBothEnds(possibleLiteral));
+        if (!expression) {
+            return ExpressionSpec::invalidExpressionSpec();
+        }
+
+        ExpressionSpec expressionSpec{expression, ExtendableLiteralType};
+        return expressionSpec;
+    }
+
+    if (!isEnclosedWith(ref, '\"', '\"')) {
+        return ExpressionSpec::invalidExpressionSpec();
+    }
+
+    Expression* expression = createExpression(removeCharFromBothEnds(ref));
+    if (!expression) {
+        return ExpressionSpec::invalidExpressionSpec();
+    }
+
+    ExpressionSpec expressionSpec{expression, LiteralType};
+    return expressionSpec;
+}
+
+Expression* PreProcessor::createExpression(String literal)
+{
+    StringList* splitString = splitProgram(literal);
+    Expression* expression = parseExpression(splitString);
+    return expression;
+}
 
 Reference PreProcessor::createReference(String ref)
 {
@@ -217,11 +283,12 @@ DeclarationTable PreProcessor::processDeclarations(String declarationsString)
 {
     DeclarationTable declarationTable;
 
-    StringList* splitByWhiteSpacesList = splitByWhitespace(declarationsString);
+    StringList* tokenizedStringList = splitProgram(declarationsString);
     DesignEntity* currentDesignEntityPtr;
     bool hasCurrentDesignEntity = false;
+    bool isPreviousTokenASynonym = false;
 
-    for (auto& token : *splitByWhiteSpacesList) {
+    for (auto& token : *tokenizedStringList) {
         if (!hasCurrentDesignEntity) {
             currentDesignEntityPtr = new DesignEntity(*token);
             if (currentDesignEntityPtr->getType() == NonExistentType) {
@@ -230,22 +297,31 @@ DeclarationTable PreProcessor::processDeclarations(String declarationsString)
 
             hasCurrentDesignEntity = true;
         } else {
-            char lastChar = token->at(token->size() - 1);
-            if (lastChar == ';' || lastChar == ',') {
-                String synonymToken = (*token).substr(0, token->size() - 1);
-
-                if (!isValidSynonym(synonymToken) || declarationTable.hasSynonym(synonymToken)) {
+            if (*token == ";") {
+                if (!isPreviousTokenASynonym) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
 
-                declarationTable.addDeclaration(synonymToken, *currentDesignEntityPtr);
-
-                if (lastChar == ';') {
-                    hasCurrentDesignEntity = false;
+                hasCurrentDesignEntity = false;
+                isPreviousTokenASynonym = false;
+                continue;
+            } else if (*token == ",") {
+                if (!isPreviousTokenASynonym) {
+                    return DeclarationTable::invalidDeclarationTable();
                 }
 
-            } else {
+                isPreviousTokenASynonym = false;
+                continue;
+            } else if (isPreviousTokenASynonym) {
+                // Syntax error e.g. while w w1;
                 return DeclarationTable::invalidDeclarationTable();
+            } else {
+                if (!isValidSynonym(*token) || declarationTable.hasSynonym(*token)) {
+                    return DeclarationTable::invalidDeclarationTable();
+                }
+
+                declarationTable.addDeclaration(*token, *currentDesignEntityPtr);
+                isPreviousTokenASynonym = true;
             }
         }
     }
@@ -294,7 +370,7 @@ StringPair splitByFirstDelimiter(String str, char c)
 
 /**
  * Splits up the given string by the first
- * consecutive whitespace, into two substrings.
+ * consecutive whitespaces, into two substrings.
  * Given string should be trimmed.
  *
  * @param str String to be split
@@ -350,4 +426,22 @@ Boolean containsOpenParentheses(String str)
 Boolean containsCloseParenthesesAsLastChar(String str)
 {
     return str.at(str.size() - 1) == ')';
+}
+
+/**
+ * Returns true if a non-empty substring is enclosed
+ * by the given left end and right character.
+ *
+ * @param str String to be checked
+ * @param leftEnd Character at left end
+ * @param rightEnd Character at right end
+ */
+Boolean isEnclosedWith(String str, char leftEnd, char rightEnd)
+{
+    return str[0] == leftEnd && str.size() > 2 && str[str.size() - 1] == rightEnd;
+}
+
+String removeCharFromBothEnds(String str)
+{
+    return str.substr(1, str.size() - 2);
 }
