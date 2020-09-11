@@ -23,6 +23,17 @@ procedure compute {\n\
     print ave;\n\
 }";
 
+/* Annotated computeAverage with line numbers
+procedure compute {
+1.  read num1;
+2.  read num2;
+3.  read num3;
+4.  sum = (num1 + num2) * num3;
+5.  ave = sum / 3;
+6.  print ave;
+}
+*/
+
 TEST_CASE("Design Extractor identifies semantically valid program as valid - computeAverage")
 {
     List<StatementNode> statements;
@@ -40,7 +51,7 @@ TEST_CASE("Design Extractor identifies semantically valid program as valid - com
     ProcedureNode* computeProcedure = createProcedureNode("compute", stmtLstNode);
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(computeProcedure));
-    ProgramNode* programNode = createProgramNode("computeAverage", procedureList);
+    ProgramNode* programNode = createProgramNode("computeAverage", procedureList, 6);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -66,6 +77,24 @@ procedure printAscending {\n\
     print num2;\n\
     print noSwap;\n\
 }";
+
+/* Annotated printAscending with line numbers
+procedure printAscending {
+1.  read num1;\n\
+2.  read num2;\n\
+3.  noSwap = 0;\n\
+4.  if(num1 > num2) then {
+5.    temp = num1;
+6.    num1 = num2;
+7.    num2 = temp;
+    } else {
+8.    noSwap = 1;
+    }
+9.  print num1;
+10. print num2;
+11. print noSwap;
+}";
+*/
 
 TEST_CASE("Design Extractor identifies semantically valid program with if as valid - printAscending")
 {
@@ -103,7 +132,7 @@ TEST_CASE("Design Extractor identifies semantically valid program with if as val
     ProcedureNode* computeProcedure = createProcedureNode("printAscending", stmtLstNode);
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(computeProcedure));
-    ProgramNode* programNode = createProgramNode("printAscending", procedureList);
+    ProgramNode* programNode = createProgramNode("printAscending", procedureList, 11);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -125,7 +154,18 @@ procedure sumDigit {\n\
 \n\
     print sum;\n\
 }";
-
+/* Annotated sumDigits with line numbers
+procedure sumDigit {
+1.  read number;
+2.  sum = 0;
+3.  while(number > 0) {
+4.    digit = number % 10;
+5.    sum = sum + digit;
+6.    number = number / 10;
+    }
+7.  print sum;\n\
+}
+*/
 
 TEST_CASE("Design Extractor identifies semantically valid program with while as valid - sumDigits") 
 {
@@ -153,7 +193,7 @@ TEST_CASE("Design Extractor identifies semantically valid program with while as 
     ProcedureNode* computeProcedure = createProcedureNode("sumDigits", stmtLstNode);
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(computeProcedure));
-    ProgramNode* programNode = createProgramNode("sumDigits", procedureList);
+    ProgramNode* programNode = createProgramNode("sumDigits", procedureList, 7);
 
 
     SemanticErrorsValidator seValidator(*programNode);
@@ -188,6 +228,29 @@ procedure sumDigit {\n\
     print sum;\n\
 }";
 
+/* Annotated sumDigits duplicates with line numbers
+procedure sumDigit {
+1.  read number;
+2.  sum = 0;
+3.  while(number > 0) {
+4.    digit = number % 10;
+5.    sum = sum + digit;
+6.    number = number / 10;
+    }
+7.  print sum;
+}
+procedure sumDigit {
+8.  read number;
+9.  sum = 0;
+10. while(number > 0) {
+11.     digit = number % 10;
+12.     sum = sum + digit;
+13.     number = number / 10;
+    }
+14. print sum;
+}
+*/
+
 TEST_CASE("Design Extractor identifies semantically invalid program with duplicate procedure name as invalid - sumDigitsDuplicate")
 {
     List<StatementNode> statements;
@@ -210,13 +273,35 @@ TEST_CASE("Design Extractor identifies semantically invalid program with duplica
     statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("sum"))));
 
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
-    ProcedureNode* sumDigit1Node = createProcedureNode("sumDigit", stmtLstNode);
-    ProcedureNode* sumDigit2Node = createProcedureNode("sumDigit", stmtLstNode);
+    ProcedureNode* sumDigitNode = createProcedureNode("sumDigit", stmtLstNode);
+
+    // Duplicate procedure
+    List<StatementNode> dupStatements;
+    List<StatementNode> dupWhileStatements;
+    dupStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(8, Variable("number"))));
+    dupStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(9, Variable("sum"), createRefExpr(0))));
+
+    dupWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(11, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+    dupWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(12, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
+    dupWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(13, Variable("number"), createDivExpr(createRefExpr("number"), createRefExpr(10)))));
+    StmtlstNode* dupWhileStmtLstNode = createStmtlstNode(dupWhileStatements);
+
+    dupStatements.push_back(std::unique_ptr<WhileStatementNode>(
+        createWhileNode(10, createGtExpr(createRefExpr("sum"), createRefExpr(0)), dupWhileStmtLstNode)));
+
+    dupStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(14, Variable("sum"))));
+
+    StmtlstNode* dupStmtLstNode = createStmtlstNode(dupStatements);
+    ProcedureNode* dupSumDigitNode = createProcedureNode("sumDigit", dupStmtLstNode);
 
     List<ProcedureNode> procedureList;
-    procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigit1Node));
-    procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigit2Node));
-    ProgramNode* programNode = createProgramNode("sumDigitsDuplicate", procedureList);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigitNode));
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(dupSumDigitNode));
+    ProgramNode* programNode = createProgramNode("sumDigitsDuplicate", procedureList, 14);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -265,7 +350,43 @@ procedure computeCentroid {\n\
 \n\
     normSq = cenX * cenY + cenY * cenY;\n\
 }";
+/* Annotated multiProcedureProgram with line numbers
+procedure main {
+1.  flag = 0;
+2.  call computeCentroid;
+3.  call printResults;
+}
+procedure readPoint{
+4.   read x;
+5.   read y;
+}
 
+procedure printResults {
+6.  print flag;
+7.  print cenX;
+8.  print cenY;
+9.  print normSq;
+}
+procedure computeCentroid {
+10.  count = 0;
+11.  cenX = 0;
+12.  cenY = 0;
+13.  call readPoint;
+14.  while((x != 0) && (y != 0)) {
+15.      count = count + 1;
+16.      cenX = cenX + x;
+17.      cenY = cenY + y;
+18.      call readPoint;
+     }
+19.  if(count == 0) then {
+20.      flag = 1;
+     } else {
+21.      cenX = cenX/ count;
+22.      cenY = cenY / count;
+     }
+23.  normSq = cenX * cenY + cenY * cenY;
+}
+*/
 
 TEST_CASE("Design Extractor identifies semantically valid program with while and if as valid - multiProcedureProgram")
 {
@@ -350,7 +471,7 @@ TEST_CASE("Design Extractor identifies semantically valid program with while and
     ProcedureNode* computeCentroidProc = createProcedureNode("computeCentroid", computeCentroidStmtLstNode);
     procedureList.push_back(std::unique_ptr<ProcedureNode>(computeCentroidProc));
 
-    ProgramNode* programNode = createProgramNode("SimpleProgram", procedureList);
+    ProgramNode* programNode = createProgramNode("SimpleProgram", procedureList, 23);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -380,6 +501,24 @@ procedure plus {\n\
     call sumDigit;\n\
 }";
 
+/* Annotated sumDigitPlusCyclicCall with line numbers
+procedure sumDigit {
+1.  read number;
+2.  sum = 0;
+3.  while(number > 0) {
+4.    digit = number % 10;
+5.    sum = sum + digit;
+6.    number = number / 10;
+    }
+7.  call plus;
+8.  print sum;
+}
+procedure plus {
+9.  sum = 0;
+10. print sum;
+11. call sumDigit;
+}
+*/
 TEST_CASE("Design Extractor identifies semantically invalid program with cyclic calls as invalid - sumDigit and plus")
 {
     //sumDigit
@@ -417,7 +556,7 @@ TEST_CASE("Design Extractor identifies semantically invalid program with cyclic 
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(plusProcedureNode));
-    ProgramNode* programNode = createProgramNode("sumDigitPlusCyclicCall", procedureList);
+    ProgramNode* programNode = createProgramNode("sumDigitPlusCyclicCall", procedureList, 11);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -454,6 +593,28 @@ procedure multiply {\n\
     call sumDigit;\n\
 }";
 
+/* Annotated sumDigitPlusCyclicCall with line numbers
+procedure sumDigit {
+1.  read number;
+2.  sum = 0;
+3.  while(number > 0) {
+4.    digit = number % 10;
+5.    sum = sum + digit;
+6.    number = number / 10;
+    }
+7.  call plus;
+8.  print sum;
+}
+procedure plus {
+9.  sum = 0;
+10. print sum;
+11. call multiply;
+}
+procedure multiply {
+12. print number;
+13. call sumDigit;
+}
+*/
 TEST_CASE("Design Extractor identifies semantically invalid program with cyclic calls as invalid - sumDigit, plus and minus")
 {
     // sumDigit
@@ -500,7 +661,7 @@ TEST_CASE("Design Extractor identifies semantically invalid program with cyclic 
     procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(plusProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(multiplyProcedureNode));
-    ProgramNode* programNode = createProgramNode("sumDigitPlusMultiplyCyclicCall", procedureList);
+    ProgramNode* programNode = createProgramNode("sumDigitPlusMultiplyCyclicCall", procedureList, 13);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -530,6 +691,25 @@ procedure plus {\n\
     print sum;\n\
     call multiply;\n\
 }";
+
+/* Annotated sumDigitPlusNonexistentProcedureCall with line numbers
+procedure sumDigit {
+1.  read number;
+2.  sum = 0;
+3.  while(number > 0) {
+4.    digit = number % 10;
+5.    sum = sum + digit;
+6.    number = number / 10;
+    }
+7.  call plus;
+8.  print sum;
+}
+procedure plus {
+9.  sum = 0;
+10. print sum;
+11. call multiply;
+}
+*/
 
 TEST_CASE(
     "Design Extractor identifies semantically invalid program with non-existent procedure calls as invalid - sumDigit and plus")
@@ -569,7 +749,7 @@ TEST_CASE(
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(plusProcedureNode));
-    ProgramNode* programNode = createProgramNode("sumDigitPlusNonexistentProcedureCall", procedureList);
+    ProgramNode* programNode = createProgramNode("sumDigitPlusNonexistentProcedureCall", procedureList, 11);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -606,6 +786,31 @@ procedure printNumber {\n\
     print number;\n\
     call printSumDigit;\n\
 }";
+
+/* Annotated sumDigitPlusMultiplyNestedWhileIfCyclicCall with line numbers
+procedure printSumDigit {
+1.  read number;
+2.  sum = 0;
+3.  while(number > 0) {
+4.    digit = number % 10;
+5.    sum = sum + digit;
+6.    number = number / 10;
+7.    if(sum > 2) then {
+8.      call printSum;
+      } else {
+9.      call printNumber;
+      }
+    }
+}
+procedure printSum {
+10. print sum;
+11. call printNumber;
+}
+procedure printNumber {
+12. print number;
+13. call printSumDigit;
+}
+*/
 
 TEST_CASE(
     "Design Extractor identifies semantically invalid program with nested while and if cyclic calls as invalid - printSumDigit, printSum and printNumber")
@@ -669,7 +874,7 @@ TEST_CASE(
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printSumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printSumProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printNumberProcedureNode));
-    ProgramNode* programNode = createProgramNode("printSumDigitPrintSumPrintNumberNestedWhileIfCyclicCall", procedureList);
+    ProgramNode* programNode = createProgramNode("printSumDigitPrintSumPrintNumberNestedWhileIfCyclicCall", procedureList, 13);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
@@ -678,7 +883,7 @@ TEST_CASE(
 }
 
 String recursivePrintAscending = "\
-procedure printAscending {\n\
+procedure recusivePrintAscending {\n\
 \n\
     read num1;\n\
     read num2;\n\
@@ -692,6 +897,21 @@ procedure printAscending {\n\
     print num2;\n\
     call printAscending;\n\
 }";
+
+/* Annotated recursivePrintAscending with line numbers
+procedure recusivePrintAscending {
+1.  read num1;
+2.  read num2;
+3.  if(num1 >= num2) then {
+4.      num2 = num2 + 1;
+    } else {
+5.      num1 = num1 + 1;
+    }
+6.  print num1;
+7.  print num2;
+8.  call printAscending;
+};
+*/
 
 TEST_CASE("Design Extractor identifies semantically invalid recursive program as invalid - recursivePrintAscending")
 {
@@ -721,7 +941,7 @@ TEST_CASE("Design Extractor identifies semantically invalid recursive program as
     ProcedureNode* recursivePrintAscendingProcedureNode = createProcedureNode("recursivePrintAscending", stmtLstNode);
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
-    ProgramNode* programNode = createProgramNode("recursivePrintAscending", procedureList);
+    ProgramNode* programNode = createProgramNode("recursivePrintAscending", procedureList, 8);
 
     SemanticErrorsValidator seValidator(*programNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
