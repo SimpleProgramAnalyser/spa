@@ -1,5 +1,5 @@
-#include "Preprocessor.h"
 #include "frontend/parser/Parser.h"
+#include "Preprocessor.h"
 
 StringPair splitByFirstDelimiter(String str, char c);
 StringVector splitByFirstConsecutiveWhitespace(String str);
@@ -69,6 +69,7 @@ ClauseVector Preprocessor::processClauses(String clausesString)
     Boolean isPreviousTokenSuch = false; // is the previous token "such"
     ClauseType currentClauseType;
     Boolean hasOpenParentheses = false;
+
     // Syntactically incorrect if number of tokens after clause identifier
     // that does not have open parentheses >= 2
     int numOfTokensWithoutOpenParentheses = 0;

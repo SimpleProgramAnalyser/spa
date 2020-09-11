@@ -15,6 +15,10 @@ DesignEntity::DesignEntity(DesignEntityType designEntityType)
 
 DesignEntity::DesignEntity(const String& stringType)
 {
+    /*
+     * Suggestion: Declare some variables on top, to hold
+     * these values, don't use 'magic' values.
+     */
     if (stringType == "stmt") {
         type = StatementType;
     } else if (stringType == "read") {
@@ -255,7 +259,7 @@ ExpressionSpec PatternClause::getExprSpec()
     return expressionSpec;
 }
 
-void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
+Void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
 {
     table.insert({s, designEntity});
 }
@@ -301,7 +305,7 @@ ClauseVector ClauseVector::invalidClauseVector()
     return *cV;
 }
 
-void ClauseVector::add(Clause* clause)
+Void ClauseVector::add(Clause* clause)
 {
     clauses.push_back(clause);
 }
@@ -341,6 +345,7 @@ Boolean AbstractQuery::isInvalid()
 AbstractQuery::AbstractQuery():
     hasError{false}, selectSynonym{""}, clauses{*(new ClauseVector())}, declarationTable{*(new DeclarationTable())}
 {}
+
 AbstractQuery AbstractQuery::invalidAbstractQuery()
 {
     AbstractQuery* aq = new AbstractQuery();

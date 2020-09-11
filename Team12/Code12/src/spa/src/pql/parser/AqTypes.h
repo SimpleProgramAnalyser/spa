@@ -8,10 +8,11 @@
 #ifndef SPA_PQL_AQTYPES_H
 #define SPA_PQL_AQTYPES_H
 
-#include <Types.h>
 #include <Util.h>
 #include <ast/AstTypes.h>
 #include <utility>
+
+#include "Types.h"
 
 typedef std::pair<String, String> StringPair;
 
@@ -165,7 +166,7 @@ private:
     bool hasError = false;
 
 public:
-    void addDeclaration(Synonym s, DesignEntity& designEntity);
+    Void addDeclaration(Synonym s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s);
     Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
@@ -180,7 +181,7 @@ private:
 public:
     ClauseVector() noexcept;
     static ClauseVector invalidClauseVector();
-    void add(Clause* clause);
+    Void add(Clause* clause);
     Clause get(Integer index);
     Boolean isInvalid();
 };
@@ -191,9 +192,9 @@ private:
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
+    AbstractQuery();
 
 public:
-    AbstractQuery();
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
     Synonym getSelectSynonym();

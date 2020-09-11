@@ -20,7 +20,15 @@
  */
 RawQueryResult Evaluator::evaluateQuery(AbstractQuery query)
 {
-    RawQueryResult rawQueryResult;
+    // RawQueryResult rawQueryResult;
+
+    if (query.isInvalid()) {
+        return RawQueryResult::emptyRawQueryResult();
+    }
+
+    Vector<Vector<String>> results;
+
+    RawQueryResult rawQueryResult(results);
 
     return rawQueryResult;
 }

@@ -3,6 +3,12 @@
 
 #include <Types.h>
 
-class FormattedQueryResult {};
+class FormattedQueryResult {
+public:
+    String getResults();
+
+private:
+    String results;
+};
 
 #endif // SPA_PQL_FORMATTED_QUERY_RESULT_H

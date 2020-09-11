@@ -3,7 +3,7 @@
 #include "pql/parser/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
 
-TEST_CASE("Test invalid PQL query")
+TEST_CASE("Test contructor")
 {
     Evaluator evaluator;
 
