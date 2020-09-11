@@ -1,7 +1,3 @@
-//
-// Created by Chester Sim on 6/9/20.
-//
-
 #include "catch.hpp"
 #include "lexer/Lexer.h"
 #include "pql/PreProcessor.h"
