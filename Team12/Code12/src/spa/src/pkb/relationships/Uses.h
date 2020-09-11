@@ -3,6 +3,9 @@
 
 #include <pkb/PkbTypes.h>
 
+/**
+ * Stores Uses relationships.
+ */
 class UsesTable {
 public:
     // writing
