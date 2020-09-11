@@ -11,10 +11,15 @@
 
 #include "pql/parser/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
+#include "Types.h"
 
 class Evaluator {
 public:
+    
     RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
+private:
+    Boolean isQueryVacuouslyTrue(AbstractQuery abstractQuery);
+
 };
 
 #endif // SPA_PQL_EVALUATOR_H

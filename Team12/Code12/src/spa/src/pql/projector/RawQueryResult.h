@@ -1,3 +1,10 @@
+/**
+ * This class represents a RawQueryResult, which is an
+ * immediate encoding PQL results after interaction with
+ * the PKB (the interaction, is of course done by other
+ * classes).
+ */
+
 #ifndef SPA_PQL_RAW_QUERY_RESULT_H
 #define SPA_PQL_RAW_QUERY_RESULT_H
 

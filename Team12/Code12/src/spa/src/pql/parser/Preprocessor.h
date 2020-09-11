@@ -7,9 +7,6 @@
 class Preprocessor {
 private:
     DeclarationTable declarationTable;
-
-public:
-    AbstractQuery processQuery(String query);
     DeclarationTable processDeclarations(String declarationString);
     ClauseVector processClauses(String clausesString);
     Clause* processSuchThatClause(String clauseConstraint);
@@ -18,6 +15,9 @@ public:
     ExpressionSpec createExpressionSpec(String ref);
     Expression* createExpression(String literal);
     Boolean isSynonymOfProcedureType(Synonym s);
+
+public:
+    AbstractQuery processQuery(String query);
 };
 
 #endif // SPA_PQL_PREPROCESSOR_H

@@ -34,7 +34,6 @@ FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatTyp
      * query evaluator
      */
     Evaluator evaluator;
-
     RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
 
     // Once, we have the result, format it then return the formatted results
