@@ -39,7 +39,7 @@ FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatTyp
 
     // Once, we have the result, format it then return the formatted results
     Projector projector;
-    FormattedQueryResult formattedQueryResult;
+    FormattedQueryResult formattedQueryResult = FormattedQueryResult::emptyFormattedQueryResult();
 
     if (format == AutotesterFormat) {
         formattedQueryResult = projector.formatAutotester(rawQueryResult);
