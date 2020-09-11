@@ -1,19 +1,13 @@
 set(CMAKE_BUILD_TYPE Debug)
 
-file(GLOB srcs
+file(GLOB_RECURSE srcs
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.cpp")
-file(GLOB headers
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.hpp")
+file(GLOB_RECURSE headers
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.hpp")
 
 add_executable(unit_testing ${srcs})
 

@@ -1,7 +1,8 @@
 #include "pkb/PkbTypes.h"
 #include "RawQueryResult.h"
 
-RawQueryResult::RawQueryResult(Vector<Vector<String>> result)
+RawQueryResult::RawQueryResult(Vector<Vector<String>> results):
+    results(results)
 {
 }
 
@@ -25,3 +26,8 @@ Boolean RawQueryResult::isEmpty()
 {
     return results.empty();
 }
+
+/*bool operator== (RawQueryResult& a, RawQueryResult & b)
+{
+    return (a.results == b.results);
+}*/
