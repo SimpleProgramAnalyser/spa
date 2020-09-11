@@ -34,8 +34,8 @@ public:
     Void addCallEdge(CallStatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet,
                      std::vector<std::vector<int>>& adjList, int currProcNameIndex);
     Boolean checkCallStatementCallsValidProcedure(StatementNode* stmtNode,
-                                                     std::unordered_map<std::string, int>& procedureNameSet,
-                                                     int currProcNameIndex);
+                                                  std::unordered_map<std::string, int>& procedureNameSet,
+                                                  int currProcNameIndex);
     int getProcNameIndex(std::unordered_map<std::string, int> procedureNameSet, std::string procName);
     bool isCyclic(std::vector<std::vector<int>>& adjList, size_t procListSize);
     bool isCyclicUtil(int v, bool visited[], bool* recStack, std::vector<std::vector<int>>& adjList);

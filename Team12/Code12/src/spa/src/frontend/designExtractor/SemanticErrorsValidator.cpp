@@ -46,7 +46,7 @@ Boolean SemanticErrorsValidator::isProgramValid()
 
         for (size_t j = 0; j < stmtListNode.statementList.size(); j++) {
             StatementNode* stmtNode = (stmtListNode.statementList).at(j).get();
-            
+
             // Check if all call statements call existent procedures
             Boolean callStatementCallsExistentProcedure
                 = checkCallStatementCallsValidProcedure(stmtNode, procedureNameSet, procIndex);
@@ -72,7 +72,7 @@ Boolean SemanticErrorsValidator::checkCallStatementCallsValidProcedure(
         std::unordered_map<std::string, int>::const_iterator procedureIndexPair = procedureNameSet.find(procedureName);
         // Check if procedure exists or procedure is recursive
         if (procedureIndexPair == procedureNameSet.end() || procedureIndexPair->second == currProcNameIndex) {
-            //Throw error
+            // Throw error
             return false;
         }
     }
@@ -162,7 +162,7 @@ int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, in
                                               std::string procName)
 {
     std::unordered_map<std::string, int>::const_iterator procedureIndexPair = procedureNameSet.find(procName);
-    // We assume that all procedures exists 
+    // We assume that all procedures exists
     int procIndex = 0;
     if (procedureIndexPair != procedureNameSet.end()) {
         procIndex = procedureIndexPair->second;
