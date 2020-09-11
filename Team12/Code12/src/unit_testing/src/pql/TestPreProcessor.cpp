@@ -16,5 +16,6 @@ TEST_CASE("Test splitBySelect")
     String queryString = "assign a; Select a pattern a (_, _\"x + y\"_)";
     //    String queryString = "assign a; Select a pattern a (_, _)";
     AbstractQuery aq = pp.processQuery(queryString);
+
     REQUIRE(1 == 1);
 }
