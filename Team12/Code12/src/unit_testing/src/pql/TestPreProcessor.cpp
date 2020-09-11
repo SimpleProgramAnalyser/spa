@@ -1,13 +1,13 @@
 #include "catch.hpp"
 #include "lexer/Lexer.h"
-#include "pql/PreProcessor.h"
+#include "pql/Preprocessor.h"
 
 TEST_CASE("Test splitBySelect")
 {
     //    StringList* stringList = splitProgram("while w,       w1; assign a; read read; Select w such that Follows (w,
     //    a)");
 
-    PreProcessor pp;
+    Preprocessor pp;
     //    String queryString = "while w; Select w";
     //    String queryString = "while w; Select w;";
     //    String queryString = "stmt s; assign a ; Select s such that Follows(s, a)";

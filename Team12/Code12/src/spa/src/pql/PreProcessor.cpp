@@ -1,8 +1,4 @@
-//
-// Created by Chester Sim on 6/9/20.
-//
-
-#include "PreProcessor.h"
+#include "Preprocessor.h"
 
 StringPair splitByFirstDelimiter(String str, char c);
 StringVector splitByFirstConsecutiveWhitespace(String str);
@@ -14,7 +10,7 @@ String removeCharFromBothEnds(String str);
 // TODO: Every class that can be invalid to inherit from an Error class
 // Todo: Error class to have `hasError` member and `isInvalid` member function
 
-AbstractQuery PreProcessor::processQuery(String query)
+AbstractQuery Preprocessor::processQuery(String query)
 {
     // Split between declarations and clauses
     StringList* splitBySelectList = splitByDelimiter(query, "Select");
@@ -64,7 +60,7 @@ AbstractQuery PreProcessor::processQuery(String query)
     return aq;
 }
 
-ClauseVector PreProcessor::processClauses(String clausesString)
+ClauseVector Preprocessor::processClauses(String clausesString)
 {
     ClauseVector clauseVector;
     String* currentClauseConstraint = new String();
@@ -151,7 +147,7 @@ ClauseVector PreProcessor::processClauses(String clausesString)
     return clauseVector;
 }
 
-Clause* PreProcessor::processSuchThatClause(String clauseConstraint)
+Clause* Preprocessor::processSuchThatClause(String clauseConstraint)
 {
     StringPair pair = splitByFirstDelimiter(clauseConstraint, '(');
 
@@ -182,7 +178,7 @@ Clause* PreProcessor::processSuchThatClause(String clauseConstraint)
     return suchThatClause;
 }
 
-Clause* PreProcessor::processPatternClause(String clauseConstraint)
+Clause* Preprocessor::processPatternClause(String clauseConstraint)
 {
     StringPair pair = splitByFirstDelimiter(clauseConstraint, '(');
 
@@ -212,7 +208,7 @@ Clause* PreProcessor::processPatternClause(String clauseConstraint)
     return patternClause;
 }
 
-ExpressionSpec PreProcessor::createExpressionSpec(String ref)
+ExpressionSpec Preprocessor::createExpressionSpec(String ref)
 {
     if (ref == "_") {
         ExpressionSpec expressionSpec{WildcardExpressionType};
@@ -247,14 +243,14 @@ ExpressionSpec PreProcessor::createExpressionSpec(String ref)
     return expressionSpec;
 }
 
-Expression* PreProcessor::createExpression(String literal)
+Expression* Preprocessor::createExpression(String literal)
 {
     StringList* splitString = splitProgram(literal);
     Expression* expression = parseExpression(splitString);
     return expression;
 }
 
-Reference PreProcessor::createReference(String ref)
+Reference Preprocessor::createReference(String ref)
 {
     if (ref == "_" || declarationTable.hasSynonym(ref)) {
         Reference reference(AnyRefType, ref, isSynonymOfProcedureType(ref));
@@ -274,12 +270,12 @@ Reference PreProcessor::createReference(String ref)
     return Reference::invalidReference();
 }
 
-Boolean PreProcessor::isSynonymOfProcedureType(Synonym s)
+Boolean Preprocessor::isSynonymOfProcedureType(Synonym s)
 {
     return declarationTable.getDesignEntityOfSynonym(s).getType() == ProcedureType;
 }
 
-DeclarationTable PreProcessor::processDeclarations(String declarationsString)
+DeclarationTable Preprocessor::processDeclarations(String declarationsString)
 {
     DeclarationTable declarationTable;
 

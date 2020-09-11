@@ -7,7 +7,7 @@
 #include "AqTypes.h"
 #include "Evaluator.h"
 #include "FormattedQueryResult.h"
-#include "PreProcessor.h"
+#include "Preprocessor.h"
 #include "Projector.h"
 #include "QueryResultFormatType.h"
 
@@ -26,8 +26,8 @@
 FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatType format)
 {
     // Call the Preprocessor to parse the query
-    PreProcessor preProcessor;
-    AbstractQuery abstractQuery = preProcessor.processQuery(query);
+    Preprocessor preprocessor;
+    AbstractQuery abstractQuery = preprocessor.processQuery(query);
 
     /*
      * Pass the parsed query (AbstractQueryType to the PQL

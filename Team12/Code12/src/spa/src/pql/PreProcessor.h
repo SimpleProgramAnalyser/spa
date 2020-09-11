@@ -9,7 +9,7 @@
 #include "../lexer/Lexer.h"
 #include "AqTypes.h"
 
-class PreProcessor {
+class Preprocessor {
 private:
     DeclarationTable declarationTable;
 
