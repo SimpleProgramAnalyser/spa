@@ -193,7 +193,7 @@ private:
     Boolean hasError;
 
 public:
-    AbstractQuery(); // TODO: To be removed in the future
+    AbstractQuery();
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
     Synonym getSelectSynonym();
