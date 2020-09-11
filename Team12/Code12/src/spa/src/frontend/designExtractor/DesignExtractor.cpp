@@ -2,14 +2,11 @@
  * Implementation of SPA frontend design extractor.
  */
 #include <iostream>
-#include <stdio.h>
 #include <string>
 #include <vector>
 
-using namespace std;
-
-#include "PKB.h"
 #include "SemanticErrorsValidator.h"
+#include "FollowsExtractor.h"
 
 Void extractDesign(ProgramNode& rootNode)
 {
@@ -18,5 +15,8 @@ Void extractDesign(ProgramNode& rootNode)
 
     if (!isSemanticallyValid) {
         // Terminate Program
+        throw std::runtime_error("Semantically invalid program!!"); // TODO: more elegant way to handle
     }
+
+    extractFollows(rootNode);
 }

@@ -9,8 +9,8 @@
 #ifndef SPA_FRONTEND_DESIGN_EXTRACTOR_H
 #define SPA_FRONTEND_DESIGN_EXTRACTOR_H
 
-#include "Error.h"
 #include "ast/AstTypes.h"
+#include "error/InputError.h"
 
 Void extractDesign(ProgramNode& rootNode);
 
