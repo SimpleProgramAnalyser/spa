@@ -1,11 +1,19 @@
 # Checks a branch upon pull request, and checks the master build when there are new commits
 
-name: Check Commits
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  BUILD_TYPE: Release
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -13,6 +21,7 @@ jobs:
   clang-checks:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    timeout-minutes: 3
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -24,14 +33,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/cache
-          key: ${{ runner.os }}-spa-clang-checks-deps-v3
+          key: ${{ runner.os }}-spa-clang-checks-deps-v2
 
       - name: Cache build
         id: cache-build
         uses: actions/cache@v2
         with:
           path: ~/cache-build
-          key: ${{ runner.os }}-spa-clang-checks-build-v2
+          key: ${{ runner.os }}-spa-clang-checks-build-v3
 
       - name: Generate dependencies
         env:
@@ -64,16 +73,16 @@ jobs:
             if [[ "$CACHE_HIT" == 'true' ]]; then
               sudo cp --verbose --force --recursive ~/cache-build/* /
               cd Team12/Code12/build
-              sudo cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-              sudo make
+              sudo cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+              sudo cmake --build . --config $BUILD_TYPE
             else
               mkdir -p ~/cache-build
               cd Team12/Code12/
               rm -f -r build
               mkdir build
               cd build
-              cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-              make
+              cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+              cmake --build . --config $BUILD_TYPE
               cp --parents -r --target-directory ~/cache-build/ "$(realpath ./)"
             fi
           
@@ -92,19 +101,6 @@ jobs:
             files src/spa | sudo tee result.txt
           if sudo grep -w "error:\|warning:\|Error while processing" result.txt; then
             exit 1
-          else
-            exit 0
-          fi
-      
-      - name: Run SPA autotester
-        run: |
-          cd Team12/Code12/build/src/autotester/
-          sudo cp ../../../../Tests12/Sample_source.txt .
-          sudo cp ../../../../Tests12/Sample_queries.txt .
-          sudo ./autotester Sample_source.txt Sample_queries.txt out.xml
-          if sudo grep -w "failed" out.xml; then
-            echo "Autotester failed"
-            exit 0
           else
             exit 0
           fi
