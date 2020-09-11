@@ -29,14 +29,15 @@ Boolean SemanticErrorsValidator::isProgramValid()
 
             return false;
         }
-        index += 1;
         procedureNameSet.insert({procName, index});
+        index += 1;
     }
 
-    // Fill up adj list
+    // Check if call statements call existent procesdures and fill up adj list
     size_t numberOfProcs = procedureList->size();
     std::vector<std::vector<int>> adjList(numberOfProcs);
 
+    // Go through the statement list to look for call statements
     for (size_t i = 0; i < procedureList->size(); i++) {
         ProcedureNode& procNode = *(procedureList->at(i));
         Name procName = procNode.procedureName;
@@ -44,13 +45,38 @@ Boolean SemanticErrorsValidator::isProgramValid()
         const StmtlstNode& stmtListNode = *procNode.statementListNode;
 
         for (size_t j = 0; j < stmtListNode.statementList.size(); j++) {
-            const List<StatementNode>& stmtList = stmtListNode.statementList;
-            StatementNode* stmtNode = stmtList.at(j).get();
+            StatementNode* stmtNode = (stmtListNode.statementList).at(j).get();
+            
+            // Check if all call statements call existent procedures
+            Boolean callStatementCallsExistentProcedure
+                = checkCallStatementCallsValidProcedure(stmtNode, procedureNameSet, procIndex);
+            if (!callStatementCallsExistentProcedure) {
+                return false;
+            }
+
+            // Fill up adj list
             populateCallGraphWithStatementNode(stmtNode, procedureNameSet, adjList, procIndex);
         }
     }
 
     return !isCyclic(adjList, numberOfProcs);
+}
+
+Boolean SemanticErrorsValidator::checkCallStatementCallsValidProcedure(
+    StatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet, int currProcNameIndex)
+{
+    StatementType stmtType = stmtNode->getStatementType();
+    if (stmtType == CallStatement) {
+        CallStatementNode* callStmtNode = dynamic_cast<CallStatementNode*>(stmtNode);
+        Name procedureName = callStmtNode->procedureName;
+        std::unordered_map<std::string, int>::const_iterator procedureIndexPair = procedureNameSet.find(procedureName);
+        // Check if procedure exists or procedure is recursive
+        if (procedureIndexPair == procedureNameSet.end() || procedureIndexPair->second == currProcNameIndex) {
+            //Throw error
+            return false;
+        }
+    }
+    return true;
 }
 
 Void SemanticErrorsValidator::populateCallGraphWithStatementNode(StatementNode* stmtNode,
@@ -132,11 +158,15 @@ Void SemanticErrorsValidator::addCallEdge(CallStatementNode* stmtNode,
     adjList[currProcNameIndex].push_back(procIndex);
 }
 
-int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, int>& procedureNameSet,
+int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, int> procedureNameSet,
                                               std::string procName)
 {
     std::unordered_map<std::string, int>::const_iterator procedureIndexPair = procedureNameSet.find(procName);
-    int procIndex = procedureIndexPair->second;
+    // We assume that all procedures exists 
+    int procIndex = 0;
+    if (procedureIndexPair != procedureNameSet.end()) {
+        procIndex = procedureIndexPair->second;
+    }
     return procIndex;
 }
 
