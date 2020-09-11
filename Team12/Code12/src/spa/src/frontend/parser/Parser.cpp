@@ -979,7 +979,7 @@ ProgramNode* parseSimpleReturnNode(const String& rawProgram)
     if (currentIndex < 0 || syntaxError) {
         return nullptr;
     } else {
-        return createProgramNode("SIMPLE program", procedures, statementsSeen);
+        return createProgramNode(procedures.at(0)->procedureName, procedures, statementsSeen);
     }
 }
 
