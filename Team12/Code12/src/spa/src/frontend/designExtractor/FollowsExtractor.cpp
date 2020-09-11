@@ -8,11 +8,13 @@
 #include <cassert>
 
 #include "ast/AstLibrary.h"
-#include "pkb/relationships/Follows.h"
+#include "pkb/PKB.h"
 
 // Since only one statement can Follow another, we only need a
 // one-dimensional array to store the Follows relationships
 using FollowsList = std::vector<StatementNumber>;
+
+extern PKB pkb;
 
 /**
  * Stores a Follows relationship in an adjacency matrix,
@@ -30,7 +32,7 @@ Void markFollowsRelationship(FollowsList* followsList, StatementNumber before, S
 {
     followsList->at(before) = after;
     // call PKB to add the relationship
-    addFollowsRelationships(before, after);
+    pkb.addFollowsRelationships(before, after);
 }
 
 // forward declaration for extractFollowsFromContainer
@@ -134,7 +136,7 @@ FollowsList* extractFollowsReturnAdjacencyList(const ProgramNode& rootNode)
             currentAfterStmt = followsList->at(currentAfterStmt);
         }
         // store all Follows* in PKB
-        addFollowsRelationshipsStar(beforeStmt, seenNodesList);
+        pkb.addFollowsRelationshipsStar(beforeStmt, seenNodesList);
     }
 
     return followsList;

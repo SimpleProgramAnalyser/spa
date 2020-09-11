@@ -4,19 +4,6 @@
 
 #include "Tables.h"
 
-RootNode::RootNode(): rootNode(NULL){};
-
-void RootNode::assignRootNode(ProgramNode* rootNodeToAssign)
-{
-    rootNode = rootNodeToAssign;
-}
-
-ProgramNode* RootNode::getRootNode()
-{
-    return rootNode;
-}
-
-ProcedureTable::ProcedureTable(){};
 
 void ProcedureTable::insertIntoProcedureTable(String procName)
 {
@@ -39,7 +26,6 @@ Boolean ProcedureTable::getProcedureFromName(String procName)
     }
 }
 
-VariableTable::VariableTable(){};
 
 void VariableTable::insertIntoVariableTable(String varName)
 {
@@ -62,21 +48,11 @@ Boolean VariableTable::getVariableFromName(String varName)
     }
 }
 
-StatementTable::StatementTable():
-    listOfAllStatement({{AnyStatement, std::vector<Integer>()},
-                        {AssignmentStatement, std::vector<Integer>()},
-                        {CallStatement, std::vector<Integer>()},
-                        {IfStatement, std::vector<Integer>()},
-                        {PrintStatement, std::vector<Integer>()},
-                        {ReadStatement, std::vector<Integer>()},
-                        {WhileStatement, std::vector<Integer>()}})
-{}
-
 void StatementTable::insertIntoStatementTable(StatementNode* stmtNode, Integer lineNumber)
 {
     StatementType stmtType = stmtNode->getStatementType();
     setOfStatements.insert(lineNumber);
-    listOfAllStatement.at(stmtType).push_back(lineNumber);
+    listOfAllStatement.byType[stmtType].push_back(lineNumber);
 }
 
 Boolean StatementTable::getStatementFromIndex(Integer indexOfStmt)
@@ -91,5 +67,5 @@ Boolean StatementTable::getStatementFromIndex(Integer indexOfStmt)
 
 std::vector<Integer> StatementTable::getAllStatements(StatementType stmtType)
 {
-    return listOfAllStatement.at(stmtType);
+    return listOfAllStatement.byType[stmtType];
 }

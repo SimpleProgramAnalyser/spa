@@ -1,13 +1,16 @@
 #ifndef PKB_H
 #define PKB_H
 
-#include <pkb/tables/Tables.h>
 #include <pkb/PkbTypes.h>
 #include <pkb/relationships/Follows.h>
-#include <pkb/relationships/Parent.h>
 #include <pkb/relationships/Modifies.h>
+#include <pkb/relationships/Parent.h>
 #include <pkb/relationships/Uses.h>
+#include <pkb/tables/Tables.h>
 
+/**
+ * Program Knowledge Base (PKB) class. Use pkb by declaring `extern PKB pkb;` in global scope.
+ */
 class PKB {
 public:
     // Uses
@@ -52,6 +55,7 @@ public:
     // Follows
     void addFollowsRelationships(Integer parent, Integer child);
     void addFollowsRelationshipsStar(Integer parent, Vector<Integer> children);
+    void addFollowsRelationshipsStar(Integer parent, Integer children);
     Boolean checkIfFollowsHolds(Integer parent, Integer child);
     Boolean checkIfFollowsHoldsStar(Integer parent, Integer child);
     Vector<Integer> getAllAfterStatements(Integer parent, StatementType stmtType);

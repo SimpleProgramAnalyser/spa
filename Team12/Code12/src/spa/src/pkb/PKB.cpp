@@ -1,7 +1,7 @@
 #include "PKB.h"
 
-extern PKB pkb;
+PKB pkb = PKB();
 
-int main() {
-    pkb = PKB();
-}
+// stubs for testing
+void PKB::addFollowsRelationships(Integer parent, Integer child) {}
+void PKB::addFollowsRelationshipsStar(Integer parent, Vector<Integer> children) {}

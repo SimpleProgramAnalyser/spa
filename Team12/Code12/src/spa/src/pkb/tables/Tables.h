@@ -37,7 +37,7 @@ public:
     Vector<Integer> getAllStatements(StatementType stmtType);
 
 private:
-    HashMap<Integer, Vector<Integer>> listOfAllStatement; // getAllStmt
+    StatementNumVectorsByType listOfAllStatement; // getAllStmt
     HashSet<Integer> setOfStatements;                     // getFromIndex
 };
 
