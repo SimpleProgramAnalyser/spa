@@ -308,7 +308,7 @@ ProgramNode* getProgram5Tree_sumDigit()
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("sum"), createRefExpr(0))));
 
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("number"), createRefExpr(10)))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(5, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
