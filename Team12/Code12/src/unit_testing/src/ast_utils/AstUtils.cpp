@@ -316,7 +316,7 @@ ProgramNode* getProgram5Tree_sumDigit()
     StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
 
     statements.push_back(std::unique_ptr<WhileStatementNode>(
-        createWhileNode(3, createGtExpr(createRefExpr("sum"), createRefExpr(0)), whileStmtLstNode)));
+        createWhileNode(3, createGtExpr(createRefExpr("number"), createRefExpr(0)), whileStmtLstNode)));
 
     statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("sum"))));
 
