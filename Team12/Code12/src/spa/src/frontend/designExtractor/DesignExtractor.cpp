@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "SemanticErrorsValidator.h"
 #include "FollowsExtractor.h"
+#include "SemanticErrorsValidator.h"
 
 Void extractDesign(ProgramNode& rootNode)
 {

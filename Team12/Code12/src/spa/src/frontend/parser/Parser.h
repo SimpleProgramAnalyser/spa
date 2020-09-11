@@ -7,8 +7,8 @@
 #ifndef SPA_FRONTEND_PARSER_H
 #define SPA_FRONTEND_PARSER_H
 
-#include "error/InputError.h"
 #include "ast/AstTypes.h"
+#include "error/InputError.h"
 
 Void parseSimple(const String& rawProgram);
 Expression* parseExpression(StringList* lexedExpression);
