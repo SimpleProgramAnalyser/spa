@@ -8,6 +8,6 @@ file(GLOB headers
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.hpp")
-add_executable(unit_testing ${srcs} src/pql/TestPreProcessor.cpp)
+add_executable(unit_testing ${srcs} src/pql/TestPreProcessor.cpp src/ast_utils/AstUtils.cpp src/ast_utils/AstUtils.h)
 
 target_link_libraries(unit_testing spa)

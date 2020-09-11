@@ -65,9 +65,7 @@ add_library(spa
 )
 
 # flags for debug
-if(CMAKE_COMPILER_IS_GNUCXX)
-    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
-endif(CMAKE_COMPILER_IS_GNUCXX)
+target_compile_options(spa PRIVATE "-Wextra;")
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
