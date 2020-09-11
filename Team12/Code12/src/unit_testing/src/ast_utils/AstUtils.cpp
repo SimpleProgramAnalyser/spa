@@ -10,7 +10,7 @@
 
 #include "ast/AstLibrary.h"
 
-String getProgram1String()
+String getProgram1String_compute()
 {
     String simpleProgram = "\
 procedure compute {\n\
@@ -27,7 +27,7 @@ procedure compute {\n\
     return simpleProgram;
 }
 
-ProgramNode* getProgram1Tree()
+ProgramNode* getProgram1Tree_compute()
 {
     List<StatementNode> statements;
     statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("num1"))));
@@ -48,7 +48,7 @@ ProgramNode* getProgram1Tree()
     return constructedAst;
 }
 
-String getProgram2String()
+String getProgram2String_factorials()
 {
     String simpleProgram = "\
 procedure factorials {\n\
@@ -103,7 +103,7 @@ procedure factorials {
     return simpleProgram;
 }
 
-ProgramNode* getProgram2Tree()
+ProgramNode* getProgram2Tree_factorials()
 {
     List<StatementNode> statements;
     statements.push_back(
@@ -138,7 +138,7 @@ ProgramNode* getProgram2Tree()
     return constructedAst;
 }
 
-String getProgram3String()
+String getProgram3String_computeAverage()
 {
     String computeAverage = "\
 procedure compute {\n\
@@ -166,7 +166,7 @@ procedure compute {
     return computeAverage;
 }
 
-ProgramNode* getProgram3Tree()
+ProgramNode* getProgram3Tree_computeAverage()
 {
     List<StatementNode> statements;
     statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("num1"))));
@@ -188,7 +188,7 @@ ProgramNode* getProgram3Tree()
     return programNode;
 }
 
-String getProgram4String()
+String getProgram4String_printAscending()
 {
     String printAscending = "\
 procedure printAscending {\n\
@@ -229,7 +229,7 @@ procedure printAscending {
     return printAscending;
 }
 
-ProgramNode* getProgram4Tree()
+ProgramNode* getProgram4Tree_printAscending()
 {
     List<StatementNode> statements;
     statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("num1"))));
@@ -268,7 +268,7 @@ ProgramNode* getProgram4Tree()
     return programNode;
 }
 
-String getProgram5String()
+String getProgram5String_sumDigit()
 {
     String sumDigits = "\
 procedure sumDigit {\n\
@@ -299,7 +299,7 @@ procedure sumDigit {
     return sumDigits;
 }
 
-ProgramNode* getProgram5Tree()
+ProgramNode* getProgram5Tree_sumDigit()
 {
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -321,7 +321,7 @@ ProgramNode* getProgram5Tree()
     statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("sum"))));
 
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
-    ProcedureNode* computeProcedure = createProcedureNode("sumDigits", stmtLstNode);
+    ProcedureNode* computeProcedure = createProcedureNode("sumDigit", stmtLstNode);
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(computeProcedure));
     ProgramNode* programNode = createProgramNode("sumDigit", procedureList, 7);
@@ -329,7 +329,7 @@ ProgramNode* getProgram5Tree()
     return programNode;
 }
 
-String getProgram6String()
+String getProgram6String_sumDigitDuplicate()
 {
     String sumDigitsDuplicate = "\
 procedure sumDigit {\n\
@@ -382,7 +382,7 @@ procedure sumDigit {
     return sumDigitsDuplicate;
 }
 
-ProgramNode* getProgram6Tree()
+ProgramNode* getProgram6Tree_sumDigitDuplicate()
 {
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -437,7 +437,7 @@ ProgramNode* getProgram6Tree()
     return programNode;
 }
 
-String getProgram7String()
+String getProgram7String_computeCentroid()
 {
     String multiProcedureProgram = "\
 procedure main {\n\
@@ -521,7 +521,7 @@ procedure computeCentroid {
     return multiProcedureProgram;
 }
 
-ProgramNode* getProgram7Tree()
+ProgramNode* getProgram7Tree_computeCentroid()
 {
     List<StatementNode> mainStatements;
     List<StatementNode> readPointStatements;
@@ -610,7 +610,7 @@ ProgramNode* getProgram7Tree()
     return programNode;
 }
 
-String getProgram8String() {
+String getProgram8String_sumDigitPlusCyclicCall() {
     String sumDigitPlusCyclicCall = "\
 procedure sumDigit {\n\
 \n\
@@ -653,7 +653,7 @@ procedure plus {
     return sumDigitPlusCyclicCall;
 }
 
-ProgramNode* getProgram8Tree() {
+ProgramNode* getProgram8Tree_sumDigitPlusCyclicCall() {
     // sumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -689,12 +689,12 @@ ProgramNode* getProgram8Tree() {
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(plusProcedureNode));
-    ProgramNode* programNode = createProgramNode("sumDigitPlusCyclicCall", procedureList, 11);
+    ProgramNode* programNode = createProgramNode("sumDigit", procedureList, 11);
 
     return programNode;
 }
 
-String getProgram9String() {
+String getProgram9String_sumDigitPlusMultiplyCyclicCall() {
     String sumDigitPlusMultiplyCyclicCall = "\
 procedure sumDigit {\n\
 \n\
@@ -748,7 +748,7 @@ procedure multiply {
     return sumDigitPlusMultiplyCyclicCall;
 }
 
-ProgramNode* getProgram9Tree() {
+ProgramNode* getProgram9Tree_sumDigitPlusMultiplyCyclicCall() {
     // sumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -792,12 +792,12 @@ ProgramNode* getProgram9Tree() {
     procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(plusProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(multiplyProcedureNode));
-    ProgramNode* programNode = createProgramNode("sumDigitPlusMultiplyCyclicCall", procedureList, 13);
+    ProgramNode* programNode = createProgramNode("sumDigit", procedureList, 13);
 
     return programNode;
 }
 
-String getProgram10String() {
+String getProgram10String_sumDigitPlusNonexistentProcedureCall() {
     String sumDigitPlusNonexistentProcedureCall = "\
 procedure sumDigit {\n\
 \n\
@@ -841,7 +841,7 @@ procedure plus {
     return sumDigitPlusNonexistentProcedureCall;
 }
 
-ProgramNode* getProgram10Tree() {
+ProgramNode* getProgram10Tree_sumDigitPlusNonexistentProcedureCall() {
     // sumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -877,12 +877,12 @@ ProgramNode* getProgram10Tree() {
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(sumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(plusProcedureNode));
-    ProgramNode* programNode = createProgramNode("sumDigitPlusNonexistentProcedureCall", procedureList, 11);
+    ProgramNode* programNode = createProgramNode("sumDigit", procedureList, 11);
 
     return programNode;
 }
 
-String getProgram11String() {
+String getProgram11String_sumDigitPlusMultiplyNestedWhileIfCyclicCall() {
     String sumDigitPlusMultiplyNestedWhileIfCyclicCall = "\
 procedure printSumDigit {\n\
 \n\
@@ -939,7 +939,7 @@ procedure printNumber {
     return sumDigitPlusMultiplyNestedWhileIfCyclicCall;
 }
 
-ProgramNode* getProgram11Tree() {
+ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall() {
     // printSumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -997,12 +997,12 @@ ProgramNode* getProgram11Tree() {
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printSumProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printNumberProcedureNode));
     ProgramNode* programNode
-        = createProgramNode("printSumDigitPrintSumPrintNumberNestedWhileIfCyclicCall", procedureList, 13);
+        = createProgramNode("printSumDigit", procedureList, 13);
 
     return programNode;
 }
 
-String getProgram12String() {
+String getProgram12String_recursivePrintAscending() {
     String recursivePrintAscending = "\
 procedure recursivePrintAscending {\n\
 \n\
@@ -1036,7 +1036,7 @@ procedure recursivePrintAscending {
     return recursivePrintAscending;
 }
 
-ProgramNode* getProgram12Tree() {
+ProgramNode* getProgram12Tree_recursivePrintAscending() {
     List<StatementNode> statements;
     statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("num1"))));
     statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(2, Variable("num2"))));

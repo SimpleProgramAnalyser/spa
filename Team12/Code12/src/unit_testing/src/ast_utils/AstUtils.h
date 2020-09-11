@@ -8,10 +8,11 @@
  * for unit testing purposes.
  *
  * In the methods, the same programs will share the same
- * program number. For example, getProgram1String() will
- * return the raw SIMPLE program, while getProgram1Tree()
- * will return the Abstract Syntax Tree representing
- * the program returned in getProgram1String().
+ * program number. For example, getProgram1String_compute()
+ * will return the raw SIMPLE program, while
+ * getProgram1Tree_compute() will return the Abstract
+ * Syntax Tree representing the program returned in
+ * getProgram1String_compute().
  */
 
 #ifndef UNIT_TESTING_AST_UTILS_H
@@ -21,63 +22,63 @@
 #include "ast/AstTypes.h"
 
 // Program 1: Basic program with read, assign, print
-String getProgram1String();
+String getProgram1String_compute();
 // Program 1: Basic program with read, assign, print
-ProgramNode* getProgram1Tree();
+ProgramNode* getProgram1Tree_compute();
 
 // Program 2: Program with "if" nested in "while"
-String getProgram2String();
+String getProgram2String_factorials();
 // Program 2: Program with "if" nested in "while"
-ProgramNode* getProgram2Tree();
+ProgramNode* getProgram2Tree_factorials();
 
 // Program 3: computeAverage, program with read, assign, print
-String getProgram3String();
+String getProgram3String_computeAverage();
 // Program 3: computeAverage, program with read, assign, print
-ProgramNode* getProgram3Tree();
+ProgramNode* getProgram3Tree_computeAverage();
 
 // Program 4: printAscending, program with read, assign, if/else, print
-String getProgram4String();
+String getProgram4String_printAscending();
 // Program 4: printAscending, program with read, assign, if/else, print
-ProgramNode* getProgram4Tree();
+ProgramNode* getProgram4Tree_printAscending();
 
 // Program 5: sumDigit, program with read, assign, while, print
-String getProgram5String();
+String getProgram5String_sumDigit();
 // Program 5: sumDigit, program with read, assign, while, print
-ProgramNode* getProgram5Tree();
+ProgramNode* getProgram5Tree_sumDigit();
 
 // Program 6: sumDigitsDuplicate, program with duplicate procedure
-String getProgram6String();
+String getProgram6String_sumDigitDuplicate();
 // Program 6: sumDigitsDuplicate, program with duplicate procedure
-ProgramNode* getProgram6Tree();
+ProgramNode* getProgram6Tree_sumDigitDuplicate();
 
 // Program 7: computeCentroid, program with multiple procedures
-String getProgram7String();
+String getProgram7String_computeCentroid();
 // Program 7: computeCentroid, program with multiple procedures
-ProgramNode* getProgram7Tree();
+ProgramNode* getProgram7Tree_computeCentroid();
 
 // Program 8: sumDigit but with a cyclic call (2 procedures)
-String getProgram8String();
+String getProgram8String_sumDigitPlusCyclicCall();
 // Program 8: sumDigit but with a cyclic call (2 procedures)
-ProgramNode* getProgram8Tree();
+ProgramNode* getProgram8Tree_sumDigitPlusCyclicCall();
 
 // Program 9: sumDigit but with a cyclic call (3 procedures)
-String getProgram9String();
+String getProgram9String_sumDigitPlusMultiplyCyclicCall();
 // Program 9: sumDigit but with a cyclic call (3 procedures)
-ProgramNode* getProgram9Tree();
+ProgramNode* getProgram9Tree_sumDigitPlusMultiplyCyclicCall();
 
 // Program 10: Calling a non-existent procedure
-String getProgram10String();
+String getProgram10String_sumDigitPlusNonexistentProcedureCall();
 // Program 10: Calling a non-existent procedure
-ProgramNode* getProgram10Tree();
+ProgramNode* getProgram10Tree_sumDigitPlusNonexistentProcedureCall();
 
 // Program 11: Cyclic calls within nested if and while
-String getProgram11String();
+String getProgram11String_sumDigitPlusMultiplyNestedWhileIfCyclicCall();
 // Program 11: Cyclic calls within nested if and while
-ProgramNode* getProgram11Tree();
+ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall();
 
 // Program 12: Recursive program
-String getProgram12String();
+String getProgram12String_recursivePrintAscending();
 // Program 12: Recursive program
-ProgramNode* getProgram12Tree();
+ProgramNode* getProgram12Tree_recursivePrintAscending();
 
 #endif // UNIT_TESTING_AST_UTILS_H

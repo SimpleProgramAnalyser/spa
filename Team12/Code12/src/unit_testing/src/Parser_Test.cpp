@@ -5,8 +5,8 @@
 
 TEST_CASE("Parser can parse an example program correctly")
 {
-    ProgramNode* ast = parseSimpleReturnNode(getProgram1String());
-    REQUIRE(*(ast) == *(getProgram1Tree()));
+    ProgramNode* ast = parseSimpleReturnNode(getProgram1String_compute());
+    REQUIRE(*(ast) == *(getProgram1Tree_compute()));
 }
 
 TEST_CASE("Parser parses if statements correctly") {}
@@ -15,8 +15,8 @@ TEST_CASE("Parser parses while statements correctly") {}
 
 TEST_CASE("Parser parses if nested in while correctly")
 {
-    ProgramNode* ast = parseSimpleReturnNode(getProgram2String());
-    REQUIRE(*(ast) == *(getProgram2Tree()));
+    ProgramNode* ast = parseSimpleReturnNode(getProgram2String_factorials());
+    REQUIRE(*(ast) == *(getProgram2Tree_factorials()));
 }
 
 TEST_CASE("Parser parses complicated arithmetic expressions statements correctly") {}

@@ -9,7 +9,7 @@
 
 TEST_CASE("Follows extractor works for if and else statements nested in while")
 {
-    FollowsList* followsList = extractFollowsReturnAdjacencyList(*getProgram2Tree());
+    FollowsList* followsList = extractFollowsReturnAdjacencyList(*getProgram2Tree_factorials());
     //        Follows relationships: 1  2  3  4  5
     //                               |  |  |  |  |
     //                               V  V  V  V  V
