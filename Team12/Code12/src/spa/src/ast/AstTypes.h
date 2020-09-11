@@ -57,8 +57,9 @@ class ProgramNode {
 public:
     const Name programName;
     List<ProcedureNode> procedureList;
-    ProgramNode(Name n, List<ProcedureNode> procLst);
+    ProgramNode(Name n, List<ProcedureNode> procLst, StatementNumber totalStmts);
     bool operator==(const ProgramNode& pgn) const;
+    StatementNumber totalNumberOfStatements;
 };
 
 class BasicDataType {

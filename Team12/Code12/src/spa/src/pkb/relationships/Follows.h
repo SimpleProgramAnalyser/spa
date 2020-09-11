@@ -3,6 +3,9 @@
 
 #include <pkb/PkbTypes.h>
 
+void addFollowsRelationships(Integer before, Integer after);
+void addFollowsRelationshipsStar(Integer before, Vector<Integer> after);
+
 class BeforeTable {
 public:
     // writing
