@@ -556,7 +556,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
     }
 }
 
-// global variable to help in numbering statements
+// global variable to help in numbering statements, this
+// variable is to be incremented before a statement is numbered
 static int statementsSeen = 0;
 
 ParserReturnType<std::unique_ptr<CallStatementNode>> parseCallStmt(frontend::TokenList* programTokens,
@@ -663,8 +664,11 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
         statementsSeen++;
         StatementNumber ifStmtNum = statementsSeen;
         // now, parse the "if" statements
-        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer)->tokenTag == frontend::BracesOpenTag) {
+        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer + 1)->tokenTag == frontend::BracesOpenTag) {
             ifStatements = parseStatementList(programTokens, tokenPointer + 1 /* skip "then"*/);
+        } else {
+            // syntax error in if statement brackets
+            return getSyntaxError<IfStatementNode>();
         }
         // check if "if" statements parsed correctly
         if (ifStatements.nextUnparsedToken < 0 || ifStatements.nextUnparsedToken > numberOfTokens) {
@@ -764,7 +768,7 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
         }
         // check if semicolon was found
         if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer)->tokenTag == frontend::SemicolonTag
-            && tokenPointer - 1 > startIndex + 2) {
+            && tokenPointer - 1 >= startIndex + 2) {
 
             expression = parseExpression(programTokens, startIndex + 2, tokenPointer - 1);
         } else {
@@ -975,7 +979,7 @@ ProgramNode* parseSimpleReturnNode(const String& rawProgram)
     if (currentIndex < 0 || syntaxError) {
         return nullptr;
     } else {
-        return createProgramNode("SIMPLE program", procedures);
+        return createProgramNode("SIMPLE program", procedures, statementsSeen);
     }
 }
 

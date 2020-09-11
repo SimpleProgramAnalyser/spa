@@ -42,7 +42,8 @@ AbstractQuery PreProcessor::processQuery(String query)
     return aq;
 }
 
-ClauseVector PreProcessor::processClauses(String clausesString) {}
+// TODO: Chester
+// ClauseVector PreProcessor::processClauses(String clausesString) {}
 
 DeclarationTable PreProcessor::processDeclarations(String declarationsString)
 {
