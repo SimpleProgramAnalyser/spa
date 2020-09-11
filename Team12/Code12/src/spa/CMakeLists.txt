@@ -20,6 +20,21 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
 
+    # error library ?
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
+
+    # design extractor
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
+
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
@@ -27,7 +42,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
-        src/Util.cpp src/Util.h
 
     # pkb
     ${pkb}
@@ -57,5 +71,4 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 
