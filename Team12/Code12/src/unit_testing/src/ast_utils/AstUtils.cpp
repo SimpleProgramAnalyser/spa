@@ -66,40 +66,40 @@ procedure factorials {\n\
     answer = factorial;\n\
 }";
 
-/*
-Sample SIMPLE program used:
+    /*
+    Sample SIMPLE program used:
 
-procedure factorials {
-    limit = 100;
-    current = 0;
-    factorial = 0;
-    while (current < limit) {
-        if (current == 0) then {
-            factorial = 1;
-        } else {
-            factorial = current * factorial;
+    procedure factorials {
+        limit = 100;
+        current = 0;
+        factorial = 0;
+        while (current < limit) {
+            if (current == 0) then {
+                factorial = 1;
+            } else {
+                factorial = current * factorial;
+            }
+            current = current + 1;
         }
-        current = current + 1;
+        answer = factorial;
     }
-    answer = factorial;
-}
 
-Annotated with statement numbers:
-procedure factorials {
-    limit = 100;                             // 1
-    current = 0;                             // 2
-    factorial = 0;                           // 3
-    while (current < limit) {                // 4
-        if (current == 0) then {             // 5
-            factorial = 1;                   // 6
-        } else {                             //
-            factorial = current * factorial; // 7
-        }                                    //
-        current = current + 1;               // 8
-    }                                        //
-    answer = factorial;                      // 9
-}
-*/
+    Annotated with statement numbers:
+    procedure factorials {
+        limit = 100;                             // 1
+        current = 0;                             // 2
+        factorial = 0;                           // 3
+        while (current < limit) {                // 4
+            if (current == 0) then {             // 5
+                factorial = 1;                   // 6
+            } else {                             //
+                factorial = current * factorial; // 7
+            }                                    //
+            current = current + 1;               // 8
+        }                                        //
+        answer = factorial;                      // 9
+    }
+    */
     return simpleProgram;
 }
 
@@ -153,16 +153,16 @@ procedure compute {\n\
     print ave;\n\
 }";
 
-/* Annotated computeAverage with line numbers
-procedure compute {
-1.  read num1;
-2.  read num2;
-3.  read num3;
-4.  sum = (num1 + num2) * num3;
-5.  ave = sum / 3;
-6.  print ave;
-}
-*/
+    /* Annotated computeAverage with line numbers
+    procedure compute {
+    1.  read num1;
+    2.  read num2;
+    3.  read num3;
+    4.  sum = (num1 + num2) * num3;
+    5.  ave = sum / 3;
+    6.  print ave;
+    }
+    */
     return computeAverage;
 }
 
@@ -209,23 +209,23 @@ procedure printAscending {\n\
     print noSwap;\n\
 }";
 
-/* Annotated printAscending with line numbers
-procedure printAscending {
-1.  read num1;\n\
-2.  read num2;\n\
-3.  noSwap = 0;\n\
-4.  if(num1 > num2) then {
-5.    temp = num1;
-6.    num1 = num2;
-7.    num2 = temp;
-    } else {
-8.    noSwap = 1;
-    }
-9.  print num1;
-10. print num2;
-11. print noSwap;
-}";
-*/
+    /* Annotated printAscending with line numbers
+    procedure printAscending {
+    1.  read num1;\n\
+    2.  read num2;\n\
+    3.  noSwap = 0;\n\
+    4.  if(num1 > num2) then {
+    5.    temp = num1;
+    6.    num1 = num2;
+    7.    num2 = temp;
+        } else {
+    8.    noSwap = 1;
+        }
+    9.  print num1;
+    10. print num2;
+    11. print noSwap;
+    }";
+    */
     return printAscending;
 }
 
@@ -284,18 +284,18 @@ procedure sumDigit {\n\
     print sum;\n\
 }";
 
-/* Annotated sumDigits with line numbers
-procedure sumDigit {
-1.  read number;
-2.  sum = 0;
-3.  while(number > 0) {
-4.    digit = number % 10;
-5.    sum = sum + digit;
-6.    number = number / 10;
+    /* Annotated sumDigits with line numbers
+    procedure sumDigit {
+    1.  read number;
+    2.  sum = 0;
+    3.  while(number > 0) {
+    4.    digit = number % 10;
+    5.    sum = sum + digit;
+    6.    number = number / 10;
+        }
+    7.  print sum;\n\
     }
-7.  print sum;\n\
-}
-*/
+    */
     return sumDigits;
 }
 
@@ -357,28 +357,28 @@ procedure sumDigit {\n\
     print sum;\n\
 }";
 
-/* Annotated sumDigits duplicates with line numbers
-procedure sumDigit {
-1.  read number;
-2.  sum = 0;
-3.  while(number > 0) {
-4.    digit = number % 10;
-5.    sum = sum + digit;
-6.    number = number / 10;
+    /* Annotated sumDigits duplicates with line numbers
+    procedure sumDigit {
+    1.  read number;
+    2.  sum = 0;
+    3.  while(number > 0) {
+    4.    digit = number % 10;
+    5.    sum = sum + digit;
+    6.    number = number / 10;
+        }
+    7.  print sum;
     }
-7.  print sum;
-}
-procedure sumDigit {
-8.  read number;
-9.  sum = 0;
-10. while(number > 0) {
-11.     digit = number % 10;
-12.     sum = sum + digit;
-13.     number = number / 10;
+    procedure sumDigit {
+    8.  read number;
+    9.  sum = 0;
+    10. while(number > 0) {
+    11.     digit = number % 10;
+    12.     sum = sum + digit;
+    13.     number = number / 10;
+        }
+    14. print sum;
     }
-14. print sum;
-}
-*/
+    */
     return sumDigitsDuplicate;
 }
 
@@ -391,7 +391,7 @@ ProgramNode* getProgram6Tree_sumDigitDuplicate()
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("sum"), createRefExpr(0))));
 
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("number"), createRefExpr(10)))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(5, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
@@ -399,7 +399,7 @@ ProgramNode* getProgram6Tree_sumDigitDuplicate()
     StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
 
     statements.push_back(std::unique_ptr<WhileStatementNode>(
-        createWhileNode(3, createGtExpr(createRefExpr("sum"), createRefExpr(0)), whileStmtLstNode)));
+        createWhileNode(3, createGtExpr(createRefExpr("number"), createRefExpr(0)), whileStmtLstNode)));
 
     statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("sum"))));
 
@@ -414,7 +414,7 @@ ProgramNode* getProgram6Tree_sumDigitDuplicate()
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(9, Variable("sum"), createRefExpr(0))));
 
     dupWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(11, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+        createAssignNode(11, Variable("digit"), createModExpr(createRefExpr("number"), createRefExpr(10)))));
     dupWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(12, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
     dupWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
@@ -422,7 +422,7 @@ ProgramNode* getProgram6Tree_sumDigitDuplicate()
     StmtlstNode* dupWhileStmtLstNode = createStmtlstNode(dupWhileStatements);
 
     dupStatements.push_back(std::unique_ptr<WhileStatementNode>(
-        createWhileNode(10, createGtExpr(createRefExpr("sum"), createRefExpr(0)), dupWhileStmtLstNode)));
+        createWhileNode(10, createGtExpr(createRefExpr("number"), createRefExpr(0)), dupWhileStmtLstNode)));
 
     dupStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(14, Variable("sum"))));
 
@@ -481,43 +481,43 @@ procedure computeCentroid {\n\
     normSq = cenX * cenY + cenY * cenY;\n\
 }";
 
-/* Annotated multiProcedureProgram with line numbers
-procedure main {
-1.  flag = 0;
-2.  call computeCentroid;
-3.  call printResults;
-}
-procedure readPoint{
-4.   read x;
-5.   read y;
-}
+    /* Annotated multiProcedureProgram with line numbers
+    procedure main {
+    1.  flag = 0;
+    2.  call computeCentroid;
+    3.  call printResults;
+    }
+    procedure readPoint{
+    4.   read x;
+    5.   read y;
+    }
 
-procedure printResults {
-6.  print flag;
-7.  print cenX;
-8.  print cenY;
-9.  print normSq;
-}
-procedure computeCentroid {
-10.  count = 0;
-11.  cenX = 0;
-12.  cenY = 0;
-13.  call readPoint;
-14.  while((x != 0) && (y != 0)) {
-15.      count = count + 1;
-16.      cenX = cenX + x;
-17.      cenY = cenY + y;
-18.      call readPoint;
-     }
-19.  if(count == 0) then {
-20.      flag = 1;
-     } else {
-21.      cenX = cenX/ count;
-22.      cenY = cenY / count;
-     }
-23.  normSq = cenX * cenY + cenY * cenY;
-}
-*/
+    procedure printResults {
+    6.  print flag;
+    7.  print cenX;
+    8.  print cenY;
+    9.  print normSq;
+    }
+    procedure computeCentroid {
+    10.  count = 0;
+    11.  cenX = 0;
+    12.  cenY = 0;
+    13.  call readPoint;
+    14.  while((x != 0) && (y != 0)) {
+    15.      count = count + 1;
+    16.      cenX = cenX + x;
+    17.      cenY = cenY + y;
+    18.      call readPoint;
+         }
+    19.  if(count == 0) then {
+    20.      flag = 1;
+         } else {
+    21.      cenX = cenX/ count;
+    22.      cenY = cenY / count;
+         }
+    23.  normSq = cenX * cenY + cenY * cenY;
+    }
+    */
     return multiProcedureProgram;
 }
 
@@ -610,7 +610,8 @@ ProgramNode* getProgram7Tree_computeCentroid()
     return programNode;
 }
 
-String getProgram8String_sumDigitPlusCyclicCall() {
+String getProgram8String_sumDigitPlusCyclicCall()
+{
     String sumDigitPlusCyclicCall = "\
 procedure sumDigit {\n\
 \n\
@@ -632,28 +633,29 @@ procedure plus {\n\
     call sumDigit;\n\
 }";
 
-/* Annotated sumDigitPlusCyclicCall with line numbers
-procedure sumDigit {
-1.  read number;
-2.  sum = 0;
-3.  while(number > 0) {
-4.    digit = number % 10;
-5.    sum = sum + digit;
-6.    number = number / 10;
+    /* Annotated sumDigitPlusCyclicCall with line numbers
+    procedure sumDigit {
+    1.  read number;
+    2.  sum = 0;
+    3.  while(number > 0) {
+    4.    digit = number % 10;
+    5.    sum = sum + digit;
+    6.    number = number / 10;
+        }
+    7.  call plus;
+    8.  print sum;
     }
-7.  call plus;
-8.  print sum;
-}
-procedure plus {
-9.  sum = 0;
-10. print sum;
-11. call sumDigit;
-}
-*/
+    procedure plus {
+    9.  sum = 0;
+    10. print sum;
+    11. call sumDigit;
+    }
+    */
     return sumDigitPlusCyclicCall;
 }
 
-ProgramNode* getProgram8Tree_sumDigitPlusCyclicCall() {
+ProgramNode* getProgram8Tree_sumDigitPlusCyclicCall()
+{
     // sumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -662,7 +664,7 @@ ProgramNode* getProgram8Tree_sumDigitPlusCyclicCall() {
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("sum"), createRefExpr(0))));
 
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("number"), createRefExpr(10)))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(5, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
@@ -670,7 +672,7 @@ ProgramNode* getProgram8Tree_sumDigitPlusCyclicCall() {
     StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
 
     statements.push_back(std::unique_ptr<WhileStatementNode>(
-        createWhileNode(3, createGtExpr(createRefExpr("sum"), createRefExpr(0)), whileStmtLstNode)));
+        createWhileNode(3, createGtExpr(createRefExpr("number"), createRefExpr(0)), whileStmtLstNode)));
 
     statements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(7, "plus")));
     statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("sum"))));
@@ -694,7 +696,8 @@ ProgramNode* getProgram8Tree_sumDigitPlusCyclicCall() {
     return programNode;
 }
 
-String getProgram9String_sumDigitPlusMultiplyCyclicCall() {
+String getProgram9String_sumDigitPlusMultiplyCyclicCall()
+{
     String sumDigitPlusMultiplyCyclicCall = "\
 procedure sumDigit {\n\
 \n\
@@ -723,32 +726,33 @@ procedure multiply {\n\
     call sumDigit;\n\
 }";
 
-/* Annotated sumDigitPlusCyclicCall with line numbers
-procedure sumDigit {
-1.  read number;
-2.  sum = 0;
-3.  while(number > 0) {
-4.    digit = number % 10;
-5.    sum = sum + digit;
-6.    number = number / 10;
+    /* Annotated sumDigitPlusCyclicCall with line numbers
+    procedure sumDigit {
+    1.  read number;
+    2.  sum = 0;
+    3.  while(number > 0) {
+    4.    digit = number % 10;
+    5.    sum = sum + digit;
+    6.    number = number / 10;
+        }
+    7.  call plus;
+    8.  print sum;
     }
-7.  call plus;
-8.  print sum;
-}
-procedure plus {
-9.  sum = 0;
-10. print sum;
-11. call multiply;
-}
-procedure multiply {
-12. print number;
-13. call sumDigit;
-}
-*/
+    procedure plus {
+    9.  sum = 0;
+    10. print sum;
+    11. call multiply;
+    }
+    procedure multiply {
+    12. print number;
+    13. call sumDigit;
+    }
+    */
     return sumDigitPlusMultiplyCyclicCall;
 }
 
-ProgramNode* getProgram9Tree_sumDigitPlusMultiplyCyclicCall() {
+ProgramNode* getProgram9Tree_sumDigitPlusMultiplyCyclicCall()
+{
     // sumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -757,7 +761,7 @@ ProgramNode* getProgram9Tree_sumDigitPlusMultiplyCyclicCall() {
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("sum"), createRefExpr(0))));
 
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("number"), createRefExpr(10)))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(5, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
@@ -765,7 +769,7 @@ ProgramNode* getProgram9Tree_sumDigitPlusMultiplyCyclicCall() {
     StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
 
     statements.push_back(std::unique_ptr<WhileStatementNode>(
-        createWhileNode(3, createGtExpr(createRefExpr("sum"), createRefExpr(0)), whileStmtLstNode)));
+        createWhileNode(3, createGtExpr(createRefExpr("number"), createRefExpr(0)), whileStmtLstNode)));
 
     statements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(7, "plus")));
     statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("sum"))));
@@ -797,7 +801,8 @@ ProgramNode* getProgram9Tree_sumDigitPlusMultiplyCyclicCall() {
     return programNode;
 }
 
-String getProgram10String_sumDigitPlusNonexistentProcedureCall() {
+String getProgram10String_sumDigitPlusNonexistentProcedureCall()
+{
     String sumDigitPlusNonexistentProcedureCall = "\
 procedure sumDigit {\n\
 \n\
@@ -820,28 +825,29 @@ procedure plus {\n\
     call multiply;\n\
 }";
 
-/* Annotated sumDigitPlusNonexistentProcedureCall with line numbers
-procedure sumDigit {
-1.  read number;
-2.  sum = 0;
-3.  while(number > 0) {
-4.    digit = number % 10;
-5.    sum = sum + digit;
-6.    number = number / 10;
+    /* Annotated sumDigitPlusNonexistentProcedureCall with line numbers
+    procedure sumDigit {
+    1.  read number;
+    2.  sum = 0;
+    3.  while(number > 0) {
+    4.    digit = number % 10;
+    5.    sum = sum + digit;
+    6.    number = number / 10;
+        }
+    7.  call plus;
+    8.  print sum;
     }
-7.  call plus;
-8.  print sum;
-}
-procedure plus {
-9.  sum = 0;
-10. print sum;
-11. call multiply;
-}
-*/
+    procedure plus {
+    9.  sum = 0;
+    10. print sum;
+    11. call multiply;
+    }
+    */
     return sumDigitPlusNonexistentProcedureCall;
 }
 
-ProgramNode* getProgram10Tree_sumDigitPlusNonexistentProcedureCall() {
+ProgramNode* getProgram10Tree_sumDigitPlusNonexistentProcedureCall()
+{
     // sumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -850,7 +856,7 @@ ProgramNode* getProgram10Tree_sumDigitPlusNonexistentProcedureCall() {
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("sum"), createRefExpr(0))));
 
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("number"), createRefExpr(10)))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(5, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
@@ -858,7 +864,7 @@ ProgramNode* getProgram10Tree_sumDigitPlusNonexistentProcedureCall() {
     StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
 
     statements.push_back(std::unique_ptr<WhileStatementNode>(
-        createWhileNode(3, createGtExpr(createRefExpr("sum"), createRefExpr(0)), whileStmtLstNode)));
+        createWhileNode(3, createGtExpr(createRefExpr("number"), createRefExpr(0)), whileStmtLstNode)));
 
     statements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(7, "plus")));
     statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("sum"))));
@@ -882,7 +888,8 @@ ProgramNode* getProgram10Tree_sumDigitPlusNonexistentProcedureCall() {
     return programNode;
 }
 
-String getProgram11String_sumDigitPlusMultiplyNestedWhileIfCyclicCall() {
+String getProgram11String_sumDigitPlusMultiplyNestedWhileIfCyclicCall()
+{
     String sumDigitPlusMultiplyNestedWhileIfCyclicCall = "\
 procedure printSumDigit {\n\
 \n\
@@ -912,34 +919,35 @@ procedure printNumber {\n\
     call printSumDigit;\n\
 }";
 
-/* Annotated sumDigitPlusMultiplyNestedWhileIfCyclicCall with line numbers
-procedure printSumDigit {
-1.  read number;
-2.  sum = 0;
-3.  while(number > 0) {
-4.    digit = number % 10;
-5.    sum = sum + digit;
-6.    number = number / 10;
-7.    if(sum > 2) then {
-8.      call printSum;
-      } else {
-9.      call printNumber;
-      }
+    /* Annotated sumDigitPlusMultiplyNestedWhileIfCyclicCall with line numbers
+    procedure printSumDigit {
+    1.  read number;
+    2.  sum = 0;
+    3.  while(number > 0) {
+    4.    digit = number % 10;
+    5.    sum = sum + digit;
+    6.    number = number / 10;
+    7.    if(sum > 2) then {
+    8.      call printSum;
+          } else {
+    9.      call printNumber;
+          }
+        }
     }
-}
-procedure printSum {
-10. print sum;
-11. call printNumber;
-}
-procedure printNumber {
-12. print number;
-13. call printSumDigit;
-}
-*/
+    procedure printSum {
+    10. print sum;
+    11. call printNumber;
+    }
+    procedure printNumber {
+    12. print number;
+    13. call printSumDigit;
+    }
+    */
     return sumDigitPlusMultiplyNestedWhileIfCyclicCall;
 }
 
-ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall() {
+ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall()
+{
     // printSumDigit
     List<StatementNode> statements;
     List<StatementNode> whileStatements;
@@ -948,7 +956,7 @@ ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall() {
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("sum"), createRefExpr(0))));
 
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("num"), createRefExpr(10)))));
+        createAssignNode(4, Variable("digit"), createModExpr(createRefExpr("number"), createRefExpr(10)))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(5, Variable("sum"), createPlusExpr(createRefExpr("sum"), createRefExpr("digit")))));
     whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
@@ -971,7 +979,7 @@ ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall() {
 
     // Add while stmtLstNode to printSumDigit's statement list
     statements.push_back(std::unique_ptr<WhileStatementNode>(
-        createWhileNode(3, createGtExpr(createRefExpr("sum"), createRefExpr(0)), whileStmtLstNode)));
+        createWhileNode(3, createGtExpr(createRefExpr("number"), createRefExpr(0)), whileStmtLstNode)));
 
     // Create printSumDigit's stmtlstNode
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
@@ -996,13 +1004,13 @@ ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall() {
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printSumDigitsProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printSumProcedureNode));
     procedureList.push_back(std::unique_ptr<ProcedureNode>(printNumberProcedureNode));
-    ProgramNode* programNode
-        = createProgramNode("printSumDigit", procedureList, 13);
+    ProgramNode* programNode = createProgramNode("printSumDigit", procedureList, 13);
 
     return programNode;
 }
 
-String getProgram12String_recursivePrintAscending() {
+String getProgram12String_recursivePrintAscending()
+{
     String recursivePrintAscending = "\
 procedure recursivePrintAscending {\n\
 \n\
@@ -1019,24 +1027,25 @@ procedure recursivePrintAscending {\n\
     call recursivePrintAscending;\n\
 }";
 
-/* Annotated recursivePrintAscending with line numbers
-procedure recursivePrintAscending {
-1.  read num1;
-2.  read num2;
-3.  if(num1 >= num2) then {
-4.      num2 = num2 + 1;
-    } else {
-5.      num1 = num1 + 1;
-    }
-6.  print num1;
-7.  print num2;
-8.  call recursivePrintAscending;
-};
-*/
+    /* Annotated recursivePrintAscending with line numbers
+    procedure recursivePrintAscending {
+    1.  read num1;
+    2.  read num2;
+    3.  if(num1 >= num2) then {
+    4.      num2 = num2 + 1;
+        } else {
+    5.      num1 = num1 + 1;
+        }
+    6.  print num1;
+    7.  print num2;
+    8.  call recursivePrintAscending;
+    };
+    */
     return recursivePrintAscending;
 }
 
-ProgramNode* getProgram12Tree_recursivePrintAscending() {
+ProgramNode* getProgram12Tree_recursivePrintAscending()
+{
     List<StatementNode> statements;
     statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("num1"))));
     statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(2, Variable("num2"))));
@@ -1049,7 +1058,7 @@ ProgramNode* getProgram12Tree_recursivePrintAscending() {
     StmtlstNode* ifStmtLstNode = createStmtlstNode(ifStatements);
     // Else statements
     elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(5, Variable("num1"), createPlusExpr(createRefExpr("num2"), createRefExpr(1)))));
+        createAssignNode(5, Variable("num1"), createPlusExpr(createRefExpr("num1"), createRefExpr(1)))));
     StmtlstNode* elseStmtLstNode = createStmtlstNode(elseStatements);
 
     statements.push_back(std::unique_ptr<IfStatementNode>(
