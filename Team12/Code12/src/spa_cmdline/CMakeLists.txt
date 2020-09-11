@@ -4,6 +4,7 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_
 set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(spa_cmdline ${srcs})
+
 target_link_options(spa_cmdline PUBLIC "-no-pie")
 target_link_libraries(spa_cmdline spa)
 
