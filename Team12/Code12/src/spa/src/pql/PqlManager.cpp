@@ -16,7 +16,7 @@
  * for the results of that query.
  *
  * @param query The PQL query.
- * @param The format, to format the results.
+ * @param format The format, to format the results.
  *
  * @return FormattedQueryResult, representing the PQL
  * query results (Note: If either PQL query invalid, or is
