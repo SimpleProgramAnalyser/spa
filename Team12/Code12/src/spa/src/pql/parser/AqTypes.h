@@ -5,8 +5,8 @@
  * further processing.
  */
 
-#ifndef SPA_AQTYPES_H
-#define SPA_AQTYPES_H
+#ifndef SPA_PQL_AQTYPES_H
+#define SPA_PQL_AQTYPES_H
 
 #include <Types.h>
 #include <Util.h>
@@ -206,4 +206,4 @@ public:
 
 Boolean isValidSynonym(String s);
 
-#endif // SPA_AQTYPES_H
+#endif // SPA_PQL_AQTYPES_H

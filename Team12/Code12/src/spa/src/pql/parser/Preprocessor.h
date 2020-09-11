@@ -1,5 +1,5 @@
-#ifndef SPA_PREPROCESSOR_H
-#define SPA_PREPROCESSOR_H
+#ifndef SPA_PQL_PREPROCESSOR_H
+#define SPA_PQL_PREPROCESSOR_H
 
 #include "lexer/Lexer.h"
 #include "AqTypes.h"
@@ -20,4 +20,4 @@ public:
     Boolean isSynonymOfProcedureType(Synonym s);
 };
 
-#endif // SPA_PREPROCESSOR_H
+#endif // SPA_PQL_PREPROCESSOR_H

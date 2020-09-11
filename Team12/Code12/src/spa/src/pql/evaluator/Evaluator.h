@@ -6,8 +6,8 @@
  * for the results of the query.
  */
 
-#ifndef SPA_EVALUATOR_H
-#define SPA_EVALUATOR_H
+#ifndef SPA_PQL_EVALUATOR_H
+#define SPA_PQL_EVALUATOR_H
 
 #include "pql/parser/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
@@ -17,4 +17,4 @@ public:
     RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
 };
 
-#endif // SPA_EVALUATOR_H
+#endif // SPA_PQL_EVALUATOR_H

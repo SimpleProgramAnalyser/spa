@@ -3,8 +3,8 @@
  * for the frontend and autotester.
  */
 
-#ifndef SPA_PROJECTOR_H
-#define SPA_PROJECTOR_H
+#ifndef SPA_PQL_PROJECTOR_H
+#define SPA_PQL_PROJECTOR_H
 
 #include "FormattedQueryResult.h"
 #include "RawQueryResult.h"
@@ -15,4 +15,4 @@ public:
     FormattedQueryResult formatUI(RawQueryResult rawQueryResult);
 };
 
-#endif // SPA_PROJECTOR_H
+#endif // SPA_PQL_PROJECTOR_H

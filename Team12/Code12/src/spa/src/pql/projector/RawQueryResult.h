@@ -1,6 +1,6 @@
-#ifndef SPA_RAWQUERYRESULT_H
-#define SPA_RAWQUERYRESULT_H
+#ifndef SPA_PQL_RAW_QUERY_RESULT_H
+#define SPA_PQL_RAW_QUERY_RESULT_H
 
 class RawQueryResult {};
 
-#endif // SPA_RAWQUERYRESULT_H
+#endif // SPA_PQL_RAW_QUERY_RESULT_H
