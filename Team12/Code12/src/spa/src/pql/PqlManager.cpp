@@ -4,12 +4,12 @@
 
 #include "PqlManager.h"
 
-#include "AqTypes.h"
-#include "Evaluator.h"
-#include "FormattedQueryResult.h"
-#include "Preprocessor.h"
-#include "Projector.h"
-#include "QueryResultFormatType.h"
+#include "pql/parser/AqTypes.h"
+#include "pql/evaluator/Evaluator.h"
+#include "pql/projector/FormattedQueryResult.h"
+#include "pql/parser/Preprocessor.h"
+#include "pql/projector/Projector.h"
+#include "pql/projector/QueryResultFormatType.h"
 
 /**
  * Executes a PQL query, and interacts with the PKB,

@@ -1,7 +1,7 @@
 #include "FrontendManager.h"
-#include "pql/FormattedQueryResult.h"
+#include "pql/projector/FormattedQueryResult.h"
+#include "pql/projector/QueryResultFormatType.h"
 #include "pql/PqlManager.h"
-#include "pql/QueryResultFormatType.h"
 #include <Types.h>
 #include <iostream>
 

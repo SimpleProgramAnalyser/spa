@@ -8,8 +8,8 @@
 
 #include <Types.h>
 
-#include "FormattedQueryResult.h"
-#include "QueryResultFormatType.h"
+#include "projector/FormattedQueryResult.h"
+#include "projector/QueryResultFormatType.h"
 
 class PqlManager {
 public:

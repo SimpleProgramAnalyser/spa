@@ -4,8 +4,8 @@
 
 #include "Evaluator.h"
 
-#include "AqTypes.h"
-#include "RawQueryResult.h"
+#include "pql/parser/AqTypes.h"
+#include "pql/projector/RawQueryResult.h"
 
 /**
  * Evaluates a PQL query, and interacts with the PKB,

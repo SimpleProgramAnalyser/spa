@@ -1,6 +1,6 @@
 #include "catch.hpp"
 #include "lexer/Lexer.h"
-#include "pql/Preprocessor.h"
+#include "pql/parser/Preprocessor.h"
 
 TEST_CASE("Test splitBySelect")
 {

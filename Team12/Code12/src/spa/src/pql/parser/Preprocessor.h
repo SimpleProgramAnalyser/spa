@@ -1,12 +1,7 @@
-//
-// Created by Chester Sim on 6/9/20.
-//
-
 #ifndef SPA_PREPROCESSOR_H
 #define SPA_PREPROCESSOR_H
 
-#include "../frontend/parser/Parser.h"
-#include "../lexer/Lexer.h"
+#include "lexer/Lexer.h"
 #include "AqTypes.h"
 
 class Preprocessor {

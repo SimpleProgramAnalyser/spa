@@ -33,19 +33,19 @@ add_library(spa
     ${pkb}
 
     # pql
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Projector.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Projector.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/QueryResultFormatType.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/AqTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/Preprocessor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/Preprocessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
 )

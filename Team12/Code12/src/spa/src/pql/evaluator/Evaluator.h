@@ -9,8 +9,8 @@
 #ifndef SPA_EVALUATOR_H
 #define SPA_EVALUATOR_H
 
-#include "AqTypes.h"
-#include "RawQueryResult.h"
+#include "pql/parser/AqTypes.h"
+#include "pql/projector/RawQueryResult.h"
 
 class Evaluator {
 public:
