@@ -10,14 +10,14 @@ typedef std::string ProcedureName;
  * VariablesVector represents a set of variables,
  * possibly used by a certain part of the program.
  */
-typedef std::vector<std::string> VariablesVector;
+typedef std::unordered_set<std::string> VariablesSet;
 /**
  * A map of ProcedureName to a list of variables used by
  * that procedure, in order to find Uses for call statements.
  */
-typedef std::unordered_map<ProcedureName, VariablesVector> ProcedureUsesMap;
+typedef std::unordered_map<ProcedureName, VariablesSet> ProcedureUsesMap;
 
-Void storeVariablesInPkb(StatementNumber stmt, const VariablesVector& variables)
+Void storeVariablesInPkb(StatementNumber stmt, const VariablesSet& variables)
 {
     //    for (const std::string& var : variables) {
     //        // TODO: call PKB API
@@ -25,7 +25,7 @@ Void storeVariablesInPkb(StatementNumber stmt, const VariablesVector& variables)
     //    }
 }
 
-Void storeVariablesInPkb(const ProcedureName& proc, const VariablesVector& variables)
+Void storeVariablesInPkb(const ProcedureName& proc, const VariablesSet& variables)
 {
     //    for (const std::string& var : variables) {
     //        // TODO: call PKB API
@@ -44,10 +44,10 @@ Void storeVariablesInPkb(const ProcedureName& proc, const VariablesVector& varia
  * @return A VariableVector containing unique
  *         elements from both v1 and v2.
  */
-VariablesVector concatenateVectors(const VariablesVector& v1, const VariablesVector& v2,
-                                   const VariablesVector& v3 = VariablesVector())
+VariablesSet concatenateVectors(const VariablesSet& v1, const VariablesSet& v2,
+                                   const VariablesSet& v3 = VariablesSet())
 {
-    std::unordered_set<std::string> uniqueSet;
+    VariablesSet uniqueSet;
     uniqueSet.reserve(v1.size() + v2.size());
     for (const std::string& var1 : v1) {
         uniqueSet.insert(var1);
@@ -58,17 +58,17 @@ VariablesVector concatenateVectors(const VariablesVector& v1, const VariablesVec
     for (const std::string& var3 : v3) {
         uniqueSet.insert(var3);
     }
-    return VariablesVector(uniqueSet.begin(), uniqueSet.end());
+    return uniqueSet;
 }
 
-VariablesVector extractUsesExpression(const Expression* expr)
+VariablesSet extractUsesExpression(const Expression* expr)
 {
     // determine expression type
     if (expr->isArithmetic()) {
         // NOLINTNEXTLINE
         const ArithmeticExpression* arithExp = static_cast<const ArithmeticExpression*>(expr);
-        VariablesVector leftUses = extractUsesExpression(arithExp->leftFactor);
-        VariablesVector rightUses = extractUsesExpression(arithExp->rightFactor);
+        VariablesSet leftUses = extractUsesExpression(arithExp->leftFactor);
+        VariablesSet rightUses = extractUsesExpression(arithExp->rightFactor);
         return concatenateVectors(leftUses, rightUses);
     } else {
         // NOLINTNEXTLINE
@@ -76,21 +76,21 @@ VariablesVector extractUsesExpression(const Expression* expr)
         const BasicDataType* data = refExp->basicData;
         if (data->isConstant()) {
             // constants cannot be used!
-            return VariablesVector();
+            return VariablesSet();
         } else {
-            VariablesVector uses;
+            VariablesSet uses;
             uses.reserve(1);
             // NOLINTNEXTLINE
-            uses.push_back((static_cast<const Variable*>(data))->varName);
+            uses.insert((static_cast<const Variable*>(data))->varName);
             return uses;
         }
     }
 }
 
-VariablesVector extractUsesConditionalExpression(const ConditionalExpression* cond)
+VariablesSet extractUsesConditionalExpression(const ConditionalExpression* cond)
 {
-    VariablesVector leftUses;
-    VariablesVector rightUses;
+    VariablesSet leftUses;
+    VariablesSet rightUses;
     switch (cond->getConditionalType()) {
     case NotConditionalExpression:
         // NOLINTNEXTLINE
@@ -125,13 +125,13 @@ VariablesVector extractUsesConditionalExpression(const ConditionalExpression* co
 /**
  * Returns all the variables used in the statement list
  */
-VariablesVector extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUsesMap* procedureUses)
+VariablesSet extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUsesMap* procedureUses)
 {
     size_t numberOfStatements = stmtLstNode->statementList.size();
-    VariablesVector allVariablesUsed;
+    VariablesSet allVariablesUsed;
     for (size_t i = 0; i < numberOfStatements; i++) {
         const std::unique_ptr<StatementNode>& currentStatement = stmtLstNode->statementList.at(i);
-        VariablesVector usedInStatement;
+        VariablesSet usedInStatement;
         switch (currentStatement->getStatementType()) {
         case AssignmentStatement: {
             // NOLINTNEXTLINE
@@ -148,15 +148,15 @@ VariablesVector extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUses
         case IfStatement: {
             // NOLINTNEXTLINE
             const auto* ifStatement = static_cast<const IfStatementNode*>(currentStatement.get());
-            VariablesVector usedInConditional = extractUsesConditionalExpression(ifStatement->predicate);
-            VariablesVector usedInIf = extractUsesStmtlst(ifStatement->ifStatementList, procedureUses);
-            VariablesVector usedInElse = extractUsesStmtlst(ifStatement->elseStatementList, procedureUses);
+            VariablesSet usedInConditional = extractUsesConditionalExpression(ifStatement->predicate);
+            VariablesSet usedInIf = extractUsesStmtlst(ifStatement->ifStatementList, procedureUses);
+            VariablesSet usedInElse = extractUsesStmtlst(ifStatement->elseStatementList, procedureUses);
             usedInStatement = concatenateVectors(usedInConditional, usedInIf, usedInElse);
             break;
         }
         case PrintStatement: {
             // NOLINTNEXTLINE
-            usedInStatement.push_back(static_cast<const PrintStatementNode*>(currentStatement.get())->var.varName);
+            usedInStatement.insert(static_cast<const PrintStatementNode*>(currentStatement.get())->var.varName);
             break;
         }
         case ReadStatement: {
@@ -167,8 +167,8 @@ VariablesVector extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUses
         case WhileStatement: {
             // NOLINTNEXTLINE
             const auto* whileStatement = static_cast<const WhileStatementNode*>(currentStatement.get());
-            VariablesVector usedInConditional = extractUsesConditionalExpression(whileStatement->predicate);
-            VariablesVector usedInWhileList = extractUsesStmtlst(whileStatement->statementList, procedureUses);
+            VariablesSet usedInConditional = extractUsesConditionalExpression(whileStatement->predicate);
+            VariablesSet usedInWhileList = extractUsesStmtlst(whileStatement->statementList, procedureUses);
             usedInStatement = concatenateVectors(usedInConditional, usedInWhileList);
             break;
         }
@@ -183,22 +183,32 @@ VariablesVector extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUses
     return allVariablesUsed;
 }
 
-// Expose the internal hash table for testing purposes
-ProcedureUsesMap extractUsesReturnMap(ProgramNode& rootNode, SemanticErrorsValidator& sev)
+/**
+ * Extracts the Uses relationships in the SIMPLE program
+ * Abstract Syntax Tree, and returns the map of procedures
+ * to used variables.
+ *
+ * @param rootNode Root node of the Abstract Syntax Tree.
+ * @param callOrder The order to run the extractor. Procedures
+ *                  that call other procedures have to be
+ *                  run last to populate the procedure uses
+ *                  map. If not, the correct Uses relationships
+ *                  cannot be determined for Call statements.
+ * @return Map of procedure names to used variables.
+ */
+ProcedureUsesMap extractUsesReturnMap(ProgramNode& rootNode, const std::vector<int>& callOrder)
 {
-    // determine order to extract uses
-    std::vector<int> callOrder = sev.reverseTopologicalSort();
     // set up procedureUses map
     ProcedureUsesMap procedureUses;
     // process the procedures in the sorted order
     for (int procIndex : callOrder) {
         const std::unique_ptr<ProcedureNode>& currentProcedure = rootNode.procedureList.at(procIndex);
-        VariablesVector variablesUsedInCurrentProcedure
+        VariablesSet variablesUsedInCurrentProcedure
             = extractUsesStmtlst(currentProcedure->statementListNode, &procedureUses);
         // update PKB
         storeVariablesInPkb(currentProcedure->procedureName, variablesUsedInCurrentProcedure);
         // store Uses relationship in hash map, for Call statements
-        procedureUses.insert(std::pair<ProcedureName, VariablesVector>(currentProcedure->procedureName,
+        procedureUses.insert(std::pair<ProcedureName, VariablesSet>(currentProcedure->procedureName,
                                                                        variablesUsedInCurrentProcedure));
     }
     return procedureUses;
@@ -206,5 +216,6 @@ ProcedureUsesMap extractUsesReturnMap(ProgramNode& rootNode, SemanticErrorsValid
 
 Void extractUses(ProgramNode& rootNode, SemanticErrorsValidator& sev)
 {
-    extractUsesReturnMap(rootNode, sev);
+    // determine order to extract Uses with topological sort
+    extractUsesReturnMap(rootNode, sev.reverseTopologicalSort());
 }
