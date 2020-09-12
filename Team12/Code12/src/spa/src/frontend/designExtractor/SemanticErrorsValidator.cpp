@@ -196,7 +196,7 @@ bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack
         size_t length = adjacencyMatrixOfCalls.size();
         for (size_t i = 0; i < length; i++) {
             if (adjacencyMatrixOfCalls.at(v).at(i)
-                && (!visited[i] && isCyclicUtil(i, visited, recStack) || recStack[i])) {
+                && ((!visited[i] && isCyclicUtil(i, visited, recStack)) || recStack[i])) {
                 return true;
             }
         }

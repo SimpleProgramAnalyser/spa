@@ -32,7 +32,7 @@ Void markFollowsRelationship(FollowsList* followsList, StatementNumber before, S
 {
     followsList->at(before) = after;
     // call PKB to add the relationship
-    pkb.addFollowsRelationships(before, after);
+    addFollowsRelationships(before, after);
 }
 
 // forward declaration for extractFollowsFromContainer
@@ -136,7 +136,7 @@ FollowsList* extractFollowsReturnAdjacencyList(const ProgramNode& rootNode)
             currentAfterStmt = followsList->at(currentAfterStmt);
         }
         // store all Follows* in PKB
-        pkb.addFollowsRelationshipsStar(beforeStmt, seenNodesList);
+        addFollowsRelationshipsStar(beforeStmt, seenNodesList);
     }
 
     return followsList;

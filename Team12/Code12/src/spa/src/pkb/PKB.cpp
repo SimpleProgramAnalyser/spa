@@ -2,56 +2,56 @@
 
 PKB pkb = PKB();
 
-void PKB::addUsesRelationships(Integer stmtNum, StatementType stmtType, const Vector<String>& varNames)
+void addUsesRelationships(Integer stmtNum, StatementType stmtType, const Vector<String>& varNames)
 {
-    return usesTable.addUsesRelationships(stmtNum, stmtType, varNames);
+    pkb.usesTable.addUsesRelationships(stmtNum, stmtType, varNames);
 }
-void PKB::addUsesRelationships(const String& procName, const Vector<String>& varNames)
+void addUsesRelationships(const String& procName, const Vector<String>& varNames)
 {
-    return usesTable.addUsesRelationships(procName, varNames);
+    pkb.usesTable.addUsesRelationships(procName, varNames);
 }
-Boolean PKB::checkIfProcedureUses(const String& procName, const String& varName)
+Boolean checkIfProcedureUses(const String& procName, const String& varName)
 {
-    return usesTable.checkIfProcedureUses(procName, varName);
+    return pkb.usesTable.checkIfProcedureUses(procName, varName);
 }
-Boolean PKB::checkIfStatementUses(Integer stmt, const String& varName)
+Boolean checkIfStatementUses(Integer stmt, const String& varName)
 {
-    return usesTable.checkIfStatementUses(stmt, varName);
+    return pkb.usesTable.checkIfStatementUses(stmt, varName);
 }
 
-Vector<Integer> PKB::getUsesStatements(const String& varName, StatementType stmtType)
+Vector<Integer> getUsesStatements(const String& varName, StatementType stmtType)
 {
-    return usesTable.getUsesStatements(varName, stmtType);
+    return pkb.usesTable.getUsesStatements(varName, stmtType);
 }
-Vector<String> PKB::getUsesProcedures(const String& procName)
+Vector<String> getUsesProcedures(const String& procName)
 {
-    return usesTable.getUsesProcedures(procName);
+    return pkb.usesTable.getUsesProcedures(procName);
 }
-Vector<String> PKB::getUsesVariablesFromStatement(Integer stmt)
+Vector<String> getUsesVariablesFromStatement(Integer stmt)
 {
-    return usesTable.getUsesVariablesFromStatement(stmt);
+    return pkb.usesTable.getUsesVariablesFromStatement(stmt);
 }
-Vector<String> PKB::getusesVariablesFromProcedure(const String& procName)
+Vector<String> getusesVariablesFromProcedure(const String& procName)
 {
-    return usesTable.getusesVariablesFromProcedure(procName);
+    return pkb.usesTable.getusesVariablesFromProcedure(procName);
 }
-Vector<Integer> PKB::getAllUsesStatements(StatementType stmtType)
+Vector<Integer> getAllUsesStatements(StatementType stmtType)
 {
-    return usesTable.getAllUsesStatements(stmtType);
+    return pkb.usesTable.getAllUsesStatements(stmtType);
 }
-Vector<String> PKB::getAllUsesVariables(StatementType stmtType)
+Vector<String> getAllUsesVariables(StatementType stmtType)
 {
-    return usesTable.getAllUsesVariables(stmtType);
+    return pkb.usesTable.getAllUsesVariables(stmtType);
 }
-Vector<String> PKB::getAllUsesVariables(const String& procName)
+Vector<String> getAllUsesVariables(const String& procName)
 {
-    return usesTable.getAllUsesVariables(procName);
+    return pkb.usesTable.getAllUsesVariables(procName);
 }
-Vector<String> PKB::getAllUsesProcedures()
+Vector<String> getAllUsesProcedures()
 {
-    return usesTable.getAllUsesProcedures();
+    return pkb.usesTable.getAllUsesProcedures();
 }
 
 // Follows stub functions
-void PKB::addFollowsRelationships(Integer parent, Integer child) {}
-void PKB::addFollowsRelationshipsStar(Integer parent, Vector<Integer> children) {}
+void addFollowsRelationships(Integer parent, Integer child) {}
+void addFollowsRelationshipsStar(Integer parent, Vector<Integer> children) {}
