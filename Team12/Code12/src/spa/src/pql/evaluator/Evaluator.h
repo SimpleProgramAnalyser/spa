@@ -23,6 +23,7 @@ private:
     Vector<String> processQueryClause(Synonym synonym, Clause* clause, DeclarationTable declarations);
     Vector<String> processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
     Vector<String> processQuerySuchThatFollowsClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
+    Vector<String> convertToStringVect(Vector<Integer> intList);
 };
 
 #endif // SPA_PQL_EVALUATOR_H

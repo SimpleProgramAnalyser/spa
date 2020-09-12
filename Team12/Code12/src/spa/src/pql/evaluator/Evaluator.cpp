@@ -280,14 +280,42 @@ Vector<String> Evaluator::processQuerySuchThatFollowsClause(Synonym synonym, Suc
     BeforeTable beforeTable;
 
     if (leftRefDesignEntityType == StmtType && rightRefDesignEntityType == AssignType) {
-        // TODO: Please uncomment when the PKB method has been implemented.
+        // TODO: Please uncomment the following line when the PKB method has been implemented.
         // Vector<Integer> tempResult = beforeTable.getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
 
         Vector<Integer> tempResult;
+        tempResult.push_back(1);
         tempResult.push_back(2);
-        tempResult.push_back(3);
+
+        result = convertToStringVect(tempResult);
     }
+
     return result;
+}
+
+/*
+ * A (private) Utility method to convert an integer vector to a string
+ * vector.
+ *
+ * @param intList An integer vector to convert.
+ *
+ * @return Vector<String> the converted vector.
+ */
+Vector<String> Evaluator::convertToStringVect(Vector<Integer> intList)
+{
+    Vector<String> strList;
+
+    Integer len = intList.size();
+
+    for (int i = 0; i < len; ++i) {
+        int elem = intList.at(i);
+
+        String str = std::to_string(elem);
+
+        strList.push_back(str);
+    }
+
+    return strList;
 }
 
 /*
