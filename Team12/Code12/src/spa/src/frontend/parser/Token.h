@@ -7,7 +7,6 @@
 #define SPA_FRONTEND_TOKEN_H
 
 #include "Types.h"
-#include "Util.h"
 
 namespace frontend {
 

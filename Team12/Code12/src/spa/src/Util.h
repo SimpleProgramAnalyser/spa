@@ -5,12 +5,11 @@
 #ifndef SPA_UTIL_H
 #define SPA_UTIL_H
 
-#include <regex>
-
 #include "Types.h"
 
 namespace util {
 
+// template functions have to be known in the header
 template <typename T>
 bool checkListValuesEqual(const List<T>& first, const List<T>& second)
 {

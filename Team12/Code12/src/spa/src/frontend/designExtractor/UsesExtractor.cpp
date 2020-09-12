@@ -5,6 +5,8 @@
 
 #include <unordered_set>
 
+#include "pkb/PKB.h"
+
 typedef std::string ProcedureName;
 /**
  * VariablesVector represents a set of variables,
@@ -17,20 +19,14 @@ typedef std::unordered_set<std::string> VariablesSet;
  */
 typedef std::unordered_map<ProcedureName, VariablesSet> ProcedureUsesMap;
 
-Void storeVariablesInPkb(StatementNumber stmt, const VariablesSet& variables)
+Void storeVariablesInPkb(StatementNumber stmt, StatementType type, const VariablesSet& variables)
 {
-    //    for (const std::string& var : variables) {
-    //        // TODO: call PKB API
-    //        // addUsesRelationships(stmt, var)
-    //    }
+    addUsesRelationships(stmt, type, std::vector<std::string>(variables.begin(), variables.end()));
 }
 
 Void storeVariablesInPkb(const ProcedureName& proc, const VariablesSet& variables)
 {
-    //    for (const std::string& var : variables) {
-    //        // TODO: call PKB API
-    //        // addUsesRelationships(proc, var)
-    //    }
+    addUsesRelationships(proc, std::vector<std::string>(variables.begin(), variables.end()));
 }
 
 /**
@@ -131,7 +127,8 @@ VariablesSet extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUsesMap
     for (size_t i = 0; i < numberOfStatements; i++) {
         const std::unique_ptr<StatementNode>& currentStatement = stmtLstNode->statementList.at(i);
         VariablesSet usedInStatement;
-        switch (currentStatement->getStatementType()) {
+        StatementType currentStatementType = currentStatement->getStatementType();
+        switch (currentStatementType) {
         case AssignmentStatement: {
             // NOLINTNEXTLINE
             const auto* assign = static_cast<const AssignmentStatementNode*>(currentStatement.get());
@@ -175,7 +172,7 @@ VariablesSet extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUsesMap
             throw std::runtime_error("Unknown statement type in UsesExtractor extractUsesStmtlst");
         }
         // update PKB
-        storeVariablesInPkb(currentStatement->getStatementNumber(), usedInStatement);
+        storeVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, usedInStatement);
         // associate variables with the statement list as well
         allVariablesUsed = concatenateVectors(allVariablesUsed, usedInStatement);
     }

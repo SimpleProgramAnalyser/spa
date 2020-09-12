@@ -45,6 +45,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
 
+    # frontend manager
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
+
     # pkb
     ${pkb}
 

@@ -10,7 +10,7 @@
 #include "ast/AstTypes.h"
 #include "error/InputError.h"
 
-Void parseSimple(const String& rawProgram);
+ProgramNode* parseSimpleReturnNode(const String& rawProgram);
 Expression* parseExpression(StringList* lexedExpression);
 Void postSyntaxError(InputError syntaxError);
 
