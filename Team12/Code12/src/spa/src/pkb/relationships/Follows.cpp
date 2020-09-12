@@ -44,10 +44,9 @@ void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeS
                                            StatementType afterStmtType)
 {
     // store statements before it
-    stmtBeforeMap.insert(after, before);
+    stmtBeforeMap.insert(std::pair<Integer, Integer>(after, before));
     // store statements after it
-    stmtAfterMap.insert(before, after);
-
+    stmtAfterMap.insert(std::pair<Integer, Integer>(before, after));
     typedShenanigans(before, beforeStmtType, after, afterStmtType);
 }
 
