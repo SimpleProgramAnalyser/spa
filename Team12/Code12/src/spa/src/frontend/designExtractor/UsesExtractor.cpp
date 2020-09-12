@@ -44,8 +44,7 @@ Void storeVariablesInPkb(const ProcedureName& proc, const VariablesSet& variable
  * @return A VariableVector containing unique
  *         elements from both v1 and v2.
  */
-VariablesSet concatenateVectors(const VariablesSet& v1, const VariablesSet& v2,
-                                   const VariablesSet& v3 = VariablesSet())
+VariablesSet concatenateVectors(const VariablesSet& v1, const VariablesSet& v2, const VariablesSet& v3 = VariablesSet())
 {
     VariablesSet uniqueSet;
     uniqueSet.reserve(v1.size() + v2.size());
@@ -208,8 +207,8 @@ ProcedureUsesMap extractUsesReturnMap(ProgramNode& rootNode, const std::vector<i
         // update PKB
         storeVariablesInPkb(currentProcedure->procedureName, variablesUsedInCurrentProcedure);
         // store Uses relationship in hash map, for Call statements
-        procedureUses.insert(std::pair<ProcedureName, VariablesSet>(currentProcedure->procedureName,
-                                                                       variablesUsedInCurrentProcedure));
+        procedureUses.insert(
+            std::pair<ProcedureName, VariablesSet>(currentProcedure->procedureName, variablesUsedInCurrentProcedure));
     }
     return procedureUses;
 }

@@ -933,3 +933,76 @@ TEST_CASE("Design Extractor identifies semantically invalid recursive program as
 
     REQUIRE(isSemanticallyValid == false);
 }
+
+TEST_CASE("uhhh") {
+    List<StatementNode> aStmts;
+    List<StatementNode> bStmts;
+    List<StatementNode> cStmts;
+    List<StatementNode> dStmts;
+
+    List<ProcedureNode> procedureList;
+
+    // procedure a
+    aStmts.push_back(std::unique_ptr<CallStatementNode>(createCallNode(1, "b")));
+    aStmts.push_back(std::unique_ptr<CallStatementNode>(createCallNode(2, "c")));
+    aStmts.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(3, Variable("num"))));
+    aStmts.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(4, Variable("result"))));
+    StmtlstNode* aStmtLstNode = createStmtlstNode(aStmts);
+    ProcedureNode* aProc = createProcedureNode("a", aStmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(aProc));
+
+    // procedure b
+    bStmts.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(5, Variable("num"))));
+    bStmts.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("factor"), createRefExpr("factor"))));
+    bStmts.push_back(std::unique_ptr<CallStatementNode>(createCallNode(7, "d")));
+    StmtlstNode* bStmtLstNode = createStmtlstNode(bStmts);
+    ProcedureNode* bProc = createProcedureNode("b", bStmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(bProc));
+
+    // procedure c while
+    List<StatementNode> cIfStatements;
+    List<StatementNode> cElseStatements;
+    List<StatementNode> cWhileStatements;
+    cIfStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(13, Variable("num"), createDivExpr(createRefExpr("num"), createRefExpr(2)))));
+    cElseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(14, Variable("result"), createPlusExpr(createRefExpr("num"), createRefExpr("result")))));
+    cElseStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(15, "d")));
+    cWhileStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(12, createEqExpr(createModExpr(createRefExpr("base"), createRefExpr(2)), createRefExpr(0)),
+            createStmtlstNode(cIfStatements), createStmtlstNode(cElseStatements))));
+
+    // procedure c
+    cStmts.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(8, Variable("depth"), createRefExpr(7))));
+    cStmts.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(9, Variable("base"), createRefExpr(10))));
+    cStmts.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(10, Variable("result"), createRefExpr(0))));
+    cStmts.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
+        11, createGtExpr(createRefExpr("base"), createRefExpr(0)), createStmtlstNode(cWhileStatements))));
+    StmtlstNode* cStmtLstNode = createStmtlstNode(cStmts);
+    ProcedureNode* cProc = createProcedureNode("c", cStmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(cProc));
+
+    // procedure d
+    List<StatementNode> dIfStatements;
+    List<StatementNode> dElseStatements;
+    dIfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(17, Variable("result"), createRefExpr("depth"))));
+    dElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(18, Variable("result"), createRefExpr("result"))));
+    dStmts.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(16, createGtExpr(createRefExpr("depth"), createRefExpr(0)), createStmtlstNode(dIfStatements),
+            createStmtlstNode(dElseStatements))));
+    StmtlstNode* dStmtLstNode = createStmtlstNode(dStmts);
+    ProcedureNode* dProc = createProcedureNode("d", dStmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(dProc));
+
+    ProgramNode* programNode = createProgramNode("a", procedureList, 18);
+    SemanticErrorsValidator seValidator(*programNode);
+    Boolean isSemanticallyValid = seValidator.isProgramValid();
+    REQUIRE(isSemanticallyValid);
+    REQUIRE(seValidator.reverseTopologicalSort() == std::vector<int>{3, 2, 1, 0});
+}
