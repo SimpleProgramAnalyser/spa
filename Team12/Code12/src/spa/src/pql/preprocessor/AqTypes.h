@@ -15,6 +15,7 @@
 #include "Types.h"
 
 typedef std::pair<String, String> StringPair;
+typedef String Synonym;
 
 enum DesignEntityType {
     StmtType = 0,
@@ -38,9 +39,8 @@ public:
     explicit DesignEntity(DesignEntityType designEntityType);
     explicit DesignEntity(const String& stringType);
     DesignEntityType getType();
+    Boolean operator==(const DesignEntity& designEntity);
 };
-
-typedef String Synonym;
 
 enum ClauseType { SuchThatClauseType = 0, PatternClauseType = 1 };
 
@@ -59,6 +59,7 @@ public:
     Clause(Clause&&) = default;
     Clause& operator=(Clause&&) = delete;
     virtual ~Clause() = default;
+    virtual Boolean operator==(const Clause& clause);
 };
 
 enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
@@ -82,6 +83,7 @@ public:
     Boolean isInvalid();
     Boolean isProcedure();
     static Reference invalidReference();
+    Boolean operator==(const Reference& reference);
 };
 
 enum RelationshipReferenceType {
@@ -112,6 +114,7 @@ public:
     Reference getRightRef();
     Boolean isInvalid();
     static RelationshipReferenceType getRelRefType(String relRef);
+    Boolean operator==(const Relationship& relationship);
 };
 
 class SuchThatClause: public Clause {
@@ -121,6 +124,7 @@ private:
 public:
     SuchThatClause(Relationship& r);
     Relationship getRelationship();
+    Boolean operator==(const SuchThatClause& suchThatClause);
 };
 
 enum ExpressionSpecType {
@@ -143,6 +147,7 @@ public:
     Expression* getExpression();
     Boolean isInvalid();
     static ExpressionSpec invalidExpressionSpec();
+    Boolean operator==(const ExpressionSpec& expressionSpec);
 };
 
 enum PatternStatementType { AssignPatternType = 0 };
@@ -158,6 +163,7 @@ public:
     PatternStatementType getStatementType();
     Reference getEntRef();
     ExpressionSpec getExprSpec();
+    Boolean operator==(const PatternClause& patternClause);
 };
 
 class DeclarationTable {
@@ -167,10 +173,11 @@ private:
 
 public:
     Void addDeclaration(Synonym s, DesignEntity& designEntity);
-    DesignEntity getDesignEntityOfSynonym(Synonym s);
+    DesignEntity getDesignEntityOfSynonym(Synonym s) const;
     Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
     static DeclarationTable invalidDeclarationTable();
+    Boolean operator==(const DeclarationTable& declarationTable);
 };
 
 class ClauseVector {
@@ -184,7 +191,8 @@ public:
     Void add(Clause* clause);
     Clause* get(Integer index);
     Integer totalNumClauses();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
+    Boolean operator==(const ClauseVector& clauseVector);
 };
 
 class AbstractQuery {
@@ -202,6 +210,7 @@ public:
     ClauseVector getClauses();
     DeclarationTable getDeclarationTable();
     Boolean isInvalid();
+    Boolean operator==(const AbstractQuery& abstractQuery);
 };
 
 // Utils
