@@ -14,6 +14,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
 
+
     # ast library
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
@@ -52,19 +53,19 @@ add_library(spa
     ${pkb}
 
     # pql
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Evaluator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/FormattedQueryResult.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Projector.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/Projector.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/RawQueryResult.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/QueryResultFormatType.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PreProcessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
 )

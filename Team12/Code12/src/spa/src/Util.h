@@ -30,9 +30,10 @@ bool checkListValuesEqual(const List<T>& first, const List<T>& second)
     return allMatch;
 }
 
-Boolean isMatchingRegex(const String& rawInput, const String& regex);
 Boolean isPossibleIdentifier(const String& str);
-
+Boolean isPossibleConstant(const String& str);
+Boolean isRelationshipReference(const String& str);
+Boolean isLiteralIdent(const String& str);
 } // namespace util
 
 #endif // SPA_UTIL_H

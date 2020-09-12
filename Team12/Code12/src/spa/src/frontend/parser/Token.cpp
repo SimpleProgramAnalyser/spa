@@ -71,11 +71,6 @@ Boolean frontend::isRelationalOperatorTag(Tag tag)
     return tag == GtTag || tag == GteTag || tag == LtTag || tag == LteTag || tag == NeqTag || tag == EqTag;
 }
 
-Boolean frontend::isPossibleConstant(const String& str)
-{
-    return util::isMatchingRegex(str, "\\d+");
-}
-
 TokenList* frontend::tokeniseSimple(StringList* lexedSimpleProgram)
 {
     auto* tokens = new TokenList();
@@ -88,7 +83,7 @@ TokenList* frontend::tokeniseSimple(StringList* lexedSimpleProgram)
         if (tokenTag == NullTag) {
             if (util::isPossibleIdentifier(currentString)) {
                 tokens->push_back(std::unique_ptr<Token>(new Token(currentString, IdentifierTag)));
-            } else if (isPossibleConstant(currentString)) {
+            } else if (util::isPossibleConstant(currentString)) {
                 tokens->push_back(std::unique_ptr<Token>(new Token(currentString, ConstantTag)));
             } else {
                 // tokeniser is not sure what the item is
