@@ -62,7 +62,6 @@ public:
 
 Boolean isIdentifierTag(Tag tag);
 Boolean isRelationalOperatorTag(Tag tag);
-Boolean isPossibleIdentifier(const String& str);
 Boolean isPossibleConstant(const String& str);
 
 typedef List<Token> TokenList;

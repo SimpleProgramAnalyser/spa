@@ -5,8 +5,7 @@
 
 #include "AqTypes.h"
 
-#include <regex>
-#include <utility>
+#include "Util.h"
 
 DesignEntity::DesignEntity(DesignEntityType designEntityType)
 {
@@ -211,19 +210,7 @@ AbstractQuery AbstractQuery::invalidAbstractQuery()
     return aq;
 }
 
-// Utils
-
-Boolean isMatchingRegex(const String& rawInput, const String& regex)
-{
-    return std::regex_match(rawInput, std::regex(regex));
-}
-
-Boolean isPossibleIdentifier(const String& str)
-{
-    return isMatchingRegex(str, "[A-Za-z]([A-Za-z]|[\\d])*");
-}
-
 Boolean isValidSynonym(String testString)
 {
-    return isPossibleIdentifier(testString);
+    return util::isPossibleIdentifier(testString);
 }

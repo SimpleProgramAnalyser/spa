@@ -5,9 +5,8 @@
 
 #include "Token.h"
 
-#include <regex>
-
 #include "StringMatcher.h"
+#include "Util.h"
 
 using namespace frontend;
 
@@ -72,19 +71,9 @@ Boolean frontend::isRelationalOperatorTag(Tag tag)
     return tag == GtTag || tag == GteTag || tag == LtTag || tag == LteTag || tag == NeqTag || tag == EqTag;
 }
 
-Boolean isMatchingRegex(const String& rawInput, const String& regex)
-{
-    return std::regex_match(rawInput, std::regex(regex));
-}
-
-Boolean frontend::isPossibleIdentifier(const String& str)
-{
-    return isMatchingRegex(str, "[A-Za-z]([A-Za-z]|[\\d])*");
-}
-
 Boolean frontend::isPossibleConstant(const String& str)
 {
-    return isMatchingRegex(str, "\\d+");
+    return util::isMatchingRegex(str, "\\d+");
 }
 
 TokenList* frontend::tokeniseSimple(StringList* lexedSimpleProgram)
@@ -97,7 +86,7 @@ TokenList* frontend::tokeniseSimple(StringList* lexedSimpleProgram)
         String currentString = *lexedSimpleProgram->at(i);
         Tag tokenTag = lookupTrie->matchString(currentString, NullTag);
         if (tokenTag == NullTag) {
-            if (isPossibleIdentifier(currentString)) {
+            if (util::isPossibleIdentifier(currentString)) {
                 tokens->push_back(std::unique_ptr<Token>(new Token(currentString, IdentifierTag)));
             } else if (isPossibleConstant(currentString)) {
                 tokens->push_back(std::unique_ptr<Token>(new Token(currentString, ConstantTag)));
