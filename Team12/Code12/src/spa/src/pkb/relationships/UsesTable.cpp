@@ -3,7 +3,6 @@
 void UsesTable::addUsesRelationships(const String& procName, Vector<String> varNames)
 {
     // add to procVarsetMap
-//    procVarsetMap.emplace(procName, HashSet<String>());
     procVarsetMap[procName].insert(varNames.begin(), varNames.end());
 
     // add to procVarlistMap

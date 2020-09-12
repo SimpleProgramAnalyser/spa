@@ -4,7 +4,6 @@
 
 #include "Tables.h"
 
-
 void ProcedureTable::insertIntoProcedureTable(String procName)
 {
     listOfProcedureNames.push_back(procName);
@@ -25,7 +24,6 @@ Boolean ProcedureTable::getProcedureFromName(String procName)
         return true;
     }
 }
-
 
 void VariableTable::insertIntoVariableTable(String varName)
 {

@@ -38,7 +38,7 @@ public:
 
 private:
     StatementNumVectorsByType listOfAllStatement; // getAllStmt
-    HashSet<Integer> setOfStatements;                     // getFromIndex
+    HashSet<Integer> setOfStatements;             // getFromIndex
 };
 
 #endif
