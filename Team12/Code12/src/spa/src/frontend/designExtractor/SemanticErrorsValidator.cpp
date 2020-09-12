@@ -230,7 +230,84 @@ bool SemanticErrorsValidator::isCyclic(size_t procListSize)
     return false;
 }
 
+/**
+ * Helper function for Kahn's algorithm. After a node is
+ * removed from the graph and put in the sorted list,
+ * this function will update the adjacency matrix and
+ * add any new edgeless nodes to the list of nodes that
+ * can be added to the sorted list next.
+ *
+ * @param adjacencyMatrix The adjacency matrix representing
+ *                                the directed acyclic graph.
+ * @param nodesToSearch The list of nodes to be looked at next.
+ * @param removedNode The index of the node that was removed.
+ */
+void handleNeighbours(Matrix& adjacencyMatrix, std::vector<size_t>& nodesToSearch, size_t removedNode)
+{
+    size_t length = adjacencyMatrix.size();
+    for (size_t i = 0; i < length; i++) {
+        if (!adjacencyMatrix.at(i).at(removedNode)) {
+            continue;
+        }
+        // remove edge i -> currentNode from the graph
+        adjacencyMatrix.at(i).at(removedNode) = false;
+        // check if i has any more outgoing edges
+        bool hasOutgoingEdge = false;
+        for (size_t j = 0; j < length; j++) {
+            if (adjacencyMatrix.at(i).at(j)) {
+                hasOutgoingEdge = true;
+                break;
+            }
+        }
+        if (!hasOutgoingEdge) {
+            // i is now pointing to nothing
+            nodesToSearch.push_back(i);
+        }
+    }
+}
+
 std::vector<int> SemanticErrorsValidator::reverseTopologicalSort()
 {
-    return std::vector<int>();
+    // Kahn's algorithm, modified for reverse order
+    // deep-clone the matrix to keep track of edges
+    size_t length = adjacencyMatrixOfCalls.size();
+    Matrix adjacencyMatrixForKahns;
+    adjacencyMatrixForKahns.reserve(length);
+    for (size_t i = 0; i < length; i++) {
+        adjacencyMatrixForKahns.push_back(std::vector<bool>());
+        adjacencyMatrixForKahns.at(i).reserve(length);
+        for (size_t j = 0; j < length; j++) {
+            // copy all edges
+            adjacencyMatrixForKahns.at(i).at(j) = adjacencyMatrixOfCalls.at(i).at(j);
+        }
+    }
+    std::vector<int> reverseSortedNodes;
+    std::vector<size_t> nodesToSearch;
+    // Find nodes that have no edges pointing away from them
+    for (size_t i = 0; i < length; i++) {
+        bool hasEdgePointingAway = false;
+        for (size_t j = 0; j < length; j++) {
+            if (adjacencyMatrixForKahns.at(i).at(j)) {
+                // i has an edge pointing to another node j
+                hasEdgePointingAway = true;
+                break;
+            }
+        }
+        if (!hasEdgePointingAway) {
+            // found a node i with no edges pointing away from it
+            nodesToSearch.push_back(i);
+        }
+    }
+
+    // start from nodes pointing to nothing
+    while (!nodesToSearch.empty()) {
+        size_t currentNode = nodesToSearch.at(nodesToSearch.size());
+        nodesToSearch.pop_back();
+        // add node to the reverse sorted list
+        reverseSortedNodes.push_back(static_cast<int>(currentNode));
+        // remove node currentNode from the graph
+        handleNeighbours(adjacencyMatrixForKahns, nodesToSearch, currentNode);
+    }
+
+    return reverseSortedNodes;
 }
