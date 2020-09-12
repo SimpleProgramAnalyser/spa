@@ -3,17 +3,17 @@
  * within PQL, and interfaces with UI too.
  */
 
-#ifndef SPA_PQLMANAGER_H
-#define SPA_PQLMANAGER_H
+#ifndef SPA_PQL_PQL_MANAGER_H
+#define SPA_PQL_PQL_MANAGER_H
 
 #include <Types.h>
 
-#include "FormattedQueryResult.h"
-#include "QueryResultFormatType.h"
+#include "projector/FormattedQueryResult.h"
+#include "projector/QueryResultFormatType.h"
 
 class PqlManager {
 public:
     FormattedQueryResult executeQuery(String query, QueryResultFormatType format);
 };
 
-#endif // SPA_PQLMANAGER_H
+#endif // SPA_PQL_PQL_MANAGER_H
