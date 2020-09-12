@@ -1,6 +1,5 @@
 file(GLOB srcs "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
-file(GLOB_RECURSE pkb "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/*.h")
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -45,7 +44,17 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
 
     # pkb
-    ${pkb}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
 
     # pql
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/AqTypes.h
