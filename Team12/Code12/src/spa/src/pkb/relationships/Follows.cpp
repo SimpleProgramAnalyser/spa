@@ -32,10 +32,12 @@ void FollowsTable::typedShenanigans(Integer before, StatementType beforeStmtType
 {
     tryAddBefore(before, beforeStmtType, afterStmtType, stmtBeforeType, stmtBeforeTypeSet);
     tryAddBefore(before, beforeStmtType, AnyStatement, stmtBeforeType, stmtBeforeTypeSet);
+    tryAddBefore(before, AnyStatement, afterStmtType, stmtBeforeType, stmtBeforeTypeSet);
     tryAddBefore(before, AnyStatement, AnyStatement, stmtBeforeType, stmtBeforeTypeSet);
 
-    tryAddAfter(after, afterStmtType, afterStmtType, stmtAfterType, stmtAfterTypeSet);
-    tryAddAfter(after, afterStmtType, AnyStatement, stmtAfterType, stmtAfterTypeSet);
+    tryAddAfter(after, beforeStmtType, afterStmtType, stmtAfterType, stmtAfterTypeSet);
+    tryAddAfter(after, beforeStmtType, AnyStatement, stmtAfterType, stmtAfterTypeSet);
+    tryAddAfter(after, AnyStatement, afterStmtType, stmtAfterType, stmtAfterTypeSet);
     tryAddAfter(after, AnyStatement, AnyStatement, stmtAfterType, stmtAfterTypeSet);
 }
 // important private helper function
@@ -44,10 +46,12 @@ void FollowsTable::typedShenanigansStar(Integer before, StatementType beforeStmt
 {
     tryAddBefore(before, beforeStmtType, afterStmtType, stmtBeforeStarType, stmtBeforeStarTypeSet);
     tryAddBefore(before, beforeStmtType, AnyStatement, stmtBeforeStarType, stmtBeforeStarTypeSet);
+    tryAddBefore(before, AnyStatement, afterStmtType, stmtBeforeStarType, stmtBeforeStarTypeSet);
     tryAddBefore(before, AnyStatement, AnyStatement, stmtBeforeStarType, stmtBeforeStarTypeSet);
 
-    tryAddAfter(after, afterStmtType, afterStmtType, stmtAfterStarType, stmtAfterStarTypeSet);
-    tryAddAfter(after, afterStmtType, AnyStatement, stmtAfterStarType, stmtAfterStarTypeSet);
+    tryAddAfter(after, beforeStmtType, afterStmtType, stmtAfterStarType, stmtAfterStarTypeSet);
+    tryAddAfter(after, beforeStmtType, AnyStatement, stmtAfterStarType, stmtAfterStarTypeSet);
+    tryAddAfter(after, AnyStatement, afterStmtType, stmtAfterStarType, stmtAfterStarTypeSet);
     tryAddAfter(after, AnyStatement, AnyStatement, stmtAfterStarType, stmtAfterStarTypeSet);
 }
 
