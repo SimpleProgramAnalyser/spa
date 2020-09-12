@@ -12,15 +12,13 @@ procedure compute {
 }
 */
 
-SCENARIO("Iteration 1 toy example", "[uses]")
+SCENARIO("Iteration 1 toy example Uses", "[uses][pkb]")
 {
     UsesTable usesTable = UsesTable();
     GIVEN("some Uses relationships")
     {
-        // TODO: Prepare some uses relationships
         WHEN("relationships are added to Uses table")
         {
-            // TODO: Add them
             usesTable.addUsesRelationships(4, StatementType::AssignmentStatement,
                                            Vector<String>{"num1", "num2", "num3"});
             usesTable.addUsesRelationships(5, StatementType::AssignmentStatement, Vector<String>{"sum"});
