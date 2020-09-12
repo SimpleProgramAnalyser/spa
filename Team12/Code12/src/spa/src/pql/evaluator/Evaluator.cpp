@@ -4,7 +4,7 @@
 
 #include "Evaluator.h"
 
-#include "pkb/relationships/Follows.h"
+#include "pkb/PKB.h"
 #include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
 
@@ -278,10 +278,7 @@ Vector<String> Evaluator::processQuerySuchThatFollowsClause(Synonym synonym, Suc
      */
 
     if (leftRefDesignEntityType == StmtType && rightRefDesignEntityType == AssignType) {
-        // TODO: Please uncomment the following line when the PKB method has been implemented.
-        // Vector<Integer> tempResult = getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
-
-        Vector<Integer> tempResult;
+        Vector<Integer> tempResult = getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
         tempResult.push_back(1);
         tempResult.push_back(2);
 

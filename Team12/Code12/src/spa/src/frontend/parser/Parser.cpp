@@ -982,8 +982,3 @@ ProgramNode* parseSimpleReturnNode(const String& rawProgram)
         return createProgramNode(procedures.at(0)->procedureName, procedures, statementsSeen);
     }
 }
-
-Void parseSimple(const String& rawProgram)
-{
-    ProgramNode* abstractSyntaxTree = parseSimpleReturnNode(rawProgram);
-}

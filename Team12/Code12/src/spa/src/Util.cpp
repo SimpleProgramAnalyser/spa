@@ -2,10 +2,9 @@
  * Implementation of utility functions for SPA.
  */
 
-#ifndef SPA_UTIL_CPP
-#define SPA_UTIL_CPP
-
 #include "Util.h"
+
+#include <regex>
 
 Boolean isMatchingRegex(const String& rawInput, const String& regex)
 {
@@ -36,5 +35,3 @@ Boolean util::isLiteralIdent(const String& str)
         return false;
     }
 }
-
-#endif // SPA_UTIL_CPP

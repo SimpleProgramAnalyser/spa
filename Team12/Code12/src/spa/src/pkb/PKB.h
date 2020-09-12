@@ -54,14 +54,15 @@ Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, State
 Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 
 // Follows
-void addFollowsRelationships(Integer parent, Integer child);
-void addFollowsRelationshipsStar(Integer parent, Vector<Integer> children);
-Boolean checkIfFollowsHolds(Integer parent, Integer child);
-Boolean checkIfFollowsHoldsStar(Integer parent, Integer child);
-Vector<Integer> getAllAfterStatements(Integer parent, StatementType stmtType);
-Vector<Integer> getAllBeforeStatements(Integer parent, StatementType stmtType);
-Vector<Integer> getAllAfterStatementsStar(Integer parent, StatementType stmtType);
-Vector<Integer> getAllBeforeStatementsStar(Integer parent, StatementType stmtType);
+void addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after, StatementType afterStmtType);
+void addFollowsRelationshipsStar(Integer before, StatementType beforeStmtType,
+                                 Vector<Pair<Integer, StatementType>> afterStmttypePairs);
+Boolean checkIfFollowsHolds(Integer before, Integer after);
+Boolean checkIfFollowsHoldsStar(Integer before, Integer after);
+Vector<Integer> getAllAfterStatements(Integer before, StatementType stmtType);
+Vector<Integer> getAllBeforeStatements(Integer after, StatementType stmtType);
+Vector<Integer> getAllAfterStatementsStar(Integer before, StatementType stmtType);
+Vector<Integer> getAllBeforeStatementsStar(Integer after, StatementType stmtType);
 Vector<Integer> getAllBeforeStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllBeforeStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);

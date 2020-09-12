@@ -6,6 +6,7 @@
 #include "Token.h"
 
 #include "StringMatcher.h"
+#include "Util.h"
 
 using namespace frontend;
 
