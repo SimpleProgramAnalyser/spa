@@ -38,14 +38,14 @@ private:
     HashMap<String, Vector<String>> varProclistMap;
 
     // for getAllVar
-    Vector<String> stmttypeVarlistMap[STATEMENT_TYPE_COUNT];
+    Array<Vector<String>, STATEMENT_TYPE_COUNT> stmttypeVarlistMap;
     HashSet<String> allVarUsedByProc;
 
     // for getAllStmt
-    Vector<Integer> stmttypeStmtlistMap[STATEMENT_TYPE_COUNT];
+    Array<Vector<Integer>, STATEMENT_TYPE_COUNT> stmttypeStmtlistMap;
 
     // for getAllProcedure
-    HashSet<String> allUsesProc;
+    Vector<String> allUsesProc;
 };
 
 #endif // SPA_USES_H

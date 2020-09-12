@@ -18,8 +18,11 @@ using HashSet = std::unordered_set<T>;
 template <typename T>
 using Vector = std::vector<T>;
 
+template <typename T, std::size_t n>
+using Array = std::array<T, n>;
+
 typedef struct {
-    std::array<Vector<Integer>, STATEMENT_TYPE_COUNT> byType;
+    Array<Vector<Integer>, STATEMENT_TYPE_COUNT> byType;
 } StatementNumVectorsByType;
 
 #endif // SPA_PKBTYPES_H

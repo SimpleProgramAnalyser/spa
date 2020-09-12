@@ -55,7 +55,6 @@ public:
     // Follows
     void addFollowsRelationships(Integer parent, Integer child);
     void addFollowsRelationshipsStar(Integer parent, Vector<Integer> children);
-    void addFollowsRelationshipsStar(Integer parent, Integer children);
     Boolean checkIfFollowsHolds(Integer parent, Integer child);
     Boolean checkIfFollowsHoldsStar(Integer parent, Integer child);
     Vector<Integer> getAllAfterStatements(Integer parent, StatementType stmtType);
