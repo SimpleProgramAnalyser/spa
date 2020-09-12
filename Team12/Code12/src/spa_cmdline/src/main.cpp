@@ -1,20 +1,20 @@
 #include "FrontendManager.h"
-#include "pql/FormattedQueryResult.h"
+#include "pql/projector/FormattedQueryResult.h"
+#include "pql/projector/QueryResultFormatType.h"
 #include "pql/PqlManager.h"
-#include "pql/QueryResultFormatType.h"
 #include <Types.h>
 #include <iostream>
 
 // Constant declarations
-const String LINEFEED_CHAR = "\n";
-const String SIMPLE_EXIT_STR = "*";
-const String PQL_EXIT_STR = "exit";
-const String GREET_MSG = "Welcome to our SIMPLE SPA!";
-const String BYE_MSG = "Thank you for using our SIMPLE SPA!";
-const String SIMPLE_PROGRAM_PROMPT_MSG =  "Please enter a SIMPLE source program (when done, enter a '*' on a new line):";
-const String SIMPLE_PROGRAM_PROCESSING_MSG = "Passing SIMPLE program to SPA frontend...";
-const String DONE_FEEDBACK_MSG = "Done....";
-const String PQL_QUERY_PROMPT_MSG = "Please enter a PQL query (enter 'exit' to end):";
+const String LinefeedChar = "\n";
+const String SimpleExitStr = "*";
+const String PqlExitStr = "exit";
+const String GreetMsg = "Welcome to our SIMPLE SPA!";
+const String ByeMsg = "Thank you for using our SIMPLE SPA!";
+const String SimpleProgramPromptMsg =  "Please enter a SIMPLE source program (when done, enter a '*' on a new line):";
+const String SimpleProgramProcessingMsg = "Passing SIMPLE program to SPA frontend...";
+const String DoneFeedbackMsg = "Done....";
+const String PqlQueryPromptMsg = "Please enter a PQL query (enter 'exit' to end):";
 
 /*
  * Passes the SIMPLE source program to the SPA
@@ -60,12 +60,12 @@ String readProgram() {
             break;
         }
 
-        if (line.compare(SIMPLE_EXIT_STR) == 0) {
+        if (line.compare(SimpleExitStr) == 0) {
             break;
         }
 
         // std::cout << line << std::endl;
-        program.append(line + LINEFEED_CHAR);
+        program.append(line + LinefeedChar);
     }
 
     return program;
@@ -74,22 +74,22 @@ String readProgram() {
 // Main entry-point to our SPA!
 int main(int argv, char **args)
 {
-    std::cout << GREET_MSG << std::endl;
+    std::cout << GreetMsg << std::endl;
 
-    std::cout << SIMPLE_PROGRAM_PROMPT_MSG << std::endl;
+    std::cout << SimpleProgramPromptMsg << std::endl;
 
     String program = readProgram();
 
     std::cout << std::endl << std::endl;
 
-    std::cout << SIMPLE_PROGRAM_PROCESSING_MSG << std::endl;
+    std::cout << SimpleProgramProcessingMsg << std::endl;
 
     parse(program);
 
-    std::cout << DONE_FEEDBACK_MSG << std::endl;
+    std::cout << DoneFeedbackMsg << std::endl;
     
     while (true) {
-        std::cout << PQL_QUERY_PROMPT_MSG << std::endl;
+        std::cout << PqlQueryPromptMsg << std::endl;
 
         String declarations;
         String select;
@@ -108,18 +108,16 @@ int main(int argv, char **args)
             break;
         }
 
-        if (declarations.compare(PQL_EXIT_STR) == 0) {
+        if (declarations.compare(PqlExitStr) == 0) {
             break;
         }
 
-        String query = declarations + LINEFEED_CHAR + select;
+        String query = declarations + LinefeedChar + select;
 
         evaluate(query);
     }
 
-    std::cout << BYE_MSG << std::endl;
+    std::cout << ByeMsg << std::endl;
 
     return 0;
 }
-
-

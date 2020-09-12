@@ -7,6 +7,7 @@
 #define SPA_FRONTEND_TOKEN_H
 
 #include "Types.h"
+#include "Util.h"
 
 namespace frontend {
 
@@ -62,8 +63,6 @@ public:
 
 Boolean isIdentifierTag(Tag tag);
 Boolean isRelationalOperatorTag(Tag tag);
-Boolean isPossibleIdentifier(const String& str);
-Boolean isPossibleConstant(const String& str);
 
 typedef List<Token> TokenList;
 TokenList* tokeniseSimple(StringList* lexedSimpleProgram);
