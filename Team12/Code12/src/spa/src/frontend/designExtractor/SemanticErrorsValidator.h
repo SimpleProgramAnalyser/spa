@@ -18,27 +18,28 @@
 class SemanticErrorsValidator {
 public:
     ProgramNode& programNode;
+    std::vector<std::vector<int>> adjacencyListOfCalls;
 
-    SemanticErrorsValidator(ProgramNode& progNode);
+    explicit SemanticErrorsValidator(ProgramNode& progNode);
     Boolean isProgramValid();
 
     Void populateCallGraphWithStatementNode(StatementNode* stmtNode,
                                             std::unordered_map<std::string, int>& procedureNameSet,
-                                            std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+                                            int currProcNameIndex);
     Void populateCallGraphWithIfStatement(IfStatementNode* stmtNode,
                                           std::unordered_map<std::string, int>& procedureNameSet,
-                                          std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+                                          int currProcNameIndex);
     Void populateCallGraphWithWhileStatement(WhileStatementNode* stmtNode,
                                              std::unordered_map<std::string, int>& procedureNameSet,
-                                             std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+                                             int currProcNameIndex);
     Void addCallEdge(CallStatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet,
-                     std::vector<std::vector<int>>& adjList, int currProcNameIndex);
+                     int currProcNameIndex);
     Boolean checkCallStatementCallsValidProcedure(StatementNode* stmtNode,
                                                   std::unordered_map<std::string, int>& procedureNameSet,
                                                   int currProcNameIndex);
     int getProcNameIndex(std::unordered_map<std::string, int> procedureNameSet, std::string procName);
-    bool isCyclic(std::vector<std::vector<int>>& adjList, size_t procListSize);
-    bool isCyclicUtil(int v, bool visited[], bool* recStack, std::vector<std::vector<int>>& adjList);
+    bool isCyclic(size_t procListSize);
+    bool isCyclicUtil(int v, bool visited[], bool* recStack);
 };
 
 #endif // SPA_FRONTEND_SEMANTIC_ERROS_VALIDATOR_H

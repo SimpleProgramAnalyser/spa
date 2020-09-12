@@ -8,9 +8,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "ast/AstTypes.h"
-
-SemanticErrorsValidator::SemanticErrorsValidator(ProgramNode& progNode): programNode(progNode) {}
+SemanticErrorsValidator::SemanticErrorsValidator(ProgramNode& progNode):
+    programNode(progNode), adjacencyListOfCalls(progNode.procedureList.size())
+{}
 
 Boolean SemanticErrorsValidator::isProgramValid()
 {
@@ -35,7 +35,6 @@ Boolean SemanticErrorsValidator::isProgramValid()
 
     // Check if call statements call existent procesdures and fill up adj list
     size_t numberOfProcs = procedureList->size();
-    std::vector<std::vector<int>> adjList(numberOfProcs);
 
     // Go through the statement list to look for call statements
     for (size_t i = 0; i < procedureList->size(); i++) {
@@ -55,11 +54,11 @@ Boolean SemanticErrorsValidator::isProgramValid()
             }
 
             // Fill up adj list
-            populateCallGraphWithStatementNode(stmtNode, procedureNameSet, adjList, procIndex);
+            populateCallGraphWithStatementNode(stmtNode, procedureNameSet, procIndex);
         }
     }
 
-    return !isCyclic(adjList, numberOfProcs);
+    return !isCyclic(numberOfProcs);
 }
 
 Boolean SemanticErrorsValidator::checkCallStatementCallsValidProcedure(
@@ -81,21 +80,19 @@ Boolean SemanticErrorsValidator::checkCallStatementCallsValidProcedure(
 
 Void SemanticErrorsValidator::populateCallGraphWithStatementNode(StatementNode* stmtNode,
                                                                  std::unordered_map<std::string, int>& procedureNameSet,
-                                                                 std::vector<std::vector<int>>& adjList,
                                                                  int currProcNameIndex)
 {
     StatementType stmtType = stmtNode->getStatementType();
     switch (stmtType) {
     case WhileStatement:
-        populateCallGraphWithWhileStatement(dynamic_cast<WhileStatementNode*>(stmtNode), procedureNameSet, adjList,
+        populateCallGraphWithWhileStatement(dynamic_cast<WhileStatementNode*>(stmtNode), procedureNameSet,
                                             currProcNameIndex);
         break;
     case CallStatement:
-        addCallEdge(dynamic_cast<CallStatementNode*>(stmtNode), procedureNameSet, adjList, currProcNameIndex);
+        addCallEdge(dynamic_cast<CallStatementNode*>(stmtNode), procedureNameSet, currProcNameIndex);
         break;
     case IfStatement:
-        populateCallGraphWithIfStatement(dynamic_cast<IfStatementNode*>(stmtNode), procedureNameSet, adjList,
-                                         currProcNameIndex);
+        populateCallGraphWithIfStatement(dynamic_cast<IfStatementNode*>(stmtNode), procedureNameSet, currProcNameIndex);
         break;
     default:
         break;
@@ -104,7 +101,6 @@ Void SemanticErrorsValidator::populateCallGraphWithStatementNode(StatementNode* 
 
 Void SemanticErrorsValidator::populateCallGraphWithIfStatement(IfStatementNode* stmtNode,
                                                                std::unordered_map<std::string, int>& procedureNameSet,
-                                                               std::vector<std::vector<int>>& adjList,
                                                                int currProcNameIndex)
 {
     const StmtlstNode& ifStmtListNode = *(stmtNode->ifStatementList);
@@ -114,18 +110,17 @@ Void SemanticErrorsValidator::populateCallGraphWithIfStatement(IfStatementNode* 
 
     for (size_t i = 0; i < ifStmtList.size(); i++) {
         StatementNode* statementNode = ifStmtList.at(i).get();
-        populateCallGraphWithStatementNode(statementNode, procedureNameSet, adjList, currProcNameIndex);
+        populateCallGraphWithStatementNode(statementNode, procedureNameSet, currProcNameIndex);
     }
 
     for (size_t i = 0; i < elseStmtList.size(); i++) {
         StatementNode* statementNode = elseStmtList.at(i).get();
-        populateCallGraphWithStatementNode(statementNode, procedureNameSet, adjList, currProcNameIndex);
+        populateCallGraphWithStatementNode(statementNode, procedureNameSet, currProcNameIndex);
     }
 }
 
 Void SemanticErrorsValidator::populateCallGraphWithWhileStatement(
-    WhileStatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet,
-    std::vector<std::vector<int>>& adjList, int currProcNameIndex)
+    WhileStatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet, int currProcNameIndex)
 {
     const ConditionalExpression* predicate = stmtNode->predicate;
     const StmtlstNode& stmtListNode = *(stmtNode->statementList);
@@ -138,14 +133,13 @@ Void SemanticErrorsValidator::populateCallGraphWithWhileStatement(
         const List<StatementNode>& stmtList = stmtListNode.statementList;
         for (size_t i = 0; i < stmtList.size(); i++) {
             StatementNode* statementNode = stmtList.at(i).get();
-            populateCallGraphWithStatementNode(statementNode, procedureNameSet, adjList, currProcNameIndex);
+            populateCallGraphWithStatementNode(statementNode, procedureNameSet, currProcNameIndex);
         }
     }
 }
 
 Void SemanticErrorsValidator::addCallEdge(CallStatementNode* stmtNode,
-                                          std::unordered_map<std::string, int>& procedureNameSet,
-                                          std::vector<std::vector<int>>& adjList, int currProcNameIndex)
+                                          std::unordered_map<std::string, int>& procedureNameSet, int currProcNameIndex)
 {
     Name procedureName = stmtNode->procedureName;
     if (procedureName == "") {
@@ -155,7 +149,7 @@ Void SemanticErrorsValidator::addCallEdge(CallStatementNode* stmtNode,
     int procIndex = getProcNameIndex(procedureNameSet, procedureName);
 
     // Add call procedureName in graph
-    adjList[currProcNameIndex].push_back(procIndex);
+    adjacencyListOfCalls.at(currProcNameIndex).push_back(procIndex);
 }
 
 int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, int> procedureNameSet,
@@ -170,18 +164,17 @@ int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, in
     return procIndex;
 }
 
-bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack,
-                                           std::vector<std::vector<int>>& adjList)
+bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack)
 {
-    if (visited[v] == false) {
+    if (!visited[v]) {
         // Mark the current node as visited and part of recursion stack
         visited[v] = true;
         recStack[v] = true;
 
         // Recur for all the vertices adjacent to this vertex
         std::vector<int>::iterator i;
-        for (i = adjList[v].begin(); i < adjList[v].end(); i++) {
-            if (!visited[*i] && isCyclicUtil(*i, visited, recStack, adjList)) {
+        for (i = adjacencyListOfCalls.at(v).begin(); i < adjacencyListOfCalls.at(v).end(); i++) {
+            if (!visited[*i] && isCyclicUtil(*i, visited, recStack)) {
                 return true;
             } else if (recStack[*i]) {
                 return true;
@@ -192,7 +185,7 @@ bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack
     return false;
 }
 
-bool SemanticErrorsValidator::isCyclic(std::vector<std::vector<int>>& adjList, size_t procListSize)
+bool SemanticErrorsValidator::isCyclic(size_t procListSize)
 {
     // Mark all the vertices as not visited and not part of recursion stack
     bool* visited = new bool[procListSize];
@@ -203,10 +196,16 @@ bool SemanticErrorsValidator::isCyclic(std::vector<std::vector<int>>& adjList, s
     }
 
     // Call the recursive helper function to detect cycles
-    for (size_t i = 0; i < procListSize; i++)
-        if (isCyclicUtil(i, visited, recStack, adjList)) {
+    for (size_t i = 0; i < procListSize; i++) {
+        if (isCyclicUtil(i, visited, recStack)) {
             // throw error
+            delete[] visited;
+            delete[] recStack;
             return true;
         }
+    }
+
+    delete[] visited;
+    delete[] recStack;
     return false;
 }
