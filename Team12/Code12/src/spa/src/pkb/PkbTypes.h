@@ -31,4 +31,5 @@ typedef struct {
 typedef struct {
     Array<HashSet<Integer>, STATEMENT_TYPE_COUNT> byType;
 } StatementNumSetsByType;
+
 #endif // SPA_PKBTYPES_H
