@@ -268,6 +268,11 @@ void handleNeighbours(Matrix& adjacencyMatrix, std::vector<size_t>& nodesToSearc
 
 std::vector<int> SemanticErrorsValidator::reverseTopologicalSort()
 {
+    if (!hasExecutedValidityChecks || !programValidity) {
+        // program has not been executed, or program is invalid
+        return std::vector<int>();
+    }
+
     // Kahn's algorithm, modified for reverse order
     // deep-clone the matrix to keep track of edges
     size_t length = adjacencyMatrixOfCalls.size();
