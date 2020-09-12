@@ -39,7 +39,6 @@ private:
     HashMap<Integer, StatementNumVectorsByType> stmtBeforestarlistMap;
     HashMap<Integer, StatementNumVectorsByType> stmtAfterstarlistMap;
 
-
     // WARNING: potential confusion
     // stmtBeforeType:
     /**
