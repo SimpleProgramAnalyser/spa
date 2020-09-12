@@ -86,7 +86,6 @@ Vector<Integer> getAllStatements(StatementType stmtType);
 void assignRootNode(ProgramNode* rootNodeToAssign);
 ProgramNode* getRootNode();
 
-
 class PKB {
 public:
     ProgramNode* rootNode{};
