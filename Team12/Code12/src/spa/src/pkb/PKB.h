@@ -82,7 +82,7 @@ public:
     ProgramNode* getRootNode();
 
 private:
-    ProgramNode* rootNode;
+    ProgramNode* rootNode{};
     StatementTable statementTable;
     VariableTable variableTable;
     ProcedureTable procedureTable;
