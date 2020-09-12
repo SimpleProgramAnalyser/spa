@@ -279,9 +279,7 @@ Vector<String> Evaluator::processQuerySuchThatFollowsClause(Synonym synonym, Suc
 
     if (leftRefDesignEntityType == StmtType && rightRefDesignEntityType == AssignType) {
         Vector<Integer> tempResult = getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
-        tempResult.push_back(1);
-        tempResult.push_back(2);
-
+        tempResult.push_back(12345);
         result = convertToStringVect(tempResult);
     }
 

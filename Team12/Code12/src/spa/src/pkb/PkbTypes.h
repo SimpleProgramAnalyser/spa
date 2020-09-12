@@ -3,6 +3,7 @@
  * Type definitions and shorthands that are used in various components of PKB.
  */
 #include <ast/AstTypes.h>
+#include <array>
 #include <unordered_map>
 #include <unordered_set>
 
