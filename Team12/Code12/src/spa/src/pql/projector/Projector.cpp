@@ -20,10 +20,11 @@
  */
 FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
 {
-    String formattedResults;
     Vector<Vector<Vector<String>>> rawResults = rawQueryResult.getResults();
 
     Vector<Vector<String>> reducedRawResults = reduceQueryRawResults(rawResults);
+
+    String formattedResults = convertVectorToString(reducedRawResults.at(0));
 
     FormattedQueryResult formattedQueryResult(formattedResults);
 
@@ -92,11 +93,10 @@ Vector<String> Projector::reduceQueryRawResultsPerSynonym(Vector<Vector<String>>
     Integer len = rawResults.size();
 
     /*
-     * We utilise the trie header library provided by Frontend,
-     * where we can check if a given string is in a set
-     * (of strings).
+     * We maintain an unordered_map to keep track
+     * of unique items.
      */
-    auto* trie = new str_match::Trie<Boolean>();
+    std::unordered_map<String, String> table;
 
     for (int i = 0; i < len; ++i) {
         Vector<String> temp = rawResults.at(i);
@@ -106,16 +106,40 @@ Vector<String> Projector::reduceQueryRawResultsPerSynonym(Vector<Vector<String>>
         for (int j = 0; j < len2; ++j) {
             String str = temp.at(j);
 
-            // If str not in trie, add it, else ignore it.
-            if (!trie->matchString(str, false)) {
-                trie->addEntryToTrie(str, false);
-
+            // If str not added before, add it, else ignore it.
+            std::unordered_map<String, String>::const_iterator got = table.find(str);
+            if (got == table.end()) {
+                table.insert({str, str});
                 mergedResults.push_back(str);
             }
         }
 
     }
     return mergedResults;
+}
+
+/*
+ * A utility method for converting a vector to a string.
+ * This string would be comma delimted, where each element
+ * corresponds to an element in the vector.
+ *
+ * @param strList The string list to convert.
+ *
+ * @return String a comma delimited string, representing
+ * a condensed form of the elements in the original
+ * vector.
+ */
+String Projector::convertVectorToString(Vector<String> strList)
+{
+    Integer len = strList.size();
+
+    String result;
+
+    for (int i = 0; i < len; ++i) {
+        result += strList.at(i);
+    }
+
+    return result;
 }
 
 FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
