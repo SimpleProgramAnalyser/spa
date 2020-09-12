@@ -20,6 +20,10 @@
  */
 FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
 {
+    if (rawQueryResult.isEmpty()) {
+        return FormattedQueryResult::emptyFormattedQueryResult();
+    }
+
     Vector<Vector<Vector<String>>> rawResults = rawQueryResult.getResults();
 
     Vector<Vector<String>> reducedRawResults = reduceQueryRawResults(rawResults);
@@ -30,9 +34,21 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
      * the reducedRawResults (instead of just 1). More specifically,
      * we need a method which generates the Cartesian product
      * between the Strings in each Vector<String> for all entries
-     * in Vector<Vector<String>>.a
+     * in Vector<Vector<String>>.
+     *
+     * For now, we will just iterate through all Vector<String>
+     * in Vector<Vector<String>> and print concatenate them together.
      */
-    String formattedResults = convertVectorToString(reducedRawResults.at(0));
+    Integer len = reducedRawResults.size();
+    String formattedResults;
+    for (int i = 0; i < len; ++i) {
+        Vector<String> temp = reducedRawResults.at(i);
+        formattedResults += convertVectorToString(temp);
+
+        if (i < len - 1) {
+            formattedResults += PipeStr;
+        }
+    }
 
     FormattedQueryResult formattedQueryResult(formattedResults);
 
@@ -98,15 +114,14 @@ Vector<String> Projector::reduceQueryRawResultsPerSynonym(Vector<Vector<String>>
 {
     Vector<String> mergedResults;
 
-    Integer len = rawResults.size();
-
     /*
      * We maintain an unordered_map to keep track
      * of unique items.
      */
     std::unordered_map<String, String> table;
 
-    for (int i = 0; i < len; ++i) {
+    Integer len1 = rawResults.size();
+    for (int i = 0; i < len1; ++i) {
         Vector<String> temp = rawResults.at(i);
 
         Integer len2 = temp.size();
@@ -145,6 +160,10 @@ String Projector::convertVectorToString(Vector<String> strList)
 
     for (int i = 0; i < len; ++i) {
         result += strList.at(i);
+
+        if (i < len - 1) {
+            result += CommaStr;
+        }
     }
 
     return result;

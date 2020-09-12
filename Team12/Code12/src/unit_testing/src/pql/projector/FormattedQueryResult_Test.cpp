@@ -6,7 +6,6 @@
  */
 
 #include "catch.hpp"
-#include "pql/evaluator/Evaluator.h"
 #include "pql/parser/AqTypes.h"
 #include "pql/projector/FormattedQueryResult.h"
 

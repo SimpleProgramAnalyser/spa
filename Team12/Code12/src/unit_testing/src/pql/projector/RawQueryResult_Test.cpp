@@ -78,11 +78,11 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> mul
 
     Vector<String> resultInner2;
 
-    String a2 = "a";
-    String b2 = "b";
+    String a2 = "c";
+    String b2 = "d";
 
     resultInner2.push_back(a2);
-    resultInner1.push_back(b2);
+    resultInner2.push_back(b2);
 
     Vector<Vector<String>> resultOuter2;
     resultOuter2.push_back(resultInner2);
