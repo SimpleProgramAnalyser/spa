@@ -35,15 +35,14 @@ RawQueryResult Evaluator::evaluateQuery(AbstractQuery query)
      * syntatically) valid.
      */
 
-    if (isQueryVacuouslyTrue(query)) {
-        /*
-         * Call Tables API, to retrieve all
-         * objects, if PQL query is vacuously
-         * true.
-         */
-    }
+    Boolean queryVacuouslyTrue = isQueryVacuouslyTrue(query);
 
     RawQueryResult result = processQuery(query);
+
+    /*
+     * If query is vacuously true, retrieve all entity
+     * related to that synonym, from Tables API
+     */
 
     return result;
 }
@@ -329,5 +328,47 @@ Vector<String> Evaluator::convertToStringVect(Vector<Integer> intList)
  */
 Boolean Evaluator::isQueryVacuouslyTrue(AbstractQuery query)
 {
-    return false;
+    Synonym selectSynonym = query.getSelectSynonym();
+    ClauseVector clauses = query.getClauses();
+    DeclarationTable declarations = query.getDeclarationTable();
+
+    /*
+     * Iterate through all clauses, one of which must at least
+     * have be related directly to the select synonym.
+     */
+    for (int i = 0; i < clauses.totalNumClauses(); ++i) {
+        Clause* clause = clauses.get(i);
+
+        if (clause->getType() == SuchThatClauseType) {
+            SuchThatClause* stClause = dynamic_cast<SuchThatClause*>(clause);
+
+            Relationship rel = stClause->getRelationship();
+
+            ReferenceValue leftVal = rel.getLeftRef().getValue();
+            ReferenceValue rightVal = rel.getRightRef().getValue();
+
+            /*
+             * If any synonym matches select synonym, we terminate
+             * early, knowing that query is indeed not vacuously true.
+             */
+            if (leftVal == selectSynonym || rightVal == selectSynonym) {
+                return false;
+            }
+        } else if (clause->getType() == PatternClauseType) {
+            PatternClause* pClause = dynamic_cast<PatternClause*>(clause);
+
+            ReferenceValue val = pClause->getEntRef().getValue();
+
+            /*
+             * If the synonym matches select synonym, we terminate
+             * early, knowing that query is indeed not vacuously true.
+             */
+            if (val == selectSynonym) {
+                return false;
+            }
+        }
+    }
+
+    // Else the query is vacuously true.
+    return true;
 }

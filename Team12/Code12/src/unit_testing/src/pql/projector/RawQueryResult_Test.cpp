@@ -167,3 +167,151 @@ TEST_CASE("RawQueryResult::isEmpty() -> non-empty results vector")
     // === Check expected test results ===
     REQUIRE(rawQueryResult.isEmpty() == expectedEmpty);
 }
+
+TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, all equals")
+{
+    // === Test set-up ===
+    Vector<Vector<Vector<String>>> results1;
+    Vector<String> resultInner11;
+
+    String a11 = "a";
+    String b11 = "b";
+
+    resultInner11.push_back(a11);
+    resultInner11.push_back(b11);
+
+    Vector<Vector<String>> resultOuter11;
+    resultOuter11.push_back(resultInner11);
+
+    results1.push_back(resultOuter11);
+
+    Vector<String> resultInner12;
+
+    String a12 = "c";
+    String b12 = "d";
+
+    resultInner12.push_back(a12);
+    resultInner12.push_back(b12);
+
+    Vector<Vector<String>> resultOuter12;
+    resultOuter12.push_back(resultInner12);
+
+    results1.push_back(resultOuter12);
+
+    RawQueryResult rawQueryResult1(results1);
+
+    Vector<Vector<Vector<String>>> results2;
+    Vector<String> resultInner21;
+
+    String a21 = "a";
+    String b21 = "b";
+
+    resultInner21.push_back(a21);
+    resultInner21.push_back(b21);
+
+    Vector<Vector<String>> resultOuter21;
+    resultOuter21.push_back(resultInner21);
+
+    results2.push_back(resultOuter21);
+
+    Vector<String> resultInner22;
+
+    String a22 = "c";
+    String b22 = "d";
+
+    resultInner22.push_back(a22);
+    resultInner22.push_back(b22);
+
+    Vector<Vector<String>> resultOuter22;
+    resultOuter22.push_back(resultInner22);
+
+    results2.push_back(resultOuter22);
+
+    RawQueryResult rawQueryResult2(results2);
+
+
+    // === Execute test method ===
+    Boolean equality = (rawQueryResult1 == rawQueryResult2);
+
+
+    // === Expected test results ===
+    Boolean expectedEquality = true;
+
+
+    // === Check expected test results ===
+    REQUIRE(equality == expectedEquality);
+}
+
+TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, at least one not equals")
+{
+    // === Test set-up ===
+    Vector<Vector<Vector<String>>> results1;
+    Vector<String> resultInner11;
+
+    String a11 = "a";
+    String b11 = "c";
+
+    resultInner11.push_back(a11);
+    resultInner11.push_back(b11);
+
+    Vector<Vector<String>> resultOuter11;
+    resultOuter11.push_back(resultInner11);
+
+    results1.push_back(resultOuter11);
+
+    Vector<String> resultInner12;
+
+    String a12 = "c";
+    String b12 = "d";
+
+    resultInner12.push_back(a12);
+    resultInner12.push_back(b12);
+
+    Vector<Vector<String>> resultOuter12;
+    resultOuter12.push_back(resultInner12);
+
+    results1.push_back(resultOuter12);
+
+    RawQueryResult rawQueryResult1(results1);
+
+    Vector<Vector<Vector<String>>> results2;
+    Vector<String> resultInner21;
+
+    String a21 = "a";
+    String b21 = "b";
+
+    resultInner21.push_back(a21);
+    resultInner21.push_back(b21);
+
+    Vector<Vector<String>> resultOuter21;
+    resultOuter21.push_back(resultInner21);
+
+    results2.push_back(resultOuter21);
+
+    Vector<String> resultInner22;
+
+    String a22 = "c";
+    String b22 = "d";
+
+    resultInner22.push_back(a22);
+    resultInner22.push_back(b22);
+
+    Vector<Vector<String>> resultOuter22;
+    resultOuter22.push_back(resultInner22);
+
+    results2.push_back(resultOuter22);
+
+    RawQueryResult rawQueryResult2(results2);
+
+
+    // === Execute test method ===
+    Boolean equality = (rawQueryResult1 == rawQueryResult2);
+
+
+    // === Expected test results ===
+    Boolean expectedEquality = false;
+
+
+    // === Check expected test results ===
+    REQUIRE(equality == expectedEquality);
+}

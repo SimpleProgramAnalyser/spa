@@ -62,3 +62,51 @@ TEST_CASE("FormattedQueryResult::emptyFormattedQueryResult() ->")
     // === Check expected test results ===
     REQUIRE(formattedQueryResult.getResults() == expectedResults);
 }
+
+TEST_CASE("FormattedQueryResult::==(const FormattedQueryResult) const -> results string equals")
+{
+    // === Test set-up ===
+    String results1 = "abc";
+
+    FormattedQueryResult formattedQueryResult1(results1);
+
+    String results2 = "abc";
+
+    FormattedQueryResult formattedQueryResult2(results2);
+
+
+    // === Execute test method ===
+    Boolean equality = (formattedQueryResult1 == formattedQueryResult2);
+
+
+    // === Expected test results ===
+    Boolean expectedEquality = true;
+
+
+    // === Check expected test results ===
+    REQUIRE(equality == expectedEquality);
+}
+
+TEST_CASE("FormattedQueryResult::==(const FormattedQueryResult) const -> results string not equals")
+{
+    // === Test set-up ===
+    String results1 = "abc";
+
+    FormattedQueryResult formattedQueryResult1(results1);
+
+    String results2 = "def";
+
+    FormattedQueryResult formattedQueryResult2(results2);
+
+
+    // === Execute test method ===
+    Boolean equality = (formattedQueryResult1 == formattedQueryResult2);
+
+
+    // === Expected test results ===
+    Boolean expectedEquality = false;
+
+
+    // === Check expected test results ===
+    REQUIRE(equality == expectedEquality);
+}

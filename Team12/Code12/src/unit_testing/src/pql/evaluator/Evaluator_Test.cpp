@@ -20,14 +20,38 @@
 #include "pql/parser/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
 
-TEST_CASE("Test invalid PQL query")
+TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntatically) PQL query")
 {
+    // === Test set-up ===
     Evaluator evaluator;
 
-    // Construct dummy AbstractQuery type
     AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
 
+
+    // === Execute test method ===
     RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
 
-    REQUIRE(1 == 1);
+
+    // === Expected test results ===
+    RawQueryResult expectedRawQueryResult = RawQueryResult::emptyRawQueryResult();
+
+    REQUIRE(rawQueryResult == expectedRawQueryResult);
+}
+
+TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> vacuously true PQL query")
+{
+    // === Test set-up ===
+    Evaluator evaluator;
+
+    AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
+
+
+    // === Execute test method ===
+    RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
+
+
+    // === Expected test results ===
+    RawQueryResult expectedRawQueryResult = RawQueryResult::emptyRawQueryResult();
+
+    REQUIRE(rawQueryResult == expectedRawQueryResult);
 }

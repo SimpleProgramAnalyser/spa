@@ -23,6 +23,8 @@ public:
     Vector<Vector<Vector<String>>> getResults();
 
     Boolean isEmpty();
+
+    Boolean operator==(const RawQueryResult& rawQueryResult) const;
 private:
     RawQueryResult();
     Vector<Vector<Vector<String>>> results;

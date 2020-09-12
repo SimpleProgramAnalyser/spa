@@ -22,6 +22,7 @@ public:
     static FormattedQueryResult emptyFormattedQueryResult();
     String getResults();
 
+    Boolean operator==(const FormattedQueryResult& formattedQueryResult) const;
 private:
     FormattedQueryResult();
     String results;

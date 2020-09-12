@@ -57,3 +57,22 @@ String FormattedQueryResult::getResults()
 {
     return results;
 }
+
+/*
+ * Determines when 2 FormattedueryResult objects are equal.
+ * This method overloads equality operator and defines
+ * what it means for 2 such objects to be equal.
+ *
+ * In our definition, this equality holds if and only
+ * if the String results, from both
+ * objects are equals.
+ *
+ * @param formattedQueryResult Another FormattedQueryResult object
+ * to compare with current instance.
+ *
+ * @return Boolean, true if equals, false otherwise.
+ */
+Boolean FormattedQueryResult::operator==(const FormattedQueryResult& formattedQueryResult) const
+{
+    return this->results == formattedQueryResult.results;
+}

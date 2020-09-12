@@ -73,7 +73,21 @@ Boolean RawQueryResult::isEmpty()
     return results.empty();
 }
 
-/*bool operator== (RawQueryResult& a, RawQueryResult & b)
+/*
+ * Determines when 2 RawQueryResult objects are equal.
+ * This method overloads equality operator and defines
+ * what it means for 2 such objects to be equal.
+ *
+ * In our definition, this equality holds if and only
+ * if the Vector<Vector<Vector<String>>> results, from both
+ * objects are equals.
+ *
+ * @param rawQueryResult Another RawQueryResult object
+ * to compare with current instance.
+ *
+ * @return Boolean, true if equals, false otherwise.
+ */
+Boolean RawQueryResult::operator==(const RawQueryResult& rawQueryResult) const
 {
-    return (a.results == b.results);
-}*/
+    return this->results == rawQueryResult.results;
+}
