@@ -283,7 +283,7 @@ std::vector<int> SemanticErrorsValidator::reverseTopologicalSort()
         adjacencyMatrixForKahns.at(i).reserve(length);
         for (size_t j = 0; j < length; j++) {
             // copy all edges
-            adjacencyMatrixForKahns.at(i).at(j) = adjacencyMatrixOfCalls.at(i).at(j);
+            adjacencyMatrixForKahns.at(i).push_back(adjacencyMatrixOfCalls.at(i).at(j));
         }
     }
     std::vector<int> reverseSortedNodes;
@@ -306,7 +306,7 @@ std::vector<int> SemanticErrorsValidator::reverseTopologicalSort()
 
     // start from nodes pointing to nothing
     while (!nodesToSearch.empty()) {
-        size_t currentNode = nodesToSearch.at(nodesToSearch.size());
+        size_t currentNode = nodesToSearch.at(nodesToSearch.size() - 1);
         nodesToSearch.pop_back();
         // add node to the reverse sorted list
         reverseSortedNodes.push_back(static_cast<int>(currentNode));
