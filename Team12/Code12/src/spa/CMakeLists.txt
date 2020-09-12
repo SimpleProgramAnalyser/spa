@@ -49,10 +49,10 @@ add_library(spa
     ${pkb}
 
     # pql
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/AqTypes.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/AqTypes.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/Preprocessor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser/Preprocessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h

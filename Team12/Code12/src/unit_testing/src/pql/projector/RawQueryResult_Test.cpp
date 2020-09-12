@@ -5,25 +5,22 @@
  * method; getResults(), is implemented correctly.
  */
 
+#include "Types.h"
 #include "catch.hpp"
 #include "pql/evaluator/Evaluator.h"
-#include "pql/parser/AqTypes.h"
+#include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
-#include "Types.h"
 
 TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> empty results vector")
 {
     // === Test set-up ===
     Vector<Vector<Vector<String>>> results;
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult(results);
 
-
     // === Expected test results ===
     Vector<Vector<Vector<String>>> expectedResults = results;
-
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.getResults() == expectedResults);
@@ -46,14 +43,11 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> sin
 
     results.push_back(resultOuter);
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult(results);
 
-
     // === Expected test results ===
     Vector<Vector<Vector<String>>> expectedResults = results;
-
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.getResults() == expectedResults);
@@ -89,14 +83,11 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> mul
 
     results.push_back(resultOuter2);
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult(results);
 
-
     // === Expected test results ===
     Vector<Vector<Vector<String>>> expectedResults = results;
-
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.getResults() == expectedResults);
@@ -107,14 +98,11 @@ TEST_CASE("RawQueryResult::emptyRawQueryResult() -> ")
     // === Test set-up ===
     Vector<Vector<Vector<String>>> results;
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult = RawQueryResult::emptyRawQueryResult();
 
-
     // === Expected test results ===
     Vector<Vector<Vector<String>>> expectedResults = results;
-
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.getResults() == expectedResults);
@@ -125,14 +113,11 @@ TEST_CASE("RawQueryResult::isEmpty() -> empty results vector")
     // === Test set-up ===
     Vector<Vector<String>> results;
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult = RawQueryResult::emptyRawQueryResult();
 
-
     // === Expected test results ===
     Boolean expectedEmpty = true;
-
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.isEmpty() == expectedEmpty);
@@ -155,20 +140,18 @@ TEST_CASE("RawQueryResult::isEmpty() -> non-empty results vector")
 
     results.push_back(resultOuter);
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult(results);
 
-
     // === Expected test results ===
     Boolean expectedEmpty = false;
-
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.isEmpty() == expectedEmpty);
 }
 
-TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, all equals")
+TEST_CASE(
+    "RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, all equals")
 {
     // === Test set-up ===
     Vector<Vector<Vector<String>>> results1;
@@ -229,20 +212,18 @@ TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> mult
 
     RawQueryResult rawQueryResult2(results2);
 
-
     // === Execute test method ===
     Boolean equality = (rawQueryResult1 == rawQueryResult2);
 
-
     // === Expected test results ===
     Boolean expectedEquality = true;
-
 
     // === Check expected test results ===
     REQUIRE(equality == expectedEquality);
 }
 
-TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, at least one not equals")
+TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, at least "
+          "one not equals")
 {
     // === Test set-up ===
     Vector<Vector<Vector<String>>> results1;
@@ -303,14 +284,11 @@ TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> mult
 
     RawQueryResult rawQueryResult2(results2);
 
-
     // === Execute test method ===
     Boolean equality = (rawQueryResult1 == rawQueryResult2);
 
-
     // === Expected test results ===
     Boolean expectedEquality = false;
-
 
     // === Check expected test results ===
     REQUIRE(equality == expectedEquality);

@@ -6,10 +6,10 @@
  */
 
 #include "catch.hpp"
-#include "pql/parser/AqTypes.h"
-#include "pql/projector/RawQueryResult.h"
+#include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/FormattedQueryResult.h"
 #include "pql/projector/Projector.h"
+#include "pql/projector/RawQueryResult.h"
 
 TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> empty rawQueryResult")
 {
@@ -18,20 +18,18 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> empty r
 
     Projector projector;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
 
-
     // === Expected test results ===
     String expectedResults = "";
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult.getResults() == expectedResults);
 }
 
-TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty rawQueryResult with 1 element in outer list")
+TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty rawQueryResult with 1 element in "
+          "outer list")
 {
     // === Test set-up ===
     Vector<Vector<Vector<String>>> results;
@@ -52,20 +50,18 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-emp
 
     Projector projector;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
 
-
     // === Expected test results ===
     String expectedResults = "a,b";
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult.getResults() == expectedResults);
 }
 
-TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty rawQueryResult with multiple elements in outer list")
+TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty rawQueryResult with multiple "
+          "elements in outer list")
 {
     // === Test set-up ===
     Vector<Vector<Vector<String>>> results;
@@ -99,20 +95,18 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-emp
 
     Projector projector;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
 
-
     // === Expected test results ===
     String expectedResults = "a,b|c,d";
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult.getResults() == expectedResults);
 }
 
-TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty rawQueryResult with multiple elements in outer list, duplicate elements in at least one inner list")
+TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty rawQueryResult with multiple "
+          "elements in outer list, duplicate elements in at least one inner list")
 {
     // === Test set-up ===
     Vector<Vector<Vector<String>>> results;
@@ -148,14 +142,11 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-emp
 
     Projector projector;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
 
-
     // === Expected test results ===
     String expectedResults = "a,b|c,d";
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult.getResults() == expectedResults);

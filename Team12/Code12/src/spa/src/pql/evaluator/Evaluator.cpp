@@ -4,9 +4,9 @@
 
 #include "Evaluator.h"
 
-#include "pql/parser/AqTypes.h"
-#include "pql/projector/RawQueryResult.h"
 #include "pkb/relationships/Follows.h"
+#include "pql/preprocessor/AqTypes.h"
+#include "pql/projector/RawQueryResult.h"
 
 /**
  * Evaluates a PQL query, and interacts with the PKB,
@@ -82,7 +82,6 @@ RawQueryResult Evaluator::processQuery(AbstractQuery query)
 
     results.push_back(result);
 
-
     RawQueryResult rawQueryResult(results);
 
     return rawQueryResult;
@@ -92,7 +91,7 @@ RawQueryResult Evaluator::processQuery(AbstractQuery query)
  * Processes (all) the clauses in a PQL query, with respect to
  * a given synonym. All results obtained from the clauses will be
  * with respect to that particular synonym.
- * 
+ *
  * For instance, given the following PQL query;
  *     assign a; statement s;
  *     Select a such that Follows(s, a) pattern a(_, "3+5")
@@ -124,7 +123,8 @@ RawQueryResult Evaluator::processQuery(AbstractQuery query)
  * (please read the documentation of RawQueryResult for more details),
  * evaluated with respect to a particular synonym.
  */
-Vector<Vector<String>> Evaluator::processQueryClauses(Synonym synonym, ClauseVector clauses, DeclarationTable declarations)
+Vector<Vector<String>> Evaluator::processQueryClauses(Synonym synonym, ClauseVector clauses,
+                                                      DeclarationTable declarations)
 {
     Vector<Vector<String>> results;
 
@@ -134,7 +134,6 @@ Vector<Vector<String>> Evaluator::processQueryClauses(Synonym synonym, ClauseVec
         Vector<String> result = processQueryClause(synonym, clause, declarations);
 
         results.push_back(result);
-
     }
 
     return results;
@@ -193,7 +192,8 @@ Vector<String> Evaluator::processQueryClause(Synonym synonym, Clause* clause, De
  * documentation of RawQueryResult for more details) evaluated
  * with respect to a particular synonym.
  */
-Vector<String> Evaluator::processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations)
+Vector<String> Evaluator::processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause,
+                                                     DeclarationTable declarations)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
@@ -240,7 +240,8 @@ Vector<String> Evaluator::processQuerySuchThatClause(Synonym synonym, SuchThatCl
  * documentation of RawQueryResult for more details) evaluated
  * with respect to a particular synonym.
  */
-Vector<String> Evaluator::processQuerySuchThatFollowsClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations)
+Vector<String> Evaluator::processQuerySuchThatFollowsClause(Synonym synonym, SuchThatClause* stClause,
+                                                            DeclarationTable declarations)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
@@ -276,11 +277,9 @@ Vector<String> Evaluator::processQuerySuchThatFollowsClause(Synonym synonym, Suc
      * PKB API to get the results.
      */
 
-    BeforeTable beforeTable;
-
     if (leftRefDesignEntityType == StmtType && rightRefDesignEntityType == AssignType) {
         // TODO: Please uncomment the following line when the PKB method has been implemented.
-        // Vector<Integer> tempResult = beforeTable.getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
+        // Vector<Integer> tempResult = getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
 
         Vector<Integer> tempResult;
         tempResult.push_back(1);

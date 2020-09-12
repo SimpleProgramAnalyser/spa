@@ -1,6 +1,6 @@
 #include "catch.hpp"
-#include "pql/parser/AqTypes.h"
-#include "pql/parser/Preprocessor.h"
+#include "pql/preprocessor/AqTypes.h"
+#include "pql/preprocessor/Preprocessor.h"
 
 TEST_CASE("Test splitBySelect")
 {

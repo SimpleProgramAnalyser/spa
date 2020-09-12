@@ -6,7 +6,7 @@
  */
 
 #include "catch.hpp"
-#include "pql/parser/AqTypes.h"
+#include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/FormattedQueryResult.h"
 
 TEST_CASE("FormattedQueryResult::FormattedQueryResult(String results) -> empty results string")

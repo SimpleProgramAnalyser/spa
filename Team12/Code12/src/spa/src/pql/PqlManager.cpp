@@ -4,10 +4,10 @@
 
 #include "PqlManager.h"
 
-#include "pql/parser/AqTypes.h"
 #include "pql/evaluator/Evaluator.h"
+#include "pql/preprocessor/AqTypes.h"
+#include "pql/preprocessor/Preprocessor.h"
 #include "pql/projector/FormattedQueryResult.h"
-#include "pql/parser/Preprocessor.h"
 #include "pql/projector/Projector.h"
 #include "pql/projector/QueryResultFormatType.h"
 

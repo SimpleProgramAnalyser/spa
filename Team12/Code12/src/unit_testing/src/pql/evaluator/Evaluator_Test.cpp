@@ -11,13 +11,13 @@
  * (e.g, fake Follows relationships) in PKB and then
  * testing our evaluatQuery(..) method from there.
  *
- * Thus, the tests here in this class, are actually 
+ * Thus, the tests here in this class, are actually
  * PQL-PKB integration tests.
  */
 
 #include "catch.hpp"
 #include "pql/evaluator/Evaluator.h"
-#include "pql/parser/AqTypes.h"
+#include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
 
 TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntatically) PQL query")
@@ -27,10 +27,8 @@ TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntaticall
 
     AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
-
 
     // === Expected test results ===
     RawQueryResult expectedRawQueryResult = RawQueryResult::emptyRawQueryResult();
@@ -45,10 +43,8 @@ TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> vacuously true PQL q
 
     AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
 
-
     // === Execute test method ===
     RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
-
 
     // === Expected test results ===
     RawQueryResult expectedRawQueryResult = RawQueryResult::emptyRawQueryResult();
