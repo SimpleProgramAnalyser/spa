@@ -9,19 +9,19 @@
 class UsesTable {
 public:
     // writing
-    void addUsesRelationships(Integer stmtNum, Vector<String> varNames);
-    void addUsesRelationships(String procName, Vector<String> varNames);
+    void addUsesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames);
+    void addUsesRelationships(const String& procName, Vector<String> varNames);
 
     // reading
-    String checkIfProcedureUses(String procName, String varName);
-    Integer checkIfStatementUses(Integer stmt, String varName);
-    Vector<Integer> getUsesStatements(String varName, StatementType stmtType);
-    Vector<String> getUsesProcedures(String procName);
+    Boolean checkIfProcedureUses(const String& procName, const String& varName);
+    Boolean checkIfStatementUses(Integer stmt, const String& varName);
+    Vector<Integer> getUsesStatements(const String& varName, StatementType stmtType);
+    Vector<String> getUsesProcedures(const String& varName);
     Vector<String> getUsesVariablesFromStatement(Integer stmt);
-    Vector<String> getusesVariablesFromProcedure(String procName);
+    Vector<String> getusesVariablesFromProcedure(const String& procName);
     Vector<Integer> getAllUsesStatements(StatementType stmtType);
     Vector<String> getAllUsesVariables(StatementType stmtType);
-    Vector<String> getAllUsesVariables(String procName);
+    Vector<String> getAllUsesVariables(const String& procName);
     Vector<String> getAllUsesProcedures();
 
 private:
