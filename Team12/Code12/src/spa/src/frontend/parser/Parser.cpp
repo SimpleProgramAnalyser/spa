@@ -539,9 +539,9 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             return secondCondition;
         }
         assert(secondCondition.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-               == endIndex - 1);
+               == endIndex);
         // finally, create the conditional expression
-        if (programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::AndConditionalTag) {
+        if (programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::AndConditionalTag) {
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
                 std::unique_ptr<ConditionalExpression>(
                     createAndExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
@@ -979,7 +979,7 @@ ProgramNode* parseSimpleReturnNode(const String& rawProgram)
     if (currentIndex < 0 || syntaxError) {
         return nullptr;
     } else {
-        return createProgramNode("SIMPLE program", procedures, statementsSeen);
+        return createProgramNode(procedures.at(0)->procedureName, procedures, statementsSeen);
     }
 }
 
