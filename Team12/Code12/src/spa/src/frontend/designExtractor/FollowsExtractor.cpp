@@ -114,7 +114,7 @@ FollowsList* extractFollowsReturnAdjacencyList(const ProgramNode& rootNode)
     // initiate the Follows* list for fast lookup
     auto* followsList = new FollowsList();
     followsList->reserve(numberOfStatements + 1);
-    for (size_t i = 0; i < numberOfStatements + 1; i++) {
+    for (StatementNumber i = 0; i < numberOfStatements + 1; i++) {
         // initiate the adjacency list with 0
         // 0 indicates the lack of a Follows relationship
         followsList->push_back(0);
