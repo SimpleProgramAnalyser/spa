@@ -4,8 +4,8 @@
 
 #include "Follows.h"
 
-void FollowsTable::tryAddBefore(Integer before, StatementType beforeType, StatementType afterType,
-                                ArrayArrayList& aal, ArrayArraySet& aas)
+void FollowsTable::tryAddBefore(Integer before, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
+                                ArrayArraySet& aas)
 {
     // store the before statement into (lists of statements before type afterStmtType)
     auto setBeforeType = &aas[afterType].byType[beforeType];
@@ -15,8 +15,8 @@ void FollowsTable::tryAddBefore(Integer before, StatementType beforeType, Statem
         aal[afterType].byType[beforeType].push_back(before);
     }
 }
-void FollowsTable::tryAddAfter(Integer after, StatementType beforeType, StatementType afterType,
-                               ArrayArrayList& aal, ArrayArraySet& aas)
+void FollowsTable::tryAddAfter(Integer after, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
+                               ArrayArraySet& aas)
 {
     // store the after statement into (lists of statements after type afterStmtType)
     auto setAfterType = &aas[beforeType].byType[afterType];
