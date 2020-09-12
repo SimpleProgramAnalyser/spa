@@ -9,6 +9,13 @@
 
 #include "Types.h"
 
+/*
+ * TODO: Formatted result should be split into 2 classes,
+ * one representing the formatted results for the UI,
+ * and the other for the autotester, as these 2
+ * classes might potentially require different
+ * formats.
+ */
 class FormattedQueryResult {
 public:
     FormattedQueryResult(String results);

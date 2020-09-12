@@ -24,6 +24,14 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
 
     Vector<Vector<String>> reducedRawResults = reduceQueryRawResults(rawResults);
 
+    /*
+     * TODO: For iteration 2, we need to handle this better (in a
+     * more general manner), as there could be multiple entries in
+     * the reducedRawResults (instead of just 1). More specifically,
+     * we need a method which generates the Cartesian product
+     * between the Strings in each Vector<String> for all entries
+     * in Vector<Vector<String>>.a
+     */
     String formattedResults = convertVectorToString(reducedRawResults.at(0));
 
     FormattedQueryResult formattedQueryResult(formattedResults);
