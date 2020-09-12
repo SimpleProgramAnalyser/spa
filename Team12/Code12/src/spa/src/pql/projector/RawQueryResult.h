@@ -8,9 +8,8 @@
 #ifndef SPA_PQL_RAW_QUERY_RESULT_H
 #define SPA_PQL_RAW_QUERY_RESULT_H
 
-#include "pkb/PkbTypes.h"
 #include "Types.h"
-
+#include "pkb/PkbTypes.h"
 
 class RawQueryResult {
 public:
@@ -25,6 +24,7 @@ public:
     Boolean isEmpty();
 
     Boolean operator==(const RawQueryResult& rawQueryResult) const;
+
 private:
     RawQueryResult();
     Vector<Vector<Vector<String>>> results;

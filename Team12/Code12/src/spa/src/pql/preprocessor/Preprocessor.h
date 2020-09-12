@@ -1,8 +1,8 @@
 #ifndef SPA_PQL_PREPROCESSOR_H
 #define SPA_PQL_PREPROCESSOR_H
 
-#include "lexer/Lexer.h"
 #include "AqTypes.h"
+#include "lexer/Lexer.h"
 
 class Preprocessor {
 private:

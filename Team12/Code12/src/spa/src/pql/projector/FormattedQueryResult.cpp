@@ -16,9 +16,7 @@
  * @return A new instance of this class.
  *
  */
-FormattedQueryResult::FormattedQueryResult(String results):
-    results(results)
-{}
+FormattedQueryResult::FormattedQueryResult(String results): results(results) {}
 
 /*
  * Constructs a RawQueryResult instance. This constructor
@@ -28,8 +26,7 @@ FormattedQueryResult::FormattedQueryResult(String results):
  *
  * @return A new instance of this class.
  */
-FormattedQueryResult::FormattedQueryResult()
-{}
+FormattedQueryResult::FormattedQueryResult() {}
 
 /*
  * Returns an instance of an empty FormattedQueryResult object,

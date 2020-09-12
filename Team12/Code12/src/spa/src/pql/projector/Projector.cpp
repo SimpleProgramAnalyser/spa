@@ -2,8 +2,9 @@
  * Implementation of the PQL results projector/formatter.
  */
 
-#include "FormattedQueryResult.h"
 #include "Projector.h"
+
+#include "FormattedQueryResult.h"
 #include "RawQueryResult.h"
 #include "Types.h"
 #include "frontend/parser/StringMatcher.h"
@@ -136,7 +137,6 @@ Vector<String> Projector::reduceQueryRawResultsPerSynonym(Vector<Vector<String>>
                 mergedResults.push_back(str);
             }
         }
-
     }
     return mergedResults;
 }

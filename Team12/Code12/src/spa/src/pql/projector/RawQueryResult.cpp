@@ -3,8 +3,9 @@
  * and some handy (public) methods.
  */
 
-#include "pkb/PkbTypes.h"
 #include "RawQueryResult.h"
+
+#include "pkb/PkbTypes.h"
 
 /*
  * Constructs a RawQueryResult instance. This constructor
@@ -21,9 +22,7 @@
  * @return A new instance of this class.
  *
  */
-RawQueryResult::RawQueryResult(Vector<Vector<Vector<String>>> results):
-    results(results)
-{}
+RawQueryResult::RawQueryResult(Vector<Vector<Vector<String>>> results): results(results) {}
 
 /*
  * Constructs a RawQueryResult instance. This constructor
@@ -33,8 +32,7 @@ RawQueryResult::RawQueryResult(Vector<Vector<Vector<String>>> results):
  *
  * @return A new instance of this class.
  */
-RawQueryResult::RawQueryResult()
-{}
+RawQueryResult::RawQueryResult() {}
 
 /*
  * Returns an instance of an empty RawQueryResult object,

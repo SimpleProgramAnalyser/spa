@@ -1,5 +1,6 @@
-#include "frontend/parser/Parser.h"
 #include "Preprocessor.h"
+
+#include "frontend/parser/Parser.h"
 
 StringPair splitByFirstDelimiter(String str, char c);
 StringVector splitByFirstConsecutiveWhitespace(String str);
