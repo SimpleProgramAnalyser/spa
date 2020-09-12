@@ -9,10 +9,31 @@
 #include <vector>
 
 SemanticErrorsValidator::SemanticErrorsValidator(ProgramNode& progNode):
-    programNode(progNode), adjacencyListOfCalls(progNode.procedureList.size())
-{}
+    programNode(progNode), hasExecutedValidityChecks(false), programValidity(false)
+{
+    // initiate adjacency matrix
+    size_t length = progNode.procedureList.size();
+    adjacencyMatrixOfCalls.reserve(length);
+    for (size_t i = 0; i < length; i++) {
+        adjacencyMatrixOfCalls.push_back(std::vector<bool>());
+        adjacencyMatrixOfCalls.at(i).reserve(length);
+        for (size_t j = 0; j < length; j++) {
+            // initialise all edges to 0
+            adjacencyMatrixOfCalls.at(i).push_back(false);
+        }
+    }
+}
 
 Boolean SemanticErrorsValidator::isProgramValid()
+{
+    if (!hasExecutedValidityChecks) {
+        programValidity = checkForAllSemanticErrors();
+        hasExecutedValidityChecks = true;
+    }
+    return programValidity;
+}
+
+Boolean SemanticErrorsValidator::checkForAllSemanticErrors()
 {
     List<ProcedureNode>* procedureList = &(programNode.procedureList);
 
@@ -33,7 +54,7 @@ Boolean SemanticErrorsValidator::isProgramValid()
         index += 1;
     }
 
-    // Check if call statements call existent procesdures and fill up adj list
+    // Check if call statements call existent procedures and fill up adj list
     size_t numberOfProcs = procedureList->size();
 
     // Go through the statement list to look for call statements
@@ -149,11 +170,11 @@ Void SemanticErrorsValidator::addCallEdge(CallStatementNode* stmtNode,
     int procIndex = getProcNameIndex(procedureNameSet, procedureName);
 
     // Add call procedureName in graph
-    adjacencyListOfCalls.at(currProcNameIndex).push_back(procIndex);
+    adjacencyMatrixOfCalls.at(currProcNameIndex).at(procIndex) = true;
 }
 
 int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, int> procedureNameSet,
-                                              std::string procName)
+                                              const std::string& procName)
 {
     std::unordered_map<std::string, int>::const_iterator procedureIndexPair = procedureNameSet.find(procName);
     // We assume that all procedures exists
@@ -172,11 +193,10 @@ bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack
         recStack[v] = true;
 
         // Recur for all the vertices adjacent to this vertex
-        std::vector<int>::iterator i;
-        for (i = adjacencyListOfCalls.at(v).begin(); i < adjacencyListOfCalls.at(v).end(); i++) {
-            if (!visited[*i] && isCyclicUtil(*i, visited, recStack)) {
-                return true;
-            } else if (recStack[*i]) {
+        size_t length = adjacencyMatrixOfCalls.size();
+        for (size_t i = 0; i < length; i++) {
+            if (adjacencyMatrixOfCalls.at(v).at(i)
+                && (!visited[i] && isCyclicUtil(i, visited, recStack) || recStack[i])) {
                 return true;
             }
         }
@@ -208,4 +228,9 @@ bool SemanticErrorsValidator::isCyclic(size_t procListSize)
     delete[] visited;
     delete[] recStack;
     return false;
+}
+
+std::vector<int> SemanticErrorsValidator::reverseTopologicalSort()
+{
+    return std::vector<int>();
 }
