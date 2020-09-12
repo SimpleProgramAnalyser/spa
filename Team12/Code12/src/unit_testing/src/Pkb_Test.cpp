@@ -1,6 +1,5 @@
 #include "../src/ast/AstTypes.cpp"
 #include "../src/pkb/tables/Tables.cpp"
-#include "TNode.h"
 #include "catch.hpp"
 
 TEST_CASE("2nd Test")

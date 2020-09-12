@@ -478,7 +478,7 @@ procedure computeCentroid {\n\
         cenY = cenY / count;\n\
     }\n\
 \n\
-    normSq = cenX * cenY + cenY * cenY;\n\
+    normSq = cenX * cenX + cenY * cenY;\n\
 }";
 
     /* Annotated multiProcedureProgram with line numbers
@@ -515,7 +515,7 @@ procedure computeCentroid {\n\
     21.      cenX = cenX/ count;
     22.      cenY = cenY / count;
          }
-    23.  normSq = cenX * cenY + cenY * cenY;
+    23.  normSq = cenX * cenX + cenY * cenY;
     }
     */
     return multiProcedureProgram;

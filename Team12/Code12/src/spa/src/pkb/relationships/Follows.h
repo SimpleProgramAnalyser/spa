@@ -3,14 +3,14 @@
 
 #include <pkb/PkbTypes.h>
 
-void addFollowsRelationships(Integer before, Integer after);
-void addFollowsRelationshipsStar(Integer before, Vector<Integer> after);
-
-class BeforeTable {
+/**
+ * Stores Follows, Follows* relationships.
+ */
+class FollowsTable {
 public:
     // writing
-    void addBeforeRelationships(Integer parent, Integer child);
-    void addBeforeRelationshipsStar(Integer parent, Vector<Integer> children);
+    void addFollowsRelationships(Integer parent, Integer child);
+    void addFollowsRelationshipsStar(Integer parent, Vector<Integer> children);
 
     // reading
     Boolean checkIfFollowsHolds(Integer parent, Integer child);
@@ -41,5 +41,4 @@ private:
     Vector<Integer> afterByType[STATEMENT_TYPE_COUNT];
     Vector<Integer> afterStarByType[STATEMENT_TYPE_COUNT];
 };
-
 #endif // SPA_BEFORE_H

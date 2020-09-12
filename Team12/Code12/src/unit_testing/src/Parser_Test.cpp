@@ -25,7 +25,7 @@ TEST_CASE("Parser parses complicated conditional expressions statements correctl
 
 TEST_CASE("Parser parses multiple procedures correctly") {
     ProgramNode* ast = parseSimpleReturnNode(getProgram7String_computeCentroid());
-    (*(ast) == *getProgram7Tree_computeCentroid());
+    REQUIRE(*(ast) == *getProgram7Tree_computeCentroid());
 }
 
 TEST_CASE("Parser parses keywords as identifiers correctly") {}
