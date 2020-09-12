@@ -3,6 +3,9 @@
 
 #include <pkb/PkbTypes.h>
 
+/**
+ * Stores Modifies relationships.
+ */
 class ModifiesTable {
 public:
     // writing
@@ -15,7 +18,7 @@ public:
     Vector<Integer> getModifiesStatements(String varName, StatementType stmtType);
     Vector<String> getModifiesProcedures(String procName);
     Vector<String> getModifiesVariablesFromStatement(Integer stmt);
-    Vector<String> getusesVariablesFromProcedure(String procName);
+    Vector<String> getModifiesVariablesFromProcedure(String procName);
     Vector<Integer> getAllModifiesStatements(StatementType stmtType);
     Vector<String> getAllModifiesVariables(StatementType stmtType);
     Vector<String> getAllModifiesVariables(String procName);

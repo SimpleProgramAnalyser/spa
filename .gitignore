@@ -38,6 +38,9 @@
 
 # CMake
 cmake-build-debug/
+
+# Windows
+build_win/
 build/
 build_win/
 

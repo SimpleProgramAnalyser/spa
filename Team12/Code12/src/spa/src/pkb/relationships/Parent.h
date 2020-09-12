@@ -1,8 +1,11 @@
-#ifndef SPA_USES_H
-#define SPA_USES_H
+#ifndef SPA_PARENT_H
+#define SPA_PARENT_H
 
 #include <pkb/PkbTypes.h>
 
+/**
+ * Stores Parent, Parent* relationships.
+ */
 class ParentTable {
 public:
     // writing
@@ -39,4 +42,4 @@ private:
     Vector<Integer> childStarByType[STATEMENT_TYPE_COUNT];
 };
 
-#endif // SPA_USES_H
+#endif // SPA_PARENT_H

@@ -34,4 +34,10 @@ enum StatementType {
     STATEMENT_TYPE_COUNT
 };
 
+// PQL
+
+enum ErrorType { Syntax = 0, Semantic = 1 };
+
+enum ErrorSource { SimpleProgram = 0, Query = 1 };
+
 #endif // SPA_TYPES_H
