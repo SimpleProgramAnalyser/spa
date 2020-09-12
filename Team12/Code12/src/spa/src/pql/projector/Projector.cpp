@@ -171,7 +171,26 @@ String Projector::convertVectorToString(Vector<String> strList)
 
 FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
 {
-    String formattedResults = "";
+    // TODO: Change to be different from autotester
+    if (rawQueryResult.isEmpty()) {
+        return FormattedQueryResult::emptyFormattedQueryResult();
+    }
+
+    Vector<Vector<Vector<String>>> rawResults = rawQueryResult.getResults();
+
+    Vector<Vector<String>> reducedRawResults = reduceQueryRawResults(rawResults);
+
+    Integer len = reducedRawResults.size();
+    String formattedResults;
+    for (int i = 0; i < len; ++i) {
+        Vector<String> temp = reducedRawResults.at(i);
+        formattedResults += convertVectorToString(temp);
+
+        if (i < len - 1) {
+            formattedResults += PipeStr;
+        }
+    }
+
     FormattedQueryResult formattedQueryResult(formattedResults);
 
     return formattedQueryResult;

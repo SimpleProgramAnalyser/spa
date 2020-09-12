@@ -3,6 +3,8 @@
  */
 #include "FrontendManager.h"
 
+#include <stdexcept>
+
 #include "designExtractor/DesignExtractor.h"
 #include "parser/Parser.h"
 

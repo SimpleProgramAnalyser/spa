@@ -28,6 +28,7 @@ void evaluate(String query)
     PqlManager pqlManager;
 
     FormattedQueryResult result = pqlManager.executeQuery(std::move(query), UiFormat);
+    std::cout << result.getResults() << std::endl;
 }
 
 /**

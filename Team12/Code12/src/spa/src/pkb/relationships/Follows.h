@@ -2,7 +2,8 @@
 #define SPA_BEFORE_H
 
 #include <pkb/PkbTypes.h>
-
+typedef Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> ArrayArrayList;
+typedef Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> ArrayArraySet;
 /**
  * Stores Follows, Follows* relationships.
  */
@@ -12,7 +13,7 @@ public:
     void addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after,
                                  StatementType afterStmtType);
     void addFollowsRelationshipsStar(Integer before, StatementType beforeStmtType,
-                                     Vector<Pair<Integer, StatementType>> afterStmttypePairs);
+                                     const Vector<Pair<Integer, StatementType>>& afterStmttypePairs);
 
     // reading
     Boolean checkIfFollowsHolds(Integer before, Integer after);
@@ -59,5 +60,9 @@ private:
     // since the above is confusing, we have some helper functions.
     void typedShenanigans(Integer before, StatementType beforeType, Integer after, StatementType afterType);
     void typedShenanigansStar(Integer before, StatementType beforeType, Integer after, StatementType afterType);
+    void tryAddBefore(Integer before, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
+                      ArrayArraySet& aas);
+    void tryAddAfter(Integer after, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
+                     ArrayArraySet& aas);
 };
 #endif // SPA_BEFORE_H

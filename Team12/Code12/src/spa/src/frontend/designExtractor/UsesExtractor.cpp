@@ -3,6 +3,7 @@
  */
 #include "UsesExtractor.h"
 
+#include <stdexcept>
 #include <unordered_set>
 
 #include "pkb/PKB.h"

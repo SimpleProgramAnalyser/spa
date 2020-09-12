@@ -2,6 +2,7 @@
  * For PKB's internal use only.
  * Type definitions and shorthands that are used in various components of PKB.
  */
+#include <array>
 #include <ast/AstTypes.h>
 #include <unordered_map>
 #include <unordered_set>
@@ -31,5 +32,4 @@ typedef struct {
 typedef struct {
     Array<HashSet<Integer>, STATEMENT_TYPE_COUNT> byType;
 } StatementNumSetsByType;
-
 #endif // SPA_PKBTYPES_H
