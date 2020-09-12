@@ -14,14 +14,18 @@
 
 class RawQueryResult {
 public:
-    RawQueryResult(Vector<Vector<String>> results);
+    RawQueryResult(Vector<Vector<Vector<String>>> results);
     static RawQueryResult emptyRawQueryResult();
-    Vector<Vector<String>> getResults();
+    /*
+     * TODO: Don't return the whole Vector<Vector<String>>,
+     * implement it like Chester's, get by index only.
+     */
+    Vector<Vector<Vector<String>>> getResults();
 
     Boolean isEmpty();
 private:
     RawQueryResult();
-    Vector<Vector<String>> results;
+    Vector<Vector<Vector<String>>> results;
 };
 
 #endif // SPA_PQL_RAW_QUERY_RESULT_H

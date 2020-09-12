@@ -1,5 +1,5 @@
 /*
- * Tests for the public methods in RawQueryResult.cpp (under pql/projector).
+ * Unit tests for the public methods in RawQueryResult.cpp (under pql/projector).
  * Due to the OOP encapsulation, we cannot retrieve some private members of
  * the classes, and hence assume (give benefit of doubt) that the public
  * method; getResults(), is implemented correctly.

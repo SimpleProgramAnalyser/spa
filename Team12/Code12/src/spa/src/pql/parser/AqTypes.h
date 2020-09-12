@@ -17,7 +17,7 @@
 typedef std::pair<String, String> StringPair;
 
 enum DesignEntityType {
-    StatementType = 0,
+    StmtType = 0,
     ReadType = 1,
     PrintType = 2,
     CallType = 4,
@@ -50,15 +50,15 @@ protected:
     Boolean hasError;
 
 public:
-    virtual ~Clause() = default;
-    Clause(const Clause&) = default;
-    Clause operator=(const Clause&) = delete;
-    Clause(Clause&&) = delete;
-    Clause& operator=(Clause&&) = delete;
     explicit Clause(ClauseType clauseType);
     static Clause* invalidClause(ClauseType clauseType);
     ClauseType getType();
     Boolean isInvalid();
+    Clause(const Clause&) = default;
+    Clause operator=(const Clause&) = delete;
+    Clause(Clause&&) = default;
+    Clause& operator=(Clause&&) = delete;
+    virtual ~Clause() = default;
 };
 
 enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
@@ -182,7 +182,8 @@ public:
     ClauseVector() noexcept;
     static ClauseVector invalidClauseVector();
     Void add(Clause* clause);
-    Clause get(Integer index);
+    Clause* get(Integer index);
+    Integer totalNumClauses();
     Boolean isInvalid();
 };
 

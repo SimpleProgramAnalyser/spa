@@ -20,7 +20,7 @@ DesignEntity::DesignEntity(const String& stringType)
      * these values, don't use 'magic' values.
      */
     if (stringType == "stmt") {
-        type = StatementType;
+        type = StmtType;
     } else if (stringType == "read") {
         type = ReadType;
     } else if (stringType == "print") {
@@ -310,9 +310,14 @@ Void ClauseVector::add(Clause* clause)
     clauses.push_back(clause);
 }
 
-Clause ClauseVector::get(Integer index)
+Clause* ClauseVector::get(Integer index)
 {
-    return *(clauses.at(index));
+    return clauses.at(index);
+}
+
+Integer ClauseVector::totalNumClauses()
+{
+    return clauses.size();
 }
 
 Boolean ClauseVector::isInvalid()

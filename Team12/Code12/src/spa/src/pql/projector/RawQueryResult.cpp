@@ -11,14 +11,17 @@
  * is the only public constructor available for creating a
  * new instance of the object.
  *
- * @param results A list of list of strings, each Vector<String>
- * element in the outer list represents the result of a single
- * synonym (in the PQL 'select').
+ * @param results A Vector<Vector<Vector<String>>>, where each
+ * Vector<Vector<String>> element represents the result of a single
+ * synonym (in the PQL 'select'), evaluated with respect to (all) the
+ * clauses in the query. And within the Vector<Vector<String>>,
+ * each Vector<String> represents the result of a single synonym
+ * evaluated with respect to (only) 1 particular clause (in the query).
  *
  * @return A new instance of this class.
  *
  */
-RawQueryResult::RawQueryResult(Vector<Vector<String>> results):
+RawQueryResult::RawQueryResult(Vector<Vector<Vector<String>>> results):
     results(results)
 {}
 
@@ -51,7 +54,7 @@ RawQueryResult RawQueryResult::emptyRawQueryResult()
  *
  * @return A Vector<Vector<String>> representing the results.
  */
-Vector<Vector<String>> RawQueryResult::getResults()
+Vector<Vector<Vector<String>>> RawQueryResult::getResults()
 {
     return results;
 }

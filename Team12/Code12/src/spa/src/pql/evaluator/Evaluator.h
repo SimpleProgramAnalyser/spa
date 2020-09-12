@@ -15,11 +15,14 @@
 
 class Evaluator {
 public:
-    
     RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
 private:
     Boolean isQueryVacuouslyTrue(AbstractQuery abstractQuery);
-
+    RawQueryResult processQuery(AbstractQuery abstractQuery);
+    Vector<Vector<String>> processQueryClauses(Synonym synonym, ClauseVector clauses, DeclarationTable declarations);
+    Vector<String> processQueryClause(Synonym synonym, Clause* clause, DeclarationTable declarations);
+    Vector<String> processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
+    Vector<String> processQuerySuchThatFollowsClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
 };
 
 #endif // SPA_PQL_EVALUATOR_H
