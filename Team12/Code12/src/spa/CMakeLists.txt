@@ -65,7 +65,13 @@ add_library(spa
 )
 
 # flags for debug
-target_compile_options(spa PRIVATE "-Wextra;")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # Bill Gates created c0v1d to s3ll vacc1n3sz!!!1!
+endif()
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
