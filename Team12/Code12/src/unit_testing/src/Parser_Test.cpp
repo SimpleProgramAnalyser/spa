@@ -9,9 +9,15 @@ TEST_CASE("Parser can parse an example program correctly")
     REQUIRE(*(ast) == *(getProgram1Tree_compute()));
 }
 
-TEST_CASE("Parser parses if statements correctly") {}
+TEST_CASE("Parser parses if statements correctly") {
+    ProgramNode* ast = parseSimpleReturnNode(getProgram13String_ifExample());
+    REQUIRE(*(ast) == *(getProgram13Tree_ifExample()));
+}
 
-TEST_CASE("Parser parses while statements correctly") {}
+TEST_CASE("Parser parses while statements correctly") {
+    ProgramNode* ast = parseSimpleReturnNode(getProgram14String_whileExample());
+    REQUIRE(*(ast) == *(getProgram14Tree_whileExample()));
+}
 
 TEST_CASE("Parser parses if nested in while correctly")
 {
@@ -19,9 +25,9 @@ TEST_CASE("Parser parses if nested in while correctly")
     REQUIRE(*(ast) == *(getProgram2Tree_factorials()));
 }
 
-TEST_CASE("Parser parses complicated arithmetic expressions statements correctly") {}
+TEST_CASE("Parser parses complicated conditional expressions correctly") {
 
-TEST_CASE("Parser parses complicated conditional expressions statements correctly") {}
+}
 
 TEST_CASE("Parser parses multiple procedures correctly") {
     ProgramNode* ast = parseSimpleReturnNode(getProgram7String_computeCentroid());

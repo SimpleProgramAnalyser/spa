@@ -1076,3 +1076,76 @@ ProgramNode* getProgram12Tree_recursivePrintAscending()
 
     return programNode;
 }
+
+String getProgram13String_ifExample()
+{
+    String ifExample = "\
+procedure ifExample {\n\
+\n\
+    if(num1 >= num2) then {\n\
+        num2 = num2 + 1;\n\
+    } else {\n\
+        num1 = num1 + 1;\n\
+    }\n\
+}";
+
+    return ifExample;
+}
+
+ProgramNode* getProgram13Tree_ifExample()
+{
+    List<StatementNode> statements;
+    List<StatementNode> ifStatements;
+    List<StatementNode> elseStatements;
+    // If statements
+    ifStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(2, Variable("num2"), createPlusExpr(createRefExpr("num2"), createRefExpr(1)))));
+    StmtlstNode* ifStmtLstNode = createStmtlstNode(ifStatements);
+    // Else statements
+    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(3, Variable("num1"), createPlusExpr(createRefExpr("num1"), createRefExpr(1)))));
+    StmtlstNode* elseStmtLstNode = createStmtlstNode(elseStatements);
+
+    statements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(1, createGteExpr(createRefExpr("num1"), createRefExpr("num2")), ifStmtLstNode, elseStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* recursivePrintAscendingProcedureNode = createProcedureNode("ifExample", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
+    ProgramNode* programNode = createProgramNode("ifExample", procedureList, 3);
+
+    return programNode;
+}
+
+String getProgram14String_whileExample()
+{
+    String whileExample = "\
+procedure whileExample {\n\
+\n\
+    while(x != 0){\n\
+        x = x * 123;\
+    }\n\
+}";
+
+    return whileExample;
+}
+
+ProgramNode* getProgram14Tree_whileExample()
+{
+    List<StatementNode> statements;
+    List<StatementNode> whileStatements;
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(2, Variable("x"), createTimesExpr(createRefExpr("x"), createRefExpr(123)))));
+    StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
+    statements.push_back(std::unique_ptr<WhileStatementNode>(
+        createWhileNode(1, createNeqExpr(createRefExpr("x"), createRefExpr(0)), whileStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* recursivePrintAscendingProcedureNode = createProcedureNode("whileExample", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
+    ProgramNode* programNode = createProgramNode("whileExample", procedureList, 2);
+
+    return programNode;
+}

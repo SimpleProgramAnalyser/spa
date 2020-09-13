@@ -81,4 +81,14 @@ String getProgram12String_recursivePrintAscending();
 // Program 12: Recursive program
 ProgramNode* getProgram12Tree_recursivePrintAscending();
 
+// Program 13: If statement and assign
+String getProgram13String_ifExample();
+// Program 13: If statement and assign
+ProgramNode* getProgram13Tree_ifExample();
+
+// Program 14: While statement and assign
+String getProgram14String_whileExample();
+// Program 14: While statement and assign
+ProgramNode* getProgram14Tree_whileExample();
+
 #endif // UNIT_TESTING_AST_UTILS_H
