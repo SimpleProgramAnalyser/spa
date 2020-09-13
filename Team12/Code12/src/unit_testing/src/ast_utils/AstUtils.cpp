@@ -1110,9 +1110,9 @@ ProgramNode* getProgram13Tree_ifExample()
         createIfNode(1, createGteExpr(createRefExpr("num1"), createRefExpr("num2")), ifStmtLstNode, elseStmtLstNode)));
 
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
-    ProcedureNode* recursivePrintAscendingProcedureNode = createProcedureNode("ifExample", stmtLstNode);
+    ProcedureNode* ifExampleProcedureNode = createProcedureNode("ifExample", stmtLstNode);
     List<ProcedureNode> procedureList;
-    procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(ifExampleProcedureNode));
     ProgramNode* programNode = createProgramNode("ifExample", procedureList, 3);
 
     return programNode;
@@ -1142,9 +1142,9 @@ ProgramNode* getProgram14Tree_whileExample()
         createWhileNode(1, createNeqExpr(createRefExpr("x"), createRefExpr(0)), whileStmtLstNode)));
 
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
-    ProcedureNode* recursivePrintAscendingProcedureNode = createProcedureNode("whileExample", stmtLstNode);
+    ProcedureNode* whileExampleProcedureNode = createProcedureNode("whileExample", stmtLstNode);
     List<ProcedureNode> procedureList;
-    procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(whileExampleProcedureNode));
     ProgramNode* programNode = createProgramNode("whileExample", procedureList, 2);
 
     return programNode;
@@ -1283,10 +1283,101 @@ ProgramNode* getProgram15Tree_complicatedConditional()
     statements.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(1, predicate, whileStmtLstNode)));
 
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
-    ProcedureNode* recursivePrintAscendingProcedureNode = createProcedureNode("complicatedConditional", stmtLstNode);
+    ProcedureNode* complicatedConditionalProcedureNode = createProcedureNode("complicatedConditional", stmtLstNode);
     List<ProcedureNode> procedureList;
-    procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(complicatedConditionalProcedureNode));
     ProgramNode* programNode = createProgramNode("complicatedConditional", procedureList, 2);
 
     return programNode;
 }
+
+String getProgram16String_keywordsAsIdentifier()
+{
+    String keywordsAsIdentifier = "\
+procedure procedure {\n\
+    read print;\
+    if = (3 + 4) * 3;\n\
+    while (while <= else) {\n\
+        call = call + 1;\n\
+        else = else - if;\n\
+    }\n\
+    call if;\n\
+}\n\
+\n\
+procedure if {\n\
+    print print;\n\
+    read procedure;\n\
+    if (if == then) then{\n\
+        else = then / while;\n\
+    } else {\n\
+        read read;\n\
+    }\n\
+    read = print - procedure;\n\
+}";
+    /* Annotated procedure with line numbers
+procedure procedure {
+1.  read print;
+2.  if = (3 + 4) * 3;
+3.  while (while <= else) {
+4.      call = call + 1;
+5.      else = else - if;
+    }
+6.  call if;
+}
+
+procedure if {
+7.  print print;
+8.  read procedure;
+9.  if (if == then) then{
+10.     else = then / while;
+    } else {
+11.     read read;\n
+    }
+12. read = print - procedure;
+}
+*/
+    return keywordsAsIdentifier;
+}
+
+ProgramNode* getProgram16Tree_keywordsAsIdentifier()
+{
+    List<StatementNode> procedureStatements;
+    List<StatementNode> whileStatements;
+    procedureStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("print"))));
+    procedureStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        2, Variable("if"), createTimesExpr(createPlusExpr(createRefExpr(3), createRefExpr(4)), createRefExpr(3)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(4, Variable("call"), createPlusExpr(createRefExpr("call"), createRefExpr(1)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(5, Variable("else"), createMinusExpr(createRefExpr("else"), createRefExpr("if")))));
+    procedureStatements.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
+        3, createLteExpr(createRefExpr("while"), createRefExpr("else")), createStmtlstNode(whileStatements))));
+    procedureStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(6, "if")));
+
+    List<StatementNode> ifProcedureStatements;
+    List<StatementNode> realIfStatements;
+    List<StatementNode> realElseStatements;
+    ifProcedureStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("print"))));
+    ifProcedureStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(8, Variable("procedure"))));
+    realIfStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(10, Variable("else"), createDivExpr(createRefExpr("then"), createRefExpr("while")))));
+    realElseStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(11, Variable("read"))));
+    ifProcedureStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(9, createEqExpr(createRefExpr("if"), createRefExpr("then")), createStmtlstNode(realIfStatements),
+                     createStmtlstNode(realElseStatements))));
+    ifProcedureStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(12, Variable("read"), createMinusExpr(createRefExpr("print"), createRefExpr("procedure")))));
+
+    StmtlstNode* procStmtLstNode = createStmtlstNode(procedureStatements);
+    ProcedureNode* procedureProcedure = createProcedureNode("procedure", procStmtLstNode);
+    StmtlstNode* ifStmtLstNode = createStmtlstNode(ifProcedureStatements);
+    ProcedureNode* ifProcedure = createProcedureNode("if", ifStmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(procedureProcedure));
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(ifProcedure));
+    ProgramNode* programNode = createProgramNode("procedure", procedureList, 12);
+
+    return programNode;
+}
+
+

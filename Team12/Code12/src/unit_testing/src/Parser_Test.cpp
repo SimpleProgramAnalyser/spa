@@ -54,7 +54,12 @@ TEST_CASE("Parser parses multiple procedures correctly")
     REQUIRE(*(ast) == *getProgram7Tree_computeCentroid());
 }
 
-TEST_CASE("Parser parses keywords as identifiers correctly") {}
+TEST_CASE("Parser parses keywords as identifiers correctly")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram16String_keywordsAsIdentifier());
+    ProgramNode* expected = getProgram16Tree_keywordsAsIdentifier();
+    REQUIRE(*(ast) == *expected);
+}
 
 TEST_CASE("Parser parses variables with same name as procedure") {}
 

@@ -98,4 +98,14 @@ StringList* getProgram15StringList_complicatedConditional();
 // Program 15: Complicated conditional in while
 ProgramNode* getProgram15Tree_complicatedConditional();
 
+// Program 16: Keywords used as identifier
+String getProgram16String_keywordsAsIdentifier();
+// Program 16: Keywords used as identifier
+ProgramNode* getProgram16Tree_keywordsAsIdentifier();
+
+// Program 17: Variable with same name as procedure
+String getProgram17String_sameVariableAndProcedureName();
+// Program 17: Variable with same name as procedure
+ProgramNode* getProgram17Tree_sameVariableAndProcedureName();
+
 #endif // UNIT_TESTING_AST_UTILS_H
