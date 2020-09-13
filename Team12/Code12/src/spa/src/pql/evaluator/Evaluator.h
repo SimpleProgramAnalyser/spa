@@ -18,6 +18,7 @@ public:
     RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
 
 private:
+    const Integer DummyVectorIntRes = 12345;
     Boolean isQueryVacuouslyTrue(ClauseVector clauses);
     Boolean isQueryVacuouslyTrue(Vector<RawResultFromClause> results);
     Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause> results);
@@ -28,6 +29,9 @@ private:
     RawResultFromClause processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
     RawResultFromClause processQuerySuchThatFollowsClause(Synonym synonym, SuchThatClause* stClause,
                                                           DeclarationTable declarations);
+    RawResultFromClause processQuerySuchThatFollowsStarClause(Synonym synonym, SuchThatClause* stClause,
+                                                          DeclarationTable declarations);
+    StatementType mapToStatementType(DesignEntityType entType);
 };
 
 #endif // SPA_PQL_EVALUATOR_H
