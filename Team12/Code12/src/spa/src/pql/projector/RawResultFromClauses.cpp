@@ -7,7 +7,7 @@
 
 /*
  * Constructs a RawResultFromClauses instance,
- * from a Vector<String> as returned directly from the
+ * from a Vector<RawResultFromClauses> 
  * PKB API.
  *
  * Impt Note: This constructor tries to merge similar
@@ -90,6 +90,34 @@ RawResultFromClauses RawResultFromClauses::emptyRawResultFromClauses()
 }
 
 /*
+ * A utility method for converting a the current RawResultFromClauses
+ * (instance) to a string.
+ *
+ * This string would be delimted (depending on delimeter passed in),
+ * where each element corresponds to an element in the vector.
+ *
+ * @param Delimeter The character to delimit results by.
+ *
+ * @return String a comma delimited string
+ */
+String RawResultFromClauses::toString(String delimeter)
+{
+    Integer len = this->count();
+
+    String str;
+
+    for (int i = 0; i < len; ++i) {
+        str += results.at(i);
+
+        if (i < len - 1) {
+            str += delimeter;
+        }
+    }
+
+    return str;
+}
+
+/*
  * Checks if the results list is empty.
  *
  * @return True if results list indeed empty,
@@ -101,12 +129,13 @@ Boolean RawResultFromClauses::isEmpty()
 }
 
 /*
- * Retrieves a particular RawResultFromClause in the
+ * Retrieves a particular String in the
  * Vector, given an index.
  *
  * @param index The index of the vector, to access.
  *
- * @return The sought RawResultFromClauses.
+ * @return The sought RawResultFromClauses
+ * (string form).
  */
 String RawResultFromClauses::get(Integer index)
 {

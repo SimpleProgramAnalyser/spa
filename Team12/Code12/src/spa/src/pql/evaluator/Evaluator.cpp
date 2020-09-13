@@ -115,6 +115,7 @@ RawQueryResult Evaluator::processQuery(AbstractQuery query)
  * RawResultFromClause for more details), evaluated with respect
  * to a particular synonym.
  */
+#include <iostream>
 RawResultFromClauses Evaluator::processQueryClauses(Synonym synonym, ClauseVector clauses, DeclarationTable declarations)
 {
     Vector<RawResultFromClause> results;
@@ -160,6 +161,8 @@ RawResultFromClauses Evaluator::processQueryClauses(Synonym synonym, ClauseVecto
         if (!result.checkIsClauseRelatedToSynonym() && result.isEmpty()) {
             return RawResultFromClauses::emptyRawResultFromClauses();
         }
+
+        results.push_back(result);
     }
 
     /*
@@ -277,6 +280,7 @@ RawResultFromClause Evaluator::processQuerySuchThatClause(Synonym synonym, SuchT
     Reference leftRef = relationship.getLeftRef();
     Reference rightRef = relationship.getRightRef();*/
 
+
     return result;
 }
 
@@ -312,6 +316,38 @@ RawResultFromClause Evaluator::processQuerySuchThatFollowsClause(Synonym synonym
     Reference leftRef = rel.getLeftRef();
     Reference rightRef = rel.getRightRef();
 
+    ReferenceType leftRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = leftRef.getReferenceType();
+
+    /*
+     * Here, we filter by reference types of the follows clause
+     * operands, and there are a few possible combinations,
+     * each of them corresponds to a particular group of
+     * PKB API calls.
+     *
+     * The possible combinations are:
+     * 1. Follows(3, s)
+     *    Where the left operand is an integer
+     *    (line number) and the right operand is
+     *    a synonym.
+     *
+     * 2. Follows(s, 3)
+     *    Where the left operand is a synonym type
+     *    and the left operand is a integer (line
+     *    number).
+     *
+     * 3. Follows(2, 3)
+     *    Both operands are integers.
+     *    (It is not hard to see that the left and right
+     *    operands in this case, would never be related to
+     *    the synonym (as per iteration 1 requirements)).
+     *
+     * (Note: For combination 1 and 2, s could be any
+     * DesignEntityType, e.g, WhileType, StmtType, etc, and
+     * in the event it is an underscore; _, it would be
+     * converted to StmtType)
+     */
+
     /*
      * For follows, we can have _ as the first argument,
      * e.g, Follows(_, 3).
@@ -330,28 +366,41 @@ RawResultFromClause Evaluator::processQuerySuchThatFollowsClause(Synonym synonym
     DesignEntityType rightRefDesignEntityType = rightRefDesignEntity.getType();
 
     /*
-     * Here there are many combinations/possibilities, of the left and
-     * right operands design entity types and we shall (exhaustively)
-     * handle them one-by-one (via a bunch of if-else).
-     *
-     * Upon getting the right combination, we will then call the
-     * PKB API to get the results.
+     * Check if clause is related to synonym, recall that a clause is related to
+     * synonym if and only if at least one of its operands is equals to given
+     * synonym in question.
      */
+    if (leftRef.getValue() == synonym || rightRef.getValue() == synonym) {
+        isClauseRelatedToSynonym = true;
+    }
 
+    /*
+     * Here there are many combinations/possibilities, of the left and
+     * right operands design entity types, however with a hashmap,
+     * we can simplify things.
+     *
+     * The hashmap, would map DesignEntityType (pql/preprocessor/AqTypes.h)
+     * to StatementType (in Types.h).
+     */
+    // leftRefStmtType = hash
     if (leftRefDesignEntityType == StmtType && rightRefDesignEntityType == AssignType) {
-        Vector<Integer> tempResult = getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
-        tempResult.push_back(12345);
-        result = RawResultFromClause::convertToStringVect(tempResult);
-
-        /*
-         * Check if clause is related to synonym, recall that a clause is related to
-         * synonym if and only if at least one of its operands is equals to given
-         * synonym in question.
-         */
-        if (leftRef.getValue() == synonym || rightRef.getValue() == synonym) {
-            isClauseRelatedToSynonym = true;
+        if (leftRef.getValue() == synonym) {
+            /*
+             * If select synonym appeared on the left, examples of such queries include;
+             *     stmt s; assign a; Select s such that Follows(s, a)
+             */
+            Vector<Integer> tempResult = getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement);
+            tempResult.push_back(12345);
+            result = RawResultFromClause::convertToStringVect(tempResult);
+        } else if (rightRef.getValue() == synonym) {
+            /*
+             * If select synonym appeared on the right, examples of such queries include;
+             *     stmt s; assign a; Select s such that Follows(a, s)
+             */
+            Vector<Integer> tempResult = getAllAfterStatementsTyped(AnyStatement, AssignmentStatement);
+            tempResult.push_back(12345);
+            result = RawResultFromClause::convertToStringVect(tempResult);
         }
-        
     }
 
     RawResultFromClause rawResultFromClause(result, isClauseRelatedToSynonym);

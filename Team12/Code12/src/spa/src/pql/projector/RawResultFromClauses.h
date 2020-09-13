@@ -29,6 +29,8 @@ public:
 
     static RawResultFromClauses emptyRawResultFromClauses();
 
+    String toString(String delimeter);
+
     Boolean isEmpty();
 
     String get(Integer index);
