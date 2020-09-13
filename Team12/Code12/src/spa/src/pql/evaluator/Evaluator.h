@@ -18,13 +18,16 @@ public:
     RawQueryResult evaluateQuery(AbstractQuery abstractQuery);
 
 private:
-    Boolean isQueryVacuouslyTrue(AbstractQuery abstractQuery);
+    Boolean isQueryVacuouslyTrue(ClauseVector clauses);
+    Boolean isQueryVacuouslyTrue(Vector<RawResultFromClause> results);
+    Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause> results);
+    RawResultFromClause retrieveResultsForVacuouslyTrueQueries(DesignEntityType entTypeOfSynonym);
     RawQueryResult processQuery(AbstractQuery abstractQuery);
-    Vector<Vector<String>> processQueryClauses(Synonym synonym, ClauseVector clauses, DeclarationTable declarations);
-    Vector<String> processQueryClause(Synonym synonym, Clause* clause, DeclarationTable declarations);
-    Vector<String> processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
-    Vector<String> processQuerySuchThatFollowsClause(Synonym synonym, SuchThatClause* stClause,
-                                                     DeclarationTable declarations);
+    RawResultFromClauses processQueryClauses(Synonym synonym, ClauseVector clauses, DeclarationTable declarations);
+    RawResultFromClause processQueryClause(Synonym synonym, Clause* clause, DeclarationTable declarations);
+    RawResultFromClause processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
+    RawResultFromClause processQuerySuchThatFollowsClause(Synonym synonym, SuchThatClause* stClause,
+                                                          DeclarationTable declarations);
 };
 
 #endif // SPA_PQL_EVALUATOR_H

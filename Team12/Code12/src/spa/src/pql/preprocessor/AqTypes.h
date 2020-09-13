@@ -183,7 +183,7 @@ public:
     static ClauseVector invalidClauseVector();
     Void add(Clause* clause);
     Clause* get(Integer index);
-    Integer totalNumClauses();
+    Integer count();
     Boolean isInvalid();
 };
 

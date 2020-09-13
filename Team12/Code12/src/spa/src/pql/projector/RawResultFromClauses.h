@@ -7,6 +7,14 @@
  * Note: Please do not confuse this class with the
  * RawResultFromClauses class (please read the
  * documentation of that class for more details).
+ *
+ * Impt Note: This constructor tries to merge similar
+ * adjacent RawResultFromClause (entries), hence
+ * it (this constructor) only accepts a results
+ * (Vector<RawResultFromClause>) vector, where
+ * all RawResultFromClause elements are directly
+ * related to the synonym (i.e, isClauseRelatedToSynonym
+ * is true).
  */
 
 #ifndef SPA_PQL_RAW_RESULT_FROM_CLAUSES_H
@@ -19,17 +27,19 @@ class RawResultFromClauses {
 public:
     RawResultFromClauses(Vector<RawResultFromClause> results);
 
+    static RawResultFromClauses emptyRawResultFromClauses();
+
     Boolean isEmpty();
 
-    RawResultFromClause get(Integer index);
+    String get(Integer index);
 
     Integer count();
 
     Boolean operator==(const RawResultFromClauses& rawResultFromClauses) const;
 
 private:
-    // RawResultFromClauses();
-    Vector<RawResultFromClause> results;
+    RawResultFromClauses();
+    Vector<String> results;
 };
 
 #endif // SPA_PQL_RAW_RESULT_FROM_CLAUSES_H

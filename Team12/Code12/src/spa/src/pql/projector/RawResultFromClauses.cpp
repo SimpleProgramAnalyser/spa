@@ -10,6 +10,14 @@
  * from a Vector<String> as returned directly from the
  * PKB API.
  *
+ * Impt Note: This constructor tries to merge similar
+ * adjacent RawResultFromClause (entries), hence
+ * it (this constructor) only accepts a results
+ * (Vector<RawResultFromClause>) vector, where
+ * all RawResultFromClause elements are directly
+ * related to the synonym (i.e, isClauseRelatedToSynonym
+ * is true).
+ *
  * @param results A Vector<RawResultFromClause> representing
  * the raw query results of a all clauses in the query,
  * evaluated with respect to a particular synonym.
@@ -17,9 +25,69 @@
  * @return A new instance of this class.
  *
  */
-RawResultFromClauses::RawResultFromClauses(Vector<RawResultFromClause> results):
-    results{results}
-{}
+RawResultFromClauses::RawResultFromClauses(Vector<RawResultFromClause> results)
+{
+    Vector<String> mergedResults;
+
+    /*
+     * We maintain an unordered_map to keep track
+     * of unique items.
+     */
+    std::unordered_map<String, String> table;
+
+    Integer len1 = results.size();
+
+    for (int i = 0; i < len1; ++i) {
+        RawResultFromClause temp = results.at(i);
+
+
+        Integer len2 = temp.count();
+
+        for (int j = 0; j < len2; ++j) {
+            if (!temp.checkIsClauseRelatedToSynonym()) {
+                /*
+                 * Throw an assert run-time error, please read
+                 * documentation for this class, to understand
+                 * why we are checking for this.
+                 */
+            }
+
+            String str = temp.get(j);
+
+            // If str not added before, add it, else ignore it.
+            std::unordered_map<String, String>::const_iterator got = table.find(str);
+            if (got == table.end()) {
+                table.insert({str, str});
+                mergedResults.push_back(str);
+            }
+        }
+    }
+
+    this->results =  mergedResults;
+}
+
+/*
+ * Constructs a RawResultFromClauses instance. This constructor
+ * is a private constructor for creating a new instance of
+ * the object, to be used internally (e.g, creating
+ * empty RawResultFromClauses objects).
+ *
+ * @return A new instance of this class.
+ */
+RawResultFromClauses::RawResultFromClauses() {}
+
+/*
+ * Returns an instance of an empty RawResultFromClauses object,
+ * this method makes use of the private constructor.
+ *
+ * @return An empty RawResultFromClauses object.
+ */
+RawResultFromClauses RawResultFromClauses::emptyRawResultFromClauses()
+{
+    RawResultFromClauses* rawResultFromClauses = new RawResultFromClauses();
+
+    return *rawResultFromClauses;
+}
 
 /*
  * Checks if the results list is empty.
@@ -40,7 +108,7 @@ Boolean RawResultFromClauses::isEmpty()
  *
  * @return The sought RawResultFromClauses.
  */
-RawResultFromClause RawResultFromClauses::get(Integer index)
+String RawResultFromClauses::get(Integer index)
 {
     return results.at(index);
 }

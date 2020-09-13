@@ -315,7 +315,7 @@ Clause* ClauseVector::get(Integer index)
     return clauses.at(index);
 }
 
-Integer ClauseVector::totalNumClauses()
+Integer ClauseVector::count()
 {
     return clauses.size();
 }

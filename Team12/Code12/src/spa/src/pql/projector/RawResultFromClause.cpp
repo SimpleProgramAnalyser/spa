@@ -11,8 +11,12 @@
  * PKB API.
  *
  * @param results A Vector<String> representing
- * the raw query results of a single clauses in the query,
- * evaluated with respect to a particular synonym.
+ * the raw query results of a single clauses in the query
+ * (this is the also same raw type returned by the PKB
+ * API).
+ * @param isClauseRelatedToSynonym representing
+ * whether the clause/clause result, is related
+ * to the synonym.
  *
  * @return A new instance of this class.
  *
@@ -22,8 +26,32 @@ RawResultFromClause::RawResultFromClause(Vector<String> results, Boolean isClaus
 {}
 
 /*
- * A (private) Utility method to convert an integer vector to a string
- * vector.
+ * Constructs a RawResultFromClause instance. This constructor
+ * is a private constructor for creating a new instance of
+ * the object, to be used internally (e.g, creating
+ * empty RawResultFromClause objects).
+ *
+ * @return A new instance of this class.
+ */
+RawResultFromClause::RawResultFromClause() {}
+
+/*
+ * Returns an instance of an empty RawResultFromClause object,
+ * this method makes use of the private constructor.
+ *
+ * @return An empty RawResultFromClause object.
+ */
+RawResultFromClause RawResultFromClause::emptyRawResultFromClause()
+{
+    RawResultFromClause* rawResultFromClause = new RawResultFromClause();
+
+    return *rawResultFromClause;
+}
+
+/*
+ * A (public) Utility method to convert an integer vector to a string
+ * vector, because the constructor (of this class, only accepts
+ * Vector<String>)
  *
  * @param intList An integer vector to convert.
  *
@@ -46,27 +74,6 @@ Vector<String> RawResultFromClause::convertToStringVect(Vector<Integer> intList)
     return strList;
 }
 
-/*
- * Constructs a RawResultFromClause instance,
- * from a Vector<Integer> as returned directly from the
- * PKB API.
- *
- * @param results A Vector<Integer> representing
- * the raw query results of a single clauses in the query,
- * evaluated with respect to a particular synonym.
- *
- * The constructor, will convert the Vector<Integer>
- * tot Vector<String> for internal representation/
- * storage consistency.
- *
- * @return A new instance of this class.
- *
- */
-RawResultFromClause::RawResultFromClause(Vector<Integer> results, Boolean isClauseRelatedToSynonym)
-{
-    this->isClauseRelatedToSynonym = isClauseRelatedToSynonym;
-    this->results = convertToStringVect(results);
-}
 
 /*
  * Checks if the results list is empty.
@@ -101,6 +108,28 @@ String RawResultFromClause::get(Integer index)
 Integer RawResultFromClause::count()
 {
     return results.size();
+}
+
+/*
+ * Returns true if clause results is indeed related to synonym,
+ * false otherwise.
+ *
+ * Notionally, a clause results is related to the synonym if
+ * and only if at least one of its operands
+ * has the synonym, for e.g,
+ *     statement s1; statement s2;
+ *     Select s1 such that Follows(s1, s2);
+ *
+ * where here it could be observed that synonym
+ * s1 is used in Follows relationship, appearing
+ * there as one of its operands.
+ *
+ * @return True if clause results is related to synonym,
+ * false otherwise.
+ */
+Boolean RawResultFromClause::checkIsClauseRelatedToSynonym()
+{
+    return isClauseRelatedToSynonym;
 }
 
 /*
