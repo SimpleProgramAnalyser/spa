@@ -521,6 +521,98 @@ procedure computeCentroid {\n\
     return multiProcedureProgram;
 }
 
+String getProgram7StringMismatchedBraces_computeCentroid()
+{
+    String mismatchedBraces = "\
+procedure main {\n\
+\n\
+    flag = 0;\n\
+    call computeCentroid;\n\
+    call printResults;\n\
+}\n\
+\n\
+procedure readPoint{\n\
+     read x;\n\
+     read y;\n\
+}\n\
+\n\
+procedure printResults {\n\
+    print flag;\n\
+    print cenX;\n\
+    print cenY;\n\
+    print normSq;\n\
+}\n\
+\n\
+procedure computeCentroid {\n\
+\n\
+    count = 0;\n\
+    cenX = 0;\n\
+    cenY = 0;\n\
+    call readPoint;\n\
+    while((x != 0) && (y != 0)) {\n\
+        count = count + 1;\n\
+        cenX = cenX + x;\n\
+        cenY = cenY + y;\n\
+        call readPoint;\n\
+    }\n\
+    if(count == 0) then " /* missing opening brace here */ "\
+\n        flag = 1;\n\
+    } else {\n\
+        cenX = cenX/ count;\n\
+        cenY = cenY / count;\n\
+    }\n\
+\n\
+    normSq = cenX * cenX + cenY * cenY;\n\
+}";
+    return mismatchedBraces;
+}
+
+String getProgram7StringMismatchedBrackets_computeCentroid()
+{
+    String mismatchedBrackets = "\
+procedure main {\n\
+\n\
+    flag = 0;\n\
+    call computeCentroid;\n\
+    call printResults;\n\
+}\n\
+\n\
+procedure readPoint{\n\
+     read x;\n\
+     read y;\n\
+}\n\
+\n\
+procedure printResults {\n\
+    print flag;\n\
+    print cenX;\n\
+    print cenY;\n\
+    print normSq;\n\
+}\n\
+\n\
+procedure computeCentroid {\n\
+\n\
+    count = 0;\n\
+    cenX = 0;\n\
+    cenY = 0;\n\
+    call readPoint;\n\
+    while((x != 0) && (y != 0" /* missing closing bracket here */ ") {\n\
+        count = count + 1;\n\
+        cenX = cenX + x;\n\
+        cenY = cenY + y;\n\
+        call readPoint;\n\
+    }\n\
+    if(count == 0) then {\n\
+        flag = 1;\n\
+    } else {\n\
+        cenX = cenX/ count;\n\
+        cenY = cenY / count;\n\
+    }\n\
+\n\
+    normSq = cenX * cenX + cenY * cenY;\n\
+}";
+    return mismatchedBrackets;
+}
+
 ProgramNode* getProgram7Tree_computeCentroid()
 {
     List<StatementNode> mainStatements;

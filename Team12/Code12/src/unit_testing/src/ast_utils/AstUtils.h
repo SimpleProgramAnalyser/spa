@@ -53,6 +53,10 @@ ProgramNode* getProgram6Tree_sumDigitDuplicate();
 
 // Program 7: computeCentroid, program with multiple procedures
 String getProgram7String_computeCentroid();
+// Get a syntactically incorrect version of program 7, with mismatched braces
+String getProgram7StringMismatchedBraces_computeCentroid();
+// Get a syntactically incorrect version of program 7, with mismatched brackets
+String getProgram7StringMismatchedBrackets_computeCentroid();
 // Program 7: computeCentroid, program with multiple procedures
 ProgramNode* getProgram7Tree_computeCentroid();
 

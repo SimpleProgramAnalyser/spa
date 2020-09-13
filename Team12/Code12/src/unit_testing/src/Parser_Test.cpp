@@ -184,6 +184,14 @@ TEST_CASE("parseExpression does not work for while statement")
     REQUIRE(parsed == nullptr);
 }
 
-TEST_CASE("Syntax error, mismatched braces") {}
+TEST_CASE("Syntax error, mismatched braces")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram7StringMismatchedBraces_computeCentroid());
+    REQUIRE(ast == nullptr);
+}
 
-TEST_CASE("Syntax error, mismatched brackets") {}
+TEST_CASE("Syntax error, mismatched brackets")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram7StringMismatchedBrackets_computeCentroid());
+    REQUIRE(ast == nullptr);
+}
