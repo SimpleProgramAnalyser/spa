@@ -62,15 +62,23 @@ public:
     virtual Boolean operator==(const Clause& clause);
 };
 
-enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
+enum ReferenceType {
+    SynonymRefType = 0,
+    WildcardRefType = 1,
+    LiteralRefType = 2,
+    IntegerRefType = 4,
+};
+// enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
 
-typedef String ReferenceValue; // TODO: more thought needs to be done on the implementation of ReferenceValue
+typedef String ReferenceValue;
 
 class Reference {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
     Boolean isProcedureType;
+    Boolean hasError;
+    Reference();
 
 public:
     Reference(ReferenceType refType, ReferenceValue refValue);
@@ -79,9 +87,9 @@ public:
     ReferenceValue getValue();
     Boolean isValidEntityRef();
     Boolean isValidStatementRef();
-    Boolean isWildCard();
     Boolean isInvalid();
     Boolean isProcedure();
+    Boolean isWildCard();
     static Reference invalidReference();
     Boolean operator==(const Reference& reference);
 };

@@ -4,44 +4,49 @@
 
 #include "AqTypes.h"
 
+Reference::Reference(): isProcedureType{false}, hasError{false}
+{
+    referenceType = SynonymRefType;
+}
+
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{refValue}, isProcedureType{false}
+    referenceType{refType}, referenceValue{refValue}, isProcedureType{false}, hasError{false}
 {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue, Boolean isProc):
-    referenceType{refType}, referenceValue{refValue}, isProcedureType{isProc}
+    referenceType{refType}, referenceValue{refValue}, isProcedureType{isProc}, hasError{false}
 {}
 
 Reference Reference::invalidReference()
 {
-    Reference r(InvalidRefType, "");
+    Reference r;
+    r.hasError = true;
     return r;
 }
 
 Boolean Reference::isInvalid()
 {
-    return referenceType == InvalidRefType;
+    return hasError;
 }
 
 Boolean Reference::isValidEntityRef()
 {
-    return util::isLiteralIdent(referenceValue) || util::isPossibleIdentifier(referenceValue) || referenceValue == "_";
+    return referenceType == LiteralRefType || referenceType == SynonymRefType || referenceType == WildcardRefType;
 }
 
 Boolean Reference::isValidStatementRef()
 {
-    return util::isPossibleConstant(referenceValue) || util::isPossibleIdentifier(referenceValue)
-           || referenceValue == "_";
-}
-
-Boolean Reference::isWildCard()
-{
-    return referenceValue == "_";
+    return referenceType == IntegerRefType || referenceType == SynonymRefType || referenceType == WildcardRefType;
 }
 
 Boolean Reference::isProcedure()
 {
     return isProcedureType;
+}
+
+Boolean Reference::isWildCard()
+{
+    return referenceType == WildcardRefType;
 }
 
 ReferenceType Reference::getReferenceType()

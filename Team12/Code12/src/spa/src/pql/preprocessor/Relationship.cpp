@@ -27,7 +27,7 @@ Relationship::Relationship(String relationshipRef, Reference leftRef, Reference 
     }
 
     if (relationshipReference == UsesType || relationshipReference == ModifiesType) {
-        if (leftRef.isWildCard() || !rightRef.isValidEntityRef()) {
+        if (leftRef.getReferenceType() == WildcardRefType || !rightRef.isValidEntityRef()) {
             hasError = true;
             return;
         }
