@@ -506,6 +506,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in sub-conditional expression
             return negatedCondition;
         }
+        assert(negatedCondition.nextUnparsedToken
+               == endBracket); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
             std::unique_ptr<ConditionalExpression>(createNotExpr(negatedCondition.astNode.release())),
             /* add one to skip closed bracket */
@@ -545,13 +547,13 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
                 std::unique_ptr<ConditionalExpression>(
                     createAndExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
-                secondCondition.nextUnparsedToken);
+                secondCondition.nextUnparsedToken + 1);
         } else {
             // programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::OrConditionalTag
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
                 std::unique_ptr<ConditionalExpression>(
                     createOrExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
-                secondCondition.nextUnparsedToken);
+                secondCondition.nextUnparsedToken + 1);
         }
     }
 }

@@ -91,4 +91,11 @@ String getProgram14String_whileExample();
 // Program 14: While statement and assign
 ProgramNode* getProgram14Tree_whileExample();
 
+// Program 15: Complicated conditional in while
+String getProgram15String_complicatedConditional();
+// Program 15: Complicated conditional in while
+StringList* getProgram15StringList_complicatedConditional();
+// Program 15: Complicated conditional in while
+ProgramNode* getProgram15Tree_complicatedConditional();
+
 #endif // UNIT_TESTING_AST_UTILS_H

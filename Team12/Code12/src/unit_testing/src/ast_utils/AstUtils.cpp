@@ -1149,3 +1149,144 @@ ProgramNode* getProgram14Tree_whileExample()
 
     return programNode;
 }
+
+String getProgram15String_complicatedConditional()
+{
+    String complicatedConditional = "\
+procedure complicatedConditional {\n\
+\n\
+    while(!((x % 6 - 3 < a) && ((y == z) || (!(b != c + x))))){\n\
+        x = x * 123;\
+    }\n\
+}";
+
+    return complicatedConditional;
+}
+
+StringList* getProgram15StringList_complicatedConditional()
+{
+    auto* complicatedConditional = new StringList(46);
+    auto* str0 = new String("procedure");
+    auto* str1 = new String("complicatedConditional");
+    auto* str2 = new String("{");
+    auto* str3 = new String("while");
+    auto* str4 = new String("(");
+    auto* str5 = new String("!");
+    auto* str6 = new String("(");
+    auto* str7 = new String("(");
+    auto* str8 = new String("x");
+    auto* str9 = new String("%");
+    auto* str10 = new String("6");
+    auto* str11 = new String("-");
+    auto* str12 = new String("3");
+    auto* str13 = new String("<");
+    auto* str14 = new String("a");
+    auto* str15 = new String(")");
+    auto* str16 = new String("&&");
+    auto* str17 = new String("(");
+    auto* str18 = new String("(");
+    auto* str19 = new String("y");
+    auto* str20 = new String("==");
+    auto* str21 = new String("z");
+    auto* str22 = new String(")");
+    auto* str23 = new String("||");
+    auto* str24 = new String("(");
+    auto* str25 = new String("!");
+    auto* str26 = new String("(");
+    auto* str27 = new String("b");
+    auto* str28 = new String("!=");
+    auto* str29 = new String("c");
+    auto* str30 = new String("+");
+    auto* str31 = new String("x");
+    auto* str32 = new String(")");
+    auto* str33 = new String(")");
+    auto* str34 = new String(")");
+    auto* str35 = new String(")");
+    auto* str36 = new String(")");
+    auto* str37 = new String("{");
+    auto* str38 = new String("x");
+    auto* str39 = new String("=");
+    auto* str40 = new String("x");
+    auto* str41 = new String("*");
+    auto* str42 = new String("123");
+    auto* str43 = new String(";");
+    auto* str44 = new String("}");
+    auto* str45 = new String("}");
+
+    complicatedConditional->at(0) = std::unique_ptr<std::string>(str0);
+    complicatedConditional->at(1) = std::unique_ptr<std::string>(str1);
+    complicatedConditional->at(2) = std::unique_ptr<std::string>(str2);
+    complicatedConditional->at(3) = std::unique_ptr<std::string>(str3);
+    complicatedConditional->at(4) = std::unique_ptr<std::string>(str4);
+    complicatedConditional->at(5) = std::unique_ptr<std::string>(str5);
+    complicatedConditional->at(6) = std::unique_ptr<std::string>(str6);
+    complicatedConditional->at(7) = std::unique_ptr<std::string>(str7);
+    complicatedConditional->at(8) = std::unique_ptr<std::string>(str8);
+    complicatedConditional->at(9) = std::unique_ptr<std::string>(str9);
+    complicatedConditional->at(10) = std::unique_ptr<std::string>(str10);
+    complicatedConditional->at(11) = std::unique_ptr<std::string>(str11);
+    complicatedConditional->at(12) = std::unique_ptr<std::string>(str12);
+    complicatedConditional->at(13) = std::unique_ptr<std::string>(str13);
+    complicatedConditional->at(14) = std::unique_ptr<std::string>(str14);
+    complicatedConditional->at(15) = std::unique_ptr<std::string>(str15);
+    complicatedConditional->at(16) = std::unique_ptr<std::string>(str16);
+    complicatedConditional->at(17) = std::unique_ptr<std::string>(str17);
+    complicatedConditional->at(18) = std::unique_ptr<std::string>(str18);
+    complicatedConditional->at(19) = std::unique_ptr<std::string>(str19);
+    complicatedConditional->at(20) = std::unique_ptr<std::string>(str20);
+    complicatedConditional->at(21) = std::unique_ptr<std::string>(str21);
+    complicatedConditional->at(22) = std::unique_ptr<std::string>(str22);
+    complicatedConditional->at(23) = std::unique_ptr<std::string>(str23);
+    complicatedConditional->at(24) = std::unique_ptr<std::string>(str24);
+    complicatedConditional->at(25) = std::unique_ptr<std::string>(str25);
+    complicatedConditional->at(26) = std::unique_ptr<std::string>(str26);
+    complicatedConditional->at(27) = std::unique_ptr<std::string>(str27);
+    complicatedConditional->at(28) = std::unique_ptr<std::string>(str28);
+    complicatedConditional->at(29) = std::unique_ptr<std::string>(str29);
+    complicatedConditional->at(30) = std::unique_ptr<std::string>(str30);
+    complicatedConditional->at(31) = std::unique_ptr<std::string>(str31);
+    complicatedConditional->at(32) = std::unique_ptr<std::string>(str32);
+    complicatedConditional->at(33) = std::unique_ptr<std::string>(str33);
+    complicatedConditional->at(34) = std::unique_ptr<std::string>(str34);
+    complicatedConditional->at(35) = std::unique_ptr<std::string>(str35);
+    complicatedConditional->at(36) = std::unique_ptr<std::string>(str36);
+    complicatedConditional->at(37) = std::unique_ptr<std::string>(str37);
+    complicatedConditional->at(38) = std::unique_ptr<std::string>(str38);
+    complicatedConditional->at(39) = std::unique_ptr<std::string>(str39);
+    complicatedConditional->at(40) = std::unique_ptr<std::string>(str40);
+    complicatedConditional->at(41) = std::unique_ptr<std::string>(str41);
+    complicatedConditional->at(42) = std::unique_ptr<std::string>(str42);
+    complicatedConditional->at(43) = std::unique_ptr<std::string>(str43);
+    complicatedConditional->at(44) = std::unique_ptr<std::string>(str44);
+    complicatedConditional->at(45) = std::unique_ptr<std::string>(str45);
+
+    return complicatedConditional;
+}
+
+ProgramNode* getProgram15Tree_complicatedConditional()
+{
+    ConditionalExpression* notNeqExpression
+        = createNotExpr(createNeqExpr(createRefExpr("b"), createPlusExpr(createRefExpr("c"), createRefExpr("x"))));
+    ConditionalExpression* eqExpression = createEqExpr(createRefExpr("y"), createRefExpr("z"));
+    ConditionalExpression* orExpression = createOrExpr(eqExpression, notNeqExpression);
+    Expression* minusExpression
+        = createMinusExpr(createModExpr(createRefExpr("x"), createRefExpr(6)), createRefExpr(3));
+    ConditionalExpression* gtExpression = createLtExpr(minusExpression, createRefExpr("a"));
+    ConditionalExpression* andExpression = createAndExpr(gtExpression, orExpression);
+    ConditionalExpression* predicate = createNotExpr(andExpression);
+
+    List<StatementNode> statements;
+    List<StatementNode> whileStatements;
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(2, Variable("x"), createTimesExpr(createRefExpr("x"), createRefExpr(123)))));
+    StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
+    statements.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(1, predicate, whileStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* recursivePrintAscendingProcedureNode = createProcedureNode("complicatedConditional", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
+    ProgramNode* programNode = createProgramNode("complicatedConditional", procedureList, 2);
+
+    return programNode;
+}
