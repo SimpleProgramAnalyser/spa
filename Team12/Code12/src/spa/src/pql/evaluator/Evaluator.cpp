@@ -229,7 +229,6 @@ RawResultFromClause Evaluator::processQueryClause(Synonym synonym, Clause* claus
         SuchThatClause* stClause = dynamic_cast<SuchThatClause*>(clause);
 
         result = processQuerySuchThatClause(synonym, stClause, declarations);
-
     } else if (clause->getType() == PatternClauseType) {
     }
 
@@ -318,7 +317,7 @@ RawResultFromClause Evaluator::processQuerySuchThatFollowsClause(Synonym synonym
     Reference rightRef = rel.getRightRef();
 
     ReferenceType leftRefType = leftRef.getReferenceType();
-    ReferenceType rightRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = rightRef.getReferenceType();
 
     /*
      * Here, we filter by reference types of the follows clause
@@ -633,7 +632,7 @@ RawResultFromClause Evaluator::processQuerySuchThatFollowsStarClause(Synonym syn
     Reference rightRef = rel.getRightRef();
 
     ReferenceType leftRefType = leftRef.getReferenceType();
-    ReferenceType rightRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = rightRef.getReferenceType();
 
     /*
      * Here, we filter by reference types of the follows clause
