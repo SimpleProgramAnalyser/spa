@@ -1380,4 +1380,71 @@ ProgramNode* getProgram16Tree_keywordsAsIdentifier()
     return programNode;
 }
 
+String getProgram17String_sameVariableAndProcedureName()
+{
+    String procedureString = "\
+procedure procedure {\n\
+    procedure = procedure % procedure;\n\
+    read call;\n\
+    call call;\n\
+}\n\
+\n\
+procedure call {\n\
+    procedure = procedure * 1;\n\
+    string = 43110;\n\
+    call string;\n\
+}\n\
+\n\
+procedure string {\n\
+    print string;\n\
+}\n\
+";
+    /* Annotated procedure with line numbers
+procedure procedure {
+1.  procedure = procedure % procedure;
+2.  read call;
+3.  call call;
+}
 
+procedure call {
+4.  procedure = procedure * 1;
+5.  string = 43110;
+6.  call string;
+}
+
+procedure string {
+7.  print string;
+}
+    */
+    return procedureString;
+}
+
+ProgramNode* getProgram17Tree_sameVariableAndProcedureName()
+{
+    List<StatementNode> procedureStatements;
+    List<StatementNode> callStatements;
+    List<StatementNode> stringStatements;
+    procedureStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        1, Variable("procedure"), createModExpr(createRefExpr("procedure"), createRefExpr("procedure")))));
+    procedureStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(2, Variable("call"))));
+    procedureStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(3, "call")));
+
+    callStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(4, Variable("procedure"), createTimesExpr(createRefExpr("procedure"), createRefExpr(1)))));
+    callStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("string"), createRefExpr(43110))));
+    callStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(6, "string")));
+
+    stringStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("string"))));
+
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(
+        std::unique_ptr<ProcedureNode>(createProcedureNode("procedure", createStmtlstNode(procedureStatements))));
+    procedureList.push_back(
+        std::unique_ptr<ProcedureNode>(createProcedureNode("call", createStmtlstNode(callStatements))));
+    procedureList.push_back(
+        std::unique_ptr<ProcedureNode>(createProcedureNode("string", createStmtlstNode(stringStatements))));
+    ProgramNode* programNode = createProgramNode("procedure", procedureList, 7);
+
+    return programNode;
+}

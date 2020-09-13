@@ -58,10 +58,15 @@ TEST_CASE("Parser parses keywords as identifiers correctly")
 {
     ProgramNode* ast = parseSimpleReturnNode(getProgram16String_keywordsAsIdentifier());
     ProgramNode* expected = getProgram16Tree_keywordsAsIdentifier();
-    REQUIRE(*(ast) == *expected);
+    REQUIRE(*(ast) == *(expected));
 }
 
-TEST_CASE("Parser parses variables with same name as procedure") {}
+TEST_CASE("Parser parses variables with same name as procedure")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram17String_sameVariableAndProcedureName());
+    ProgramNode* expected = getProgram17Tree_sameVariableAndProcedureName();
+    REQUIRE(*(ast) == *(expected));
+}
 
 TEST_CASE("parseExpression works for plus expression")
 {
