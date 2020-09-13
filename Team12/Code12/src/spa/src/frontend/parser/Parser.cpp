@@ -506,8 +506,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in sub-conditional expression
             return negatedCondition;
         }
-        assert(negatedCondition.nextUnparsedToken
-               == endBracket); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        assert(negatedCondition.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+               == endBracket);
         return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
             std::unique_ptr<ConditionalExpression>(createNotExpr(negatedCondition.astNode.release())),
             /* add one to skip closed bracket */
