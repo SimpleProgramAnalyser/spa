@@ -717,7 +717,7 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
             && programTokens->at(tokenPointer)->tokenTag == frontend::BracketClosedTag
             && tokenPointer - 1 > startIndex + 2) {
 
-            loopControlCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 2);
+            loopControlCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 1);
         } else {
             // syntax error in while condition
             return getSyntaxError<WhileStatementNode>();
