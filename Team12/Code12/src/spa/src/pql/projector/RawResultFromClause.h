@@ -13,10 +13,13 @@
 #define SPA_PQL_RAW_RESULT_FROM_CLAUSE_H
 
 #include "Types.h"
+#include "pkb/PkbTypes.h"
 
 class RawResultFromClause {
 public:
     RawResultFromClause(Vector<String> results, Boolean isClauseRelatedToSynonym);
+
+    RawResultFromClause(Vector<Integer> results, Boolean isClauseRelatedToSynonym);
 
     Boolean isEmpty();
 
@@ -25,8 +28,8 @@ public:
     Integer count();
 
     Boolean operator==(const RawResultFromClause& rawResultFromClause) const;
-
 private:
+    Vector<String> convertToStringVect(Vector<Integer> intList);
     // RawResultFromClause();
     Boolean isClauseRelatedToSynonym;
     Vector<String> results;

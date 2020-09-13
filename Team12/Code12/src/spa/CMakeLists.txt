@@ -74,6 +74,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawResultFromClause.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawResultFromClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawResultFromClauses.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawResultFromClauses.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp

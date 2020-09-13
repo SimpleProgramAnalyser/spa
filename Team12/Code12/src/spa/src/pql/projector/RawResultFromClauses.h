@@ -17,7 +17,7 @@
 
 class RawResultFromClauses {
 public:
-    RawResultFromClause(Vector<RawResultFromClause>);
+    RawResultFromClauses(Vector<RawResultFromClause> results);
 
     Boolean isEmpty();
 

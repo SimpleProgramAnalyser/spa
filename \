@@ -1,0 +1,52 @@
+/**
+ * Implementation of the RawQueryResult class,
+ * and some handy (public) methods.
+ */
+
+#include "RawResultFromClause.h"
+
+/*
+ * Constructs a RawResultFromClause instance,
+ * from a Vector<String> as returned directly from the
+ * PKB API.
+ *
+ * @param results A Vector<String> representing
+ * the raw query results of a single clauses in the query,
+ * evaluated with respect to a particular synonym.
+ *
+ * @return A new instance of this class.
+ *
+ */
+RawResultFromClause::RawResultFromClause(Vector<String> results, Boolean isClauseRelatedToSynonym):
+    results{results}, isClauseRelatedToSynonym{isClauseRelatedToSynonym}
+{}
+
+/*
+ * Constructs a RawResultFromClause instance,
+ * from a Vector<Integer> as returned directly from the
+ * PKB API.
+ *
+ * @param results A Vector<Integer> representing
+ * the raw query results of a single clauses in the query,
+ * evaluated with respect to a particular synonym.
+ *
+ * @return A new instance of this class.
+ *
+ */
+RawResultFromClause::RawResultFromClause(Vector<Integer> results, Boolean isClauseRelatedToSynonym):
+    results{results}, isClauseRelatedToSynonym{isClauseRelatedToSynonym}
+{
+}
+/*
+ * Checks if the results list is empty, there are 2
+ * scenarios this could happen. Either, the
+ * query is invalid or there are indeed no results
+ * from query.
+ *
+ * @return True if results list indeed empty,
+ * false otherwise.
+ */
+Boolean RawQueryResult::isEmpty()
+{
+    return results.empty();
+}
