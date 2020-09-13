@@ -10,7 +10,7 @@
 #include "pql/evaluator/Evaluator.h"
 #include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
-
+/*
 TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> empty results vector")
 {
     // === Test set-up ===
@@ -292,4 +292,4 @@ TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> mult
 
     // === Check expected test results ===
     REQUIRE(equality == expectedEquality);
-}
+}*/

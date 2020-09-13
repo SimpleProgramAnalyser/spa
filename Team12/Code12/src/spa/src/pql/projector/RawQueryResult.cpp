@@ -22,7 +22,7 @@
  * @return A new instance of this class.
  *
  */
-RawQueryResult::RawQueryResult(Vector<Vector<Vector<String>>> results): results(results) {}
+// RawQueryResult::RawQueryResult(Vector<Vector<Vector<String>>> results): results(results) {}
 
 /*
  * Constructs a RawQueryResult instance. This constructor
@@ -52,10 +52,10 @@ RawQueryResult RawQueryResult::emptyRawQueryResult()
  *
  * @return A Vector<Vector<String>> representing the results.
  */
-Vector<Vector<Vector<String>>> RawQueryResult::getResults()
+/*Vector<Vector<Vector<String>>> RawQueryResult::getResults()
 {
     return results;
-}
+}*/
 
 /*
  * Checks if the results list is empty, there are 2
@@ -66,10 +66,10 @@ Vector<Vector<Vector<String>>> RawQueryResult::getResults()
  * @return True if results list indeed empty,
  * false otherwise.
  */
-Boolean RawQueryResult::isEmpty()
+/*Boolean RawQueryResult::isEmpty()
 {
     return results.empty();
-}
+}*/
 
 /*
  * Determines when 2 RawQueryResult objects are equal.
@@ -85,7 +85,7 @@ Boolean RawQueryResult::isEmpty()
  *
  * @return Boolean, true if equals, false otherwise.
  */
-Boolean RawQueryResult::operator==(const RawQueryResult& rawQueryResult) const
+/*Boolean RawQueryResult::operator==(const RawQueryResult& rawQueryResult) const
 {
     return this->results == rawQueryResult.results;
-}
+}*/
