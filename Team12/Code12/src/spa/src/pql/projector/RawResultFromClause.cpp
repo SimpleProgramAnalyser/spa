@@ -148,5 +148,5 @@ Boolean RawResultFromClause::checkIsClauseRelatedToSynonym()
  */
 Boolean RawResultFromClause::operator==(const RawResultFromClause& rawResultFromClause) const
 {
-   return this->results == rawResultFromClause.results;
+   return this->results == rawResultFromClause.results && this->isClauseRelatedToSynonym == rawResultFromClause.isClauseRelatedToSynonym;
 }
