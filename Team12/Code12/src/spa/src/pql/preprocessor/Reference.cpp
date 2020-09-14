@@ -4,17 +4,17 @@
 
 #include "AqTypes.h"
 
-Reference::Reference(): isProcedureType{false}, hasError{false}
+Reference::Reference(): designEntity{}, hasError{false}
 {
     referenceType = SynonymRefType;
 }
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{refValue}, isProcedureType{false}, hasError{false}
+    referenceType{refType}, referenceValue{refValue}, designEntity{}, hasError{false}
 {}
 
-Reference::Reference(ReferenceType refType, ReferenceValue refValue, Boolean isProc):
-    referenceType{refType}, referenceValue{refValue}, isProcedureType{isProc}, hasError{false}
+Reference::Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt):
+    referenceType{refType}, referenceValue{refValue}, designEntity{designEnt}, hasError{false}
 {}
 
 Reference Reference::invalidReference()
@@ -41,10 +41,16 @@ Boolean Reference::isValidStatementRef()
 
 Boolean Reference::isProcedure()
 {
-    return isProcedureType;
+    return designEntity.getType() == ProcedureType;
 }
 
-Boolean Reference::isWildCard()
+Boolean Reference::isNonStatementSynonym()
+{
+    DesignEntityType designEntityType = designEntity.getType();
+    return designEntityType == ProcedureType || designEntityType == VariableType || designEntityType == ConstantType;
+}
+
+Boolean Reference::isWildCard() // TODO: phase out
 {
     return referenceType == WildcardRefType;
 }
@@ -59,7 +65,13 @@ ReferenceValue Reference::getValue()
     return referenceValue;
 }
 
+DesignEntity Reference::getDesignEntity()
+{
+    return designEntity;
+}
+
 Boolean Reference::operator==(const Reference& reference)
 {
-    return this->referenceType == reference.referenceType && this->referenceValue == referenceValue;
+    return this->referenceType == reference.referenceType && this->referenceValue == referenceValue
+           && this->designEntity == reference.designEntity;
 }

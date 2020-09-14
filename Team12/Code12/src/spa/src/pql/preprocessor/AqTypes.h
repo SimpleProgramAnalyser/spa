@@ -36,6 +36,7 @@ private:
     DesignEntityType type;
 
 public:
+    DesignEntity();
     explicit DesignEntity(DesignEntityType designEntityType);
     explicit DesignEntity(const String& stringType);
     DesignEntityType getType();
@@ -68,7 +69,6 @@ enum ReferenceType {
     LiteralRefType = 2,
     IntegerRefType = 4,
 };
-// enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
 
 typedef String ReferenceValue;
 
@@ -76,20 +76,23 @@ class Reference {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
-    Boolean isProcedureType;
+    //    Boolean isProcedureType;
+    DesignEntity designEntity;
     Boolean hasError;
     Reference();
 
 public:
     Reference(ReferenceType refType, ReferenceValue refValue);
-    Reference(ReferenceType refType, ReferenceValue refValue, Boolean isProc);
+    Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt);
     ReferenceType getReferenceType();
+    DesignEntity getDesignEntity();
     ReferenceValue getValue();
     Boolean isValidEntityRef();
     Boolean isValidStatementRef();
     Boolean isInvalid();
     Boolean isProcedure();
     Boolean isWildCard();
+    Boolean isNonStatementSynonym();
     static Reference invalidReference();
     Boolean operator==(const Reference& reference);
 };
@@ -122,6 +125,8 @@ public:
     Reference getRightRef();
     Boolean isInvalid();
     static RelationshipReferenceType getRelRefType(String relRef);
+    static Boolean validateRelationshipSemantics(RelationshipReferenceType relationshipReferenceType, Reference leftRef,
+                                                 Reference rightRef);
     Boolean operator==(const Relationship& relationship);
 };
 
@@ -209,7 +214,6 @@ private:
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
-    AbstractQuery();
 
 public:
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
@@ -219,6 +223,7 @@ public:
     DeclarationTable getDeclarationTable();
     Boolean isInvalid();
     Boolean operator==(const AbstractQuery& abstractQuery);
+    AbstractQuery();
 };
 
 // Utils

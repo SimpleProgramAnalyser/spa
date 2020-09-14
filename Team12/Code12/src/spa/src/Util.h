@@ -30,8 +30,9 @@ bool checkListValuesEqual(const List<T>& first, const List<T>& second)
     return allMatch;
 }
 
-template<typename T>
-Boolean checkVectorOfPointersEqual(const std::vector<T>& first, const std::vector<T>& second) {
+template <typename T>
+Boolean checkVectorOfPointersEqual(const std::vector<T>& first, const std::vector<T>& second)
+{
     if (first.size() != second.size()) {
         return false;
     }
@@ -53,6 +54,7 @@ Boolean isPossibleIdentifier(const String& str);
 Boolean isPossibleConstant(const String& str);
 Boolean isRelationshipReference(const String& str);
 Boolean isLiteralIdent(const String& str);
+String removeCharFromBothEnds(String str);
 } // namespace util
 
 #endif // SPA_UTIL_H
