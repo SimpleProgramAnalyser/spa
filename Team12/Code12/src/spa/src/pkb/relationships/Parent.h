@@ -9,17 +9,19 @@
 class ParentTable {
 public:
     // writing
-    void addParentRelationships(Integer parent, Integer child);
-    void addParentRelationshipsStar(Integer parent, Vector<Integer> children);
+    void addParentRelationships(Integer parent, StatementType parentStmtType, Integer child,
+                                StatementType childStmtType);
+    void addParentRelationshipsStar(Integer parent, StatementType parentStmtType,
+                                    const Vector<StatementNumWithType>& childStmttypePairs);
 
     // reading
     Boolean checkIfParentHolds(Integer parent, Integer child);
     Boolean checkIfParentHoldsStar(Integer parent, Integer child);
 
-    Vector<Integer> getAllChildStatements(Integer parent, StatementType stmtType);
-    Vector<Integer> getAllParentStatements(Integer parent, StatementType stmtType);
+    Vector<StatementNumWithType> getChildStatement(Integer parent);
+    Vector<StatementNumWithType> getParentStatement(Integer child);
     Vector<Integer> getAllChildStatementsStar(Integer parent, StatementType stmtType);
-    Vector<Integer> getAllParentStatementsStar(Integer parent, StatementType stmtType);
+    Vector<Integer> getAllParentStatementsStar(Integer child, StatementType stmtType);
 
     Vector<Integer> getAllParentStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
     Vector<Integer> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
@@ -27,19 +29,40 @@ public:
     Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 
 private:
-    HashMap<Integer, Integer> stmtParentMap;
-    HashMap<Integer, Integer> stmtChildMap;
+    // to check if Parent(*)(x, y) holds
+    HashMap<Integer, StatementNumWithType> stmtParentMap;
+    HashMap<Integer, StatementNumWithType> stmtChildMap;
+    HashMap<Integer, HashSet<Integer>> stmtParentstarsetMap;
+    HashMap<Integer, HashSet<Integer>> stmtChildstarsetMap;
 
+    // statements parent/child given statement, sorted by type
     HashMap<Integer, StatementNumVectorsByType> stmtParentstarlistMap;
     HashMap<Integer, StatementNumVectorsByType> stmtChildstarlistMap;
 
-    HashMap<Integer, HashSet<Integer>> stmtParentstarMap;
-    HashMap<Integer, HashSet<Integer>> stmtChildstarMap;
+    // WARNING: potential confusion
+    // stmtParentType:
+    /**
+     * | StmtType | Statements parent this type |
+     * | Assign   | Assign: 1, 2; While: 3      |
+     */
+    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentType;
+    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentStarType;
+    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildType;
+    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildStarType;
 
-    Vector<Integer> parentByType[STATEMENT_TYPE_COUNT];
-    Vector<Integer> parentStarByType[STATEMENT_TYPE_COUNT];
-    Vector<Integer> childByType[STATEMENT_TYPE_COUNT];
-    Vector<Integer> childStarByType[STATEMENT_TYPE_COUNT];
+    // hashsets to prevent duplication in lists above
+    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentTypeSet;
+    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentStarTypeSet;
+    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtChildTypeSet;
+    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtChildStarTypeSet;
+
+    // since the above is confusing, we have some helper functions.
+    void typedShenanigans(Integer parent, StatementType parentType, Integer child, StatementType childType);
+    void typedShenanigansStar(Integer parent, StatementType parentType, Integer child, StatementType childType);
+    static void tryAddParent(Integer parent, StatementType parentType, StatementType childType, ArrayArrayList& aal,
+                             ArrayArraySet& aas);
+    static void tryAddChild(Integer child, StatementType parentType, StatementType childType, ArrayArrayList& aal,
+                            ArrayArraySet& aas);
 };
 
 #endif // SPA_PARENT_H

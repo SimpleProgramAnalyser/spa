@@ -53,7 +53,9 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h

@@ -10,18 +10,18 @@ class ModifiesTable {
 public:
     // writing
     void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames);
-    void addModifiesRelationships(String procName, Vector<String> varNames);
+    void addModifiesRelationships(const String& procName, Vector<String> varNames);
 
     // reading
-    String checkIfProcedureModifies(String procName, String varName);
-    Integer checkIfStatementModifies(Integer stmt, String varName);
-    Vector<Integer> getModifiesStatements(String varName, StatementType stmtType);
-    Vector<String> getModifiesProcedures(String procName);
+    Boolean checkIfProcedureModifies(const String& procName, const String& varName);
+    Boolean checkIfStatementModifies(Integer stmt, const String& varName);
+    Vector<Integer> getModifiesStatements(const String& varName, StatementType stmtType);
+    Vector<String> getModifiesProcedures(const String& procName);
     Vector<String> getModifiesVariablesFromStatement(Integer stmt);
-    Vector<String> getModifiesVariablesFromProcedure(String procName);
+    Vector<String> getModifiesVariablesFromProcedure(const String& procName);
     Vector<Integer> getAllModifiesStatements(StatementType stmtType);
     Vector<String> getAllModifiesVariables(StatementType stmtType);
-    Vector<String> getAllModifiesVariables(String procName);
+    Vector<String> getAllModifiesVariables(const String& procName);
     Vector<String> getAllModifiesProcedures();
 
 private:
@@ -38,14 +38,14 @@ private:
     HashMap<String, Vector<String>> varProclistMap;
 
     // for getAllVar
-    Vector<String> stmttypeVarlistMap[STATEMENT_TYPE_COUNT];
+    Array<Vector<String>, STATEMENT_TYPE_COUNT> stmttypeVarlistMap;
     HashSet<String> allVarUsedByProc;
 
     // for getAllStmt
-    Vector<Integer> stmttypeStmtlistMap[STATEMENT_TYPE_COUNT];
+    Array<Vector<Integer>, STATEMENT_TYPE_COUNT> stmttypeStmtlistMap;
 
     // for getAllProcedure
-    HashSet<String> allModifiesProc;
+    Vector<String> allModifiesProc;
 };
 
 #endif // SPA_MODIFIES_H

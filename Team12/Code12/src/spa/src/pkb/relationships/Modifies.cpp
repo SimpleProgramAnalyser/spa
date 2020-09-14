@@ -1,6 +1,6 @@
-#include "Uses.h"
+#include "Modifies.h"
 
-void UsesTable::addUsesRelationships(const String& procName, Vector<String> varNames)
+void ModifiesTable::addModifiesRelationships(const String& procName, Vector<String> varNames)
 {
     // add to procVarsetMap
     procVarsetMap[procName].insert(varNames.begin(), varNames.end());
@@ -18,11 +18,11 @@ void UsesTable::addUsesRelationships(const String& procName, Vector<String> varN
     // add to allVarUsedByProc
     allVarUsedByProc.insert(varNames.begin(), varNames.end());
 
-    // add to allUsesProc
-    allUsesProc.push_back(procName);
+    // add to allModifiesProc
+    allModifiesProc.push_back(procName);
 }
 
-void UsesTable::addUsesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
+void ModifiesTable::addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
 {
     // add to stmtVarsetMap
     stmtVarsetMap[stmtNum].insert(varNames.begin(), varNames.end());
@@ -48,46 +48,46 @@ void UsesTable::addUsesRelationships(Integer stmtNum, StatementType stmtType, Ve
     stmttypeStmtlistMap[StatementType::AnyStatement].push_back(stmtNum);
 }
 
-Boolean UsesTable::checkIfProcedureUses(const String& procName, const String& varName)
+Boolean ModifiesTable::checkIfProcedureModifies(const String& procName, const String& varName)
 {
     auto varSet = procVarsetMap[procName];
     return varSet.find(varName) != varSet.end();
 }
 
-Boolean UsesTable::checkIfStatementUses(Integer stmt, const String& varName)
+Boolean ModifiesTable::checkIfStatementModifies(Integer stmt, const String& varName)
 {
     auto varSet = stmtVarsetMap[stmt];
     return varSet.find(varName) != varSet.end();
 }
-Vector<Integer> UsesTable::getUsesStatements(const String& varName, StatementType stmtType)
+Vector<Integer> ModifiesTable::getModifiesStatements(const String& varName, StatementType stmtType)
 {
     return varStmtlistMap[varName].byType[stmtType];
 }
-Vector<String> UsesTable::getUsesProcedures(const String& varName)
+Vector<String> ModifiesTable::getModifiesProcedures(const String& varName)
 {
     return varProclistMap[varName];
 }
-Vector<String> UsesTable::getUsesVariablesFromStatement(Integer stmt)
+Vector<String> ModifiesTable::getModifiesVariablesFromStatement(Integer stmt)
 {
     return stmtVarlistMap[stmt];
 }
-Vector<String> UsesTable::getUsesVariablesFromProcedure(const String& procName)
+Vector<String> ModifiesTable::getModifiesVariablesFromProcedure(const String& procName)
 {
     return procVarlistMap[procName];
 }
-Vector<Integer> UsesTable::getAllUsesStatements(StatementType stmtType)
+Vector<Integer> ModifiesTable::getAllModifiesStatements(StatementType stmtType)
 {
     return stmttypeStmtlistMap[stmtType];
 }
-Vector<String> UsesTable::getAllUsesVariables(StatementType stmtType)
+Vector<String> ModifiesTable::getAllModifiesVariables(StatementType stmtType)
 {
     return stmttypeVarlistMap[stmtType];
 }
-Vector<String> UsesTable::getAllUsesVariables(const String& procName)
+Vector<String> ModifiesTable::getAllModifiesVariables(const String& procName)
 {
     return procVarlistMap[procName];
 }
-Vector<String> UsesTable::getAllUsesProcedures()
+Vector<String> ModifiesTable::getAllModifiesProcedures()
 {
-    return allUsesProc;
+    return allModifiesProc;
 }
