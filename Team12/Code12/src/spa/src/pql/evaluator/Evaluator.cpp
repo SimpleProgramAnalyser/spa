@@ -40,6 +40,26 @@ ClauseResult convertToClauseResult(const Vector<Integer>& intList)
     return strList;
 }
 
+// Helper methods for PKB
+inline Vector<Integer> verifyStatementType(const StatementType& stmtType, Vector<StatementNumWithType>& result)
+{
+    if (!result.empty() && result.at(0).second == stmtType) {
+        return std::vector<Integer>(result.at(0).first);
+    } else {
+        return std::vector<Integer>();
+    }
+}
+
+inline Vector<Integer> getAllBeforeStatements(Integer after, StatementType stmtType) {
+    Vector<StatementNumWithType> result = getBeforeStatement(after);
+    return verifyStatementType(stmtType, result);
+}
+
+inline Vector<Integer> getAllAfterStatements(Integer before, StatementType stmtType) {
+    Vector<StatementNumWithType> result = getAfterStatement(before);
+    return verifyStatementType(stmtType, result);
+}
+
 /**
  * Evaluates a PQL query, and interacts with the PKB,
  * for the results of that query.
