@@ -14,7 +14,7 @@ ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): expressionSpecT
 }
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
-    expression(expr), expressionSpecType{exprSpecType}, hasError{false}
+    expressionSpecType{exprSpecType}, expression(expr), hasError{false}
 {}
 
 Expression* ExpressionSpec::getExpression()
@@ -22,14 +22,14 @@ Expression* ExpressionSpec::getExpression()
     return expression;
 }
 
-Boolean ExpressionSpec::isInvalid()
+Boolean ExpressionSpec::isInvalid() const
 {
     return hasError;
 }
 
 ExpressionSpec ExpressionSpec::invalidExpressionSpec()
 {
-    ExpressionSpec* eS = new ExpressionSpec();
+    auto* eS = new ExpressionSpec();
     eS->hasError = true;
     return *eS;
 }

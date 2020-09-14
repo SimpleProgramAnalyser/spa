@@ -29,7 +29,7 @@ public:
 
     Integer count();
 
-    Boolean checkIsClauseRelatedToSynonym();
+    Boolean checkIsClauseRelatedToSynonym() const;
 
     Boolean operator==(const RawResultFromClause& rawResultFromClause) const;
 private:

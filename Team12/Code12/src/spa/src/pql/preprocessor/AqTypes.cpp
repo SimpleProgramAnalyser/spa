@@ -362,3 +362,7 @@ Boolean isValidSynonym(String testString)
 {
     return util::isPossibleIdentifier(testString);
 }
+
+Boolean isStatementDesignEntity(DesignEntityType type) {
+    return static_cast<uint8_t>(type << 6u) == 0x40;
+}

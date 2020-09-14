@@ -149,7 +149,7 @@ protected:
     bool compare(const StatementNode& sn) const override;
 };
 
-enum ConditionalExpressionType {
+enum ConditionalExpressionType : char {
     RelationalConditionalExpression = 0,
     NotConditionalExpression = 1,
     AndConditionalExpression = 2,

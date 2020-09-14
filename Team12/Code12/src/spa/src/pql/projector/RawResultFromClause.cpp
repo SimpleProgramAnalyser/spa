@@ -22,7 +22,7 @@
  *
  */
 RawResultFromClause::RawResultFromClause(Vector<String> results, Boolean isClauseRelatedToSynonym):
-    results{results}, isClauseRelatedToSynonym{isClauseRelatedToSynonym}
+    isClauseRelatedToSynonym{isClauseRelatedToSynonym}, results{std::move(results)}
 {}
 
 /*
@@ -33,7 +33,7 @@ RawResultFromClause::RawResultFromClause(Vector<String> results, Boolean isClaus
  *
  * @return A new instance of this class.
  */
-RawResultFromClause::RawResultFromClause() {}
+RawResultFromClause::RawResultFromClause(): isClauseRelatedToSynonym() {}
 
 /*
  * Returns an instance of an empty RawResultFromClause object,
@@ -43,8 +43,7 @@ RawResultFromClause::RawResultFromClause() {}
  */
 RawResultFromClause RawResultFromClause::emptyRawResultFromClause()
 {
-    RawResultFromClause* rawResultFromClause = new RawResultFromClause();
-
+    auto* rawResultFromClause = new RawResultFromClause();
     return *rawResultFromClause;
 }
 
@@ -73,7 +72,6 @@ Vector<String> RawResultFromClause::convertToStringVect(Vector<Integer> intList)
 
     return strList;
 }
-
 
 /*
  * Checks if the results list is empty.
@@ -127,7 +125,7 @@ Integer RawResultFromClause::count()
  * @return True if clause results is related to synonym,
  * false otherwise.
  */
-Boolean RawResultFromClause::checkIsClauseRelatedToSynonym()
+Boolean RawResultFromClause::checkIsClauseRelatedToSynonym() const
 {
     return isClauseRelatedToSynonym;
 }
@@ -148,5 +146,6 @@ Boolean RawResultFromClause::checkIsClauseRelatedToSynonym()
  */
 Boolean RawResultFromClause::operator==(const RawResultFromClause& rawResultFromClause) const
 {
-   return this->results == rawResultFromClause.results && this->isClauseRelatedToSynonym == rawResultFromClause.isClauseRelatedToSynonym;
+    return this->results == rawResultFromClause.results
+           && this->isClauseRelatedToSynonym == rawResultFromClause.isClauseRelatedToSynonym;
 }
