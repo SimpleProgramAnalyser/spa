@@ -108,6 +108,11 @@ FollowsList* extractFollowsStmtlst(FollowsList* followsList, FollowsTypeTable* f
             extractFollowsFromContainer(followsList, followsTable, currentStatement);
         }
     }
+    // check if last statement is a container statement
+    const std::unique_ptr<StatementNode>& lastStatement = statements.at(numberOfStatements - 1);
+    if (isContainerStatement(lastStatement->getStatementType())) {
+        extractFollowsFromContainer(followsList, followsTable, lastStatement);
+    }
     return followsList;
 }
 
