@@ -31,12 +31,13 @@ public:
     static RawQueryResult getSyntaxError(String errorMessage);
 
     Boolean isEmpty();
-    Vector<String> get(Integer index);
-    Integer count();
+    String get(Integer index);
+    size_t count();
+    void sort();
 
 private:
     explicit RawQueryResult(String errorMessage);
-    const Vector<String> results;
+    Vector<String> results;
 };
 
 #endif // SPA_PQL_RAW_QUERY_RESULT_H

@@ -5,6 +5,8 @@
 
 #include "RawQueryResult.h"
 
+#include <algorithm>
+
 /*
  * Constructs a RawQueryResult instance, from a Vector
  * of RawResultFromClauses. This constructor is the
@@ -21,16 +23,14 @@
  * @return A new instance of this class.
  *
  */
-RawQueryResult::RawQueryResult(Vector<RawResultFromClauses> results):
-    isSyntaxError(false), results{std::move(results)}
-{}
+RawQueryResult::RawQueryResult(Vector<String> results): isSyntaxError(false), results{std::move(results)} {}
 
 /*
  * Constructs a RawQueryResult instance that represents a
  * syntax error in the Query Preprocessor. This constructor
  * is a private constructor for creating a new instance of
  * the object, to be used internally (e.g, creating
- * RawQueryResult for syntax errot).
+ * RawQueryResult for syntax error).
  *
  * @return A new instance of this class.
  */
@@ -61,14 +61,14 @@ Boolean RawQueryResult::isEmpty()
 }
 
 /*
- * Retrieves a particular RawResultFromClauses in the
+ * Retrieves a particular String in the
  * Vector, given an index.
  *
  * @param index The index of the vector, to access.
  *
- * @return The sought RawResultFromClauses.
+ * @return The String.
  */
-RawResultFromClauses RawQueryResult::get(Integer index)
+String RawQueryResult::get(Integer index)
 {
     return results.at(index);
 }
@@ -79,7 +79,7 @@ RawResultFromClauses RawQueryResult::get(Integer index)
  *
  * @return The size of the RawResultFromClauses vector.
  */
-Integer RawQueryResult::count()
+size_t RawQueryResult::count()
 {
     return results.size();
 }
@@ -100,5 +100,22 @@ Integer RawQueryResult::count()
  */
 Boolean RawQueryResult::operator==(const RawQueryResult& rawQueryResult) const
 {
-    return this->results == rawQueryResult.results;
+    return this->results == rawQueryResult.results && this->isSyntaxError == rawQueryResult.isSyntaxError
+           && this->errorMessage == rawQueryResult.errorMessage;
+}
+
+/**
+ * Sorts the RawQueryResult by lexicographical order
+ */
+void RawQueryResult::sort()
+{
+    std::sort(results.begin(), results.end(), [](const std::string& a, const std::string& b) {
+        if (!a.empty() && std::all_of(a.begin(), a.end(), ::isdigit) && !b.empty()
+            && std::all_of(b.begin(), b.end(), ::isdigit)) {
+
+            return std::stoi(a) < std::stoi(b);
+        } else {
+            return a < b;
+        }
+    });
 }

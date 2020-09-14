@@ -337,17 +337,18 @@ ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, 
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)
 {
     ClauseResult results;
-    if (isStatementDesignEntity(entTypeOfSynonym)) {
-        results = convertToClauseResult(getAllStatements(mapToStatementType(entTypeOfSynonym)));
-    } else if (entTypeOfSynonym == VariableType) {
-        results = getAllVariables();
-    } else if (entTypeOfSynonym == ProcedureType) {
-        results = getAllProcedures();
-    } else if (entTypeOfSynonym == ConstantType) {
-        // TODO: ??? Constant ???
-    } else {
-        throw std::runtime_error("Unknown DesignEntityType in retrieveAllMatching");
-    }
+    // TODO: PKB implementation
+    // if (isStatementDesignEntity(entTypeOfSynonym)) {
+    //     results = convertToClauseResult(getAllStatements(mapToStatementType(entTypeOfSynonym)));
+    // } else if (entTypeOfSynonym == VariableType) {
+    //     results = getAllVariables();
+    // } else if (entTypeOfSynonym == ProcedureType) {
+    //     results = getAllProcedures();
+    // } else if (entTypeOfSynonym == ConstantType) {
+    //     // TODO: ??? Constant ???
+    // } else {
+    //     throw std::runtime_error("Unknown DesignEntityType in retrieveAllMatching");
+    // }
     return results;
 }
 
@@ -545,6 +546,9 @@ ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stCla
         if (followsHolds) {
             result.push_back("true");
         }
+    } else if (leftRef.getValue() == rightRef.getValue()) {
+        // Check if left == right, for Follows this will always return empty
+        return result;
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         /*
          * Check if clause is related to synonym, recall that a clause is related to

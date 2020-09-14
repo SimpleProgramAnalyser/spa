@@ -18,7 +18,7 @@
  */
 FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
 {
-    String formattedResults = "";
+    String formattedResults;
 
     if (rawQueryResult.isEmpty()) {
         return FormattedQueryResult::emptyFormattedQueryResult();
@@ -38,8 +38,8 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
 
     Integer len = rawQueryResult.count();
 
-    for (int i = 0; i < len; ++i) {
-        RawResultFromClauses result = rawQueryResult.get(i);
+    for (int i = 0; i < len - 1; ++i) {
+        String result = rawQueryResult.get(i);
 
         /*
          * Recall that the RawResultFromClauses, already
@@ -51,16 +51,14 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
          * Hence, we don't have to do anything here to
          * RawResultFromClauses.
          */
-        formattedResults += result.toString(CommaStr);
-
+        formattedResults.append(result).append(CommaStr);
+        // TODO: this is always false
         if (i < i - 1) {
-            formattedResults += PipeStr;
+            formattedResults.append(PipeStr);
         }
     }
-
-    FormattedQueryResult formattedQueryResult(formattedResults);
-
-    return formattedQueryResult;
+    formattedResults.append(rawQueryResult.get(len - 1));
+    return FormattedQueryResult(formattedResults);
 }
 
 FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
@@ -84,8 +82,9 @@ FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
      */
     Integer len = rawQueryResult.count();
     String formattedResults;
-    for (int i = 0; i < len; ++i) {
-        RawResultFromClauses result = rawQueryResult.get(i);
+    rawQueryResult.sort();
+    for (int i = 0; i < len - 1; ++i) {
+        String result = rawQueryResult.get(i);
         /*
          * Recall that the RawResultFromClauses, already
          * merge adjacent similar results from clauses
@@ -96,10 +95,12 @@ FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
          * Hence, we don't have to do anything here to
          * RawResultFromClauses.
          */
-        formattedResults += result.toString(CommaStr);
+        formattedResults.append(result).append(CommaStr);
+        // TODO: this is always false
         if (i < i - 1) {
             formattedResults.append(PipeStr);
         }
     }
+    formattedResults.append(rawQueryResult.get(len - 1));
     return FormattedQueryResult(formattedResults);
 }
