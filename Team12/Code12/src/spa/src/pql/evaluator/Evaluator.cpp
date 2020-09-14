@@ -23,7 +23,7 @@ static StatementType mapToStatementType(DesignEntityType entType);
 
 ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
                                    const DeclarationTable& declarations, Boolean isStar);
-ClauseResult evaluateParentsClause(const Synonym& synonym, SuchThatClause* stClause,
+ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClause,
                                    const DeclarationTable& declarations, Boolean isStar);
 ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
 ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stClause,
@@ -65,6 +65,18 @@ inline Vector<Integer> getAllBeforeStatements(Integer after, StatementType stmtT
 inline Vector<Integer> getAllAfterStatements(Integer before, StatementType stmtType)
 {
     Vector<StatementNumWithType> result = getAfterStatement(before);
+    return verifyStatementType(stmtType, result);
+}
+
+inline Vector<Integer> getAllParentStatements(Integer child, StatementType stmtType)
+{
+    Vector<StatementNumWithType> result = getParentStatement(child);
+    return verifyStatementType(stmtType, result);
+}
+
+inline Vector<Integer> getAllChildStatements(Integer parent, StatementType stmtType)
+{
+    Vector<StatementNumWithType> result = getChildStatement(parent);
     return verifyStatementType(stmtType, result);
 }
 
@@ -309,8 +321,10 @@ ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, c
         return evaluateFollowsClause(synonym, stClause, declarations, false);
     case FollowsStarType:
         return evaluateFollowsClause(synonym, stClause, declarations, true);
-    // case ParentType:
-    // case ParentStarType:
+    case ParentType:
+        return evaluateParentClause(synonym, stClause, declarations, false);
+    case ParentStarType:
+        return evaluateParentClause(synonym, stClause, declarations, true);
     case UsesType:
     case UsesStatementType:
     case UsesProcedureType:
@@ -695,7 +709,7 @@ ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
         } else {
             // select variable with procedure
-            result = getAllUsesProcedures();
+            result = getAllUsesVariables(leftRef.getValue());
         }
     } else {
         throw std::runtime_error("Error in evaluateUsesClause: invalid arguments in Uses");
@@ -759,10 +773,74 @@ ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stCl
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
         } else {
             // select variable with procedure
-            result = getAllModifiesProcedures();
+            result = getAllModifiesVariables(leftRef.getValue());
         }
     } else {
         throw std::runtime_error("Error in evaluateModifiesClause: invalid arguments in Modifies");
+    }
+    return result;
+}
+
+/**
+ * Processes a single Parent clause in a PQL query.
+ *
+ * @param synonym The name that is to be selected.
+ * @param stClause The Parent clause to evaluate.
+ * @param declarations Table containing a map of variables
+ *                     to their design entity type.
+ *
+ * @return Results for the synonym in the Parent clause.
+ */
+ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClause,
+    const DeclarationTable& declarations, Boolean isStar)
+{
+    ClauseResult result;
+    Reference leftRef = stClause->getRelationship().getLeftRef();
+    Reference rightRef = stClause->getRelationship().getRightRef();
+    ReferenceType leftRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = rightRef.getReferenceType();
+    if (leftRefType == IntegerRefType && canMatchMultiple(rightRefType)) {
+        Integer leftValue = std::stoi(leftRef.getValue());
+        DesignEntityType rightSynonymType
+            = rightRef.isWildCard() ? StmtType : declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType();
+        Vector<Integer> tempResult = (isStar ? getAllChildStatementsStar
+                                             : getAllChildStatements)(leftValue, mapToStatementType(rightSynonymType));
+        result = convertToClauseResult(tempResult);
+    } else if (canMatchMultiple(leftRefType) && rightRefType == IntegerRefType) {
+        DesignEntityType leftSynonymType
+            = leftRef.isWildCard() ? StmtType : declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType();
+        Integer rightValue = std::stoi(rightRef.getValue());
+        Vector<Integer> tempResult = (isStar ? getAllParentStatementsStar
+                                             : getAllParentStatements)(rightValue, mapToStatementType(leftSynonymType));
+        result = convertToClauseResult(tempResult);
+    } else if (leftRefType == IntegerRefType && rightRefType == IntegerRefType) {
+        Integer leftRefVal = std::stoi(leftRef.getValue());
+        Integer rightRefVal = std::stoi(rightRef.getValue());
+        Boolean followsHolds = (isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)(leftRefVal, rightRefVal);
+        if (followsHolds) {
+            result.push_back("true");
+        }
+    } else if (leftRef.getValue() == rightRef.getValue()) {
+        // Check if left == right, for Parent this will always return empty
+        return result;
+    } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
+        StatementType leftRefStmtType
+            = leftRef.isWildCard()
+              ? AnyStatement
+              : mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType());
+        StatementType rightRefStmtType
+            = rightRef.isWildCard()
+              ? AnyStatement
+              : mapToStatementType(declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType());
+        std::vector<Integer> (*lookupPkbFunction)(StatementType, StatementType);
+        if (leftRef.getValue() == synonym) {
+            lookupPkbFunction = isStar ? getAllParentStatementsTypedStar : getAllParentStatementsTyped;
+        } else {
+            lookupPkbFunction = isStar ? getAllChildStatementsTypedStar : getAllChildStatementsTyped;
+        }
+        result = convertToClauseResult(lookupPkbFunction(leftRefStmtType, rightRefStmtType));
+    } else {
+        throw std::runtime_error("Error in evaluateParentClause: No synonyms or integers in Parent clause");
     }
     return result;
 }
