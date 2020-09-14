@@ -28,8 +28,8 @@ Vector<String> getAllUsesProcedures();
 // Modifies
 void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames);
 void addModifiesRelationships(const String& procName, Vector<String> varNames);
-String checkIfProcedureModifies(String procName, String varName);
-Integer checkIfStatementModifies(Integer stmt, String varName);
+Boolean checkIfProcedureModifies(const String& procName, const String& varName);
+Boolean checkIfStatementModifies(Integer stmt, const String& varName);
 Vector<Integer> getModifiesStatements(const String& varName, StatementType stmtType);
 Vector<String> getModifiesProcedures(const String& procName);
 Vector<String> getModifiesVariablesFromStatement(Integer stmt);

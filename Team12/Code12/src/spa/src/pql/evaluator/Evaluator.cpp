@@ -315,8 +315,10 @@ ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, c
     case UsesStatementType:
     case UsesProcedureType:
         return evaluateUsesClause(synonym, stClause, declarations);
-    // case ModifiesStatementType:
-    // case ModifiesProcedureType:
+    case ModifiesType:
+    case ModifiesStatementType:
+    case ModifiesProcedureType:
+        return evaluateModifiesClause(synonym, stClause, declarations);
     default:
         throw std::runtime_error("Unknown relationship type in processSuchThat");
     }
@@ -697,6 +699,70 @@ ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause
         }
     } else {
         throw std::runtime_error("Error in evaluateUsesClause: invalid arguments in Uses");
+    }
+    return result;
+}
+
+/**
+ * Processes a single Modifies clause in a PQL query.
+ *
+ * @param synonym The name that is to be selected.
+ * @param stClause The Modifies clause to evaluate.
+ * @param declarations Table containing a map of variables
+ *                     to their design entity type.
+ *
+ * @return Results for the synonym in the Modifies clause.
+ */
+ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
+{
+    ClauseResult result;
+    Reference leftRef = stClause->getRelationship().getLeftRef();
+    Reference rightRef = stClause->getRelationship().getRightRef();
+    ReferenceType leftRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = rightRef.getReferenceType();
+
+    if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {
+        result = leftRefType == IntegerRefType ? getModifiesVariablesFromStatement(std::stoi(leftRef.getValue()))
+                                               : getModifiesVariablesFromProcedure(leftRef.getValue());
+    } else if (canMatchMultiple(leftRefType) && canMatchOnlyOne(rightRefType)) {
+        if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            result = convertToClauseResult(getModifiesStatements(
+                rightRef.getValue(),
+                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
+        } else {
+            // declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == ProcedureType
+            result = getModifiesProcedures(rightRef.getValue());
+        }
+    } else if (canMatchOnlyOne(leftRefType) && canMatchOnlyOne(rightRefType)) {
+        Boolean modifies;
+        if (leftRefType == IntegerRefType) {
+            modifies = checkIfStatementModifies(std::stoi(leftRef.getValue()), rightRef.getValue());
+        } else {
+            // leftRefType == LiteralRefType
+            modifies = checkIfProcedureModifies(leftRef.getValue(), rightRef.getValue());
+        }
+        if (modifies) {
+            result.push_back("true");
+        }
+    } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
+        if (leftRef.getValue() == synonym
+            && declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            // select stmt
+            result = convertToClauseResult(getAllModifiesStatements(
+                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
+        } else if (leftRef.getValue() == synonym) {
+            // select procedure
+            result = getAllModifiesProcedures();
+        } else if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            // select variable with statement
+            result = getAllModifiesVariables(
+                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
+        } else {
+            // select variable with procedure
+            result = getAllModifiesProcedures();
+        }
+    } else {
+        throw std::runtime_error("Error in evaluateModifiesClause: invalid arguments in Modifies");
     }
     return result;
 }

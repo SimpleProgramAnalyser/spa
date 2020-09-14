@@ -106,7 +106,9 @@ VariablesSet extractModifiesStmtlst(const StmtlstNode* stmtLstNode, ProcedureMod
             throw std::runtime_error("Unknown statement type in ModifiesExtractor extractModifiesStmtlst");
         }
         // update PKB
-        storeModifiesVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, modifiedInStatement);
+        if (!modifiedInStatement.empty()) {
+            storeModifiesVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, modifiedInStatement);
+        }
         // associate variables with the statement list as well
         allVariablesModified = concatenateVectors(allVariablesModified, modifiedInStatement);
     }
@@ -136,7 +138,9 @@ ProcedureModifiesMap extractModifiesReturnMap(ProgramNode& rootNode, const std::
         VariablesSet variablesModifiedInCurrentProcedure
             = extractModifiesStmtlst(currentProcedure->statementListNode, &procedureModifies);
         // update PKB
-        storeModifiesVariablesInPkb(currentProcedure->procedureName, variablesModifiedInCurrentProcedure);
+        if (!variablesModifiedInCurrentProcedure.empty()) {
+            storeModifiesVariablesInPkb(currentProcedure->procedureName, variablesModifiedInCurrentProcedure);
+        }
 
         // store Modifies relationship in hash map, for Call statements in other procedures to know
         // which variables are modified in this procedure
