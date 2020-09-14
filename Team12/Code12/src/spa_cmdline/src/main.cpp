@@ -3,7 +3,6 @@
 
 #include "frontend/FrontendManager.h"
 #include "pql/PqlManager.h"
-#include "pkb/PKB.h"
 
 /*
  * Passes the SIMPLE source program to the SPA
@@ -68,8 +67,6 @@ String readProgram()
     return program;
 }
 
-extern PKB pkb;
-
 // Main entry-point to our SPA!
 int main(int argv, char** args)
 {
@@ -96,7 +93,6 @@ int main(int argv, char** args)
 
     std::cout << DoneFeedbackMsg << std::endl;
 
-    PKB fff = pkb;
     while (true) {
         std::cout << PqlQueryPromptMsg << std::endl;
 
