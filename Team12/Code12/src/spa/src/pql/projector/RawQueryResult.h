@@ -8,33 +8,34 @@
  * and RawResultFromClauses classes to get a better understanding
  * of the information this class stores.
  *
- * Hierachically, this class is basically like a giant container,
+ * Hierarchically, this class is basically like a giant container,
  * encapsulating all (raw) results of the query.
  */
 
 #ifndef SPA_PQL_RAW_QUERY_RESULT_H
 #define SPA_PQL_RAW_QUERY_RESULT_H
 
+#include "RawResultFromClauses.h"
 #include "Types.h"
 #include "pkb/PkbTypes.h"
-#include "RawResultFromClauses.h"
 
 class RawQueryResult {
 public:
-    RawQueryResult(Vector<RawResultFromClauses> results);
+    explicit RawQueryResult(Vector<RawResultFromClauses> results);
+    Boolean operator==(const RawQueryResult& rawQueryResult) const;
 
-    static RawQueryResult emptyRawQueryResult();
+    const Boolean isSyntaxError;
+    const String errorMessage;
+
+    static RawQueryResult getSyntaxError(String errorMessage);
 
     Boolean isEmpty();
-
     RawResultFromClauses get(Integer index);
-
     Integer count();
 
-    Boolean operator==(const RawQueryResult& rawQueryResult) const;
 private:
-    RawQueryResult();
-    Vector<RawResultFromClauses> results;
+    explicit RawQueryResult(String errorMessage);
+    const Vector<RawResultFromClauses> results;
 };
 
 #endif // SPA_PQL_RAW_QUERY_RESULT_H

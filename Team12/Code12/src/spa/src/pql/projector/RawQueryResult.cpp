@@ -9,42 +9,44 @@
  * Constructs a RawQueryResult instance, from a Vector
  * of RawResultFromClauses. This constructor is the
  * only public constructor available for creating a
- * new instance of the object.
+ * new instance of RawQueryResult representing a
+ * query that was successfully evaluated.S
  *
  * @param results A Vector<RawResultFromClauses> representing
  * the raw query results of all clauses in the query,
  * where each element in the Vector represents a
  * synonym (in the PQL query) through which the clauses
- * are evaluated with respect to .
+ * are evaluated with respect to.
  *
  * @return A new instance of this class.
  *
  */
 RawQueryResult::RawQueryResult(Vector<RawResultFromClauses> results):
-    results{results}
+    isSyntaxError(false), results{std::move(results)}
 {}
 
 /*
- * Constructs a RawQueryResult instance. This constructor
+ * Constructs a RawQueryResult instance that represents a
+ * syntax error in the Query Preprocessor. This constructor
  * is a private constructor for creating a new instance of
  * the object, to be used internally (e.g, creating
- * empty RawQueryResult objects).
+ * RawQueryResult for syntax errot).
  *
  * @return A new instance of this class.
  */
-RawQueryResult::RawQueryResult() {}
+RawQueryResult::RawQueryResult(String errorMessage):
+    isSyntaxError(true), errorMessage(std::move(errorMessage)), results()
+{}
 
 /*
- * Returns an instance of an empty RawQueryResult object,
- * this method makes use of the private constructor.
+ * Returns a RawQueryResult that represents a syntax error
+ * in the Query Preprocessor.
  *
- * @return An empty RawQueryResult object.
+ * @return RawQueryResult representing syntax error
  */
-RawQueryResult RawQueryResult::emptyRawQueryResult()
+RawQueryResult RawQueryResult::getSyntaxError(String errorMessage)
 {
-    RawQueryResult* rawQueryResult = new RawQueryResult();
-
-    return *rawQueryResult;
+    return RawQueryResult(std::move(errorMessage));
 }
 
 /*

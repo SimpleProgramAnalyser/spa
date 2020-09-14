@@ -16,7 +16,7 @@
  * @return A new instance of this class.
  *
  */
-FormattedQueryResult::FormattedQueryResult(String results): results(results) {}
+FormattedQueryResult::FormattedQueryResult(String results): results(std::move(results)) {}
 
 /*
  * Constructs a RawQueryResult instance. This constructor
@@ -26,7 +26,7 @@ FormattedQueryResult::FormattedQueryResult(String results): results(results) {}
  *
  * @return A new instance of this class.
  */
-FormattedQueryResult::FormattedQueryResult() {}
+FormattedQueryResult::FormattedQueryResult() = default;
 
 /*
  * Returns an instance of an empty FormattedQueryResult object,
@@ -36,9 +36,7 @@ FormattedQueryResult::FormattedQueryResult() {}
  */
 FormattedQueryResult FormattedQueryResult::emptyFormattedQueryResult()
 {
-    FormattedQueryResult* formattedQueryResult = new FormattedQueryResult();
-
-    return *formattedQueryResult;
+    return FormattedQueryResult();
 }
 
 /*

@@ -4,10 +4,7 @@
 
 #include "Projector.h"
 
-#include "FormattedQueryResult.h"
-#include "RawQueryResult.h"
 #include "Types.h"
-#include "frontend/parser/StringMatcher.h"
 
 /*
  * Formats the raw query results into a format suitable and conforming to
@@ -61,7 +58,6 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
         }
     }
 
-
     FormattedQueryResult formattedQueryResult(formattedResults);
 
     return formattedQueryResult;
@@ -69,12 +65,12 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
 
 FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
 {
-    String formattedResults = "";
-
-    if (rawQueryResult.isEmpty()) {
+    if (rawQueryResult.isSyntaxError) {
+        // TODO: call Error API in future iterations
+        return FormattedQueryResult(rawQueryResult.errorMessage);
+    } else if (rawQueryResult.isEmpty()) {
         return FormattedQueryResult::emptyFormattedQueryResult();
     }
-
     /*
      * TODO: For iteration 2, we need to handle this better (in a
      * more general manner), as there could be multiple entries in
@@ -86,12 +82,10 @@ FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
      * For now, we will just iterate through all RawResultFromClauses
      * in RawQueryResult and concatenate them together.
      */
-
     Integer len = rawQueryResult.count();
-
+    String formattedResults;
     for (int i = 0; i < len; ++i) {
         RawResultFromClauses result = rawQueryResult.get(i);
-
         /*
          * Recall that the RawResultFromClauses, already
          * merge adjacent similar results from clauses
@@ -103,15 +97,9 @@ FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
          * RawResultFromClauses.
          */
         formattedResults += result.toString(CommaStr);
-
         if (i < i - 1) {
-            formattedResults += PipeStr;
+            formattedResults.append(PipeStr);
         }
     }
-
-
-    FormattedQueryResult formattedQueryResult(formattedResults);
-
-    return formattedQueryResult;
+    return FormattedQueryResult(formattedResults);
 }
-

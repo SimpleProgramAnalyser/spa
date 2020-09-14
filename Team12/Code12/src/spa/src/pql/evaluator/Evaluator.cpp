@@ -26,7 +26,8 @@ RawQueryResult Evaluator::evaluateQuery(AbstractQuery query)
      * If invalid, don't continue evaluating query.
      */
     if (query.isInvalid()) {
-        return RawQueryResult::emptyRawQueryResult();
+        return RawQueryResult::getSyntaxError(
+            "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.");
     }
 
     RawQueryResult result = processQuery(query);
@@ -62,7 +63,6 @@ RawQueryResult Evaluator::processQuery(AbstractQuery query)
     Synonym synonym = query.getSelectSynonym();
     ClauseVector clauses = query.getClauses();
     DeclarationTable declarations = query.getDeclarationTable();
-
 
     Vector<RawResultFromClauses> results;
 
@@ -116,7 +116,8 @@ RawQueryResult Evaluator::processQuery(AbstractQuery query)
  * to a particular synonym.
  */
 #include <iostream>
-RawResultFromClauses Evaluator::processQueryClauses(Synonym synonym, ClauseVector clauses, DeclarationTable declarations)
+RawResultFromClauses Evaluator::processQueryClauses(Synonym synonym, ClauseVector clauses,
+                                                    DeclarationTable declarations)
 {
     Vector<RawResultFromClause> results;
 
@@ -140,7 +141,6 @@ RawResultFromClauses Evaluator::processQueryClauses(Synonym synonym, ClauseVecto
 
         return rawResultFromClauses;
     }
-
 
     for (int i = 0; i < clauses.count(); ++i) {
         Clause* clause = clauses.get(i);
@@ -255,7 +255,7 @@ RawResultFromClause Evaluator::processQueryClause(Synonym synonym, Clause* claus
  * with respect to a particular synonym.
  */
 RawResultFromClause Evaluator::processQuerySuchThatClause(Synonym synonym, SuchThatClause* stClause,
-                                                               DeclarationTable declarations)
+                                                          DeclarationTable declarations)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
@@ -279,7 +279,6 @@ RawResultFromClause Evaluator::processQuerySuchThatClause(Synonym synonym, SuchT
     /*if (relationship.
     Reference leftRef = relationship.getLeftRef();
     Reference rightRef = relationship.getRightRef();*/
-
 
     return result;
 }
@@ -353,6 +352,10 @@ RawResultFromClause Evaluator::processQuerySuchThatFollowsClause(Synonym synonym
      *
      * 6. Follows(s1, s2)
      *    Where both operands are synonym types.
+     *
+     * 7. Follows(st, st)
+     *    The left operand must be the same as the right
+     *    operand. For Follows, this is impossible.
      */
     if (leftRefType == IntegerRefType && rightRefType == SynonymRefType) {
         /*
@@ -1014,7 +1017,6 @@ Boolean Evaluator::isQueryVacuouslyTrue(Vector<RawResultFromClause> results)
 
     return isQueryVacuouslyTrue;
 }
-
 
 /*
  * This method handles/checks case of a PQL query being
