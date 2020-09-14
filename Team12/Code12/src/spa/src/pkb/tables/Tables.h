@@ -10,9 +10,9 @@
 
 class ProcedureTable {
 public:
-    void insertIntoProcedureTable(String procName);
+    void insertIntoProcedureTable(const String& procName);
     Vector<String> getAllProcedures();
-    Boolean getProcedureFromName(String procName);
+    Boolean getProcedureFromName(const String& procName);
 
 private:
     HashSet<String> setOfProceduresNames; // getAllProc
@@ -21,8 +21,8 @@ private:
 
 class VariableTable {
 public:
-    void insertIntoVariableTable(String varName);
-    Boolean getVariableFromName(String varName);
+    void insertIntoVariableTable(const String& varName);
+    Boolean getVariableFromName(const String& varName);
     Vector<String> getAllVariables();
 
 private:
@@ -32,8 +32,8 @@ private:
 
 class StatementTable {
 public:
-    void insertIntoStatementTable(StatementNode* stmtNode, Integer lineNumber);
-    Boolean getStatementFromIndex(Integer indexOfStmt);
+    void insertIntoStatementTable(Integer stmtNum, StatementType stmtType);
+    Boolean getStatementFromIndex(Integer stmtNum);
     Vector<Integer> getAllStatements(StatementType stmtType);
 
 private:

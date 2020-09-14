@@ -97,7 +97,7 @@ SCENARIO("Iteration 1 toy example Uses", "[uses][pkb]")
             THEN("correct procedure-variable relationships are retrieved")
             {
                 auto ans = Vector<String>{"num1", "num2", "num3", "ave"};
-                REQUIRE_THAT(usesTable.getusesVariablesFromProcedure("compute"), Catch::UnorderedEquals(ans));
+                REQUIRE_THAT(usesTable.getUsesVariablesFromProcedure("compute"), Catch::UnorderedEquals(ans));
             }
 
             THEN("correct procedure-variable relationships are retrieved")

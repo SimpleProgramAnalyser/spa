@@ -4,7 +4,7 @@
 
 #include "Tables.h"
 
-void ProcedureTable::insertIntoProcedureTable(String procName)
+void ProcedureTable::insertIntoProcedureTable(const String& procName)
 {
     listOfProcedureNames.push_back(procName);
     setOfProceduresNames.insert(procName);
@@ -15,52 +15,39 @@ std::vector<String> ProcedureTable::getAllProcedures()
     return listOfProcedureNames;
 }
 
-Boolean ProcedureTable::getProcedureFromName(String procName)
+Boolean ProcedureTable::getProcedureFromName(const String& procName)
 {
-    std::unordered_set<String>::const_iterator iter = setOfProceduresNames.find(procName);
-    if (iter == setOfProceduresNames.end()) {
-        return false;
-    } else {
-        return true;
-    }
+    return setOfProceduresNames.find(procName) == setOfProceduresNames.end();
 }
 
-void VariableTable::insertIntoVariableTable(String varName)
+void VariableTable::insertIntoVariableTable(const String& varName)
 {
     listOfVariables.push_back(varName);
     setOfVariables.insert(varName);
 }
 
-std::vector<String> VariableTable::getAllVariables()
+Vector<String> VariableTable::getAllVariables()
 {
     return listOfVariables;
 }
 
-Boolean VariableTable::getVariableFromName(String varName)
+Boolean VariableTable::getVariableFromName(const String& varName)
 {
-    std::unordered_set<String>::const_iterator iter = setOfVariables.find(varName);
-    if (iter == setOfVariables.end()) {
-        return false;
-    } else {
-        return true;
-    }
+    return setOfVariables.find(varName) == setOfVariables.end();
 }
 
-void StatementTable::insertIntoStatementTable(StatementNode* stmtNode, Integer lineNumber)
+void StatementTable::insertIntoStatementTable(Integer stmtNum, StatementType stmtType)
 {
-    StatementType stmtType = stmtNode->getStatementType();
-    setOfStatements.insert(lineNumber);
-    listOfAllStatement.byType[stmtType].push_back(lineNumber);
+    if (setOfStatements.find(stmtNum) == setOfStatements.end()) {
+        setOfStatements.insert(stmtNum);
+        listOfAllStatement.byType[stmtType].push_back(stmtNum);
+        listOfAllStatement.byType[AnyStatement].push_back(stmtNum);
+    }
 }
 
 Boolean StatementTable::getStatementFromIndex(Integer indexOfStmt)
 {
-    std::unordered_set<Integer>::const_iterator iter = setOfStatements.find(indexOfStmt);
-    if (iter == setOfStatements.end()) {
-        return false;
-    } else {
-        return true;
-    }
+    return setOfStatements.find(indexOfStmt) == setOfStatements.end();
 }
 
 std::vector<Integer> StatementTable::getAllStatements(StatementType stmtType)

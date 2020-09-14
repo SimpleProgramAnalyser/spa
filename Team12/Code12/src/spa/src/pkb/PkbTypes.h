@@ -1,5 +1,5 @@
 /**
- * For PKB's internal use only.
+ * For PKB internal use, feel free to use but be careful of template redefinition.
  * Type definitions and shorthands that are used in various components of PKB.
  */
 #include <array>
@@ -7,8 +7,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#ifndef SPA_PKBTYPES_H
-#define SPA_PKBTYPES_H
+#ifndef SPA_PKB_TYPES_H
+#define SPA_PKB_TYPES_H
 
 template <typename K, typename V>
 using HashMap = std::unordered_map<K, V>;
@@ -32,4 +32,11 @@ typedef struct {
 typedef struct {
     Array<HashSet<Integer>, STATEMENT_TYPE_COUNT> byType;
 } StatementNumSetsByType;
-#endif // SPA_PKBTYPES_H
+
+typedef Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> ArrayArrayList;
+
+typedef Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> ArrayArraySet;
+
+typedef Pair<Integer, StatementType> StatementNumWithType;
+
+#endif // SPA_PKB_TYPES_H
