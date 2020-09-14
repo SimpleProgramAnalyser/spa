@@ -66,6 +66,7 @@ VariablesSet extractModifiesStmtlst(const StmtlstNode* stmtLstNode, ProcedureMod
         StatementType currentStatementType = currentStatement->getStatementType();
         switch (currentStatementType) {
         case AssignmentStatement: {
+            // NOLINTNEXTLINE
             modifiedInStatement.insert(
                 static_cast<const AssignmentStatementNode*>(currentStatement.get())->variable.varName);
             break;
