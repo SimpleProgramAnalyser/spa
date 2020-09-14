@@ -26,7 +26,7 @@ Vector<String> getAllUsesVariables(const String& procName);
 Vector<String> getAllUsesProcedures();
 
 // Modifies
-void addModifiesRelationships(Integer stmtNum, Vector<String> varNames);
+void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames);
 void addModifiesRelationships(String procName, Vector<String> varNames);
 String checkIfProcedureModifies(String procName, String varName);
 Integer checkIfStatementModifies(Integer stmt, String varName);

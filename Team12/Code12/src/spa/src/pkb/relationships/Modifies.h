@@ -9,7 +9,7 @@
 class ModifiesTable {
 public:
     // writing
-    void addModifiesRelationships(Integer stmtNum, Vector<String> varNames);
+    void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames);
     void addModifiesRelationships(String procName, Vector<String> varNames);
 
     // reading
