@@ -17,3 +17,14 @@ TEST_CASE("Follows extractor works for if and else statements nested in while")
 
     REQUIRE(expectedResult == *followsList);
 }
+
+TEST_CASE("Follows extractor works when last statement is container statement")
+{
+    FollowsList* followsList = extractFollowsReturnAdjacencyList(*getProgram18Tree_endWithWhile());
+    //        Follows relationships: 1  2  3  4     6  7  8
+    //                               |  |  |  |     |  |  |
+    //                               V  V  V  V     V  V  V
+    FollowsList expectedResult = {0, 2, 3, 4, 5, 0, 7, 8, 9, 0};
+
+    REQUIRE(expectedResult == *followsList);
+}

@@ -5,63 +5,52 @@
 
 #include "RawQueryResult.h"
 
-#include "pkb/PkbTypes.h"
+#include <algorithm>
 
 /*
- * Constructs a RawQueryResult instance. This constructor
- * is the only public constructor available for creating a
- * new instance of the object.
+ * Constructs a RawQueryResult instance, from a Vector
+ * of RawResultFromClauses. This constructor is the
+ * only public constructor available for creating a
+ * new instance of RawQueryResult representing a
+ * query that was successfully evaluated.S
  *
- * @param results A Vector<Vector<Vector<String>>>, where each
- * Vector<Vector<String>> element represents the result of a single
- * synonym (in the PQL 'select'), evaluated with respect to (all) the
- * clauses in the query. And within the Vector<Vector<String>>,
- * each Vector<String> represents the result of a single synonym
- * evaluated with respect to (only) 1 particular clause (in the query).
+ * @param results A Vector<RawResultFromClauses> representing
+ * the raw query results of all clauses in the query,
+ * where each element in the Vector represents a
+ * synonym (in the PQL query) through which the clauses
+ * are evaluated with respect to.
  *
  * @return A new instance of this class.
  *
  */
-RawQueryResult::RawQueryResult(Vector<Vector<Vector<String>>> results): results(results) {}
+RawQueryResult::RawQueryResult(Vector<String> results): isSyntaxError(false), results{std::move(results)} {}
 
 /*
- * Constructs a RawQueryResult instance. This constructor
+ * Constructs a RawQueryResult instance that represents a
+ * syntax error in the Query Preprocessor. This constructor
  * is a private constructor for creating a new instance of
  * the object, to be used internally (e.g, creating
- * empty RawQueryResult objects).
+ * RawQueryResult for syntax error).
  *
  * @return A new instance of this class.
  */
-RawQueryResult::RawQueryResult() {}
+RawQueryResult::RawQueryResult(String errorMessage):
+    isSyntaxError(true), errorMessage(std::move(errorMessage)), results()
+{}
 
 /*
- * Returns an instance of an empty RawQueryResult object,
- * this method makes use of the private constructor.
+ * Returns a RawQueryResult that represents a syntax error
+ * in the Query Preprocessor.
  *
- * @return An empty RawQueryResult object.
+ * @return RawQueryResult representing syntax error
  */
-RawQueryResult RawQueryResult::emptyRawQueryResult()
+RawQueryResult RawQueryResult::getSyntaxError(String errorMessage)
 {
-    RawQueryResult* rawQueryResult = new RawQueryResult();
-
-    return *rawQueryResult;
+    return RawQueryResult(std::move(errorMessage));
 }
 
 /*
- * Returns the results stored in the form of Vector<Vector<String>>.
- *
- * @return A Vector<Vector<String>> representing the results.
- */
-Vector<Vector<Vector<String>>> RawQueryResult::getResults()
-{
-    return results;
-}
-
-/*
- * Checks if the results list is empty, there are 2
- * scenarios this could happen. Either, the
- * query is invalid or there are indeed no results
- * from query.
+ * Checks if the results list is empty.
  *
  * @return True if results list indeed empty,
  * false otherwise.
@@ -72,13 +61,37 @@ Boolean RawQueryResult::isEmpty()
 }
 
 /*
+ * Retrieves a particular String in the
+ * Vector, given an index.
+ *
+ * @param index The index of the vector, to access.
+ *
+ * @return The String.
+ */
+String RawQueryResult::get(Integer index)
+{
+    return results.at(index);
+}
+
+/*
+ * Retrieves the size of the vector (i.e, number of
+ * RawResultFromClauses element in the Vector).
+ *
+ * @return The size of the RawResultFromClauses vector.
+ */
+size_t RawQueryResult::count()
+{
+    return results.size();
+}
+
+/*
  * Determines when 2 RawQueryResult objects are equal.
  * This method overloads equality operator and defines
  * what it means for 2 such objects to be equal.
  *
  * In our definition, this equality holds if and only
- * if the Vector<Vector<Vector<String>>> results, from both
- * objects are equals.
+ * if the Vector<RawResultFromClauses> are the same
+ * and so on (recursively).
  *
  * @param rawQueryResult Another RawQueryResult object
  * to compare with current instance.
@@ -87,5 +100,22 @@ Boolean RawQueryResult::isEmpty()
  */
 Boolean RawQueryResult::operator==(const RawQueryResult& rawQueryResult) const
 {
-    return this->results == rawQueryResult.results;
+    return this->results == rawQueryResult.results && this->isSyntaxError == rawQueryResult.isSyntaxError
+           && this->errorMessage == rawQueryResult.errorMessage;
+}
+
+/**
+ * Sorts the RawQueryResult by lexicographical order
+ */
+void RawQueryResult::sort()
+{
+    std::sort(results.begin(), results.end(), [](const std::string& a, const std::string& b) {
+        if (!a.empty() && std::all_of(a.begin(), a.end(), ::isdigit) && !b.empty()
+            && std::all_of(b.begin(), b.end(), ::isdigit)) {
+
+            return std::stoi(a) < std::stoi(b);
+        } else {
+            return a < b;
+        }
+    });
 }

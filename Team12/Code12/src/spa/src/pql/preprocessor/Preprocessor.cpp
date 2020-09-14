@@ -255,18 +255,23 @@ Expression* Preprocessor::createExpression(String literal)
 
 Reference Preprocessor::createReference(String ref)
 {
-    if (ref == "_" || declarationTable.hasSynonym(ref)) {
-        Reference reference(AnyRefType, ref, isSynonymOfProcedureType(ref));
+    if (ref == "_") {
+        Reference reference(WildcardRefType, ref);
         return reference;
     }
 
     if (util::isPossibleConstant(ref)) {
-        Reference reference(StatementRefType, ref);
+        Reference reference(IntegerRefType, ref);
         return reference;
     }
 
     if (util::isLiteralIdent(ref)) {
-        Reference reference(EntityRefType, ref);
+        Reference reference(LiteralRefType, ref);
+        return reference;
+    }
+
+    if (declarationTable.hasSynonym(ref)) {
+        Reference reference(SynonymRefType, ref, isSynonymOfProcedureType(ref));
         return reference;
     }
 

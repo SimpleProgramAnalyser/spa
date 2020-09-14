@@ -10,7 +10,7 @@
 #include "pql/projector/FormattedQueryResult.h"
 #include "pql/projector/Projector.h"
 #include "pql/projector/RawQueryResult.h"
-
+/*
 TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> empty rawQueryResult")
 {
     // === Test set-up ===
@@ -150,4 +150,4 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-emp
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult.getResults() == expectedResults);
-}
+}*/

@@ -1540,3 +1540,72 @@ ProgramNode* getProgram17Tree_sameVariableAndProcedureName()
 
     return programNode;
 }
+
+String getProgram18String_endWithWhile()
+{
+    String spheresdf = "\
+procedure spheresdf {\n\
+     dist = x * x + y * y + z * z;\n\
+     x = dist;\n\
+     depth = depth;\n\
+     read p;\n\
+     while (x != p) {\n\
+            p = x;\n\
+            x = (dist / x + x) / 2; dist = x - 1;\n\
+      x = x * x + y * y / 2;} \n\
+       }\
+";
+    /*
+    Annotated with statement numbers:
+
+    procedure spheresdf {
+    1.   dist = x * x + y * y + z * z;
+    2.   x = dist;
+    3.   depth = depth;
+    4.   read p;
+    5.   while (x != p) {
+    6.          p = x;
+    7.8.        x = (dist / x + x) / 2; dist = x - 1;
+    9.    x = x * x + y * y / 2;}}
+    */
+    return spheresdf;
+}
+
+ProgramNode* getProgram18Tree_endWithWhile()
+{
+    List<StatementNode> statements;
+    Expression* xxyyzz = createPlusExpr(createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                                                       createTimesExpr(createRefExpr("y"), createRefExpr("y"))),
+                                        createTimesExpr(createRefExpr("z"), createRefExpr("z")));
+    statements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(1, Variable("dist"), xxyyzz)));
+    statements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("x"), createRefExpr("dist"))));
+    statements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(3, Variable("depth"), createRefExpr("depth"))));
+    statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(4, Variable("p"))));
+
+    List<StatementNode> whileStatements;
+    whileStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("p"), createRefExpr("x"))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        7, Variable("x"),
+        createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")),
+                      createRefExpr(2)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(8, Variable("dist"), createMinusExpr(createRefExpr("x"), createRefExpr(1)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        9, Variable("x"),
+        createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                       createDivExpr(createTimesExpr(createRefExpr("y"), createRefExpr("y")), createRefExpr(2))))));
+    StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
+    statements.push_back(std::unique_ptr<WhileStatementNode>(
+        createWhileNode(5, createNeqExpr(createRefExpr("x"), createRefExpr("p")), whileStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* whileExampleProcedureNode = createProcedureNode("spheresdf", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(whileExampleProcedureNode));
+    ProgramNode* programNode = createProgramNode("spheresdf", procedureList, 9);
+
+    return programNode;
+}

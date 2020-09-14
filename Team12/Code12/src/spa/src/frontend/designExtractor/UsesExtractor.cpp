@@ -20,12 +20,12 @@ typedef std::unordered_set<std::string> VariablesSet;
  */
 typedef std::unordered_map<ProcedureName, VariablesSet> ProcedureUsesMap;
 
-Void storeVariablesInPkb(StatementNumber stmt, StatementType type, const VariablesSet& variables)
+Void storeUsesVariablesInPkb(StatementNumber stmt, StatementType type, const VariablesSet& variables)
 {
     addUsesRelationships(stmt, type, std::vector<std::string>(variables.begin(), variables.end()));
 }
 
-Void storeVariablesInPkb(const ProcedureName& proc, const VariablesSet& variables)
+Void storeUsesVariablesInPkb(const ProcedureName& proc, const VariablesSet& variables)
 {
     addUsesRelationships(proc, std::vector<std::string>(variables.begin(), variables.end()));
 }
@@ -173,7 +173,9 @@ VariablesSet extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUsesMap
             throw std::runtime_error("Unknown statement type in UsesExtractor extractUsesStmtlst");
         }
         // update PKB
-        storeVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, usedInStatement);
+        if (!usedInStatement.empty()) {
+            storeUsesVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, usedInStatement);
+        }
         // associate variables with the statement list as well
         allVariablesUsed = concatenateVectors(allVariablesUsed, usedInStatement);
     }
@@ -203,7 +205,9 @@ ProcedureUsesMap extractUsesReturnMap(ProgramNode& rootNode, const std::vector<i
         VariablesSet variablesUsedInCurrentProcedure
             = extractUsesStmtlst(currentProcedure->statementListNode, &procedureUses);
         // update PKB
-        storeVariablesInPkb(currentProcedure->procedureName, variablesUsedInCurrentProcedure);
+        if (!variablesUsedInCurrentProcedure.empty()) {
+            storeUsesVariablesInPkb(currentProcedure->procedureName, variablesUsedInCurrentProcedure);
+        }
         // store Uses relationship in hash map, for Call statements
         procedureUses.insert(
             std::pair<ProcedureName, VariablesSet>(currentProcedure->procedureName, variablesUsedInCurrentProcedure));

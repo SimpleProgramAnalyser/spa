@@ -8,26 +8,30 @@
 #ifndef SPA_PQL_AQTYPES_H
 #define SPA_PQL_AQTYPES_H
 
-#include <Util.h>
-#include <ast/AstTypes.h>
+#include <cstdint>
 #include <utility>
 
 #include "Types.h"
+#include "Util.h"
+#include "ast/AstTypes.h"
 
 typedef std::pair<String, String> StringPair;
+typedef String Synonym;
 
-enum DesignEntityType {
-    StmtType = 0,
-    ReadType = 1,
-    PrintType = 2,
-    CallType = 4,
-    WhileType = 8,
-    IfType = 16,
-    AssignType = 32,
-    VariableType = 64,
-    ConstantType = 128,
-    ProcedureType = 256,
-    NonExistentType = 512
+enum DesignEntityType : uint8_t {
+    // statement types: smallest bits are 01
+    StmtType = 1,    // 0000 0001
+    ReadType = 5,    // 0000 0101
+    PrintType = 9,   // 0000 1001
+    CallType = 13,   // 0000 1101
+    WhileType = 17,  // 0001 0001
+    IfType = 21,     // 0001 0101
+    AssignType = 25, // 0001 1001
+    // other types: smallest bits are 00
+    VariableType = 0,    // 0000 0000
+    ConstantType = 4,    // 0000 0100
+    ProcedureType = 8,   // 0000 1000
+    NonExistentType = 12 // 0000 1100
 };
 
 class DesignEntity {
@@ -38,11 +42,10 @@ public:
     explicit DesignEntity(DesignEntityType designEntityType);
     explicit DesignEntity(const String& stringType);
     DesignEntityType getType();
+    Boolean operator==(const DesignEntity& designEntity);
 };
 
-typedef String Synonym;
-
-enum ClauseType { SuchThatClauseType = 0, PatternClauseType = 1 };
+enum ClauseType : char { SuchThatClauseType = 0, PatternClauseType = 1 };
 
 class Clause {
 protected:
@@ -59,17 +62,26 @@ public:
     Clause(Clause&&) = default;
     Clause& operator=(Clause&&) = delete;
     virtual ~Clause() = default;
+    virtual Boolean operator==(const Clause& clause);
 };
 
-enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
+enum ReferenceType : char {
+    SynonymRefType = 0,
+    WildcardRefType = 1,
+    LiteralRefType = 2,
+    IntegerRefType = 4,
+};
+// enum ReferenceType { StatementRefType = 0, EntityRefType = 1, AnyRefType = 2, InvalidRefType = 3 };
 
-typedef String ReferenceValue; // TODO: more thought needs to be done on the implementation of ReferenceValue
+typedef String ReferenceValue;
 
 class Reference {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
     Boolean isProcedureType;
+    Boolean hasError;
+    Reference();
 
 public:
     Reference(ReferenceType refType, ReferenceValue refValue);
@@ -78,13 +90,14 @@ public:
     ReferenceValue getValue();
     Boolean isValidEntityRef();
     Boolean isValidStatementRef();
-    Boolean isWildCard();
     Boolean isInvalid();
     Boolean isProcedure();
+    Boolean isWildCard();
     static Reference invalidReference();
+    Boolean operator==(const Reference& reference);
 };
 
-enum RelationshipReferenceType {
+enum RelationshipReferenceType : uint16_t {
     FollowsType = 0,
     FollowsStarType = 1,
     ParentType = 2,
@@ -112,6 +125,7 @@ public:
     Reference getRightRef();
     Boolean isInvalid();
     static RelationshipReferenceType getRelRefType(String relRef);
+    Boolean operator==(const Relationship& relationship);
 };
 
 class SuchThatClause: public Clause {
@@ -121,9 +135,10 @@ private:
 public:
     SuchThatClause(Relationship& r);
     Relationship getRelationship();
+    Boolean operator==(const SuchThatClause& suchThatClause);
 };
 
-enum ExpressionSpecType {
+enum ExpressionSpecType : char {
     WildcardExpressionType = 0,          // _
     LiteralExpressionType = 1,           // _"x + y"_
     ExtendableLiteralExpressionType = 2, // "x + y"
@@ -141,11 +156,12 @@ public:
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
     Expression* getExpression();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
     static ExpressionSpec invalidExpressionSpec();
+    Boolean operator==(const ExpressionSpec& expressionSpec);
 };
 
-enum PatternStatementType { AssignPatternType = 0 };
+enum PatternStatementType : char { AssignPatternType = 0 };
 
 class PatternClause: public Clause {
 private:
@@ -158,6 +174,7 @@ public:
     PatternStatementType getStatementType();
     Reference getEntRef();
     ExpressionSpec getExprSpec();
+    Boolean operator==(const PatternClause& patternClause);
 };
 
 class DeclarationTable {
@@ -167,10 +184,11 @@ private:
 
 public:
     Void addDeclaration(Synonym s, DesignEntity& designEntity);
-    DesignEntity getDesignEntityOfSynonym(Synonym s);
+    DesignEntity getDesignEntityOfSynonym(Synonym s) const;
     Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
     static DeclarationTable invalidDeclarationTable();
+    Boolean operator==(const DeclarationTable& declarationTable);
 };
 
 class ClauseVector {
@@ -183,8 +201,10 @@ public:
     static ClauseVector invalidClauseVector();
     Void add(Clause* clause);
     Clause* get(Integer index);
+    Integer count();
     Integer totalNumClauses();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
+    Boolean operator==(const ClauseVector& clauseVector);
 };
 
 class AbstractQuery {
@@ -201,11 +221,24 @@ public:
     Synonym getSelectSynonym();
     ClauseVector getClauses();
     DeclarationTable getDeclarationTable();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
+    Boolean operator==(const AbstractQuery& abstractQuery);
 };
 
 // Utils
 
 Boolean isValidSynonym(String s);
+
+/**
+ * Check if the DesignEntityType represents
+ * a SIMPLE statement of some sort.
+ *
+ * @param type DesignEntityType to be checked.
+ * @return True, if DesignEntityType is one of
+ *         the 6 SIMPLE statement types. False,
+ *         if DesignEntityType is other entities
+ *         like variable or procedure.
+ */
+Boolean isStatementDesignEntity(DesignEntityType type);
 
 #endif // SPA_PQL_AQTYPES_H
