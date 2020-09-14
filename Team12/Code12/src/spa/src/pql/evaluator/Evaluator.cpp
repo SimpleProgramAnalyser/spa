@@ -17,11 +17,17 @@ static ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
 RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery);
 ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
                                        const DeclarationTable& declarations);
-ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
-                                   const DeclarationTable& declarations, Boolean isStar);
 ClauseResult processClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations);
 ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
 static StatementType mapToStatementType(DesignEntityType entType);
+
+ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
+                                   const DeclarationTable& declarations, Boolean isStar);
+ClauseResult evaluateParentsClause(const Synonym& synonym, SuchThatClause* stClause,
+                                   const DeclarationTable& declarations, Boolean isStar);
+ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
+ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stClause,
+                                    const DeclarationTable& declarations);
 
 /*
  * An utility method to convert an integer vector to a string vector.
@@ -303,8 +309,10 @@ ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, c
         return evaluateFollowsClause(synonym, stClause, declarations, true);
     // case ParentType:
     // case ParentStarType:
-    // case UsesStatementType:
-    // case UsesProcedureType:
+    case UsesType:
+    case UsesStatementType:
+    case UsesProcedureType:
+        return evaluateUsesClause(synonym, stClause, declarations);
     // case ModifiesStatementType:
     // case ModifiesProcedureType:
     default:
@@ -434,13 +442,28 @@ Boolean canMatchMultiple(const ReferenceType& refType)
     return (refType == SynonymRefType || refType == WildcardRefType);
 }
 
+/**
+ * The opposite of canMatchMultiple, checks if a
+ * ReferenceType can only correspond to one
+ * design entity in the program.
+ *
+ * @param refType The ReferenceType to be checked.
+ * @return True, if the Reference holding this
+ *         type can only match one entity.
+ *         Otherwise, false.
+ */
+Boolean canMatchOnlyOne(const ReferenceType& refType)
+{
+    return (refType == IntegerRefType || refType == LiteralRefType);
+}
+
 /*
  * Processes a single (such that, Follows) clause in a PQL query, with
  * respect to a given synonym. All results obtained from the clauses
  * will be with respect to that particular synonym. This method also
  * interacts with the PKB to obtain the results to the query.
  *
- * @param synonym The variable that is to be selected.
+ * @param synonym The synonym that is to be selected.
  * @param stClause The Follows clause to evaluate.
  * @param declarations Table containing a map of variables
  *                     to their design entity type.
@@ -619,6 +642,70 @@ ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stCla
         result = convertToClauseResult(lookupPkbFunction(leftRefStmtType, rightRefStmtType));
     } else {
         throw std::runtime_error("Error in evaluateFollowsClause: No synonyms or integers in Follows clause");
+    }
+    return result;
+}
+
+/**
+ * Processes a single Uses clause in a PQL query.
+ *
+ * @param synonym The name that is to be selected.
+ * @param stClause The Uses clause to evaluate.
+ * @param declarations Table containing a map of variables
+ *                     to their design entity type.
+ *
+ * @return Results for the synonym in the Uses clause.
+ */
+ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
+{
+    ClauseResult result;
+    Reference leftRef = stClause->getRelationship().getLeftRef();
+    Reference rightRef = stClause->getRelationship().getRightRef();
+    ReferenceType leftRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = rightRef.getReferenceType();
+
+    if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {
+        result = leftRefType == IntegerRefType ? getUsesVariablesFromStatement(std::stoi(leftRef.getValue()))
+                                               : getUsesVariablesFromProcedure(leftRef.getValue());
+    } else if (canMatchMultiple(leftRefType) && canMatchOnlyOne(rightRefType)) {
+        if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            result = convertToClauseResult(getUsesStatements(
+                rightRef.getValue(),
+                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
+        } else {
+            // declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == ProcedureType
+            result = getUsesProcedures(rightRef.getValue());
+        }
+    } else if (canMatchOnlyOne(leftRefType) && canMatchOnlyOne(rightRefType)) {
+        Boolean usesHolds;
+        if (leftRefType == IntegerRefType) {
+            usesHolds = checkIfStatementUses(std::stoi(leftRef.getValue()), rightRef.getValue());
+        } else {
+            // leftRefType == LiteralRefType
+            usesHolds = checkIfProcedureUses(leftRef.getValue(), rightRef.getValue());
+        }
+        if (usesHolds) {
+            result.push_back("true");
+        }
+    } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
+        if (leftRef.getValue() == synonym
+            && declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            // select stmt
+            result = convertToClauseResult(getAllUsesStatements(
+                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
+        } else if (leftRef.getValue() == synonym) {
+            // select procedure
+            result = getAllUsesProcedures();
+        } else if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            // select variable with statement
+            result = getAllUsesVariables(
+                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
+        } else {
+            // select variable with procedure
+            result = getAllUsesProcedures();
+        }
+    } else {
+        throw std::runtime_error("Error in evaluateUsesClause: invalid arguments in Uses");
     }
     return result;
 }
