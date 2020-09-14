@@ -15,7 +15,7 @@ public:
     FormattedQueryResult formatUI(RawQueryResult rawQueryResult);
 
 private:
-    const String CommaStr = ",";
+    const String CommaStr = ", ";
     const String PipeStr = "|";
 };
 

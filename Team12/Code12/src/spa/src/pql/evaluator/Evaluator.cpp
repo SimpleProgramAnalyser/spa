@@ -5,13 +5,13 @@
 #include "Evaluator.h"
 
 #include <cassert>
+#include <iterator>
 #include <stdexcept>
 
 #include "pkb/PKB.h"
 
 typedef Vector<String> ClauseResult;
 
-static Boolean checkIfClausesEmpty(ClauseVector clauses);
 ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, const Vector<Boolean>& relatednessList);
 static ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
 RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery);
@@ -198,17 +198,7 @@ ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clau
 {
     Vector<ClauseResult> resultsList;
     Vector<Boolean> relatednessList;
-    /*
-     * First check if clauses are empty.
-     *
-     * If so, retrieve all entity related to that synonym,
-     * from Tables API, and terminate.
-     */
-    Boolean areClausesEmpty = checkIfClausesEmpty(clauses);
-    if (areClausesEmpty) {
-        DesignEntityType entTypeOfSynonym = declarations.getDesignEntityOfSynonym(synonym).getType();
-        return retrieveAllMatching(entTypeOfSynonym);
-    }
+    Boolean allClausesVacuouslyTrue = true;
     for (int i = 0; i < clauses.count(); ++i) {
         Clause* clause = clauses.get(i);
         ClauseResult result = processClause(synonym, clause, declarations);
@@ -222,11 +212,23 @@ ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clau
         if (result.empty()) {
             return std::vector<String>();
         } else {
-            relatednessList.push_back(checkIfClauseRelatedToSynonym(clause, synonym));
+            Boolean checkIfClauseRelated = checkIfClauseRelatedToSynonym(clause, synonym);
+            allClausesVacuouslyTrue = allClausesVacuouslyTrue && !(checkIfClauseRelated);
+            relatednessList.push_back(checkIfClauseRelated);
             resultsList.push_back(result);
         }
     }
-
+    /*
+     * If the clauses are empty, or all clauses are vacuously
+     * true, i.e, when all of the clauses/clause results are
+     * not related to the synonym but have results, we simply
+     * query for all the possible entities that match
+     * the Select synonym.
+     */
+    if (allClausesVacuouslyTrue) {
+        DesignEntityType entTypeOfSynonym = declarations.getDesignEntityOfSynonym(synonym).getType();
+        return retrieveAllMatching(entTypeOfSynonym);
+    }
     /*
      * Filter all clause/clause results that are not
      * related to the synonym.
@@ -414,17 +416,6 @@ StatementType mapToStatementType(DesignEntityType entType)
     }
 
     return mappedStmtType;
-}
-
-/*
- * This method handles/checks case of a PQL query being
- * vacuously true, when the query does not have any clauses.
- *
- * @return True if vacuously true, false otherwise.
- */
-Boolean checkIfClausesEmpty(ClauseVector clauses)
-{
-    return clauses.count() == 0;
 }
 
 /**
