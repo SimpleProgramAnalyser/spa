@@ -6,6 +6,7 @@
 
 #include <stdexcept>
 
+#include "RawResultFromClause.h"
 #include "pkb/PKB.h"
 
 static Boolean checkIfClausesEmpty(ClauseVector clauses);
@@ -13,12 +14,28 @@ static Boolean isQueryVacuouslyTrue(Vector<RawResultFromClause> results);
 Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause> results);
 static RawResultFromClause retrieveAllMatching(DesignEntityType entTypeOfSynonym);
 RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery);
-RawResultFromClauses processSingleSynonymQuery(Synonym synonym, ClauseVector clauses, DeclarationTable declarations);
+RawResultFromClause processSingleSynonymQuery(Synonym synonym, ClauseVector clauses, DeclarationTable declarations);
 RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations,
                                           Boolean isStar);
 RawResultFromClause processClause(Synonym synonym, Clause* clause, DeclarationTable declarations);
 RawResultFromClause processSuchThat(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
 static StatementType mapToStatementType(DesignEntityType entType);
+
+/*
+ * An utility method to convert an integer vector to a string vector.
+ *
+ * @param intList An integer vector to convert.
+ *
+ * @return Vector<String> the converted vector.
+ */
+Vector<String> convertToStringVect(const Vector<Integer>& intList)
+{
+    Vector<String> strList;
+    for (Integer i : intList) {
+        strList.push_back(std::to_string(i));
+    }
+    return strList;
+}
 
 /**
  * Evaluates a PQL query, and interacts with the PKB,
@@ -62,8 +79,7 @@ RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
     Vector<Synonym> synonyms{(abstractQuery.getSelectSynonym())};
     ClauseVector clauses = abstractQuery.getClauses();
     DeclarationTable declarations = abstractQuery.getDeclarationTable();
-
-    Vector<RawResultFromClauses> results;
+    Vector<RawResultFromClause> results;
     if (synonyms.size() == 1) {
         /*
          * Currently, there is only exactly 1 synonym,
@@ -75,7 +91,7 @@ RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
          * determine the constraints of the synonyms and
          * call appropriate methods to get the result
          */
-        RawResultFromClauses result = processSingleSynonymQuery(synonyms.at(0), clauses, declarations);
+        RawResultFromClause result = processSingleSynonymQuery(synonyms.at(0), clauses, declarations);
         results.push_back(result);
     }
     return RawQueryResult(results);
@@ -116,7 +132,7 @@ RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
  * RawResultFromClause for more details), evaluated with respect
  * to a particular synonym.
  */
-RawResultFromClauses processSingleSynonymQuery(Synonym synonym, ClauseVector clauses, DeclarationTable declarations)
+RawResultFromClause processSingleSynonymQuery(Synonym synonym, ClauseVector clauses, DeclarationTable declarations)
 {
     Vector<RawResultFromClause> results;
     /*
@@ -128,9 +144,7 @@ RawResultFromClauses processSingleSynonymQuery(Synonym synonym, ClauseVector cla
     Boolean areClausesEmpty = checkIfClausesEmpty(clauses);
     if (areClausesEmpty) {
         DesignEntityType entTypeOfSynonym = declarations.getDesignEntityOfSynonym(synonym).getType();
-        RawResultFromClause result = retrieveAllMatching(entTypeOfSynonym);
-        results.push_back(result);
-        return RawResultFromClauses(results);
+        return retrieveAllMatching(entTypeOfSynonym);
     }
 
     for (int i = 0; i < clauses.count(); ++i) {
@@ -237,23 +251,22 @@ RawResultFromClause processClause(Synonym synonym, Clause* clause, DeclarationTa
  * documentation of RawQueryResult for more details) evaluated
  * with respect to a particular synonym.
  */
-RawResultFromClause processSuchThat(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations)
+Vector<String> processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
-    if (relRefType == FollowsType) {
+    switch (relRefType) {
+    case FollowsType:
         return evaluateFollowsClause(synonym, stClause, declarations, false);
-    } else if (relRefType == FollowsStarType) {
+    case FollowsStarType:
         return evaluateFollowsClause(synonym, stClause, declarations, true);
-    } else if (relRefType == ParentType) {
-    } else if (relRefType == ParentStarType) {
-    } else if (relRefType == UsesType) {
-    } else if (relRefType == UsesStatementType) {
-    } else if (relRefType == UsesProcedureType) {
-    } else if (relRefType == ModifiesType) {
-    } else if (relRefType == ModifiesStatementType) {
-    } else if (relRefType == ModifiesProcedureType) {
-    } else {
+    // case ParentType:
+    // case ParentStarType:
+    // case UsesStatementType:
+    // case UsesProcedureType:
+    // case ModifiesStatementType:
+    // case ModifiesProcedureType:
+    default:
         throw std::runtime_error("Unknown relationship type in processSuchThat");
     }
 }
@@ -296,10 +309,18 @@ Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause
 RawResultFromClause retrieveAllMatching(DesignEntityType entTypeOfSynonym)
 {
     Vector<String> results;
-    StatementType pkbType = mapToStatementType(entTypeOfSynonym);
-    // TODO: Call PKB API, given the design entity type of synonym.
-    RawResultFromClause rawResultFromClause(results, true);
-    return rawResultFromClause;
+    if (isStatementDesignEntity(entTypeOfSynonym)) {
+        results = convertToStringVect(getAllStatements(mapToStatementType(entTypeOfSynonym)));
+    } else if (entTypeOfSynonym == VariableType) {
+        results = getAllVariables();
+    } else if (entTypeOfSynonym == ProcedureType) {
+        results = getAllProcedures();
+    } else if (entTypeOfSynonym == ConstantType) {
+        // TODO: ??? Constant ???
+    } else {
+        throw std::runtime_error("Unknown DesignEntityType in retrieveAllMatching");
+    }
+    return RawResultFromClause(results);
 }
 
 /*
@@ -339,24 +360,6 @@ StatementType mapToStatementType(DesignEntityType entType)
 
 /*
  * This method handles/checks case of a PQL query being
- * vacuously true, when all clauses of the query yield
- * some results, however they are all not related
- * to the synonym in question.
- *
- * @return True if vacuously true, false otherwise.
- */
-Boolean isQueryVacuouslyTrue(Vector<RawResultFromClause> results)
-{
-    Boolean isQueryVacuouslyTrue = true;
-    Integer len = results.size();
-    for (int i = 0; i < len; ++i) {
-        isQueryVacuouslyTrue = isQueryVacuouslyTrue && !results.at(i).checkIsClauseRelatedToSynonym();
-    }
-    return isQueryVacuouslyTrue;
-}
-
-/*
- * This method handles/checks case of a PQL query being
  * vacuously true, when the query does not have any clauses.
  *
  * @return True if vacuously true, false otherwise.
@@ -368,38 +371,27 @@ Boolean checkIfClausesEmpty(ClauseVector clauses)
 
 /*
  * Processes a single (such that, Follows) clause in a PQL query, with
- * respect to a given synonym. All results obtained from
- * the clauses will be with respect to that particular synonym.
+ * respect to a given synonym. All results obtained from the clauses
+ * will be with respect to that particular synonym. This method also
+ * interacts with the PKB to obtain the results to the query.
  *
- * This method also interacts with the PKB, if needed
- * to obtain the reuslts to the query.
- *
- * @param synonym The synonym by which the clause would be
- * evaluated with respect to.
- * @param stClause The SuchThatClause (Follows type) to
- * evaluate.
- * @param declarations A table containing a map of declarations (variables)
- * to their design entity (might come in handy for processing query).
+ * @param synonym The variable that is to be selected.
+ * @param stClause The Follows clause to evaluate.
+ * @param declarations Table containing a map of variables
+ *                     to their design entity type.
  * @param isStar Whether the Follows clause comes with an
  *               asterisk, indicating the transitive closure.
  *
  * @return Results for the Synonym in the Follows clause.
  */
-RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations,
-    Boolean isStar)
+Vector<String> evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
+                                     const DeclarationTable& declarations, Boolean isStar)
 {
-    Relationship rel = stClause->getRelationship();
-    RelationshipReferenceType relRefType = rel.getRelationship();
-
     Vector<String> result;
-    Boolean isClauseRelatedToSynonym = false;
-
-    Reference leftRef = rel.getLeftRef();
-    Reference rightRef = rel.getRightRef();
-
+    Reference leftRef = stClause->getRelationship().getLeftRef();
+    Reference rightRef = stClause->getRelationship().getRightRef();
     ReferenceType leftRefType = leftRef.getReferenceType();
     ReferenceType rightRefType = rightRef.getReferenceType();
-
     /*
      * Here, we filter by reference types of the follows clause
      * operands, and there are a few possible combinations,
@@ -439,22 +431,16 @@ RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stCla
      *    The left operand must be the same as the right
      *    operand. For Follows, this is impossible.
      */
-    if (leftRefType == IntegerRefType && rightRefType == SynonymRefType) {
+    if (leftRefType == IntegerRefType && (rightRefType == SynonymRefType || rightRefType == WildcardRefType)) {
         /*
          * Check if clause is related to synonym, recall that a clause is related to
          * synonym if and only if at least one of its operands is equals to given
          * synonym in question.
          */
-        if (rightRef.getValue() == synonym) {
-            isClauseRelatedToSynonym = true;
-        }
-
-        Integer leftRefVal = std::stoi(leftRef.getValue());
-
-        // In this case, we can only get the DesignEntityType of the right operand
-        DesignEntity rightRefDesignEnt = declarations.getDesignEntityOfSynonym(rightRef.getValue());
-
-        DesignEntityType rightRefDesignEntType = rightRefDesignEnt.getType();
+        Integer leftValue = std::stoi(leftRef.getValue());
+        // get the DesignEntityType of the right operand
+        DesignEntityType rightSynonymType
+            = rightRef.isWildCard() ? StmtType : declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType();
         /*
          * Here there are many combinations/possibilities, of what the
          * right DesignEntityType can be, however with a some mapping,
@@ -471,27 +457,19 @@ RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stCla
          * to spurious StatementType. This is guaranteed due to our
          * (robust) validation at the PQL Preprocessor side.
          */
-        StatementType rightRefStmtType = mapToStatementType(rightRefDesignEntType);
-
-        Vector<Integer> tempResult = getAllAfterStatements(leftRefVal, rightRefStmtType);
-        // tempResult.push_back(12345);
-        result = RawResultFromClause::convertToStringVect(tempResult);
+        Vector<Integer> tempResult = (isStar ? getAllAfterStatementsStar
+                                             : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
+        result = convertToStringVect(tempResult);
     } else if (leftRefType == SynonymRefType && rightRefType == IntegerRefType) {
         /*
          * Check if clause is related to synonym, recall that a clause is related to
          * synonym if and only if at least one of its operands is equals to given
          * synonym in question.
          */
-        if (leftRef.getValue() == synonym) {
-            isClauseRelatedToSynonym = true;
-        }
-
-        // In this case, we can only get the DesignEntityType of the left operand
-        DesignEntity leftRefDesignEnt = declarations.getDesignEntityOfSynonym(leftRef.getValue());
-
-        DesignEntityType leftRefDesignEntType = leftRefDesignEnt.getType();
-
-        Integer rightRefVal = std::stoi(rightRef.getValue());
+        // get the DesignEntityType of the left operand
+        DesignEntityType leftSynonymType
+            = leftRef.isWildCard() ? StmtType : declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType();
+        Integer rightValue = std::stoi(rightRef.getValue());
         /*
          * Here there are many combinations/possibilities, of what the
          * right DesignEntityType can be, however with a some mapping,
@@ -508,77 +486,9 @@ RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stCla
          * to spurious StatementType. This is guaranteed due to our
          * (robust) validation at the PQL Preprocessor side.
          */
-        StatementType leftRefStmtType = mapToStatementType(leftRefDesignEntType);
-
-        Vector<Integer> tempResult = getAllBeforeStatements(rightRefVal, leftRefStmtType);
-        // tempResult.push_back(12345);
-        result = RawResultFromClause::convertToStringVect(tempResult);
-    } else if (leftRefType == IntegerRefType && rightRefType == WildcardRefType) {
-        /*
-         * For this case, in iteration 1, the clause is perpertually not
-         * related to the select synonym (because the wildcard to converted
-         * to any StmtType, hence no checking needs to be done here (if
-         * clause is related to select synonym).
-         */
-
-        // In this case, the right operand get defaulted to StmtType
-        DesignEntityType rightRefDesignEntType = StmtType;
-
-        Integer leftRefVal = std::stoi(leftRef.getValue());
-        /*
-         * Here there are many combinations/possibilities, of what the
-         * right DesignEntityType can be, however with a some mapping,
-         * function, we can simplify things.
-         *
-         * The function, would map DesignEntityType (pql/preprocessor/AqTypes.h)
-         * to StatementType (in Types.h).
-         *
-         * This function, is declared as a private member (of this class), please
-         * refer to its documentation for more details.
-         *
-         * Note: Here we make a critical assumption, that we can never
-         * have invalid DesignEntityType which would hence get mapped
-         * to spurious StatementType. This is guaranteed due to our
-         * (robust) validation at the PQL Preprocessor side.
-         */
-        StatementType rightRefStmtType = mapToStatementType(rightRefDesignEntType);
-
-        Vector<Integer> tempResult = getAllAfterStatements(leftRefVal, rightRefStmtType);
-        // tempResult.push_back(12345);
-        result = RawResultFromClause::convertToStringVect(tempResult);
-    } else if (leftRefType == WildcardRefType && rightRefType == IntegerRefType) {
-        /*
-         * For this case, in iteration 1, the clause is perpertually not
-         * related to the select synonym (because the wildcard to converted
-         * to any StmtType, hence no checking needs to be done here (if
-         * clause is related to select synonym).
-         */
-
-        // In this case, the right operand get defaulted to StmtType
-        DesignEntityType leftRefDesignEntType = StmtType;
-
-        Integer rightRefVal = std::stoi(rightRef.getValue());
-        /*
-         * Here there are many combinations/possibilities, of what the
-         * right DesignEntityType can be, however with a some mapping,
-         * function, we can simplify things.
-         *
-         * The function, would map DesignEntityType (pql/preprocessor/AqTypes.h)
-         * to StatementType (in Types.h).
-         *
-         * This function, is declared as a private member (of this class), please
-         * refer to its documentation for more details.
-         *
-         * Note: Here we make a critical assumption, that we can never
-         * have invalid DesignEntityType which would hence get mapped
-         * to spurious StatementType. This is guaranteed due to our
-         * (robust) validation at the PQL Preprocessor side.
-         */
-        StatementType leftRefStmtType = mapToStatementType(leftRefDesignEntType);
-
-        Vector<Integer> tempResult = getAllBeforeStatements(rightRefVal, leftRefStmtType);
-        // tempResult.push_back(12345);
-        result = RawResultFromClause::convertToStringVect(tempResult);
+        Vector<Integer> tempResult = (isStar ? getAllBeforeStatementsStar
+                                             : getAllBeforeStatements)(rightValue, mapToStatementType(leftSynonymType));
+        result = convertToStringVect(tempResult);
     } else if (leftRefType == IntegerRefType && rightRefType == IntegerRefType) {
         /*
          * For this case, in iteration 1, the clause is perpertually not
@@ -586,49 +496,27 @@ RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stCla
          * to any StmtType, hence no checking needs to be done here (if
          * clause is related to select synonym).
          */
-
         Integer leftRefVal = std::stoi(leftRef.getValue());
         Integer rightRefVal = std::stoi(rightRef.getValue());
-
-        Boolean followsHolds = checkIfFollowsHolds(leftRefVal, rightRefVal);
-
-        Vector<Integer> tempResult;
-        result = RawResultFromClause::convertToStringVect(tempResult);
+        Boolean followsHolds = (isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)(leftRefVal, rightRefVal);
+        if (followsHolds) {
+            result.push_back("true");
+        }
     } else if (leftRefType == SynonymRefType && rightRefType == SynonymRefType) {
         /*
          * Check if clause is related to synonym, recall that a clause is related to
          * synonym if and only if at least one of its operands is equals to given
          * synonym in question.
          */
-        if (leftRef.getValue() == synonym || rightRef.getValue() == synonym) {
-            isClauseRelatedToSynonym = true;
-        }
-
-        // In this case, we can only get the DesignEntityType of both the left and  right operands
-        DesignEntity leftRefDesignEnt = declarations.getDesignEntityOfSynonym(leftRef.getValue());
-        DesignEntity rightRefDesignEnt = declarations.getDesignEntityOfSynonym(rightRef.getValue());
-
-        DesignEntityType leftRefDesignEntType = leftRefDesignEnt.getType();
-        DesignEntityType rightRefDesignEntType = rightRefDesignEnt.getType();
-        /*
-         * Here there are many combinations/possibilities, of what the
-         * right DesignEntityType can be, however with a some mapping,
-         * function, we can simplify things.
-         *
-         * The function, would map DesignEntityType (pql/preprocessor/AqTypes.h)
-         * to StatementType (in Types.h).
-         *
-         * This function, is declared as a private member (of this class), please
-         * refer to its documentation for more details.
-         *
-         * Note: Here we make a critical assumption, that we can never
-         * have invalid DesignEntityType which would hence get mapped
-         * to spurious StatementType. This is guaranteed due to our
-         * (robust) validation at the PQL Preprocessor side.
-         */
-        StatementType leftRefStmtType = mapToStatementType(leftRefDesignEntType);
-        StatementType rightRefStmtType = mapToStatementType(rightRefDesignEntType);
-
+        // In this case, we can only get the DesignEntityType of both the left and right operands
+        StatementType leftRefStmtType
+            = leftRef.isWildCard()
+                  ? AnyStatement
+                  : mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType());
+        StatementType rightRefStmtType
+            = rightRef.isWildCard()
+                  ? AnyStatement
+                  : mapToStatementType(declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType());
         /*
          * Here, there are 3 cases, and here's how we would handle them;
          * 1. The left operand is related (appears) in the synonym.
@@ -654,20 +542,15 @@ RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stCla
          *    empty result when calling 'before' API, because the
          *    'after' would be empty too.
          */
-        Vector<Integer> tempResult;
-
+        std::vector<Integer> (*lookupPkbFunction)(StatementType, StatementType);
         if (leftRef.getValue() == synonym) {
-            tempResult = getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType);
-        } else if (rightRef.getValue() == synonym) {
-            tempResult = getAllAfterStatementsTyped(leftRefStmtType, rightRefStmtType);
+            lookupPkbFunction = isStar ? getAllBeforeStatementsTypedStar : getAllBeforeStatementsTyped;
         } else {
-            tempResult = getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType);
+            lookupPkbFunction = isStar ? getAllAfterStatementsTypedStar : getAllAfterStatementsTyped;
         }
-        // tempResult.push_back(12345);
-        result = RawResultFromClause::convertToStringVect(tempResult);
+        result = convertToStringVect(lookupPkbFunction(leftRefStmtType, rightRefStmtType));
+    } else {
+        throw std::runtime_error("Error in evaluateFollowsClause: No synonyms or integers in Follows clause");
     }
-
-    RawResultFromClause rawResultFromClause(result, isClauseRelatedToSynonym);
-
-    return rawResultFromClause;
+    return result;
 }

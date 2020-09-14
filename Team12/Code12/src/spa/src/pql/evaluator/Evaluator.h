@@ -9,7 +9,6 @@
 #ifndef SPA_PQL_EVALUATOR_H
 #define SPA_PQL_EVALUATOR_H
 
-#include "Types.h"
 #include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
 

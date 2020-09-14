@@ -15,13 +15,13 @@
 #ifndef SPA_PQL_RAW_QUERY_RESULT_H
 #define SPA_PQL_RAW_QUERY_RESULT_H
 
-#include "RawResultFromClauses.h"
 #include "Types.h"
 #include "pkb/PkbTypes.h"
+#include "pql/evaluator/RawResultFromClause.h"
 
 class RawQueryResult {
 public:
-    explicit RawQueryResult(Vector<RawResultFromClauses> results);
+    explicit RawQueryResult(Vector<RawResultFromClause> results);
     Boolean operator==(const RawQueryResult& rawQueryResult) const;
 
     const Boolean isSyntaxError;
@@ -30,12 +30,12 @@ public:
     static RawQueryResult getSyntaxError(String errorMessage);
 
     Boolean isEmpty();
-    RawResultFromClauses get(Integer index);
+    RawResultFromClause get(Integer index);
     Integer count();
 
 private:
     explicit RawQueryResult(String errorMessage);
-    const Vector<RawResultFromClauses> results;
+    const Vector<RawResultFromClause> results;
 };
 
 #endif // SPA_PQL_RAW_QUERY_RESULT_H
