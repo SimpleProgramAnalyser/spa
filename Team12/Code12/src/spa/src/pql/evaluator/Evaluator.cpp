@@ -50,12 +50,14 @@ inline Vector<Integer> verifyStatementType(const StatementType& stmtType, Vector
     }
 }
 
-inline Vector<Integer> getAllBeforeStatements(Integer after, StatementType stmtType) {
+inline Vector<Integer> getAllBeforeStatements(Integer after, StatementType stmtType)
+{
     Vector<StatementNumWithType> result = getBeforeStatement(after);
     return verifyStatementType(stmtType, result);
 }
 
-inline Vector<Integer> getAllAfterStatements(Integer before, StatementType stmtType) {
+inline Vector<Integer> getAllAfterStatements(Integer before, StatementType stmtType)
+{
     Vector<StatementNumWithType> result = getAfterStatement(before);
     return verifyStatementType(stmtType, result);
 }
@@ -357,18 +359,17 @@ ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, 
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)
 {
     ClauseResult results;
-    // TODO: PKB implementation
-    // if (isStatementDesignEntity(entTypeOfSynonym)) {
-    //     results = convertToClauseResult(getAllStatements(mapToStatementType(entTypeOfSynonym)));
-    // } else if (entTypeOfSynonym == VariableType) {
-    //     results = getAllVariables();
-    // } else if (entTypeOfSynonym == ProcedureType) {
-    //     results = getAllProcedures();
-    // } else if (entTypeOfSynonym == ConstantType) {
-    //     // TODO: ??? Constant ???
-    // } else {
-    //     throw std::runtime_error("Unknown DesignEntityType in retrieveAllMatching");
-    // }
+    if (isStatementDesignEntity(entTypeOfSynonym)) {
+        results = convertToClauseResult(getAllStatements(mapToStatementType(entTypeOfSynonym)));
+    } else if (entTypeOfSynonym == VariableType) {
+        results = getAllVariables();
+    } else if (entTypeOfSynonym == ProcedureType) {
+        results = getAllProcedures();
+    } else if (entTypeOfSynonym == ConstantType) {
+        // TODO: ??? Constant ???
+    } else {
+        throw std::runtime_error("Unknown DesignEntityType in retrieveAllMatching");
+    }
     return results;
 }
 

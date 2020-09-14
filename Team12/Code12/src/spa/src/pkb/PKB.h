@@ -70,12 +70,12 @@ Vector<Integer> getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, State
 Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 
 // Procedure
-void insertIntoProcedureTable(String procName);
+void insertIntoProcedureTable(const String& procName);
 Boolean getProcedureFromName(String procName);
 Vector<String> getAllProcedures();
 
 // Variable
-void insertIntoVariableTable(String varName);
+void insertIntoVariableTable(const String& varName);
 Boolean getVariableFromName(String varName);
 Vector<String> getAllVariables();
 
