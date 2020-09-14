@@ -67,8 +67,8 @@ VariablesSet extractModifiesStmtlst(const StmtlstNode* stmtLstNode, ProcedureMod
         switch (currentStatementType) {
         case AssignmentStatement: {
             // NOLINTNEXTLINE
-            modifiedInStatement.insert(
-                static_cast<const AssignmentStatementNode*>(currentStatement.get())->variable.varName);
+            const auto* assign = static_cast<const AssignmentStatementNode*>(currentStatement.get());
+            modifiedInStatement.insert(assign->variable.varName);
             break;
         }
         case CallStatement: {
