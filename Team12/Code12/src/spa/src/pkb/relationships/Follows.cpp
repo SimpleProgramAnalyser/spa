@@ -59,15 +59,15 @@ void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeS
                                            StatementType afterStmtType)
 {
     // store statements before it
-    stmtBeforeMap.insert(std::make_pair(after, before));
+    stmtBeforeMap[after] = std::make_pair(before, beforeStmtType);
     // store statements after it
-    stmtAfterMap.insert(std::make_pair(before, after));
+    stmtAfterMap[before] = std::make_pair(after, afterStmtType);
 
     typedShenanigans(before, beforeStmtType, after, afterStmtType);
 }
 
 void FollowsTable::addFollowsRelationshipsStar(Integer before, StatementType beforeStmtType,
-                                               const Vector<Pair<Integer, StatementType>>& afterStmttypePairs)
+                                               const Vector<StatementNumWithType>& afterStmttypePairs)
 {
     for (auto stmtTypePair : afterStmttypePairs) {
         Integer after = stmtTypePair.first;
@@ -88,7 +88,7 @@ void FollowsTable::addFollowsRelationshipsStar(Integer before, StatementType bef
 // reading
 Boolean FollowsTable::checkIfFollowsHolds(Integer before, Integer after)
 {
-    return stmtAfterMap[before] == after;
+    return stmtAfterMap[before].first == after;
 }
 
 Boolean FollowsTable::checkIfFollowsHoldsStar(Integer before, Integer after)
@@ -97,18 +97,18 @@ Boolean FollowsTable::checkIfFollowsHoldsStar(Integer before, Integer after)
     return stmtSet.find(after) != stmtSet.end();
 }
 
-Vector<Integer> FollowsTable::getAfterStatement(Integer before)
+Vector<StatementNumWithType> FollowsTable::getAfterStatement(Integer before)
 {
-    Vector<Integer> toReturn;
-    if (stmtAfterMap[before] != 0) {
+    Vector<StatementNumWithType> toReturn;
+    if (stmtAfterMap[before].first != 0) {
         toReturn.push_back(stmtAfterMap[before]);
     }
     return toReturn;
 }
-Vector<Integer> FollowsTable::getBeforeStatement(Integer after)
+Vector<StatementNumWithType> FollowsTable::getBeforeStatement(Integer after)
 {
-    Vector<Integer> toReturn;
-    if (stmtBeforeMap[after] != 0) {
+    Vector<StatementNumWithType> toReturn;
+    if (stmtBeforeMap[after].first != 0) {
         toReturn.push_back(stmtBeforeMap[after]);
     }
     return toReturn;

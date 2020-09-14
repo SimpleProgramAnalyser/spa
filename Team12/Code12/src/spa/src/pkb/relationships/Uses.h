@@ -18,7 +18,7 @@ public:
     Vector<Integer> getUsesStatements(const String& varName, StatementType stmtType);
     Vector<String> getUsesProcedures(const String& varName);
     Vector<String> getUsesVariablesFromStatement(Integer stmt);
-    Vector<String> getusesVariablesFromProcedure(const String& procName);
+    Vector<String> getUsesVariablesFromProcedure(const String& procName);
     Vector<Integer> getAllUsesStatements(StatementType stmtType);
     Vector<String> getAllUsesVariables(StatementType stmtType);
     Vector<String> getAllUsesVariables(const String& procName);
