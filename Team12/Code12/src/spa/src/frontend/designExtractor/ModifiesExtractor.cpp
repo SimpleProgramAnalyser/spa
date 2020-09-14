@@ -131,15 +131,15 @@ ProcedureModifiesMap extractModifiesReturnMap(ProgramNode& rootNode, const std::
     // process the procedures in the sorted order
     for (int procIndex : callOrder) {
         const std::unique_ptr<ProcedureNode>& currentProcedure = rootNode.procedureList.at(procIndex);
-        VariablesSet variablesModfiedInCurrentProcedure
+        VariablesSet variablesModifiedInCurrentProcedure
             = extractModifiesStmtlst(currentProcedure->statementListNode, &procedureModifies);
         // update PKB
-        storeVariablesInPkb(currentProcedure->procedureName, variablesModfiedInCurrentProcedure);
+        storeVariablesInPkb(currentProcedure->procedureName, variablesModifiedInCurrentProcedure);
 
         // store Modifies relationship in hash map, for Call statements in other procedures to know 
         // which variables are modified in this procedure
         procedureModifies.insert(std::pair<ProcedureName, VariablesSet>(currentProcedure->procedureName,
-                                                                       variablesModfiedInCurrentProcedure));
+                                                                       variablesModifiedInCurrentProcedure));
     }
     // return for unit testing
     return procedureModifies;
