@@ -144,13 +144,6 @@ StringList* splitProgram(const String& program) noexcept
             state = DefaultLexerState;
         } else if (isWhitespace(currentChar)) {
             // ignore the whitespace
-        } else if (state == SymbolicLexerState && isalnum(*currentChar)) {
-            // change state from symbolic to alphanumeric
-            // symbol was only one char long
-            splitStrings->push_back(std::move(currentString));
-            currentString.reset(new String());
-            currentString->push_back(*currentChar);
-            state = AlphanumericLexerState;
         } else if (isalnum(*currentChar)) {
             currentString->push_back(*currentChar);
             state = AlphanumericLexerState;
@@ -160,6 +153,13 @@ StringList* splitProgram(const String& program) noexcept
             splitStrings->push_back(std::move(currentString));
             currentString.reset(new String());
             state = DefaultLexerState;
+        } else if (state == SymbolicLexerState) {
+            // symbol was only one char long
+            splitStrings->push_back(std::move(currentString));
+            currentString.reset(new String());
+            // go through the loop again for current character
+            state = DefaultLexerState;
+            currentChar--;
         } else {
             if (state == AlphanumericLexerState) {
                 // change state from alphanumeric to symbolic
@@ -197,12 +197,10 @@ StringList* splitProgram(const String& program) noexcept
         }
         currentChar++;
     }
-
     // insert last word if any
     if (!currentString->empty()) {
         splitStrings->push_back(std::move(currentString));
     }
-
     return splitStrings;
 }
 

@@ -506,6 +506,8 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in sub-conditional expression
             return negatedCondition;
         }
+        assert(negatedCondition.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+               == endBracket);
         return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
             std::unique_ptr<ConditionalExpression>(createNotExpr(negatedCondition.astNode.release())),
             /* add one to skip closed bracket */
@@ -545,13 +547,13 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
                 std::unique_ptr<ConditionalExpression>(
                     createAndExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
-                secondCondition.nextUnparsedToken);
+                secondCondition.nextUnparsedToken + 1);
         } else {
             // programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::OrConditionalTag
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
                 std::unique_ptr<ConditionalExpression>(
                     createOrExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
-                secondCondition.nextUnparsedToken);
+                secondCondition.nextUnparsedToken + 1);
         }
     }
 }
@@ -709,16 +711,13 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
         && programTokens->at(startIndex + 1)->tokenTag == frontend::BracketOpenTag) {
 
         // find conditional expression and parse
-        TokenListIndex tokenPointer = getBracketEnd(programTokens, startIndex + 1) + 1;
-        // now token pointer points to the token directly after
-        // the closing bracket of while conditional
-        //
-        // we expect a open braces for statement list:
-        // "while" "(" ... ")" "{" ...
-        if (programTokens->at(tokenPointer - 1)->tokenTag == frontend::BracketClosedTag
-            && tokenPointer - 2 > startIndex + 2) {
+        TokenListIndex tokenPointer = getBracketEnd(programTokens, startIndex + 1);
 
-            loopControlCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 2);
+        if (tokenPointer >= 0 && tokenPointer < numberOfTokens
+            && programTokens->at(tokenPointer)->tokenTag == frontend::BracketClosedTag
+            && tokenPointer - 1 > startIndex + 2) {
+
+            loopControlCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 1);
         } else {
             // syntax error in while condition
             return getSyntaxError<WhileStatementNode>();
@@ -731,6 +730,12 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
         statementsSeen++;
         StatementNumber whileStmtNum = statementsSeen;
         // now, parse the statements
+        tokenPointer++;
+        // now token pointer points to the token directly after
+        // the closing bracket of while conditional
+        //
+        // we expect a open braces for statement list:
+        // "while" "(" ... ")" "{" ...
         if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer)->tokenTag == frontend::BracesOpenTag) {
             statements = parseStatementList(programTokens, tokenPointer);
         }
