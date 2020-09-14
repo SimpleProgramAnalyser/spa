@@ -107,7 +107,8 @@ VariablesSet extractModifiesStmtlst(const StmtlstNode* stmtLstNode, ProcedureMod
         }
         // update PKB
         if (!modifiedInStatement.empty()) {
-            storeModifiesVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, modifiedInStatement);
+            storeModifiesVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType,
+                                        modifiedInStatement);
         }
         // associate variables with the statement list as well
         allVariablesModified = concatenateVectors(allVariablesModified, modifiedInStatement);

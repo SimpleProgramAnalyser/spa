@@ -18,8 +18,6 @@
 #include "Types.h"
 #include "pkb/PkbTypes.h"
 
-
-
 class RawQueryResult {
 public:
     explicit RawQueryResult(Vector<String> results);
