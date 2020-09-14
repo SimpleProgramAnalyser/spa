@@ -92,4 +92,18 @@ TEST_CASE("Follows relationships stored correctly for test program")
 TEST_CASE("Follows* relationships stored correctly for test program")
 {
     parseSimple(getTestProgram());
+    std::vector<Integer> actualBeforeCall = getAllBeforeStatementsTypedStar(AnyStatement, CallStatement);
+    std::unordered_set<Integer> actualBeforeCallSet(actualBeforeCall.begin(), actualBeforeCall.end());
+    std::unordered_set<Integer> expectedBeforeCallSet = {1, 8, 9};
+    REQUIRE(actualBeforeCallSet == expectedBeforeCallSet);
+
+    std::vector<Integer> actualBeforePrint = getAllBeforeStatementsTypedStar(AnyStatement, PrintStatement);
+    std::unordered_set<Integer> actualBeforePrintSet(actualBeforePrint.begin(), actualBeforePrint.end());
+    std::unordered_set<Integer> expectedBeforePrintSet = {1, 2};
+    REQUIRE(actualBeforePrintSet == expectedBeforePrintSet);
+
+    std::vector<Integer> actualAfterPrint = getAllAfterStatementsTypedStar(AnyStatement, PrintStatement);
+    std::unordered_set<Integer> actualAfterPrintSet(actualAfterPrint.begin(), actualAfterPrint.end());
+    std::unordered_set<Integer> expectedAfterPrintSet = {3};
+    REQUIRE(actualAfterPrintSet == expectedAfterPrintSet);
 }
