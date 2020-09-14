@@ -1,10 +1,11 @@
 /**
  * Implementation of Modifies extractor.
  */
+#include "ModifiesExtractor.h"
+
 #include <stdexcept>
 #include <unordered_set>
 
-#include "ModifiesExtractor.h"
 #include "pkb/PKB.h"
 
 typedef std::string ProcedureName;
@@ -136,10 +137,10 @@ ProcedureModifiesMap extractModifiesReturnMap(ProgramNode& rootNode, const std::
         // update PKB
         storeVariablesInPkb(currentProcedure->procedureName, variablesModifiedInCurrentProcedure);
 
-        // store Modifies relationship in hash map, for Call statements in other procedures to know 
+        // store Modifies relationship in hash map, for Call statements in other procedures to know
         // which variables are modified in this procedure
         procedureModifies.insert(std::pair<ProcedureName, VariablesSet>(currentProcedure->procedureName,
-                                                                       variablesModifiedInCurrentProcedure));
+                                                                        variablesModifiedInCurrentProcedure));
     }
     // return for unit testing
     return procedureModifies;
