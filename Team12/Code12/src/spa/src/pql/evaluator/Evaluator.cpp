@@ -24,7 +24,7 @@ static StatementType mapToStatementType(DesignEntityType entType);
 ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
                                    const DeclarationTable& declarations, Boolean isStar);
 ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClause,
-                                   const DeclarationTable& declarations, Boolean isStar);
+                                  const DeclarationTable& declarations, Boolean isStar);
 ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
 ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stClause,
                                     const DeclarationTable& declarations);
@@ -727,7 +727,8 @@ ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause
  *
  * @return Results for the synonym in the Modifies clause.
  */
-ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
+ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stClause,
+                                    const DeclarationTable& declarations)
 {
     ClauseResult result;
     Reference leftRef = stClause->getRelationship().getLeftRef();
@@ -792,7 +793,7 @@ ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stCl
  * @return Results for the synonym in the Parent clause.
  */
 ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClause,
-    const DeclarationTable& declarations, Boolean isStar)
+                                  const DeclarationTable& declarations, Boolean isStar)
 {
     ClauseResult result;
     Reference leftRef = stClause->getRelationship().getLeftRef();
@@ -816,7 +817,7 @@ ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClau
     } else if (leftRefType == IntegerRefType && rightRefType == IntegerRefType) {
         Integer leftRefVal = std::stoi(leftRef.getValue());
         Integer rightRefVal = std::stoi(rightRef.getValue());
-        Boolean followsHolds = (isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)(leftRefVal, rightRefVal);
+        Boolean followsHolds = (isStar ? checkIfParentHoldsStar : checkIfParentHolds)(leftRefVal, rightRefVal);
         if (followsHolds) {
             result.push_back("true");
         }
@@ -826,12 +827,12 @@ ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClau
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         StatementType leftRefStmtType
             = leftRef.isWildCard()
-              ? AnyStatement
-              : mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType());
+                  ? AnyStatement
+                  : mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType());
         StatementType rightRefStmtType
             = rightRef.isWildCard()
-              ? AnyStatement
-              : mapToStatementType(declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType());
+                  ? AnyStatement
+                  : mapToStatementType(declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType());
         std::vector<Integer> (*lookupPkbFunction)(StatementType, StatementType);
         if (leftRef.getValue() == synonym) {
             lookupPkbFunction = isStar ? getAllParentStatementsTypedStar : getAllParentStatementsTyped;
