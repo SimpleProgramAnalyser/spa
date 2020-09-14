@@ -31,7 +31,7 @@ static StatementType mapToStatementType(DesignEntityType entType);
  * valid but yields no result, an empty RawQueryResult
  * would be returned).
  */
-RawQueryResult evaluateQuery(const AbstractQuery& query)
+RawQueryResult Evaluator::evaluateQuery(const AbstractQuery& query)
 {
     /*
      * First check if PQL query is semantically valid.
@@ -126,7 +126,6 @@ RawResultFromClauses processSingleSynonymQuery(Synonym synonym, ClauseVector cla
      * from Tables API.
      */
     Boolean areClausesEmpty = checkIfClausesEmpty(clauses);
-
     if (areClausesEmpty) {
         DesignEntityType entTypeOfSynonym = declarations.getDesignEntityOfSynonym(synonym).getType();
         RawResultFromClause result = retrieveAllMatching(entTypeOfSynonym);
@@ -168,7 +167,6 @@ RawResultFromClauses processSingleSynonymQuery(Synonym synonym, ClauseVector cla
 
         // Reset the vector, for we need to update new results.
         results.clear();
-
         results.push_back(result);
     }
 
@@ -261,6 +259,114 @@ RawResultFromClause processSuchThat(Synonym synonym, SuchThatClause* stClause, D
 }
 
 /*
+ * Given a Vector<RawResultFromClause>, filter out all RawResultFromClause
+ * that are not related to the synonym (i.e, isClauseRelatedToSynonym is false).
+ */
+Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause> results)
+{
+    Vector<RawResultFromClause> filteredResults;
+
+    Integer len = results.size();
+
+    for (int i = 0; i < len; ++i) {
+        RawResultFromClause result = results.at(i);
+
+        if (result.checkIsClauseRelatedToSynonym()) {
+            filteredResults.push_back(result);
+        }
+    }
+
+    return filteredResults;
+}
+
+/*
+ * Given a synonym, retrieves the results for vacuously true queries,
+ * i.e, retrieve all entity objects related to the design entity type
+ * of the synonym (e.g, statement, while loops, procedures, etc).
+ *
+ * This method returns a RawResultFromClass, through which it will
+ * set the isClauseRelatedToSynonym flag in the RawResultFromClass
+ * to true.
+ *
+ * @param entTypeOfSynonym The design entity type of the synonym.
+ *
+ * @return RawResultFromClause representing the results, from
+ * the vacuously true statement.
+ */
+RawResultFromClause retrieveAllMatching(DesignEntityType entTypeOfSynonym)
+{
+    Vector<String> results;
+    StatementType pkbType = mapToStatementType(entTypeOfSynonym);
+    // TODO: Call PKB API, given the design entity type of synonym.
+    RawResultFromClause rawResultFromClause(results, true);
+    return rawResultFromClause;
+}
+
+/*
+ * Given a DesignEntityType, this function maps it to
+ * a StatementType, which is a type compatible for calling
+ * the PKB API
+ *
+ * @param entType The DesignEntityType to map to.
+ *
+ * @return StatementType This represents the corresponding,
+ * mapped StatementType object.
+ */
+StatementType mapToStatementType(DesignEntityType entType)
+{
+    StatementType mappedStmtType;
+    // TODO: Use a hash table instead
+    if (entType == StmtType) {
+        mappedStmtType = AnyStatement;
+    } else if (entType == ReadType) {
+        mappedStmtType = ReadStatement;
+    } else if (entType == PrintType) {
+        mappedStmtType = PrintStatement;
+    } else if (entType == CallType) {
+        mappedStmtType = CallStatement;
+    } else if (entType == WhileType) {
+        mappedStmtType = WhileStatement;
+    } else if (entType == IfType) {
+        mappedStmtType = IfStatement;
+    } else if (entType == AssignType) {
+        mappedStmtType = AssignmentStatement;
+    } else {
+        throw std::runtime_error("Wrong entity type in mapToStatementType");
+    }
+
+    return mappedStmtType;
+}
+
+/*
+ * This method handles/checks case of a PQL query being
+ * vacuously true, when all clauses of the query yield
+ * some results, however they are all not related
+ * to the synonym in question.
+ *
+ * @return True if vacuously true, false otherwise.
+ */
+Boolean isQueryVacuouslyTrue(Vector<RawResultFromClause> results)
+{
+    Boolean isQueryVacuouslyTrue = true;
+    Integer len = results.size();
+    for (int i = 0; i < len; ++i) {
+        isQueryVacuouslyTrue = isQueryVacuouslyTrue && !results.at(i).checkIsClauseRelatedToSynonym();
+    }
+    return isQueryVacuouslyTrue;
+}
+
+/*
+ * This method handles/checks case of a PQL query being
+ * vacuously true, when the query does not have any clauses.
+ *
+ * @return True if vacuously true, false otherwise.
+ */
+Boolean checkIfClausesEmpty(ClauseVector clauses)
+{
+    return clauses.count() == 0;
+}
+
+/*
  * Processes a single (such that, Follows) clause in a PQL query, with
  * respect to a given synonym. All results obtained from
  * the clauses will be with respect to that particular synonym.
@@ -269,7 +375,7 @@ RawResultFromClause processSuchThat(Synonym synonym, SuchThatClause* stClause, D
  * to obtain the reuslts to the query.
  *
  * @param synonym The synonym by which the clause would be
- * evaluated, with respect to..
+ * evaluated with respect to.
  * @param stClause The SuchThatClause (Follows type) to
  * evaluate.
  * @param declarations A table containing a map of declarations (variables)
@@ -277,13 +383,10 @@ RawResultFromClause processSuchThat(Synonym synonym, SuchThatClause* stClause, D
  * @param isStar Whether the Follows clause comes with an
  *               asterisk, indicating the transitive closure.
  *
- * @return Vector<String>, which represents the results from only 1
- * particular (such that, Follows) clause in the query (please read the
- * documentation of RawQueryResult for more details) evaluated
- * with respect to a particular synonym.
+ * @return Results for the Synonym in the Follows clause.
  */
 RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations,
-                                          Boolean isStar)
+    Boolean isStar)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
@@ -567,112 +670,4 @@ RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stCla
     RawResultFromClause rawResultFromClause(result, isClauseRelatedToSynonym);
 
     return rawResultFromClause;
-}
-
-/*
- * Given a Vector<RawResultFromClause>, filter out all RawResultFromClause
- * that are not related to the synonym (i.e, isClauseRelatedToSynonym is false).
- */
-Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause> results)
-{
-    Vector<RawResultFromClause> filteredResults;
-
-    Integer len = results.size();
-
-    for (int i = 0; i < len; ++i) {
-        RawResultFromClause result = results.at(i);
-
-        if (result.checkIsClauseRelatedToSynonym()) {
-            filteredResults.push_back(result);
-        }
-    }
-
-    return filteredResults;
-}
-
-/*
- * Given a synonym, retrieves the results for vacuously true queries,
- * i.e, retrieve all entity objects related to the design entity type
- * of the synonym (e.g, statement, while loops, procedures, etc).
- *
- * This method returns a RawResultFromClass, through which it will
- * set the isClauseRelatedToSynonym flag in the RawResultFromClass
- * to true.
- *
- * @param entTypeOfSynonym The design entity type of the synonym.
- *
- * @return RawResultFromClause representing the results, from
- * the vacuously true statement.
- */
-RawResultFromClause retrieveAllMatching(DesignEntityType entTypeOfSynonym)
-{
-    Vector<String> results;
-    StatementType pkbType = mapToStatementType(entTypeOfSynonym);
-    // TODO: Call PKB API, given the design entity type of synonym.
-    RawResultFromClause rawResultFromClause(results, true);
-    return rawResultFromClause;
-}
-
-/*
- * Given a DesignEntityType, this function maps it to
- * a StatementType, which is a type compatible for calling
- * the PKB API
- *
- * @param entType The DesignEntityType to map to.
- *
- * @return StatementType This represents the corresponding,
- * mapped StatementType object.
- */
-StatementType mapToStatementType(DesignEntityType entType)
-{
-    StatementType mappedStmtType;
-    // TODO: Use a hash table instead
-    if (entType == StmtType) {
-        mappedStmtType = AnyStatement;
-    } else if (entType == ReadType) {
-        mappedStmtType = ReadStatement;
-    } else if (entType == PrintType) {
-        mappedStmtType = PrintStatement;
-    } else if (entType == CallType) {
-        mappedStmtType = CallStatement;
-    } else if (entType == WhileType) {
-        mappedStmtType = WhileStatement;
-    } else if (entType == IfType) {
-        mappedStmtType = IfStatement;
-    } else if (entType == AssignType) {
-        mappedStmtType = AssignmentStatement;
-    } else {
-        throw std::runtime_error("Wrong entity type in mapToStatementType");
-    }
-
-    return mappedStmtType;
-}
-
-/*
- * This method handles/checks case of a PQL query being
- * vacuously true, when all clauses of the query yield
- * some results, however they are all not related
- * to the synonym in question.
- *
- * @return True if vacuously true, false otherwise.
- */
-Boolean isQueryVacuouslyTrue(Vector<RawResultFromClause> results)
-{
-    Boolean isQueryVacuouslyTrue = true;
-    Integer len = results.size();
-    for (int i = 0; i < len; ++i) {
-        isQueryVacuouslyTrue = isQueryVacuouslyTrue && !results.at(i).checkIsClauseRelatedToSynonym();
-    }
-    return isQueryVacuouslyTrue;
-}
-
-/*
- * This method handles/checks case of a PQL query being
- * vacuously true, when the query does not have any clauses.
- *
- * @return True if vacuously true, false otherwise.
- */
-Boolean checkIfClausesEmpty(ClauseVector clauses)
-{
-    return clauses.count() == 0;
 }

@@ -15,7 +15,7 @@
 
 class Evaluator {
 public:
-    RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery);
+    static RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery);
 };
 
 #endif // SPA_PQL_EVALUATOR_H
