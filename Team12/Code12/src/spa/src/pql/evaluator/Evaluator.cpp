@@ -4,33 +4,36 @@
 
 #include "Evaluator.h"
 
+#include <cassert>
 #include <stdexcept>
 
-#include "RawResultFromClause.h"
 #include "pkb/PKB.h"
 
+typedef Vector<String> ClauseResult;
+
 static Boolean checkIfClausesEmpty(ClauseVector clauses);
-static Boolean isQueryVacuouslyTrue(Vector<RawResultFromClause> results);
-Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause> results);
-static RawResultFromClause retrieveAllMatching(DesignEntityType entTypeOfSynonym);
+ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, const Vector<Boolean>& relatednessList);
+static ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
 RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery);
-RawResultFromClause processSingleSynonymQuery(Synonym synonym, ClauseVector clauses, DeclarationTable declarations);
-RawResultFromClause evaluateFollowsClause(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations,
-                                          Boolean isStar);
-RawResultFromClause processClause(Synonym synonym, Clause* clause, DeclarationTable declarations);
-RawResultFromClause processSuchThat(Synonym synonym, SuchThatClause* stClause, DeclarationTable declarations);
+ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
+                                       const DeclarationTable& declarations);
+ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
+                                   const DeclarationTable& declarations, Boolean isStar);
+ClauseResult processClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations);
+ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
 static StatementType mapToStatementType(DesignEntityType entType);
 
 /*
  * An utility method to convert an integer vector to a string vector.
+ * String vector is also what is returned from evaluating a clause.
  *
  * @param intList An integer vector to convert.
  *
- * @return Vector<String> the converted vector.
+ * @return The converted vector of strings, or ClauseResult.
  */
-Vector<String> convertToStringVect(const Vector<Integer>& intList)
+ClauseResult convertToClauseResult(const Vector<Integer>& intList)
 {
-    Vector<String> strList;
+    ClauseResult strList;
     for (Integer i : intList) {
         strList.push_back(std::to_string(i));
     }
@@ -79,7 +82,7 @@ RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
     Vector<Synonym> synonyms{(abstractQuery.getSelectSynonym())};
     ClauseVector clauses = abstractQuery.getClauses();
     DeclarationTable declarations = abstractQuery.getDeclarationTable();
-    Vector<RawResultFromClause> results;
+    Vector<ClauseResult> results;
     if (synonyms.size() == 1) {
         /*
          * Currently, there is only exactly 1 synonym,
@@ -91,10 +94,38 @@ RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
          * determine the constraints of the synonyms and
          * call appropriate methods to get the result
          */
-        RawResultFromClause result = processSingleSynonymQuery(synonyms.at(0), clauses, declarations);
-        results.push_back(result);
+        ClauseResult result = processSingleSynonymQuery(synonyms.at(0), clauses, declarations);
+        return RawQueryResult(result);
     }
-    return RawQueryResult(results);
+    // do some stuff to combine the results
+    ClauseResult combinedResults = results.at(0); // TODO: Iteration 2
+    return RawQueryResult(combinedResults);
+}
+
+/**
+ * Given a clause, checks if the clause contains
+ * the synonym and is affected by it.
+ *
+ * @param clause The clause to be checked.
+ * @param syn The synonym to be checked.
+ * @return True, if the clause uses the synonym.
+ *         False, if it does not.
+ */
+Boolean checkIfClauseRelatedToSynonym(Clause* clause, const Synonym& syn)
+{
+    ClauseType type = clause->getType();
+    if (type == SuchThatClauseType) {
+        // NOLINTNEXTLINE
+        auto* stClause = static_cast<SuchThatClause*>(clause);
+        Relationship res = stClause->getRelationship();
+        return res.getLeftRef().getValue() == syn || res.getRightRef().getValue() == syn;
+    } else if (type == PatternClauseType) {
+        // NOLINTNEXTLINE
+        auto* prClause = static_cast<PatternClause*>(clause);
+        return prClause->getEntRef().getValue() == syn;
+    } else {
+        throw std::runtime_error("Unknown clause type in processClause");
+    }
 }
 
 /*
@@ -127,61 +158,45 @@ RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
  * @param declarations A table containing a map of declarations (variables)
  * to their design entity (might come in handy for processing query).
  *
- * @return RawResultFromClauses, which represents results from
+ * @return Results
+ * s, which represents results from
  * all clauses in the query (please read the documentation of
- * RawResultFromClause for more details), evaluated with respect
+ * Results
+ * for more details), evaluated with respect
  * to a particular synonym.
  */
-RawResultFromClause processSingleSynonymQuery(Synonym synonym, ClauseVector clauses, DeclarationTable declarations)
+ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
+                                       const DeclarationTable& declarations)
 {
-    Vector<RawResultFromClause> results;
+    Vector<ClauseResult> resultsList;
+    Vector<Boolean> relatednessList;
     /*
      * First check if clauses are empty.
      *
      * If so, retrieve all entity related to that synonym,
-     * from Tables API.
+     * from Tables API, and terminate.
      */
     Boolean areClausesEmpty = checkIfClausesEmpty(clauses);
     if (areClausesEmpty) {
         DesignEntityType entTypeOfSynonym = declarations.getDesignEntityOfSynonym(synonym).getType();
         return retrieveAllMatching(entTypeOfSynonym);
     }
-
     for (int i = 0; i < clauses.count(); ++i) {
         Clause* clause = clauses.get(i);
-        RawResultFromClause result = processClause(synonym, clause, declarations);
+        ClauseResult result = processClause(synonym, clause, declarations);
         /*
-         * If the clause is not related to the synonym,
-         * and it yields no results, then we can conclude
-         * immediately, that this query clauses (evaluated
-         * with respect to the synonym in question),
-         * returns no results.
+         * If one clause yields no results, then we can conclude
+         * immediately, that this query returns no results.
          *
          * As such, we don't have to continue processing
-         * the rest of the Clauses, and can just terminate
-         * early here.
+         * the rest of the query.
          */
-        if (!result.checkIsClauseRelatedToSynonym() && result.isEmpty()) {
-            return RawResultFromClauses::emptyRawResultFromClauses();
+        if (result.empty()) {
+            return std::vector<String>();
+        } else {
+            relatednessList.push_back(checkIfClauseRelatedToSynonym(clause, synonym));
+            resultsList.push_back(result);
         }
-
-        results.push_back(result);
-    }
-
-    /*
-     * Here there is another possibility, where query can be
-     * vacuously true, i.e, when all of the clauses/clause
-     * results are not related to the synonym
-     */
-    areClausesEmpty = isQueryVacuouslyTrue(results);
-
-    if (areClausesEmpty) {
-        DesignEntityType entTypeOfSynonym = declarations.getDesignEntityOfSynonym(synonym).getType();
-        RawResultFromClause result = retrieveAllMatching(entTypeOfSynonym);
-
-        // Reset the vector, for we need to update new results.
-        results.clear();
-        results.push_back(result);
     }
 
     /*
@@ -190,15 +205,15 @@ RawResultFromClause processSingleSynonymQuery(Synonym synonym, ClauseVector clau
      *
      * If the query was vacuously true, and
      * results were updated (on the if-condition
-     * directly on top), then, the RawResultFromClause
+     * directly on top), then, the Results
+     *
      * returned, would automatically have the flag
      * that it is related to synonym (the
      * retrieveResultsForVacuouslyTrue(..) method
      * inserts this flag (please read more on
      * its documentation, for more information).
      */
-    results = filterResultsRelatedToSyn(results);
-    return RawResultFromClauses(results);
+    return filterResultsRelatedToSyn(resultsList, relatednessList);
 }
 
 /*
@@ -215,18 +230,21 @@ RawResultFromClause processSingleSynonymQuery(Synonym synonym, ClauseVector clau
  * @param declarations A table containing a map of declarations (variables)
  * to their design entity (might come in handy for processing query).
  *
- * @return Vector<String>, which represents the results from only 1
+ * @return Results
+ * , which represents the results from only 1
  * particular clause in the query (please read the documentation
  * of RawQueryResult for more details) evaluated with respect to
  * a particular synonym.
  */
-RawResultFromClause processClause(Synonym synonym, Clause* clause, DeclarationTable declarations)
+ClauseResult processClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations)
 {
-    if (clause->getType() == SuchThatClauseType) {
+    ClauseType type = clause->getType();
+    if (type == SuchThatClauseType) {
         // NOLINTNEXTLINE
         return processSuchThat(synonym, static_cast<SuchThatClause*>(clause), declarations);
-    } else if (clause->getType() == PatternClauseType) {
+    } else if (type == PatternClauseType) {
         // TODO: Pattern matching
+        return ClauseResult();
     } else {
         throw std::runtime_error("Unknown clause type in processClause");
     }
@@ -246,12 +264,13 @@ RawResultFromClause processClause(Synonym synonym, Clause* clause, DeclarationTa
  * @param declarations A table containing a map of declarations (variables)
  * to their design entity (might come in handy for processing query).
  *
- * @return Vector<String>, which represents the results from only 1
+ * @return Results
+ * , which represents the results from only 1
  * particular (such that) clause in the query (please read the
  * documentation of RawQueryResult for more details) evaluated
  * with respect to a particular synonym.
  */
-Vector<String> processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
+ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
@@ -272,24 +291,32 @@ Vector<String> processSuchThat(const Synonym& synonym, SuchThatClause* stClause,
 }
 
 /*
- * Given a Vector<RawResultFromClause>, filter out all RawResultFromClause
- * that are not related to the synonym (i.e, isClauseRelatedToSynonym is false).
+ * Given a Vector<ClauseResults>, find results that are not related
+ * to the synonym and convert them into a true/false check.
+ *
+ * If the result is related, add the results into an unordered
+ * set to ensure uniqueness.
+ *
+ * resultsList and relatednessList must be the same size, as
+ * the relatedness list stores whether the results obtained
+ * by the clauses are related to the Select synonym.
  */
-Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause> results)
+ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, const Vector<Boolean>& relatednessList)
 {
-    Vector<RawResultFromClause> filteredResults;
-
-    Integer len = results.size();
-
-    for (int i = 0; i < len; ++i) {
-        RawResultFromClause result = results.at(i);
-
-        if (result.checkIsClauseRelatedToSynonym()) {
-            filteredResults.push_back(result);
+    size_t length = resultsList.size();
+    assert(length == relatednessList.size()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    std::unordered_set<String> uniqueResults;
+    for (size_t i = 0; i < length; i++) {
+        if (relatednessList.at(i)) {
+            // clause is related to synonym
+            std::copy(resultsList.at(i).begin(), resultsList.at(i).end(),
+                      std::inserter(uniqueResults, uniqueResults.end()));
+        } else {
+            // clause is unrelated
+            // skip the results (must be non-empty)
         }
     }
-
-    return filteredResults;
+    return std::vector<String>(uniqueResults.begin(), uniqueResults.end());
 }
 
 /*
@@ -303,14 +330,15 @@ Vector<RawResultFromClause> filterResultsRelatedToSyn(Vector<RawResultFromClause
  *
  * @param entTypeOfSynonym The design entity type of the synonym.
  *
- * @return RawResultFromClause representing the results, from
+ * @return Results
+ * representing the results, from
  * the vacuously true statement.
  */
-RawResultFromClause retrieveAllMatching(DesignEntityType entTypeOfSynonym)
+ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)
 {
-    Vector<String> results;
+    ClauseResult results;
     if (isStatementDesignEntity(entTypeOfSynonym)) {
-        results = convertToStringVect(getAllStatements(mapToStatementType(entTypeOfSynonym)));
+        results = convertToClauseResult(getAllStatements(mapToStatementType(entTypeOfSynonym)));
     } else if (entTypeOfSynonym == VariableType) {
         results = getAllVariables();
     } else if (entTypeOfSynonym == ProcedureType) {
@@ -320,7 +348,7 @@ RawResultFromClause retrieveAllMatching(DesignEntityType entTypeOfSynonym)
     } else {
         throw std::runtime_error("Unknown DesignEntityType in retrieveAllMatching");
     }
-    return RawResultFromClause(results);
+    return results;
 }
 
 /*
@@ -369,6 +397,21 @@ Boolean checkIfClausesEmpty(ClauseVector clauses)
     return clauses.count() == 0;
 }
 
+/**
+ * Checks if a ReferenceType corresponds to multiple
+ * query results, namely if the ReferenceType is
+ * the Synonym type or Wildcard type.
+ *
+ * @param refType The ReferenceType to be checked.
+ * @return True, if the Reference holding this
+ *         type can match more than one result.
+ *         Otherwise, false.
+ */
+Boolean canMatchMultiple(const ReferenceType& refType)
+{
+    return (refType == SynonymRefType || refType == WildcardRefType);
+}
+
 /*
  * Processes a single (such that, Follows) clause in a PQL query, with
  * respect to a given synonym. All results obtained from the clauses
@@ -384,10 +427,10 @@ Boolean checkIfClausesEmpty(ClauseVector clauses)
  *
  * @return Results for the Synonym in the Follows clause.
  */
-Vector<String> evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
-                                     const DeclarationTable& declarations, Boolean isStar)
+ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
+                                   const DeclarationTable& declarations, Boolean isStar)
 {
-    Vector<String> result;
+    ClauseResult result;
     Reference leftRef = stClause->getRelationship().getLeftRef();
     Reference rightRef = stClause->getRelationship().getRightRef();
     ReferenceType leftRefType = leftRef.getReferenceType();
@@ -431,7 +474,7 @@ Vector<String> evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stC
      *    The left operand must be the same as the right
      *    operand. For Follows, this is impossible.
      */
-    if (leftRefType == IntegerRefType && (rightRefType == SynonymRefType || rightRefType == WildcardRefType)) {
+    if (leftRefType == IntegerRefType && canMatchMultiple(rightRefType)) {
         /*
          * Check if clause is related to synonym, recall that a clause is related to
          * synonym if and only if at least one of its operands is equals to given
@@ -459,8 +502,8 @@ Vector<String> evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stC
          */
         Vector<Integer> tempResult = (isStar ? getAllAfterStatementsStar
                                              : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
-        result = convertToStringVect(tempResult);
-    } else if (leftRefType == SynonymRefType && rightRefType == IntegerRefType) {
+        result = convertToClauseResult(tempResult);
+    } else if (canMatchMultiple(leftRefType) && rightRefType == IntegerRefType) {
         /*
          * Check if clause is related to synonym, recall that a clause is related to
          * synonym if and only if at least one of its operands is equals to given
@@ -488,10 +531,10 @@ Vector<String> evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stC
          */
         Vector<Integer> tempResult = (isStar ? getAllBeforeStatementsStar
                                              : getAllBeforeStatements)(rightValue, mapToStatementType(leftSynonymType));
-        result = convertToStringVect(tempResult);
+        result = convertToClauseResult(tempResult);
     } else if (leftRefType == IntegerRefType && rightRefType == IntegerRefType) {
         /*
-         * For this case, in iteration 1, the clause is perpertually not
+         * For this case, in iteration 1, the clause is perpetually not
          * related to the select synonym (because the wildcard to converted
          * to any StmtType, hence no checking needs to be done here (if
          * clause is related to select synonym).
@@ -502,7 +545,7 @@ Vector<String> evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stC
         if (followsHolds) {
             result.push_back("true");
         }
-    } else if (leftRefType == SynonymRefType && rightRefType == SynonymRefType) {
+    } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         /*
          * Check if clause is related to synonym, recall that a clause is related to
          * synonym if and only if at least one of its operands is equals to given
@@ -548,7 +591,7 @@ Vector<String> evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stC
         } else {
             lookupPkbFunction = isStar ? getAllAfterStatementsTypedStar : getAllAfterStatementsTyped;
         }
-        result = convertToStringVect(lookupPkbFunction(leftRefStmtType, rightRefStmtType));
+        result = convertToClauseResult(lookupPkbFunction(leftRefStmtType, rightRefStmtType));
     } else {
         throw std::runtime_error("Error in evaluateFollowsClause: No synonyms or integers in Follows clause");
     }

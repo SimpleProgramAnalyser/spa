@@ -17,11 +17,12 @@
 
 #include "Types.h"
 #include "pkb/PkbTypes.h"
-#include "pql/evaluator/RawResultFromClause.h"
+
+
 
 class RawQueryResult {
 public:
-    explicit RawQueryResult(Vector<RawResultFromClause> results);
+    explicit RawQueryResult(Vector<String> results);
     Boolean operator==(const RawQueryResult& rawQueryResult) const;
 
     const Boolean isSyntaxError;
@@ -30,12 +31,12 @@ public:
     static RawQueryResult getSyntaxError(String errorMessage);
 
     Boolean isEmpty();
-    RawResultFromClause get(Integer index);
+    Vector<String> get(Integer index);
     Integer count();
 
 private:
     explicit RawQueryResult(String errorMessage);
-    const Vector<RawResultFromClause> results;
+    const Vector<String> results;
 };
 
 #endif // SPA_PQL_RAW_QUERY_RESULT_H
