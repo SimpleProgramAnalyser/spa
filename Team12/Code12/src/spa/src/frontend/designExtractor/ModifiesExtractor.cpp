@@ -20,12 +20,12 @@ typedef std::unordered_set<std::string> VariablesSet;
  */
 typedef std::unordered_map<ProcedureName, VariablesSet> ProcedureModifiesMap;
 
-Void storeVariablesInPkb(StatementNumber stmt, StatementType type, const VariablesSet& variables)
+Void storeModifiesVariablesInPkb(StatementNumber stmt, StatementType type, const VariablesSet& variables)
 {
     addModifiesRelationships(stmt, type, std::vector<std::string>(variables.begin(), variables.end()));
 }
 
-Void storeVariablesInPkb(const ProcedureName& proc, const VariablesSet& variables)
+Void storeModifiesVariablesInPkb(const ProcedureName& proc, const VariablesSet& variables)
 {
     addModifiesRelationships(proc, std::vector<std::string>(variables.begin(), variables.end()));
 }
@@ -106,7 +106,7 @@ VariablesSet extractModifiesStmtlst(const StmtlstNode* stmtLstNode, ProcedureMod
             throw std::runtime_error("Unknown statement type in ModifiesExtractor extractModifiesStmtlst");
         }
         // update PKB
-        storeVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, modifiedInStatement);
+        storeModifiesVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, modifiedInStatement);
         // associate variables with the statement list as well
         allVariablesModified = concatenateVectors(allVariablesModified, modifiedInStatement);
     }
@@ -136,7 +136,7 @@ ProcedureModifiesMap extractModifiesReturnMap(ProgramNode& rootNode, const std::
         VariablesSet variablesModifiedInCurrentProcedure
             = extractModifiesStmtlst(currentProcedure->statementListNode, &procedureModifies);
         // update PKB
-        storeVariablesInPkb(currentProcedure->procedureName, variablesModifiedInCurrentProcedure);
+        storeModifiesVariablesInPkb(currentProcedure->procedureName, variablesModifiedInCurrentProcedure);
 
         // store Modifies relationship in hash map, for Call statements in other procedures to know
         // which variables are modified in this procedure
