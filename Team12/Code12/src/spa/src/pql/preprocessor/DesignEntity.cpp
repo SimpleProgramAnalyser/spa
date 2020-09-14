@@ -1,7 +1,3 @@
-//
-// Created by Chester Sim on 12/9/20.
-//
-
 #include "AqTypes.h"
 
 DesignEntity::DesignEntity()

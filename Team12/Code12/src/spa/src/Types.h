@@ -23,21 +23,21 @@ typedef List<String> StringList;
 
 typedef std::vector<String> StringVector;
 
-enum StatementType {
+enum StatementType : char {
     AnyStatement = 0,
-    AssignmentStatement,
-    CallStatement,
-    IfStatement,
-    PrintStatement,
-    ReadStatement,
-    WhileStatement,
-    STATEMENT_TYPE_COUNT
+    AssignmentStatement = 1,
+    CallStatement = 2,
+    IfStatement = 3,
+    PrintStatement = 4,
+    ReadStatement = 5,
+    WhileStatement = 6,
+    STATEMENT_TYPE_COUNT = 7
 };
 
 // PQL
 
-enum ErrorType { Syntax = 0, Semantic = 1 };
+enum ErrorType : char { Syntax = 0, Semantic = 1 };
 
-enum ErrorSource { SimpleProgram = 0, Query = 1 };
+enum ErrorSource : char { SimpleProgram = 0, Query = 1 };
 
 #endif // SPA_TYPES_H

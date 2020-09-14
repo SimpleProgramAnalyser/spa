@@ -53,6 +53,10 @@ ProgramNode* getProgram6Tree_sumDigitDuplicate();
 
 // Program 7: computeCentroid, program with multiple procedures
 String getProgram7String_computeCentroid();
+// Get a syntactically incorrect version of program 7, with mismatched braces
+String getProgram7StringMismatchedBraces_computeCentroid();
+// Get a syntactically incorrect version of program 7, with mismatched brackets
+String getProgram7StringMismatchedBrackets_computeCentroid();
 // Program 7: computeCentroid, program with multiple procedures
 ProgramNode* getProgram7Tree_computeCentroid();
 
@@ -80,5 +84,37 @@ ProgramNode* getProgram11Tree_sumDigitPlusMultiplyNestedWhileIfCyclicCall();
 String getProgram12String_recursivePrintAscending();
 // Program 12: Recursive program
 ProgramNode* getProgram12Tree_recursivePrintAscending();
+
+// Program 13: If statement and assign
+String getProgram13String_ifExample();
+// Program 13: If statement and assign
+ProgramNode* getProgram13Tree_ifExample();
+
+// Program 14: While statement and assign
+String getProgram14String_whileExample();
+// Program 14: While statement and assign
+ProgramNode* getProgram14Tree_whileExample();
+
+// Program 15: Complicated conditional in while
+String getProgram15String_complicatedConditional();
+// Program 15: Complicated conditional in while
+StringList* getProgram15StringList_complicatedConditional();
+// Program 15: Complicated conditional in while
+ProgramNode* getProgram15Tree_complicatedConditional();
+
+// Program 16: Keywords used as identifier
+String getProgram16String_keywordsAsIdentifier();
+// Program 16: Keywords used as identifier
+ProgramNode* getProgram16Tree_keywordsAsIdentifier();
+
+// Program 17: Variable with same name as procedure
+String getProgram17String_sameVariableAndProcedureName();
+// Program 17: Variable with same name as procedure
+ProgramNode* getProgram17Tree_sameVariableAndProcedureName();
+
+// Program 18: Procedure ending with while statement, with multiple assign
+String getProgram18String_endWithWhile();
+// Program 18: Procedure ending with while statement, with multiple assign
+ProgramNode* getProgram18Tree_endWithWhile();
 
 #endif // UNIT_TESTING_AST_UTILS_H

@@ -1,8 +1,15 @@
 /**
- * This class represents a RawQueryResult, which is an
- * immediate encoding PQL results after interaction with
- * the PKB (the interaction, is of course done by other
- * classes).
+ * This class represents the raw query results from all
+ * the clauses in the PQL query, with respect every synonym
+ * in the PQL query (the synonym in question won't be stored in this
+ * class or any raw results class).
+ *
+ * Note: Please read the documentation of the RawResultFromClause
+ * and RawResultFromClauses classes to get a better understanding
+ * of the information this class stores.
+ *
+ * Hierarchically, this class is basically like a giant container,
+ * encapsulating all (raw) results of the query.
  */
 
 #ifndef SPA_PQL_RAW_QUERY_RESULT_H
@@ -13,21 +20,22 @@
 
 class RawQueryResult {
 public:
-    RawQueryResult(Vector<Vector<Vector<String>>> results);
-    static RawQueryResult emptyRawQueryResult();
-    /*
-     * TODO: Don't return the whole Vector<Vector<String>>,
-     * implement it like Chester's, get by index only.
-     */
-    Vector<Vector<Vector<String>>> getResults();
-
-    Boolean isEmpty();
-
+    explicit RawQueryResult(Vector<String> results);
     Boolean operator==(const RawQueryResult& rawQueryResult) const;
 
+    const Boolean isSyntaxError;
+    const String errorMessage;
+
+    static RawQueryResult getSyntaxError(String errorMessage);
+
+    Boolean isEmpty();
+    String get(Integer index);
+    size_t count();
+    void sort();
+
 private:
-    RawQueryResult();
-    Vector<Vector<Vector<String>>> results;
+    explicit RawQueryResult(String errorMessage);
+    Vector<String> results;
 };
 
 #endif // SPA_PQL_RAW_QUERY_RESULT_H

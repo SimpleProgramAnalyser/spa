@@ -3,8 +3,16 @@
  * on strings that are used before parsing.
  */
 
+#include "Util.h"
+#include "ast_utils/AstUtils.h"
 #include "catch.hpp"
 #include "lexer/Lexer.h"
+
+TEST_CASE("splitProgram works for complicated conditional")
+{
+    StringList* program = splitProgram(getProgram15String_complicatedConditional());
+    REQUIRE(util::checkListValuesEqual(*program, *(getProgram15StringList_complicatedConditional())));
+}
 
 TEST_CASE("trimWhitespace works on empty string")
 {

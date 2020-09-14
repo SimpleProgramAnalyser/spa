@@ -2,11 +2,11 @@
  * Implementation of SPA frontend design extractor.
  */
 #include <iostream>
-#include <string>
-#include <vector>
 
 #include "FollowsExtractor.h"
+#include "ModifiesExtractor.h"
 #include "SemanticErrorsValidator.h"
+#include "UsesExtractor.h"
 
 Void extractDesign(ProgramNode& rootNode)
 {
@@ -19,4 +19,6 @@ Void extractDesign(ProgramNode& rootNode)
     }
 
     extractFollows(rootNode);
+    extractUses(rootNode, seValidator);
+    extractModifies(rootNode, seValidator);
 }

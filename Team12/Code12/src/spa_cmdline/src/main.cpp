@@ -43,7 +43,7 @@ String readProgram()
 {
     // Constant declarations
     const String LinefeedChar = "\n";
-    const String SimpleExitStr = "*";
+    const String SimpleExitStr = "\\";
 
     String program;
 
@@ -53,6 +53,7 @@ String readProgram()
 
         if (std::cin.fail()) {
             // error
+            std::cout << "Error in reading from command line input!" << std::endl;
             break;
         }
 
@@ -73,12 +74,13 @@ int main(int argv, char** args)
     // Constant declarations
     const String GreetMsg = "Welcome to our SIMPLE SPA!";
     const String SimpleProgramPromptMsg
-        = "Please enter a SIMPLE source program (when done, enter a '*' on a new line):";
+        = "Please enter a SIMPLE source program (when done, enter a '\\' on a new line):";
     const String DoneFeedbackMsg = "Done....";
-    const String PqlQueryPromptMsg = "Please enter a PQL query (enter 'exit' to end):";
+    const String PqlQueryPromptMsg = "Please enter a PQL query (enter '\\' on a new line when done, or 'exit' to end):";
     const String ByeMsg = "Thank you for using our SIMPLE SPA!";
     const String SimpleProgramProcessingMsg = "Passing SIMPLE program to SPA frontend...";
     const String LinefeedChar = "\n";
+    const String PqlEndStr = "\\";
     const String PqlExitStr = "exit";
 
     std::cout << GreetMsg << std::endl;
@@ -90,39 +92,27 @@ int main(int argv, char** args)
     std::cout << SimpleProgramProcessingMsg << std::endl;
 
     parse(program);
-
     std::cout << DoneFeedbackMsg << std::endl;
 
+    std::cout << PqlQueryPromptMsg << std::endl;
+    std::string query;
     while (true) {
-        std::cout << PqlQueryPromptMsg << std::endl;
-
-        String declarations;
-        String select;
-
-        std::getline(std::cin, declarations);
-
+        std::string current;
+        std::getline(std::cin, current);
         if (std::cin.fail()) {
             // error
+            std::cout << "Error in reading from command line input!" << std::endl;
             break;
-        }
-
-        std::getline(std::cin, select);
-
-        if (std::cin.fail()) {
-            // error
+        } else if (current == PqlExitStr) {
             break;
+        } else if (current == PqlEndStr) {
+            evaluate(query);
+            query.clear();
+            std::cout << PqlQueryPromptMsg << std::endl;
+        } else {
+            query.append(current);
         }
-
-        if (declarations == PqlExitStr) {
-            break;
-        }
-
-        String query = declarations.append(LinefeedChar).append(select);
-
-        evaluate(query);
     }
-
     std::cout << ByeMsg << std::endl;
-
     return 0;
 }

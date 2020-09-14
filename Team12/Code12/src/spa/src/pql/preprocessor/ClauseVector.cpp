@@ -1,7 +1,3 @@
-//
-// Created by Chester Sim on 13/9/20.
-//
-
 #include "AqTypes.h"
 
 ClauseVector::ClauseVector() noexcept: hasError{false} {}
@@ -23,7 +19,7 @@ Clause* ClauseVector::get(Integer index)
     return clauses.at(index);
 }
 
-Integer ClauseVector::totalNumClauses()
+Integer ClauseVector::count()
 {
     return clauses.size();
 }

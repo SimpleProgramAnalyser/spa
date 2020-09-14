@@ -521,6 +521,98 @@ procedure computeCentroid {\n\
     return multiProcedureProgram;
 }
 
+String getProgram7StringMismatchedBraces_computeCentroid()
+{
+    String mismatchedBraces = "\
+procedure main {\n\
+\n\
+    flag = 0;\n\
+    call computeCentroid;\n\
+    call printResults;\n\
+}\n\
+\n\
+procedure readPoint{\n\
+     read x;\n\
+     read y;\n\
+}\n\
+\n\
+procedure printResults {\n\
+    print flag;\n\
+    print cenX;\n\
+    print cenY;\n\
+    print normSq;\n\
+}\n\
+\n\
+procedure computeCentroid {\n\
+\n\
+    count = 0;\n\
+    cenX = 0;\n\
+    cenY = 0;\n\
+    call readPoint;\n\
+    while((x != 0) && (y != 0)) {\n\
+        count = count + 1;\n\
+        cenX = cenX + x;\n\
+        cenY = cenY + y;\n\
+        call readPoint;\n\
+    }\n\
+    if(count == 0) then " /* missing opening brace here */ "\
+\n        flag = 1;\n\
+    } else {\n\
+        cenX = cenX/ count;\n\
+        cenY = cenY / count;\n\
+    }\n\
+\n\
+    normSq = cenX * cenX + cenY * cenY;\n\
+}";
+    return mismatchedBraces;
+}
+
+String getProgram7StringMismatchedBrackets_computeCentroid()
+{
+    String mismatchedBrackets = "\
+procedure main {\n\
+\n\
+    flag = 0;\n\
+    call computeCentroid;\n\
+    call printResults;\n\
+}\n\
+\n\
+procedure readPoint{\n\
+     read x;\n\
+     read y;\n\
+}\n\
+\n\
+procedure printResults {\n\
+    print flag;\n\
+    print cenX;\n\
+    print cenY;\n\
+    print normSq;\n\
+}\n\
+\n\
+procedure computeCentroid {\n\
+\n\
+    count = 0;\n\
+    cenX = 0;\n\
+    cenY = 0;\n\
+    call readPoint;\n\
+    while((x != 0) && (y != 0" /* missing closing bracket here */ ") {\n\
+        count = count + 1;\n\
+        cenX = cenX + x;\n\
+        cenY = cenY + y;\n\
+        call readPoint;\n\
+    }\n\
+    if(count == 0) then {\n\
+        flag = 1;\n\
+    } else {\n\
+        cenX = cenX/ count;\n\
+        cenY = cenY / count;\n\
+    }\n\
+\n\
+    normSq = cenX * cenX + cenY * cenY;\n\
+}";
+    return mismatchedBrackets;
+}
+
 ProgramNode* getProgram7Tree_computeCentroid()
 {
     List<StatementNode> mainStatements;
@@ -1073,6 +1165,447 @@ ProgramNode* getProgram12Tree_recursivePrintAscending()
     List<ProcedureNode> procedureList;
     procedureList.push_back(std::unique_ptr<ProcedureNode>(recursivePrintAscendingProcedureNode));
     ProgramNode* programNode = createProgramNode("recursivePrintAscending", procedureList, 8);
+
+    return programNode;
+}
+
+String getProgram13String_ifExample()
+{
+    String ifExample = "\
+procedure ifExample {\n\
+\n\
+    if(num1 >= num2) then {\n\
+        num2 = num2 + 1;\n\
+    } else {\n\
+        num1 = num1 + 1;\n\
+    }\n\
+}";
+
+    return ifExample;
+}
+
+ProgramNode* getProgram13Tree_ifExample()
+{
+    List<StatementNode> statements;
+    List<StatementNode> ifStatements;
+    List<StatementNode> elseStatements;
+    // If statements
+    ifStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(2, Variable("num2"), createPlusExpr(createRefExpr("num2"), createRefExpr(1)))));
+    StmtlstNode* ifStmtLstNode = createStmtlstNode(ifStatements);
+    // Else statements
+    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(3, Variable("num1"), createPlusExpr(createRefExpr("num1"), createRefExpr(1)))));
+    StmtlstNode* elseStmtLstNode = createStmtlstNode(elseStatements);
+
+    statements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(1, createGteExpr(createRefExpr("num1"), createRefExpr("num2")), ifStmtLstNode, elseStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* ifExampleProcedureNode = createProcedureNode("ifExample", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(ifExampleProcedureNode));
+    ProgramNode* programNode = createProgramNode("ifExample", procedureList, 3);
+
+    return programNode;
+}
+
+String getProgram14String_whileExample()
+{
+    String whileExample = "\
+procedure whileExample {\n\
+\n\
+    while(x != 0){\n\
+        x = x * 123;\
+    }\n\
+}";
+
+    return whileExample;
+}
+
+ProgramNode* getProgram14Tree_whileExample()
+{
+    List<StatementNode> statements;
+    List<StatementNode> whileStatements;
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(2, Variable("x"), createTimesExpr(createRefExpr("x"), createRefExpr(123)))));
+    StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
+    statements.push_back(std::unique_ptr<WhileStatementNode>(
+        createWhileNode(1, createNeqExpr(createRefExpr("x"), createRefExpr(0)), whileStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* whileExampleProcedureNode = createProcedureNode("whileExample", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(whileExampleProcedureNode));
+    ProgramNode* programNode = createProgramNode("whileExample", procedureList, 2);
+
+    return programNode;
+}
+
+String getProgram15String_complicatedConditional()
+{
+    String complicatedConditional = "\
+procedure complicatedConditional {\n\
+\n\
+    while(!((x % 6 - 3 < a) && ((y == z) || (!(b != c + x))))){\n\
+        x = x * 123;\
+    }\n\
+}";
+
+    return complicatedConditional;
+}
+
+StringList* getProgram15StringList_complicatedConditional()
+{
+    auto* complicatedConditional = new StringList(46);
+    auto* str0 = new String("procedure");
+    auto* str1 = new String("complicatedConditional");
+    auto* str2 = new String("{");
+    auto* str3 = new String("while");
+    auto* str4 = new String("(");
+    auto* str5 = new String("!");
+    auto* str6 = new String("(");
+    auto* str7 = new String("(");
+    auto* str8 = new String("x");
+    auto* str9 = new String("%");
+    auto* str10 = new String("6");
+    auto* str11 = new String("-");
+    auto* str12 = new String("3");
+    auto* str13 = new String("<");
+    auto* str14 = new String("a");
+    auto* str15 = new String(")");
+    auto* str16 = new String("&&");
+    auto* str17 = new String("(");
+    auto* str18 = new String("(");
+    auto* str19 = new String("y");
+    auto* str20 = new String("==");
+    auto* str21 = new String("z");
+    auto* str22 = new String(")");
+    auto* str23 = new String("||");
+    auto* str24 = new String("(");
+    auto* str25 = new String("!");
+    auto* str26 = new String("(");
+    auto* str27 = new String("b");
+    auto* str28 = new String("!=");
+    auto* str29 = new String("c");
+    auto* str30 = new String("+");
+    auto* str31 = new String("x");
+    auto* str32 = new String(")");
+    auto* str33 = new String(")");
+    auto* str34 = new String(")");
+    auto* str35 = new String(")");
+    auto* str36 = new String(")");
+    auto* str37 = new String("{");
+    auto* str38 = new String("x");
+    auto* str39 = new String("=");
+    auto* str40 = new String("x");
+    auto* str41 = new String("*");
+    auto* str42 = new String("123");
+    auto* str43 = new String(";");
+    auto* str44 = new String("}");
+    auto* str45 = new String("}");
+
+    complicatedConditional->at(0) = std::unique_ptr<std::string>(str0);
+    complicatedConditional->at(1) = std::unique_ptr<std::string>(str1);
+    complicatedConditional->at(2) = std::unique_ptr<std::string>(str2);
+    complicatedConditional->at(3) = std::unique_ptr<std::string>(str3);
+    complicatedConditional->at(4) = std::unique_ptr<std::string>(str4);
+    complicatedConditional->at(5) = std::unique_ptr<std::string>(str5);
+    complicatedConditional->at(6) = std::unique_ptr<std::string>(str6);
+    complicatedConditional->at(7) = std::unique_ptr<std::string>(str7);
+    complicatedConditional->at(8) = std::unique_ptr<std::string>(str8);
+    complicatedConditional->at(9) = std::unique_ptr<std::string>(str9);
+    complicatedConditional->at(10) = std::unique_ptr<std::string>(str10);
+    complicatedConditional->at(11) = std::unique_ptr<std::string>(str11);
+    complicatedConditional->at(12) = std::unique_ptr<std::string>(str12);
+    complicatedConditional->at(13) = std::unique_ptr<std::string>(str13);
+    complicatedConditional->at(14) = std::unique_ptr<std::string>(str14);
+    complicatedConditional->at(15) = std::unique_ptr<std::string>(str15);
+    complicatedConditional->at(16) = std::unique_ptr<std::string>(str16);
+    complicatedConditional->at(17) = std::unique_ptr<std::string>(str17);
+    complicatedConditional->at(18) = std::unique_ptr<std::string>(str18);
+    complicatedConditional->at(19) = std::unique_ptr<std::string>(str19);
+    complicatedConditional->at(20) = std::unique_ptr<std::string>(str20);
+    complicatedConditional->at(21) = std::unique_ptr<std::string>(str21);
+    complicatedConditional->at(22) = std::unique_ptr<std::string>(str22);
+    complicatedConditional->at(23) = std::unique_ptr<std::string>(str23);
+    complicatedConditional->at(24) = std::unique_ptr<std::string>(str24);
+    complicatedConditional->at(25) = std::unique_ptr<std::string>(str25);
+    complicatedConditional->at(26) = std::unique_ptr<std::string>(str26);
+    complicatedConditional->at(27) = std::unique_ptr<std::string>(str27);
+    complicatedConditional->at(28) = std::unique_ptr<std::string>(str28);
+    complicatedConditional->at(29) = std::unique_ptr<std::string>(str29);
+    complicatedConditional->at(30) = std::unique_ptr<std::string>(str30);
+    complicatedConditional->at(31) = std::unique_ptr<std::string>(str31);
+    complicatedConditional->at(32) = std::unique_ptr<std::string>(str32);
+    complicatedConditional->at(33) = std::unique_ptr<std::string>(str33);
+    complicatedConditional->at(34) = std::unique_ptr<std::string>(str34);
+    complicatedConditional->at(35) = std::unique_ptr<std::string>(str35);
+    complicatedConditional->at(36) = std::unique_ptr<std::string>(str36);
+    complicatedConditional->at(37) = std::unique_ptr<std::string>(str37);
+    complicatedConditional->at(38) = std::unique_ptr<std::string>(str38);
+    complicatedConditional->at(39) = std::unique_ptr<std::string>(str39);
+    complicatedConditional->at(40) = std::unique_ptr<std::string>(str40);
+    complicatedConditional->at(41) = std::unique_ptr<std::string>(str41);
+    complicatedConditional->at(42) = std::unique_ptr<std::string>(str42);
+    complicatedConditional->at(43) = std::unique_ptr<std::string>(str43);
+    complicatedConditional->at(44) = std::unique_ptr<std::string>(str44);
+    complicatedConditional->at(45) = std::unique_ptr<std::string>(str45);
+
+    return complicatedConditional;
+}
+
+ProgramNode* getProgram15Tree_complicatedConditional()
+{
+    ConditionalExpression* notNeqExpression
+        = createNotExpr(createNeqExpr(createRefExpr("b"), createPlusExpr(createRefExpr("c"), createRefExpr("x"))));
+    ConditionalExpression* eqExpression = createEqExpr(createRefExpr("y"), createRefExpr("z"));
+    ConditionalExpression* orExpression = createOrExpr(eqExpression, notNeqExpression);
+    Expression* minusExpression
+        = createMinusExpr(createModExpr(createRefExpr("x"), createRefExpr(6)), createRefExpr(3));
+    ConditionalExpression* gtExpression = createLtExpr(minusExpression, createRefExpr("a"));
+    ConditionalExpression* andExpression = createAndExpr(gtExpression, orExpression);
+    ConditionalExpression* predicate = createNotExpr(andExpression);
+
+    List<StatementNode> statements;
+    List<StatementNode> whileStatements;
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(2, Variable("x"), createTimesExpr(createRefExpr("x"), createRefExpr(123)))));
+    StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
+    statements.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(1, predicate, whileStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* complicatedConditionalProcedureNode = createProcedureNode("complicatedConditional", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(complicatedConditionalProcedureNode));
+    ProgramNode* programNode = createProgramNode("complicatedConditional", procedureList, 2);
+
+    return programNode;
+}
+
+String getProgram16String_keywordsAsIdentifier()
+{
+    String keywordsAsIdentifier = "\
+procedure procedure {\n\
+    read print;\
+    if = (3 + 4) * 3;\n\
+    while (while <= else) {\n\
+        call = call + 1;\n\
+        else = else - if;\n\
+    }\n\
+    call if;\n\
+}\n\
+\n\
+procedure if {\n\
+    print print;\n\
+    read procedure;\n\
+    if (if == then) then{\n\
+        else = then / while;\n\
+    } else {\n\
+        read read;\n\
+    }\n\
+    read = print - procedure;\n\
+}";
+    /* Annotated procedure with line numbers
+procedure procedure {
+1.  read print;
+2.  if = (3 + 4) * 3;
+3.  while (while <= else) {
+4.      call = call + 1;
+5.      else = else - if;
+    }
+6.  call if;
+}
+
+procedure if {
+7.  print print;
+8.  read procedure;
+9.  if (if == then) then{
+10.     else = then / while;
+    } else {
+11.     read read;\n
+    }
+12. read = print - procedure;
+}
+*/
+    return keywordsAsIdentifier;
+}
+
+ProgramNode* getProgram16Tree_keywordsAsIdentifier()
+{
+    List<StatementNode> procedureStatements;
+    List<StatementNode> whileStatements;
+    procedureStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("print"))));
+    procedureStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        2, Variable("if"), createTimesExpr(createPlusExpr(createRefExpr(3), createRefExpr(4)), createRefExpr(3)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(4, Variable("call"), createPlusExpr(createRefExpr("call"), createRefExpr(1)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(5, Variable("else"), createMinusExpr(createRefExpr("else"), createRefExpr("if")))));
+    procedureStatements.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
+        3, createLteExpr(createRefExpr("while"), createRefExpr("else")), createStmtlstNode(whileStatements))));
+    procedureStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(6, "if")));
+
+    List<StatementNode> ifProcedureStatements;
+    List<StatementNode> realIfStatements;
+    List<StatementNode> realElseStatements;
+    ifProcedureStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("print"))));
+    ifProcedureStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(8, Variable("procedure"))));
+    realIfStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(10, Variable("else"), createDivExpr(createRefExpr("then"), createRefExpr("while")))));
+    realElseStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(11, Variable("read"))));
+    ifProcedureStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(9, createEqExpr(createRefExpr("if"), createRefExpr("then")), createStmtlstNode(realIfStatements),
+                     createStmtlstNode(realElseStatements))));
+    ifProcedureStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(12, Variable("read"), createMinusExpr(createRefExpr("print"), createRefExpr("procedure")))));
+
+    StmtlstNode* procStmtLstNode = createStmtlstNode(procedureStatements);
+    ProcedureNode* procedureProcedure = createProcedureNode("procedure", procStmtLstNode);
+    StmtlstNode* ifStmtLstNode = createStmtlstNode(ifProcedureStatements);
+    ProcedureNode* ifProcedure = createProcedureNode("if", ifStmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(procedureProcedure));
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(ifProcedure));
+    ProgramNode* programNode = createProgramNode("procedure", procedureList, 12);
+
+    return programNode;
+}
+
+String getProgram17String_sameVariableAndProcedureName()
+{
+    String procedureString = "\
+procedure procedure {\n\
+    procedure = procedure % procedure;\n\
+    read call;\n\
+    call call;\n\
+}\n\
+\n\
+procedure call {\n\
+    procedure = procedure * 1;\n\
+    string = 43110;\n\
+    call string;\n\
+}\n\
+\n\
+procedure string {\n\
+    print string;\n\
+}\n\
+";
+    /* Annotated procedure with line numbers
+procedure procedure {
+1.  procedure = procedure % procedure;
+2.  read call;
+3.  call call;
+}
+
+procedure call {
+4.  procedure = procedure * 1;
+5.  string = 43110;
+6.  call string;
+}
+
+procedure string {
+7.  print string;
+}
+    */
+    return procedureString;
+}
+
+ProgramNode* getProgram17Tree_sameVariableAndProcedureName()
+{
+    List<StatementNode> procedureStatements;
+    List<StatementNode> callStatements;
+    List<StatementNode> stringStatements;
+    procedureStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        1, Variable("procedure"), createModExpr(createRefExpr("procedure"), createRefExpr("procedure")))));
+    procedureStatements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(2, Variable("call"))));
+    procedureStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(3, "call")));
+
+    callStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(4, Variable("procedure"), createTimesExpr(createRefExpr("procedure"), createRefExpr(1)))));
+    callStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("string"), createRefExpr(43110))));
+    callStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(6, "string")));
+
+    stringStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(7, Variable("string"))));
+
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(
+        std::unique_ptr<ProcedureNode>(createProcedureNode("procedure", createStmtlstNode(procedureStatements))));
+    procedureList.push_back(
+        std::unique_ptr<ProcedureNode>(createProcedureNode("call", createStmtlstNode(callStatements))));
+    procedureList.push_back(
+        std::unique_ptr<ProcedureNode>(createProcedureNode("string", createStmtlstNode(stringStatements))));
+    ProgramNode* programNode = createProgramNode("procedure", procedureList, 7);
+
+    return programNode;
+}
+
+String getProgram18String_endWithWhile()
+{
+    String spheresdf = "\
+procedure spheresdf {\n\
+     dist = x * x + y * y + z * z;\n\
+     x = dist;\n\
+     depth = depth;\n\
+     read p;\n\
+     while (x != p) {\n\
+            p = x;\n\
+            x = (dist / x + x) / 2; dist = x - 1;\n\
+      x = x * x + y * y / 2;} \n\
+       }\
+";
+    /*
+    Annotated with statement numbers:
+
+    procedure spheresdf {
+    1.   dist = x * x + y * y + z * z;
+    2.   x = dist;
+    3.   depth = depth;
+    4.   read p;
+    5.   while (x != p) {
+    6.          p = x;
+    7.8.        x = (dist / x + x) / 2; dist = x - 1;
+    9.    x = x * x + y * y / 2;}}
+    */
+    return spheresdf;
+}
+
+ProgramNode* getProgram18Tree_endWithWhile()
+{
+    List<StatementNode> statements;
+    Expression* xxyyzz = createPlusExpr(createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                                                       createTimesExpr(createRefExpr("y"), createRefExpr("y"))),
+                                        createTimesExpr(createRefExpr("z"), createRefExpr("z")));
+    statements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(1, Variable("dist"), xxyyzz)));
+    statements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("x"), createRefExpr("dist"))));
+    statements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(3, Variable("depth"), createRefExpr("depth"))));
+    statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(4, Variable("p"))));
+
+    List<StatementNode> whileStatements;
+    whileStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("p"), createRefExpr("x"))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        7, Variable("x"),
+        createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")),
+                      createRefExpr(2)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(8, Variable("dist"), createMinusExpr(createRefExpr("x"), createRefExpr(1)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        9, Variable("x"),
+        createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                       createDivExpr(createTimesExpr(createRefExpr("y"), createRefExpr("y")), createRefExpr(2))))));
+    StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
+    statements.push_back(std::unique_ptr<WhileStatementNode>(
+        createWhileNode(5, createNeqExpr(createRefExpr("x"), createRefExpr("p")), whileStmtLstNode)));
+
+    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    ProcedureNode* whileExampleProcedureNode = createProcedureNode("spheresdf", stmtLstNode);
+    List<ProcedureNode> procedureList;
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(whileExampleProcedureNode));
+    ProgramNode* programNode = createProgramNode("spheresdf", procedureList, 9);
 
     return programNode;
 }

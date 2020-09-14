@@ -1,7 +1,3 @@
-//
-// Created by Chester Sim on 13/9/20.
-//
-
 #include "AqTypes.h"
 
 AbstractQuery::AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector):
@@ -21,18 +17,18 @@ DeclarationTable AbstractQuery::getDeclarationTable()
     return declarationTable;
 }
 
-Boolean AbstractQuery::isInvalid()
+Boolean AbstractQuery::isInvalid() const
 {
     return hasError;
 }
 
 AbstractQuery::AbstractQuery():
-    hasError{false}, selectSynonym{""}, clauses{*(new ClauseVector())}, declarationTable{*(new DeclarationTable())}
+    clauses{*(new ClauseVector())}, declarationTable{*(new DeclarationTable())}, hasError{false}
 {}
 
 AbstractQuery AbstractQuery::invalidAbstractQuery()
 {
-    AbstractQuery* aq = new AbstractQuery();
+    auto* aq = new AbstractQuery();
     (*aq).hasError = true;
     return *aq;
 }

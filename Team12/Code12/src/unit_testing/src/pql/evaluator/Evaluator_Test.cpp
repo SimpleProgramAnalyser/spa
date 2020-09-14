@@ -19,7 +19,7 @@
 #include "pql/evaluator/Evaluator.h"
 #include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
-
+/*
 TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntatically) PQL query")
 {
     // === Test set-up ===
@@ -51,3 +51,4 @@ TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> vacuously true PQL q
 
     REQUIRE(rawQueryResult == expectedRawQueryResult);
 }
+*/

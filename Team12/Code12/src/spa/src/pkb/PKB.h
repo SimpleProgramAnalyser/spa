@@ -26,26 +26,27 @@ Vector<String> getAllUsesVariables(const String& procName);
 Vector<String> getAllUsesProcedures();
 
 // Modifies
-void addModifiesRelationships(Integer stmtNum, Vector<String> varNames);
-void addModifiesRelationships(String procName, Vector<String> varNames);
-String checkIfProcedureModifies(String procName, String varName);
-Integer checkIfStatementModifies(Integer stmt, String varName);
-Vector<Integer> getModifiesStatements(String varName, StatementType stmtType);
-Vector<String> getModifiesProcedures(String procName);
+void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames);
+void addModifiesRelationships(const String& procName, Vector<String> varNames);
+Boolean checkIfProcedureModifies(const String& procName, const String& varName);
+Boolean checkIfStatementModifies(Integer stmt, const String& varName);
+Vector<Integer> getModifiesStatements(const String& varName, StatementType stmtType);
+Vector<String> getModifiesProcedures(const String& procName);
 Vector<String> getModifiesVariablesFromStatement(Integer stmt);
-Vector<String> getModifiesVariablesFromProcedure(String procName);
+Vector<String> getModifiesVariablesFromProcedure(const String& procName);
 Vector<Integer> getAllModifiesStatements(StatementType stmtType);
 Vector<String> getAllModifiesVariables(StatementType stmtType);
-Vector<String> getAllModifiesVariables(String procName);
+Vector<String> getAllModifiesVariables(const String& procName);
 Vector<String> getAllModifiesProcedures();
 
 // Parent
-void addParentRelationships(Integer parent, Integer child);
-void addParentRelationshipsStar(Integer parent, Vector<Integer> children);
+void addParentRelationships(Integer parent, StatementType parentType, Integer child, StatementType childType);
+void addParentRelationshipsStar(Integer parent, StatementType parentType,
+                                const Vector<Pair<Integer, StatementType>>& childrenStmttypePairs);
 Boolean checkIfParentHolds(Integer parent, Integer child);
 Boolean checkIfParentHoldsStar(Integer parent, Integer child);
-Vector<Integer> getAllChildStatements(Integer parent, StatementType stmtType);
-Vector<Integer> getAllParentStatements(Integer parent, StatementType stmtType);
+Vector<StatementNumWithType> getChildStatement(Integer parent);
+Vector<StatementNumWithType> getParentStatement(Integer parent);
 Vector<Integer> getAllChildStatementsStar(Integer parent, StatementType stmtType);
 Vector<Integer> getAllParentStatementsStar(Integer parent, StatementType stmtType);
 Vector<Integer> getAllParentStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
@@ -56,11 +57,11 @@ Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, S
 // Follows
 void addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after, StatementType afterStmtType);
 void addFollowsRelationshipsStar(Integer before, StatementType beforeStmtType,
-                                 Vector<Pair<Integer, StatementType>> afterStmttypePairs);
+                                 const Vector<Pair<Integer, StatementType>>& afterStmttypePairs);
 Boolean checkIfFollowsHolds(Integer before, Integer after);
 Boolean checkIfFollowsHoldsStar(Integer before, Integer after);
-Vector<Integer> getAllAfterStatements(Integer before, StatementType stmtType);
-Vector<Integer> getAllBeforeStatements(Integer after, StatementType stmtType);
+Vector<StatementNumWithType> getAfterStatement(Integer before);
+Vector<StatementNumWithType> getBeforeStatement(Integer after);
 Vector<Integer> getAllAfterStatementsStar(Integer before, StatementType stmtType);
 Vector<Integer> getAllBeforeStatementsStar(Integer after, StatementType stmtType);
 Vector<Integer> getAllBeforeStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
@@ -69,18 +70,18 @@ Vector<Integer> getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, State
 Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 
 // Procedure
-void insertIntoProcedureTable(String procName);
-Vector<String> getAllProcedures();
+void insertIntoProcedureTable(const String& procName);
 Boolean getProcedureFromName(String procName);
+Vector<String> getAllProcedures();
 
 // Variable
-void insertIntoVariableTable(String varName);
+void insertIntoVariableTable(const String& varName);
 Boolean getVariableFromName(String varName);
 Vector<String> getAllVariables();
 
 // Statement
-void insertIntoStatementTable(StatementNode* stmtNode, Integer lineNumber);
-Boolean getStatementFromIndex(Integer indexOfStmt);
+void insertIntoStatementTable(Integer stmtNum, StatementType stmtType);
+Boolean getStatementFromIndex(Integer stmtNum);
 Vector<Integer> getAllStatements(StatementType stmtType);
 
 // Root node

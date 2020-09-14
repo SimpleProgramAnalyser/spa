@@ -4,91 +4,93 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_
 set(CMAKE_BUILD_TYPE Debug)
 
 add_library(spa
+    # current directory
+    ${srcs}
+    ${headers}
 
-        # current directory
-        ${srcs}
-        ${headers}
-
-        # lexer
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
-
-
-        # ast library
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
-
-        # error library ?
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
-
-        # design extractor
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
-
-        # frontend/parser
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
-
-        # frontend manager
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
+    # lexer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
 
 
-        # pkb
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
+    # ast library
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
 
-        # pql
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp)
+    # error library ?
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
 
+    # design extractor
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.cpp
+
+    # frontend/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+
+    # frontend manager
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
+
+
+    # pkb
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
+
+    # pql
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
+)
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

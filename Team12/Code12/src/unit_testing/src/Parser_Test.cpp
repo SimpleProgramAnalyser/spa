@@ -1,7 +1,22 @@
-#include "catch.hpp"
-
 #include "ast_utils/AstUtils.h"
+#include "catch.hpp"
 #include "frontend/parser/Parser.cpp"
+
+TEST_CASE("getBracketStart returns correct brackets for 5 nesting levels")
+{
+    StringList* program = getProgram15StringList_complicatedConditional();
+    frontend::TokenList* programTokens = frontend::tokeniseSimple(program);
+    REQUIRE(getBracketStart(programTokens, 35) == 6);
+    REQUIRE(getBracketStart(programTokens, 34) == 17);
+}
+
+TEST_CASE("getBracketEnd returns correct brackets for 5 nesting levels")
+{
+    StringList* program = getProgram15StringList_complicatedConditional();
+    frontend::TokenList* programTokens = frontend::tokeniseSimple(program);
+    REQUIRE(getBracketEnd(programTokens, 6) == 35);
+    REQUIRE(getBracketEnd(programTokens, 7) == 15);
+}
 
 TEST_CASE("Parser can parse an example program correctly")
 {
@@ -9,9 +24,17 @@ TEST_CASE("Parser can parse an example program correctly")
     REQUIRE(*(ast) == *(getProgram1Tree_compute()));
 }
 
-TEST_CASE("Parser parses if statements correctly") {}
+TEST_CASE("Parser parses if statements correctly")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram13String_ifExample());
+    REQUIRE(*(ast) == *(getProgram13Tree_ifExample()));
+}
 
-TEST_CASE("Parser parses while statements correctly") {}
+TEST_CASE("Parser parses while statements correctly")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram14String_whileExample());
+    REQUIRE(*(ast) == *(getProgram14Tree_whileExample()));
+}
 
 TEST_CASE("Parser parses if nested in while correctly")
 {
@@ -19,18 +42,31 @@ TEST_CASE("Parser parses if nested in while correctly")
     REQUIRE(*(ast) == *(getProgram2Tree_factorials()));
 }
 
-TEST_CASE("Parser parses complicated arithmetic expressions statements correctly") {}
+TEST_CASE("Parser parses complicated conditional expressions correctly")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram15String_complicatedConditional());
+    REQUIRE(*(ast) == *getProgram15Tree_complicatedConditional());
+}
 
-TEST_CASE("Parser parses complicated conditional expressions statements correctly") {}
-
-TEST_CASE("Parser parses multiple procedures correctly") {
+TEST_CASE("Parser parses multiple procedures correctly")
+{
     ProgramNode* ast = parseSimpleReturnNode(getProgram7String_computeCentroid());
     REQUIRE(*(ast) == *getProgram7Tree_computeCentroid());
 }
 
-TEST_CASE("Parser parses keywords as identifiers correctly") {}
+TEST_CASE("Parser parses keywords as identifiers correctly")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram16String_keywordsAsIdentifier());
+    ProgramNode* expected = getProgram16Tree_keywordsAsIdentifier();
+    REQUIRE(*(ast) == *(expected));
+}
 
-TEST_CASE("Parser parses variables with same name as procedure") {}
+TEST_CASE("Parser parses variables with same name as procedure")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram17String_sameVariableAndProcedureName());
+    ProgramNode* expected = getProgram17Tree_sameVariableAndProcedureName();
+    REQUIRE(*(ast) == *(expected));
+}
 
 TEST_CASE("parseExpression works for plus expression")
 {
@@ -148,6 +184,14 @@ TEST_CASE("parseExpression does not work for while statement")
     REQUIRE(parsed == nullptr);
 }
 
-TEST_CASE("Syntax error, mismatched braces") {}
+TEST_CASE("Syntax error, mismatched braces")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram7StringMismatchedBraces_computeCentroid());
+    REQUIRE(ast == nullptr);
+}
 
-TEST_CASE("Syntax error, mismatched brackets") {}
+TEST_CASE("Syntax error, mismatched brackets")
+{
+    ProgramNode* ast = parseSimpleReturnNode(getProgram7StringMismatchedBrackets_computeCentroid());
+    REQUIRE(ast == nullptr);
+}

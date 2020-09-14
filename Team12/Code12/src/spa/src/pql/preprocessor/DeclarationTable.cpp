@@ -1,7 +1,3 @@
-//
-// Created by Chester Sim on 13/9/20.
-//
-
 #include "AqTypes.h"
 
 Void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)

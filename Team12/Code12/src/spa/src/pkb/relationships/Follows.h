@@ -2,8 +2,6 @@
 #define SPA_BEFORE_H
 
 #include <pkb/PkbTypes.h>
-typedef Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> ArrayArrayList;
-typedef Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> ArrayArraySet;
 /**
  * Stores Follows, Follows* relationships.
  */
@@ -13,14 +11,14 @@ public:
     void addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after,
                                  StatementType afterStmtType);
     void addFollowsRelationshipsStar(Integer before, StatementType beforeStmtType,
-                                     const Vector<Pair<Integer, StatementType>>& afterStmttypePairs);
+                                     const Vector<StatementNumWithType>& afterStmttypePairs);
 
     // reading
     Boolean checkIfFollowsHolds(Integer before, Integer after);
     Boolean checkIfFollowsHoldsStar(Integer before, Integer after);
 
-    Vector<Integer> getAfterStatement(Integer before);
-    Vector<Integer> getBeforeStatement(Integer after);
+    Vector<StatementNumWithType> getAfterStatement(Integer before);
+    Vector<StatementNumWithType> getBeforeStatement(Integer after);
     Vector<Integer> getAllAfterStatementsStar(Integer before, StatementType stmtType);
     Vector<Integer> getAllBeforeStatementsStar(Integer after, StatementType stmtType);
 
@@ -31,8 +29,8 @@ public:
 
 private:
     // to check if Follows(*)(x, y) holds
-    HashMap<Integer, Integer> stmtBeforeMap;
-    HashMap<Integer, Integer> stmtAfterMap;
+    HashMap<Integer, StatementNumWithType> stmtBeforeMap;
+    HashMap<Integer, StatementNumWithType> stmtAfterMap;
     HashMap<Integer, HashSet<Integer>> stmtBeforestarsetMap;
     HashMap<Integer, HashSet<Integer>> stmtAfterstarsetMap;
 
@@ -60,9 +58,9 @@ private:
     // since the above is confusing, we have some helper functions.
     void typedShenanigans(Integer before, StatementType beforeType, Integer after, StatementType afterType);
     void typedShenanigansStar(Integer before, StatementType beforeType, Integer after, StatementType afterType);
-    void tryAddBefore(Integer before, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
-                      ArrayArraySet& aas);
-    void tryAddAfter(Integer after, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
-                     ArrayArraySet& aas);
+    static void tryAddBefore(Integer before, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
+                             ArrayArraySet& aas);
+    static void tryAddAfter(Integer after, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
+                            ArrayArraySet& aas);
 };
 #endif // SPA_BEFORE_H
