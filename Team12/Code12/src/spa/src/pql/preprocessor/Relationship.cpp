@@ -73,6 +73,7 @@ Boolean Relationship::operator==(const Relationship& relationship)
            && this->leftReference == relationship.leftReference && this->rightReference == relationship.rightReference;
 }
 
+// TODO: Consider to abstract the validation to their own classes?
 Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                     Reference rightRef)
 {
