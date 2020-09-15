@@ -156,6 +156,26 @@ ParentList* extractParentStmtlst(ParentList* parentList, ParentTypeTable* parent
     return parentList;
 }
 
+typedef Vector<std::pair<Integer, StatementType>> SeenNodesList;
+Vector<StatementNumWithType> concatenateStmtNumWithTypeVectors(const Vector<StatementNumWithType>& v1,
+                                                const Vector<StatementNumWithType>& v2)
+{
+    Vector<StatementNumWithType> uniqueSet;
+    uniqueSet.reserve(v1.size() + v2.size());
+    if (!v1.empty()) {
+        for (std::pair<Integer, StatementType> var1 : v1) {
+            uniqueSet.push_back(var1);
+        }
+    }
+    
+    if (!v2.empty()) {
+        for (std::pair<Integer, StatementType> var2 : v2) {
+            uniqueSet.push_back(var2);
+        }
+    }
+    return uniqueSet;
+}
+
 /**
  * Identifies Parent relationships in a given program
  * and stores them in a ParentList. This method is
@@ -187,21 +207,35 @@ ParentList* extractParentReturnAdjacencyList(const ProgramNode& rootNode)
         extractParentStmtlst(parentList, parentTable, procedures.at(i)->statementListNode);
     }
 
+
+    
+    Vector<SeenNodesList> parentNodesList;
+    // initialise parentNodesList
+    parentNodesList.reserve(numberOfStatements + 1);
+    for (StatementNumber i = 0; i < numberOfStatements + 1; i++) {
+        parentNodesList.push_back(Vector<std::pair<Integer, StatementType>>());
+    }
+    
     // loop through ParentList to find Parent* relationships
     for (StatementNumber childStmt = 1; childStmt < numberOfStatements + 1; childStmt++) {
         StatementNumber currentParentStmt = parentList->at(childStmt);
-        Vector<std::pair<Integer, StatementType>> seenNodesList;
+
+        SeenNodesList seenNodesList;
         // Child has parent
         while (currentParentStmt != 0) {
-            // add this edge to the seen nodes
-            seenNodesList.push_back(
-                std::pair<Integer, StatementType>(currentParentStmt, parentTable->at(currentParentStmt)));
-            // travel the edges to the next accessible node
+            // add edge to seenNodesList 
+            seenNodesList.push_back(std::pair<Integer, StatementType>(childStmt, parentTable->at(currentParentStmt)));
+            // add this edge to the parent node
+            parentNodesList.at(currentParentStmt)
+                = concatenateStmtNumWithTypeVectors(parentNodesList.at(currentParentStmt), seenNodesList);
+            // travel the edges to the next parent
             currentParentStmt = parentList->at(currentParentStmt);
         }
-        if (!seenNodesList.empty()) {
-            // store all Parent* in PKB
-            addParentRelationshipsStar(childStmt, parentTable->at(childStmt), seenNodesList);
+    }
+
+    for (StatementNumber i = 1; i < numberOfStatements + 1; i++) {
+        if (!parentNodesList.at(i).empty()) {
+            addParentRelationshipsStar(i, parentTable->at(i), parentNodesList.at(i));
         }
     }
     delete parentTable;
