@@ -1,6 +1,9 @@
 #include "TestWrapper.h"
 
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <streambuf>
 
 #include "AbstractWrapper.h"
 #include "frontend/FrontendManager.h"
@@ -29,8 +32,10 @@ TestWrapper::TestWrapper()
 // method for parsing the SIMPLE source
 void TestWrapper::parse(std::string filename)
 {
-    // need to read from file
-    String program = "procedure TEMP { x = 1; }";
+    std::ifstream fileStream(filename);
+    std::string program((std::istreambuf_iterator<char>(fileStream)),
+        std::istreambuf_iterator<char>());
+    std::cout << program << std::endl;
     parseSimple(program);
 }
 
