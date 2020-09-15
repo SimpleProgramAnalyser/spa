@@ -7,20 +7,17 @@ StringVector splitByFirstConsecutiveWhitespace(String str);
 Boolean containsOpenParentheses(String str);
 Boolean containsCloseParenthesesAsLastChar(String str);
 Boolean isEnclosedWith(String str, char leftEnd, char rightEnd);
+StringPair splitDeclarationAndSelectClause(String query);
 
 // TODO: Every class that can be invalid to inherit from an Error class
 // Todo: Error class to have `hasError` member and `isInvalid` member function
 
 AbstractQuery Preprocessor::processQuery(String query)
 {
-    // Split between declarations and clauses
-    StringList* splitBySelectList = splitByDelimiter(query, "Select");
-    // Validate both strings exists.
-    if (splitBySelectList->size() != 2) {
-        return AbstractQuery::invalidAbstractQuery();
-    }
-    String declarationString = trimWhitespace(*(splitBySelectList->at(0)));
-    String synonymAndClausesString = trimWhitespace(*(splitBySelectList->at(1)));
+    StringPair splitQuery = splitDeclarationAndSelectClause(query);
+
+    String declarationString = trimWhitespace(splitQuery.first);
+    String synonymAndClausesString = trimWhitespace(splitQuery.second);
 
     // Process declarations into declaration table
     DeclarationTable declarationTable = processDeclarations(declarationString);
@@ -30,9 +27,23 @@ AbstractQuery Preprocessor::processQuery(String query)
     this->declarationTable = declarationTable;
 
     // Extract select synonym
-    StringVector synonymAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClausesString);
-    // argument for processClauses Select without any synonym or clauses
-    if (synonymAndClausesVector.size() == 0) {
+    StringVector selectAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClausesString);
+
+    // No select clause
+    if (selectAndClausesVector.size() < 2) {
+        return AbstractQuery::invalidAbstractQuery();
+    }
+
+    String possibleSelectKeyword = selectAndClausesVector.at(0);
+    if (possibleSelectKeyword != "Select") {
+        return AbstractQuery::invalidAbstractQuery();
+    }
+
+    String synonymAndClauses = selectAndClausesVector.at(1);
+    StringVector synonymAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClauses);
+
+    // No synonym
+    if (selectAndClausesVector.size() == 0) {
         return AbstractQuery::invalidAbstractQuery();
     }
 
@@ -53,8 +64,6 @@ AbstractQuery Preprocessor::processQuery(String query)
     if (clausesVector.isInvalid()) {
         return AbstractQuery::invalidAbstractQuery();
     }
-
-    // Encapsulate into AbstractQuery and return
 
     AbstractQuery aq(selectSynonym, declarationTable, clausesVector);
     return aq;
@@ -344,7 +353,8 @@ DeclarationTable Preprocessor::processDeclarations(String declarationsString)
  * Returns a pair of Strings, split by the
  * first appearance of the delimiter. If the
  * delimiter does not exist, a pair of empty
- * strings will be returned.
+ * strings will be returned. The particular
+ * delimiter will be removed.
  *
  * @param str String to be split.
  * @param c Delimiter.
@@ -375,6 +385,34 @@ StringPair splitByFirstDelimiter(String str, char c)
     }
 
     return std::make_pair(leftString, *currentToken);
+}
+
+/**
+ * Returns a pair of Strings, split by the
+ * last appearance of the a semicolon. If the
+ * delimiter does not exist, a pair of empty
+ * strings will be returned.
+ *
+ * @param query String to be split.
+ * @return Pair of Strings split by delimiter.
+ */
+StringPair splitDeclarationAndSelectClause(String query)
+{
+    StringPair stringVector;
+    std::size_t indexOfLastDelimiter = query.find_last_of(';', query.size() - 1);
+    if (indexOfLastDelimiter == -1) {
+        return std::make_pair("", "");
+    }
+
+    String leftToken = query.substr(0, indexOfLastDelimiter + 1);
+
+    if (indexOfLastDelimiter >= query.size()) {
+        return std::make_pair(leftToken, "");
+    }
+
+    String rightToken = query.substr(indexOfLastDelimiter + 1, query.size() - indexOfLastDelimiter - 1);
+
+    return std::make_pair(leftToken, rightToken);
 }
 
 /**
