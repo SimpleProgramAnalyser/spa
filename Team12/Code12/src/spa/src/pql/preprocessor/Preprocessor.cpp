@@ -275,7 +275,8 @@ Reference Preprocessor::createReference(String ref)
     }
 
     if (util::isLiteralIdent(ref)) {
-        Reference reference(LiteralRefType, ref);
+        // unquote the string literal
+        Reference reference(LiteralRefType, util::removeCharFromBothEnds(ref));
         return reference;
     }
 
