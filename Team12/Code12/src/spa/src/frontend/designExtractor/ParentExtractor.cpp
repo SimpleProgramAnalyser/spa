@@ -45,7 +45,7 @@ Void markParentRelationship(ParentList* parentList, ParentTypeTable* parentTable
     addParentRelationships(parent, parentStmtType, child, childStmtType);
 }
 
-// forward declaration for extractFollowsFromContainer
+// forward declaration for extractChildFromContainer
 ParentList* extractParentStmtlst(ParentList* parentList, ParentTypeTable* parentTable, const StmtlstNode* stmtLstNode);
 // forward declaration for extractChildren
 ParentList* extractChildFromContainer(ParentList* parentList, ParentTypeTable* parentTable,
@@ -156,9 +156,19 @@ ParentList* extractParentStmtlst(ParentList* parentList, ParentTypeTable* parent
     return parentList;
 }
 
-typedef Vector<std::pair<Integer, StatementType>> SeenNodesList;
+/**
+ * Helper method to join two or three Vector<StatementNumWithType>. 
+ * Note that order of the elements is not preserved.
+ *
+ * @param v1 The first Vector<StatementNumWithType>.
+ * @param v2 The second Vector<StatementNumWithType>.
+ * @param v3 The third Vector<StatementNumWithType>.
+ * @return A Vector<StatementNumWithType> containing
+ *         elements from v1, v2 and v3 (if any).
+ */
 Vector<StatementNumWithType> concatenateStmtNumWithTypeVectors(const Vector<StatementNumWithType>& v1,
-                                                const Vector<StatementNumWithType>& v2)
+                                                               const Vector<StatementNumWithType>& v2,
+                                  const Vector<StatementNumWithType>& v3 = Vector<StatementNumWithType>())
 {
     Vector<StatementNumWithType> uniqueSet;
     uniqueSet.reserve(v1.size() + v2.size());
@@ -171,6 +181,12 @@ Vector<StatementNumWithType> concatenateStmtNumWithTypeVectors(const Vector<Stat
     if (!v2.empty()) {
         for (std::pair<Integer, StatementType> var2 : v2) {
             uniqueSet.push_back(var2);
+        }
+    }
+
+    if (!v3.empty()) {
+        for (std::pair<Integer, StatementType> var3 : v3) {
+            uniqueSet.push_back(var3);
         }
     }
     return uniqueSet;
@@ -207,32 +223,30 @@ ParentList* extractParentReturnAdjacencyList(const ProgramNode& rootNode)
         extractParentStmtlst(parentList, parentTable, procedures.at(i)->statementListNode);
     }
 
-
-    
-    Vector<SeenNodesList> parentNodesList;
-    // initialise parentNodesList
+    // initialise parentNodesList to store Parent* relationship
+    Vector<Vector<std::pair<Integer, StatementType>>> parentNodesList;
     parentNodesList.reserve(numberOfStatements + 1);
     for (StatementNumber i = 0; i < numberOfStatements + 1; i++) {
         parentNodesList.push_back(Vector<std::pair<Integer, StatementType>>());
     }
     
-    // loop through ParentList to find Parent* relationships
-    for (StatementNumber childStmt = 1; childStmt < numberOfStatements + 1; childStmt++) {
+    // loop through ParentList to find Parent* relationship
+    for (StatementNumber childStmt = numberOfStatements; 0 < childStmt; childStmt--) {
         StatementNumber currentParentStmt = parentList->at(childStmt);
 
-        SeenNodesList seenNodesList;
+        Vector<std::pair<Integer, StatementType>> childNodeList;
         // Child has parent
-        while (currentParentStmt != 0) {
+        if (currentParentStmt != 0) {
             // add edge to seenNodesList 
-            seenNodesList.push_back(std::pair<Integer, StatementType>(childStmt, parentTable->at(currentParentStmt)));
-            // add this edge to the parent node
-            parentNodesList.at(currentParentStmt)
-                = concatenateStmtNumWithTypeVectors(parentNodesList.at(currentParentStmt), seenNodesList);
-            // travel the edges to the next parent
-            currentParentStmt = parentList->at(currentParentStmt);
+            childNodeList.push_back(std::pair<Integer, StatementType>(childStmt, parentTable->at(childStmt)));
+
+            // Add child node & add child nodes of child to parentNodesList
+            parentNodesList.at(currentParentStmt) = concatenateStmtNumWithTypeVectors(
+                childNodeList, parentNodesList.at(childStmt), parentNodesList.at(currentParentStmt));
         }
     }
 
+    // Go through parentNodesList and store all Parent* in PKB
     for (StatementNumber i = 1; i < numberOfStatements + 1; i++) {
         if (!parentNodesList.at(i).empty()) {
             addParentRelationshipsStar(i, parentTable->at(i), parentNodesList.at(i));
