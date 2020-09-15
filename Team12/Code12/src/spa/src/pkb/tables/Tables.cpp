@@ -6,8 +6,10 @@
 
 void ProcedureTable::insertIntoProcedureTable(const String& procName)
 {
-    listOfProcedureNames.push_back(procName);
-    setOfProceduresNames.insert(procName);
+    if (setOfProceduresNames.find(procName) == setOfProceduresNames.end()) {
+        listOfProcedureNames.push_back(procName);
+        setOfProceduresNames.insert(procName);
+    }
 }
 
 std::vector<String> ProcedureTable::getAllProcedures()
@@ -22,8 +24,10 @@ Boolean ProcedureTable::getProcedureFromName(const String& procName)
 
 void VariableTable::insertIntoVariableTable(const String& varName)
 {
-    listOfVariables.push_back(varName);
-    setOfVariables.insert(varName);
+    if (setOfVariables.find(varName) == setOfVariables.end()) {
+        listOfVariables.push_back(varName);
+        setOfVariables.insert(varName);
+    }
 }
 
 Vector<String> VariableTable::getAllVariables()
