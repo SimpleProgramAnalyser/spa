@@ -144,9 +144,6 @@ StringList* splitProgram(const String& program) noexcept
             state = DefaultLexerState;
         } else if (isWhitespace(currentChar)) {
             // ignore the whitespace
-        } else if (isalnum(*currentChar)) {
-            currentString->push_back(*currentChar);
-            state = AlphanumericLexerState;
         } else if (state == SymbolicLexerState && expectedNextChar == *currentChar) {
             // we managed to find a two character symbol
             currentString->push_back(*currentChar);
@@ -160,6 +157,9 @@ StringList* splitProgram(const String& program) noexcept
             // go through the loop again for current character
             state = DefaultLexerState;
             currentChar--;
+        } else if (isalnum(*currentChar)) {
+            currentString->push_back(*currentChar);
+            state = AlphanumericLexerState;
         } else {
             if (state == AlphanumericLexerState) {
                 // change state from alphanumeric to symbolic

@@ -48,7 +48,7 @@ Boolean checkVectorOfPointersEqual(const std::vector<T>& first, const std::vecto
         }
     }
     return allMatch;
-};
+}
 
 Boolean isPossibleIdentifier(const String& str);
 Boolean isPossibleConstant(const String& str);
