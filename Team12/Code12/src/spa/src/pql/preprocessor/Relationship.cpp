@@ -10,24 +10,13 @@ Relationship::Relationship(String relationshipRef, Reference leftRef, Reference 
         return;
     }
 
-    // Validate semantics for Follows, Follows*, Parent, Parent*
-    if (relationshipReference == FollowsType || relationshipReference == FollowsStarType
-        || relationshipReference == ParentType || relationshipReference == ParentStarType) {
-        Boolean bothAreValidStatementRefs = leftRef.isValidStatementRef() && rightRef.isValidStatementRef();
-        Boolean leftRefIsProcedure = leftRef.isProcedure();
-
-        if (!bothAreValidStatementRefs || leftRefIsProcedure) {
-            hasError = true;
-            return;
-        }
+    // Validate semantics for relationships
+    if (!validateRelationshipSemantics(relationshipReference, leftRef, rightRef)) {
+        hasError = true;
+        return;
     }
 
     if (relationshipReference == UsesType || relationshipReference == ModifiesType) {
-        if (leftRef.getReferenceType() == WildcardRefType || !rightRef.isValidEntityRef()) {
-            hasError = true;
-            return;
-        }
-
         if (leftRef.isProcedure() || util::isLiteralIdent(leftRef.getValue())) {
             relationshipReference = relationshipReference == UsesType ? UsesProcedureType : ModifiesProcedureType;
         } else {
@@ -82,4 +71,33 @@ Boolean Relationship::operator==(const Relationship& relationship)
 {
     return this->relationshipReference == relationship.relationshipReference
            && this->leftReference == relationship.leftReference && this->rightReference == relationship.rightReference;
+}
+
+Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
+                                                    Reference rightRef)
+{
+    if (relRefType == FollowsType || relRefType == FollowsStarType || relRefType == ParentType
+        || relRefType == ParentStarType) {
+        Boolean bothAreValidStatementRefs = leftRef.isValidStatementRef() && rightRef.isValidStatementRef();
+        Boolean eitherIsNonStatementSynonym = leftRef.isNonStatementSynonym() || rightRef.isNonStatementSynonym();
+
+        if (!bothAreValidStatementRefs || eitherIsNonStatementSynonym) {
+            return false;
+        }
+
+        return true;
+    } else if (relRefType == UsesType || relRefType == ModifiesType) {
+        Boolean leftRefIsWildCard = leftRef.getReferenceType() == WildcardRefType;
+        Boolean rightRefIsInvalidEntityRef = !rightRef.isValidEntityRef();
+        Boolean rightRefIsNonVariableSynonym
+            = rightRef.getReferenceType() == SynonymRefType && rightRef.getDesignEntity().getType() != VariableType;
+
+        if (leftRefIsWildCard || rightRefIsInvalidEntityRef || rightRefIsNonVariableSynonym) {
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
 }

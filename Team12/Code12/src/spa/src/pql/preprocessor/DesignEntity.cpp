@@ -1,5 +1,10 @@
 #include "AqTypes.h"
 
+DesignEntity::DesignEntity()
+{
+    type = NonExistentType;
+}
+
 DesignEntity::DesignEntity(DesignEntityType designEntityType)
 {
     type = designEntityType;

@@ -14,7 +14,6 @@ private:
     Reference createReference(String ref);
     ExpressionSpec createExpressionSpec(String ref);
     Expression* createExpression(String literal);
-    Boolean isSynonymOfProcedureType(Synonym s);
 
 public:
     AbstractQuery processQuery(String query);

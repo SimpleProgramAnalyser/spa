@@ -35,3 +35,8 @@ Boolean util::isLiteralIdent(const String& str)
         return false;
     }
 }
+
+String util::removeCharFromBothEnds(String str)
+{
+    return str.substr(1, str.size() - 2);
+}
