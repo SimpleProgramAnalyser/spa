@@ -112,4 +112,9 @@ String getProgram17String_sameVariableAndProcedureName();
 // Program 17: Variable with same name as procedure
 ProgramNode* getProgram17Tree_sameVariableAndProcedureName();
 
+// Program 18: Procedure ending with while statement, with multiple assign
+String getProgram18String_endWithWhile();
+// Program 18: Procedure ending with while statement, with multiple assign
+ProgramNode* getProgram18Tree_endWithWhile();
+
 #endif // UNIT_TESTING_AST_UTILS_H

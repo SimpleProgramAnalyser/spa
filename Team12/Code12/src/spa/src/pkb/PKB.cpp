@@ -25,9 +25,9 @@ Vector<Integer> getUsesStatements(const String& varName, StatementType stmtType)
 {
     return pkb.usesTable.getUsesStatements(varName, stmtType);
 }
-Vector<String> getUsesProcedures(const String& procName)
+Vector<String> getUsesProcedures(const String& varName)
 {
-    return pkb.usesTable.getUsesProcedures(procName);
+    return pkb.usesTable.getUsesProcedures(varName);
 }
 Vector<String> getUsesVariablesFromStatement(Integer stmt)
 {
@@ -126,9 +126,9 @@ Vector<Integer> getModifiesStatements(const String& varName, StatementType stmtT
 {
     return pkb.modifiesTable.getModifiesStatements(varName, stmtType);
 }
-Vector<String> getModifiesProcedures(const String& procName)
+Vector<String> getModifiesProcedures(const String& varName)
 {
-    return pkb.modifiesTable.getModifiesProcedures(procName);
+    return pkb.modifiesTable.getModifiesProcedures(varName);
 }
 Vector<String> getModifiesVariablesFromStatement(Integer stmt)
 {
@@ -185,9 +185,9 @@ Vector<Integer> getAllChildStatementsStar(Integer parent, StatementType stmtType
 {
     return pkb.parentTable.getAllChildStatementsStar(parent, stmtType);
 }
-Vector<Integer> getAllParentStatementsStar(Integer parent, StatementType stmtType)
+Vector<Integer> getAllParentStatementsStar(Integer child, StatementType stmtType)
 {
-    return pkb.parentTable.getAllParentStatementsStar(parent, stmtType);
+    return pkb.parentTable.getAllParentStatementsStar(child, stmtType);
 }
 Vector<Integer> getAllParentStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
 {

@@ -10,6 +10,7 @@
 #include "Token.h"
 #include "ast/AstLibrary.h"
 #include "lexer/Lexer.h"
+#include "pkb/PKB.h"
 
 typedef Integer BracketsDepth;
 typedef Integer TokenListIndex;
@@ -143,8 +144,10 @@ ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(
     }
     frontend::Tag tokenTag = programTokens->at(index)->tokenTag;
     if (frontend::isIdentifierTag(tokenTag)) {
+        String variable = programTokens->at(index)->rawString;
+        insertIntoVariableTable(variable);
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
-            std::unique_ptr<ReferenceExpression>(createRefExpr(programTokens->at(index)->rawString)), index + 1);
+            std::unique_ptr<ReferenceExpression>(createRefExpr(variable)), index + 1);
     } else if (tokenTag == frontend::ConstantTag) {
         // stoi should succeed unless there is a bug in the tokeniser
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
@@ -593,11 +596,11 @@ ParserReturnType<std::unique_ptr<PrintStatementNode>> parsePrintStmt(frontend::T
         && frontend::isIdentifierTag(programTokens->at(startIndex + 1)->tokenTag)
         && programTokens->at(startIndex + 2)->tokenTag == frontend::SemicolonTag) {
 
+        String rawString = programTokens->at(startIndex + 1)->rawString;
         statementsSeen++;
+        insertIntoVariableTable(rawString);
         return ParserReturnType<std::unique_ptr<PrintStatementNode>>(
-            std::unique_ptr<PrintStatementNode>(
-                createPrintNode(statementsSeen, Variable(programTokens->at(startIndex + 1)->rawString))),
-            startIndex + 3);
+            std::unique_ptr<PrintStatementNode>(createPrintNode(statementsSeen, Variable(rawString))), startIndex + 3);
     } else {
         // syntax error in print statement
         return getSyntaxError<PrintStatementNode>();
@@ -614,11 +617,11 @@ ParserReturnType<std::unique_ptr<ReadStatementNode>> parseReadStmt(frontend::Tok
         && frontend::isIdentifierTag(programTokens->at(startIndex + 1)->tokenTag)
         && programTokens->at(startIndex + 2)->tokenTag == frontend::SemicolonTag) {
 
+        String rawString = programTokens->at(startIndex + 1)->rawString;
         statementsSeen++;
+        insertIntoVariableTable(rawString);
         return ParserReturnType<std::unique_ptr<ReadStatementNode>>(
-            std::unique_ptr<ReadStatementNode>(
-                createReadNode(statementsSeen, Variable(programTokens->at(startIndex + 1)->rawString))),
-            startIndex + 3);
+            std::unique_ptr<ReadStatementNode>(createReadNode(statementsSeen, Variable(rawString))), startIndex + 3);
     } else {
         // syntax error in read statement
         return getSyntaxError<ReadStatementNode>();
@@ -763,7 +766,9 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
     if ((numberOfTokens - startIndex) > 3 && frontend::isIdentifierTag(programTokens->at(startIndex)->tokenTag)
         && programTokens->at(startIndex + 1)->tokenTag == frontend::AssignmentTag) {
 
-        Variable assignedVariable = Variable(programTokens->at(startIndex)->rawString);
+        String rawString = programTokens->at(startIndex)->rawString;
+        insertIntoVariableTable(rawString);
+        Variable assignedVariable = Variable(rawString);
         // find end of assign expression (semicolon)
         TokenListIndex tokenPointer = startIndex + 2;
         frontend::Tag currentToken = programTokens->at(tokenPointer)->tokenTag;
@@ -867,6 +872,7 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
     if (isSyntaxError || nextUnparsed < 0) {
         return getSyntaxError<StatementNode>();
     } else {
+        insertIntoStatementTable(statement->getStatementNumber(), statement->getStatementType());
         return ParserReturnType<std::unique_ptr<StatementNode>>(std::unique_ptr<StatementNode>(statement),
                                                                 nextUnparsed);
     }
@@ -941,6 +947,7 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
     if (isSyntaxError) {
         return getSyntaxError<ProcedureNode>();
     } else {
+        insertIntoProcedureTable(procedureName);
         return ParserReturnType<std::unique_ptr<ProcedureNode>>(
             std::unique_ptr<ProcedureNode>(createProcedureNode(procedureName, statementListNode)), nextUnparsed);
     }

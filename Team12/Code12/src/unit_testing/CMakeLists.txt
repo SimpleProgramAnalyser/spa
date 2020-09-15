@@ -11,11 +11,12 @@ file(GLOB headers
 file(GLOB_RECURSE pql
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.hpp")
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser*.cpp")
 file(GLOB_RECURSE pkb/relationships
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.h")
 
-add_executable(unit_testing ${srcs} ${headers} ${pql} ${pkb/relationships})
+add_executable(unit_testing ${srcs} ${headers} ${pql} ${pkb/relationships} src/pql/parser/AbstractQueryBuilder.cpp src/pql/parser/AbstractQueryBuilder.h)
 
 target_link_libraries(unit_testing spa)

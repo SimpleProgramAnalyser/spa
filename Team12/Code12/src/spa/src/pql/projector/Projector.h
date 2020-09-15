@@ -15,11 +15,8 @@ public:
     FormattedQueryResult formatUI(RawQueryResult rawQueryResult);
 
 private:
-    const String CommaStr = ",";
+    const String CommaStr = ", ";
     const String PipeStr = "|";
-    String convertVectorToString(Vector<String> strList);
-    Vector<Vector<String>> reduceQueryRawResults(Vector<Vector<Vector<String>>> rawResults);
-    Vector<String> reduceQueryRawResultsPerSynonym(Vector<Vector<String>> rawResults);
 };
 
 #endif // SPA_PQL_PROJECTOR_H

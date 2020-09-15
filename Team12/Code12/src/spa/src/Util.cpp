@@ -28,10 +28,15 @@ Boolean util::isRelationshipReference(const String& str)
 
 Boolean util::isLiteralIdent(const String& str)
 {
-    if (str.size() > 1 && str[0] == '"' && str[str.size() - 1] == '"') {
-        String possibleIdent = str.substr(1, str.size() - 1);
+    if (str.size() > 2 && str[0] == '"' && str[str.size() - 1] == '"') {
+        String possibleIdent = str.substr(1, str.size() - 2);
         return util::isPossibleIdentifier(possibleIdent);
     } else {
         return false;
     }
+}
+
+String util::removeCharFromBothEnds(String str)
+{
+    return str.substr(1, str.size() - 2);
 }

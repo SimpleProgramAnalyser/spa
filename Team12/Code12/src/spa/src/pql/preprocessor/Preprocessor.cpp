@@ -7,7 +7,6 @@ StringVector splitByFirstConsecutiveWhitespace(String str);
 Boolean containsOpenParentheses(String str);
 Boolean containsCloseParenthesesAsLastChar(String str);
 Boolean isEnclosedWith(String str, char leftEnd, char rightEnd);
-String removeCharFromBothEnds(String str);
 
 // TODO: Every class that can be invalid to inherit from an Error class
 // Todo: Error class to have `hasError` member and `isInvalid` member function
@@ -32,14 +31,13 @@ AbstractQuery Preprocessor::processQuery(String query)
 
     // Extract select synonym
     StringVector synonymAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClausesString);
-    // TODO: consider to split clauses string by whitespace, remove first element (synonym), use rest of the elements as
     // argument for processClauses Select without any synonym or clauses
     if (synonymAndClausesVector.size() == 0) {
         return AbstractQuery::invalidAbstractQuery();
     }
 
     Synonym selectSynonym = synonymAndClausesVector.at(0);
-    if (!isValidSynonym(selectSynonym)) {
+    if (!isValidSynonym(selectSynonym) || !declarationTable.hasSynonym(selectSynonym)) {
         return AbstractQuery::invalidAbstractQuery();
     }
 
@@ -69,13 +67,14 @@ ClauseVector Preprocessor::processClauses(String clausesString)
     Boolean hasCurrentClause = false;
     Boolean isPreviousTokenSuch = false; // is the previous token "such"
     ClauseType currentClauseType;
-    Boolean hasOpenParentheses = false;
+    Integer numOfOpenParentheses = 0;
 
     // Syntactically incorrect if number of tokens after clause identifier
     // that does not have open parentheses >= 2
     int numOfTokensWithoutOpenParentheses = 0;
 
-    StringList* splitByWhitespaceList = splitByWhitespace(clausesString);
+    StringList* splitByWhitespaceList = splitProgram(clausesString);
+    //    StringList* splitByWhitespaceList = splitByWhitespace(clausesString);
 
     for (auto& token : *splitByWhitespaceList) {
         if (!hasCurrentClause) {
@@ -101,24 +100,32 @@ ClauseVector Preprocessor::processClauses(String clausesString)
             } else {
                 currentClauseConstraint->append(*token);
 
-                if (!hasOpenParentheses) {
-                    if (containsOpenParentheses(*token)) {
-                        hasOpenParentheses = true;
-                    } else {
-                        numOfTokensWithoutOpenParentheses++;
+                if (containsOpenParentheses(*token)) {
+                    numOfOpenParentheses++;
+                }
 
-                        if (numOfTokensWithoutOpenParentheses >= 2) {
-                            // At most 2 tokens after clause identifier should
-                            return ClauseVector::invalidClauseVector();
-                        }
+                if (numOfOpenParentheses == 0) {
+                    if (*token != "*") {
+                        numOfTokensWithoutOpenParentheses++;
+                    }
+
+                    if (numOfTokensWithoutOpenParentheses >= 2) {
+                        // At most 2 tokens after clause identifier should
+                        return ClauseVector::invalidClauseVector();
                     }
                 }
 
                 // Important to still check for close parentheses for
                 // tokens with open parentheses already e.g. "Follows(s,a)"
                 if (containsCloseParenthesesAsLastChar(*token)) {
-                    if (!hasOpenParentheses) {
+                    numOfOpenParentheses--;
+
+                    if (numOfOpenParentheses < 0) {
                         return ClauseVector::invalidClauseVector();
+                    }
+
+                    if (numOfOpenParentheses > 0) {
+                        continue;
                     }
 
                     Clause* clause;
@@ -136,7 +143,8 @@ ClauseVector Preprocessor::processClauses(String clausesString)
                     clauseVector.add(clause);
 
                     hasCurrentClause = false;
-                    hasOpenParentheses = false;
+                    numOfOpenParentheses = 0;
+                    numOfTokensWithoutOpenParentheses = 0;
                     currentClauseConstraint = new String();
                 }
             }
@@ -219,12 +227,12 @@ ExpressionSpec Preprocessor::createExpressionSpec(String ref)
     }
 
     if (isEnclosedWith(ref, '_', '_')) {
-        String possibleLiteral = removeCharFromBothEnds(ref);
+        String possibleLiteral = util::removeCharFromBothEnds(ref);
         if (!isEnclosedWith(possibleLiteral, '\"', '\"')) {
             return ExpressionSpec::invalidExpressionSpec();
         }
 
-        Expression* expression = createExpression(removeCharFromBothEnds(possibleLiteral));
+        Expression* expression = createExpression(util::removeCharFromBothEnds(possibleLiteral));
         if (!expression) {
             return ExpressionSpec::invalidExpressionSpec();
         }
@@ -237,7 +245,8 @@ ExpressionSpec Preprocessor::createExpressionSpec(String ref)
         return ExpressionSpec::invalidExpressionSpec();
     }
 
-    Expression* expression = createExpression(removeCharFromBothEnds(ref));
+    String expressionString = util::removeCharFromBothEnds(ref);
+    Expression* expression = createExpression(expressionString);
     if (!expression) {
         return ExpressionSpec::invalidExpressionSpec();
     }
@@ -255,27 +264,28 @@ Expression* Preprocessor::createExpression(String literal)
 
 Reference Preprocessor::createReference(String ref)
 {
-    if (ref == "_" || declarationTable.hasSynonym(ref)) {
-        Reference reference(AnyRefType, ref, isSynonymOfProcedureType(ref));
+    if (ref == "_") {
+        Reference reference(WildcardRefType, ref);
         return reference;
     }
 
     if (util::isPossibleConstant(ref)) {
-        Reference reference(StatementRefType, ref);
+        Reference reference(IntegerRefType, ref);
         return reference;
     }
 
     if (util::isLiteralIdent(ref)) {
-        Reference reference(EntityRefType, ref);
+        // unquote the string literal
+        Reference reference(LiteralRefType, util::removeCharFromBothEnds(ref));
+        return reference;
+    }
+
+    if (declarationTable.hasSynonym(ref)) {
+        Reference reference(SynonymRefType, ref, declarationTable.getDesignEntityOfSynonym(ref));
         return reference;
     }
 
     return Reference::invalidReference();
-}
-
-Boolean Preprocessor::isSynonymOfProcedureType(Synonym s)
-{
-    return declarationTable.getDesignEntityOfSynonym(s).getType() == ProcedureType;
 }
 
 DeclarationTable Preprocessor::processDeclarations(String declarationsString)
@@ -438,9 +448,4 @@ Boolean containsCloseParenthesesAsLastChar(String str)
 Boolean isEnclosedWith(String str, char leftEnd, char rightEnd)
 {
     return str[0] == leftEnd && str.size() > 2 && str[str.size() - 1] == rightEnd;
-}
-
-String removeCharFromBothEnds(String str)
-{
-    return str.substr(1, str.size() - 2);
 }

@@ -14,6 +14,60 @@ TEST_CASE("splitProgram works for complicated conditional")
     REQUIRE(util::checkListValuesEqual(*program, *(getProgram15StringList_complicatedConditional())));
 }
 
+TEST_CASE("splitProgram works for double length symbols")
+{
+    StringList* program = splitProgram("abc>=0!=3==bcd<=cde");
+    auto* str0 = new String{"abc"};
+    auto* str1 = new String{">="};
+    auto* str2 = new String{"0"};
+    auto* str3 = new String{"!="};
+    auto* str4 = new String{"3"};
+    auto* str5 = new String{"=="};
+    auto* str6 = new String{"bcd"};
+    auto* str7 = new String{"<="};
+    auto* str8 = new String{"cde"};
+    auto* expected = new StringList();
+    expected->reserve(9);
+    expected->push_back(std::unique_ptr<String>(str0));
+    expected->push_back(std::unique_ptr<String>(str1));
+    expected->push_back(std::unique_ptr<String>(str2));
+    expected->push_back(std::unique_ptr<String>(str3));
+    expected->push_back(std::unique_ptr<String>(str4));
+    expected->push_back(std::unique_ptr<String>(str5));
+    expected->push_back(std::unique_ptr<String>(str6));
+    expected->push_back(std::unique_ptr<String>(str7));
+    expected->push_back(std::unique_ptr<String>(str8));
+    REQUIRE(util::checkListValuesEqual(*program, *expected));
+    delete expected;
+}
+
+TEST_CASE("splitProgram works for operators followed by character without whitespace")
+{
+    StringList* program = splitProgram("abc>0!3=bcd<cde");
+    auto* str0 = new String{"abc"};
+    auto* str1 = new String{">"};
+    auto* str2 = new String{"0"};
+    auto* str3 = new String{"!"};
+    auto* str4 = new String{"3"};
+    auto* str5 = new String{"="};
+    auto* str6 = new String{"bcd"};
+    auto* str7 = new String{"<"};
+    auto* str8 = new String{"cde"};
+    auto* expected = new StringList();
+    expected->reserve(9);
+    expected->push_back(std::unique_ptr<String>(str0));
+    expected->push_back(std::unique_ptr<String>(str1));
+    expected->push_back(std::unique_ptr<String>(str2));
+    expected->push_back(std::unique_ptr<String>(str3));
+    expected->push_back(std::unique_ptr<String>(str4));
+    expected->push_back(std::unique_ptr<String>(str5));
+    expected->push_back(std::unique_ptr<String>(str6));
+    expected->push_back(std::unique_ptr<String>(str7));
+    expected->push_back(std::unique_ptr<String>(str8));
+    REQUIRE(util::checkListValuesEqual(*program, *expected));
+    delete expected;
+}
+
 TEST_CASE("trimWhitespace works on empty string")
 {
     REQUIRE(trimWhitespace("") == "");

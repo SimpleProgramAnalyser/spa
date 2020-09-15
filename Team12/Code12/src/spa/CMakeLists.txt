@@ -4,7 +4,6 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_
 set(CMAKE_BUILD_TYPE Debug)
 
 add_library(spa
-
     # current directory
     ${srcs}
     ${headers}
@@ -50,6 +49,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
 
+
     # pkb
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
@@ -70,6 +70,16 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
@@ -85,12 +95,12 @@ add_library(spa
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic;")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # Bill Gates created c0v1d to s3ll vacc1n3sz!!!1!
-endif()
+endif ()
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
