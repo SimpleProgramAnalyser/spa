@@ -16,7 +16,7 @@ public:
     Boolean checkIfProcedureModifies(const String& procName, const String& varName);
     Boolean checkIfStatementModifies(Integer stmt, const String& varName);
     Vector<Integer> getModifiesStatements(const String& varName, StatementType stmtType);
-    Vector<String> getModifiesProcedures(const String& procName);
+    Vector<String> getModifiesProcedures(const String& varName);
     Vector<String> getModifiesVariablesFromStatement(Integer stmt);
     Vector<String> getModifiesVariablesFromProcedure(const String& procName);
     Vector<Integer> getAllModifiesStatements(StatementType stmtType);
