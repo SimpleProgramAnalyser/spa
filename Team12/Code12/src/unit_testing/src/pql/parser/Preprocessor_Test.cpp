@@ -619,15 +619,16 @@ TEST_CASE("Vacuously True")
 
 TEST_CASE("Keyword as variable names")
 {
-    AbstractQuery abstractQuery = processQuery("assign assign; stmt while; Select assign such that Parent* (while, assign)");
+    AbstractQuery abstractQuery
+        = processQuery("assign assign; stmt while; Select assign such that Parent* (while, assign)");
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-            .addSelectSynonym("assign")
-            .addDeclaration("assign", "assign")
-            .addDeclaration("while", "stmt")
-            .addSuchThatClause("Parent*", SynonymRefType, "while", StmtType, SynonymRefType, "assign", AssignType)
-            .build();
+              .addSelectSynonym("assign")
+              .addDeclaration("assign", "assign")
+              .addDeclaration("while", "stmt")
+              .addSuchThatClause("Parent*", SynonymRefType, "while", StmtType, SynonymRefType, "assign", AssignType)
+              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -636,7 +637,8 @@ TEST_CASE("Keyword as variable names")
 
 TEST_CASE("Invalid Variable Name")
 {
-    AbstractQuery abstractQuery = processQuery("assign assign; stmt whil&e; Select assign such that Parent* (whil&e, assign)");
+    AbstractQuery abstractQuery
+        = processQuery("assign assign; stmt whil&e; Select assign such that Parent* (whil&e, assign)");
 
     REQUIRE(abstractQuery.isInvalid());
 }
@@ -647,11 +649,11 @@ TEST_CASE("Select as variable name")
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-            .addSelectSynonym("Select")
-            .addDeclaration("stmt", "stmt")
-            .addDeclaration("Select", "stmt")
-            .addSuchThatClause("Follows", SynonymRefType, "Select", StmtType, SynonymRefType, "stmt", StmtType)
-            .build();
+              .addSelectSynonym("Select")
+              .addDeclaration("stmt", "stmt")
+              .addDeclaration("Select", "stmt")
+              .addSuchThatClause("Follows", SynonymRefType, "Select", StmtType, SynonymRefType, "stmt", StmtType)
+              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
