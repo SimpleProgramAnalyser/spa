@@ -157,7 +157,7 @@ ParentList* extractParentStmtlst(ParentList* parentList, ParentTypeTable* parent
 }
 
 /**
- * Helper method to join two or three Vector<StatementNumWithType>. 
+ * Helper method to join two or three Vector<StatementNumWithType>.
  * Note that order of the elements is not preserved.
  *
  * @param v1 The first Vector<StatementNumWithType>.
@@ -166,8 +166,8 @@ ParentList* extractParentStmtlst(ParentList* parentList, ParentTypeTable* parent
  * @return A Vector<StatementNumWithType> containing
  *         elements from v1, v2 and v3 (if any).
  */
-Vector<StatementNumWithType> concatenateStmtNumWithTypeVectors(const Vector<StatementNumWithType>& v1,
-                                                               const Vector<StatementNumWithType>& v2,
+Vector<StatementNumWithType>
+concatenateStmtNumWithTypeVectors(const Vector<StatementNumWithType>& v1, const Vector<StatementNumWithType>& v2,
                                   const Vector<StatementNumWithType>& v3 = Vector<StatementNumWithType>())
 {
     Vector<StatementNumWithType> uniqueSet;
@@ -177,7 +177,7 @@ Vector<StatementNumWithType> concatenateStmtNumWithTypeVectors(const Vector<Stat
             uniqueSet.push_back(var1);
         }
     }
-    
+
     if (!v2.empty()) {
         for (std::pair<Integer, StatementType> var2 : v2) {
             uniqueSet.push_back(var2);
@@ -229,7 +229,7 @@ ParentList* extractParentReturnAdjacencyList(const ProgramNode& rootNode)
     for (StatementNumber i = 0; i < numberOfStatements + 1; i++) {
         parentNodesList.push_back(Vector<std::pair<Integer, StatementType>>());
     }
-    
+
     // loop through ParentList to find Parent* relationship
     for (StatementNumber childStmt = numberOfStatements; 0 < childStmt; childStmt--) {
         StatementNumber currentParentStmt = parentList->at(childStmt);
@@ -237,7 +237,7 @@ ParentList* extractParentReturnAdjacencyList(const ProgramNode& rootNode)
         Vector<std::pair<Integer, StatementType>> childNodeList;
         // Child has parent
         if (currentParentStmt != 0) {
-            // add edge to seenNodesList 
+            // add edge to seenNodesList
             childNodeList.push_back(std::pair<Integer, StatementType>(childStmt, parentTable->at(childStmt)));
 
             // Add child node & add child nodes of child to parentNodesList
