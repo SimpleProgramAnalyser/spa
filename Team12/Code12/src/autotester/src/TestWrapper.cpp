@@ -50,4 +50,5 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
     PqlManager pqlManager;
 
     FormattedQueryResult result = pqlManager.executeQuery(query, AutotesterFormat);
+    results.push_front(result.getResults());
 }

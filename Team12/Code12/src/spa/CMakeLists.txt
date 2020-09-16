@@ -91,7 +91,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
-)
+        src/pql/evaluator/PatternMatcher.cpp src/pql/evaluator/PatternMatcher.h)
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

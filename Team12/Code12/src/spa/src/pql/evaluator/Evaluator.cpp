@@ -14,11 +14,11 @@ typedef Vector<String> ClauseResult;
 
 ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, const Vector<Boolean>& relatednessList);
 static ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
-RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery);
-ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
-                                       const DeclarationTable& declarations);
-ClauseResult processClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations);
-ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
+RawQueryResult evaluateSyntacticallyValidQuery(AbstractQuery abstractQuery);
+ClauseResult evaluateSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
+                                        const DeclarationTable& declarations);
+ClauseResult evaluateClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations);
+ClauseResult evaluateSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
 static StatementType mapToStatementType(DesignEntityType entType);
 
 ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
@@ -101,7 +101,7 @@ RawQueryResult Evaluator::evaluateQuery(const AbstractQuery& query)
         return RawQueryResult::getSyntaxError(
             "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.");
     }
-    return processSyntacticallyValidQuery(query);
+    return evaluateSyntacticallyValidQuery(query);
 }
 
 /*
@@ -117,7 +117,7 @@ RawQueryResult Evaluator::evaluateQuery(const AbstractQuery& query)
  * valid but yields no result, an empty RawQueryResult
  * would be returned).
  */
-RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
+RawQueryResult evaluateSyntacticallyValidQuery(AbstractQuery abstractQuery)
 {
     Vector<Synonym> synonyms{(abstractQuery.getSelectSynonym())};
     ClauseVector clauses = abstractQuery.getClauses();
@@ -130,11 +130,11 @@ RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
          * all the clauses once (with respect to that synonym).
          *
          * However, if there is a tuple of synonyms,
-         * call processMultipleSynonymClauses(..) which would
+         * call evaluateMultipleSynonymClauses(..) which would
          * determine the constraints of the synonyms and
          * call appropriate methods to get the result
          */
-        ClauseResult result = processSingleSynonymQuery(synonyms.at(0), clauses, declarations);
+        ClauseResult result = evaluateSingleSynonymQuery(synonyms.at(0), clauses, declarations);
         return RawQueryResult(result);
     }
     // do some stuff to combine the results
@@ -164,7 +164,7 @@ Boolean checkIfClauseRelatedToSynonym(Clause* clause, const Synonym& syn)
         auto* prClause = static_cast<PatternClause*>(clause);
         return prClause->getEntRef().getValue() == syn;
     } else {
-        throw std::runtime_error("Unknown clause type in processClause");
+        throw std::runtime_error("Unknown clause type in checkIfClauseRelatedToSynonym");
     }
 }
 
@@ -205,15 +205,15 @@ Boolean checkIfClauseRelatedToSynonym(Clause* clause, const Synonym& syn)
  * for more details), evaluated with respect
  * to a particular synonym.
  */
-ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
-                                       const DeclarationTable& declarations)
+ClauseResult evaluateSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
+                                        const DeclarationTable& declarations)
 {
     Vector<ClauseResult> resultsList;
     Vector<Boolean> relatednessList;
     Boolean allClausesVacuouslyTrue = true;
     for (int i = 0; i < clauses.count(); ++i) {
         Clause* clause = clauses.get(i);
-        ClauseResult result = processClause(synonym, clause, declarations);
+        ClauseResult result = evaluateClause(synonym, clause, declarations);
         /*
          * If one clause yields no results, then we can conclude
          * immediately, that this query returns no results.
@@ -278,17 +278,17 @@ ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clau
  * of RawQueryResult for more details) evaluated with respect to
  * a particular synonym.
  */
-ClauseResult processClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations)
+ClauseResult evaluateClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations)
 {
     ClauseType type = clause->getType();
     if (type == SuchThatClauseType) {
         // NOLINTNEXTLINE
-        return processSuchThat(synonym, static_cast<SuchThatClause*>(clause), declarations);
+        return evaluateSuchThat(synonym, static_cast<SuchThatClause*>(clause), declarations);
     } else if (type == PatternClauseType) {
         // TODO: Pattern matching
         return ClauseResult();
     } else {
-        throw std::runtime_error("Unknown clause type in processClause");
+        throw std::runtime_error("Unknown clause type in evaluateClause");
     }
 }
 
@@ -312,7 +312,7 @@ ClauseResult processClause(const Synonym& synonym, Clause* clause, const Declara
  * documentation of RawQueryResult for more details) evaluated
  * with respect to a particular synonym.
  */
-ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
+ClauseResult evaluateSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
@@ -334,7 +334,7 @@ ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, c
     case ModifiesProcedureType:
         return evaluateModifiesClause(synonym, stClause, declarations);
     default:
-        throw std::runtime_error("Unknown relationship type in processSuchThat");
+        throw std::runtime_error("Unknown relationship type in evaluateSuchThat");
     }
 }
 
