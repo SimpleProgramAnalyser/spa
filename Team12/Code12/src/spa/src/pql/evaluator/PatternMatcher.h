@@ -6,6 +6,11 @@
 #ifndef SPA_PATTERN_MATCHER_H
 #define SPA_PATTERN_MATCHER_H
 
-class PatternMatcher {};
+#include <Types.h>
+#include <pql/preprocessor/AqTypes.h>
+#include <vector>
+
+std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause,
+                                    const DeclarationTable& declarations);
 
 #endif // SPA_PATTERN_MATCHER_H

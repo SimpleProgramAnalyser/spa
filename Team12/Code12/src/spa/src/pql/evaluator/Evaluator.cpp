@@ -8,6 +8,7 @@
 #include <iterator>
 #include <stdexcept>
 
+#include "PatternMatcher.h"
 #include "pkb/PKB.h"
 
 typedef Vector<String> ClauseResult;
@@ -161,8 +162,8 @@ Boolean checkIfClauseRelatedToSynonym(Clause* clause, const Synonym& syn)
         return res.getLeftRef().getValue() == syn || res.getRightRef().getValue() == syn;
     } else if (type == PatternClauseType) {
         // NOLINTNEXTLINE
-        auto* prClause = static_cast<PatternClause*>(clause);
-        return prClause->getEntRef().getValue() == syn;
+        auto* pnClause = static_cast<PatternClause*>(clause);
+        return pnClause->getEntRef().getValue() == syn;
     } else {
         throw std::runtime_error("Unknown clause type in checkIfClauseRelatedToSynonym");
     }
@@ -285,8 +286,8 @@ ClauseResult evaluateClause(const Synonym& synonym, Clause* clause, const Declar
         // NOLINTNEXTLINE
         return evaluateSuchThat(synonym, static_cast<SuchThatClause*>(clause), declarations);
     } else if (type == PatternClauseType) {
-        // TODO: Pattern matching
-        return ClauseResult();
+        // NOLINTNEXTLINE
+        return evaluatePattern(synonym, static_cast<PatternClause*>(clause), declarations);
     } else {
         throw std::runtime_error("Unknown clause type in evaluateClause");
     }

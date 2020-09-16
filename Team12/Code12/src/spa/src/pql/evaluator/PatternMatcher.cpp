@@ -5,4 +5,11 @@
  */
 #include "PatternMatcher.h"
 
+std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause,
+                                    const DeclarationTable& declarations)
+{
 
+    std::vector<String> result;
+
+    return result;
+}
