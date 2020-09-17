@@ -725,7 +725,7 @@ ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause
         result = leftRefType == IntegerRefType ? getUsesVariablesFromStatement(std::stoi(leftRef.getValue()))
                                                : getUsesVariablesFromProcedure(leftRef.getValue());
     } else if (canMatchMultiple(leftRefType) && canMatchOnlyOne(rightRefType)) {
-        if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+        if (isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
             result = convertToClauseResult(getUsesStatements(
                 rightRef.getValue(),
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
@@ -746,14 +746,14 @@ ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause
         }
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         if (leftRef.getValue() == synonym
-            && declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            && isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
             // select stmt
             result = convertToClauseResult(getAllUsesStatements(
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
         } else if (leftRef.getValue() == synonym) {
             // select procedure
             result = getAllUsesProcedures();
-        } else if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+        } else if (isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
             // select variable with statement
             result = getAllUsesVariables(
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
@@ -790,7 +790,7 @@ ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stCl
         result = leftRefType == IntegerRefType ? getModifiesVariablesFromStatement(std::stoi(leftRef.getValue()))
                                                : getModifiesVariablesFromProcedure(leftRef.getValue());
     } else if (canMatchMultiple(leftRefType) && canMatchOnlyOne(rightRefType)) {
-        if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+        if (isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
             result = convertToClauseResult(getModifiesStatements(
                 rightRef.getValue(),
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
@@ -811,14 +811,14 @@ ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stCl
         }
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         if (leftRef.getValue() == synonym
-            && declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+            && isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
             // select stmt
             result = convertToClauseResult(getAllModifiesStatements(
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
         } else if (leftRef.getValue() == synonym) {
             // select procedure
             result = getAllModifiesProcedures();
-        } else if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
+        } else if (isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
             // select variable with statement
             result = getAllModifiesVariables(
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
