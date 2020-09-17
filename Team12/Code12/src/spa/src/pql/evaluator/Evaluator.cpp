@@ -339,6 +339,56 @@ ClauseResult evaluateSuchThat(const Synonym& synonym, SuchThatClause* stClause, 
     }
 }
 
+/**
+ * Given two clause results, find common elements in
+ * both of the clause results and return these
+ * common elements in a single clause result.
+ *
+ * @param firstList The first clause result.
+ * @param secondList The second clause result.
+ * @return A single list of results.
+ */
+ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)
+{
+    // initiate set of elements from first list
+    std::unordered_set<String> resultsFromFirst;
+    std::copy(firstList.begin(), firstList.end(), std::inserter(resultsFromFirst, resultsFromFirst.end()));
+    // initiate set to contain elements found in both
+    std::unordered_set<String> resultsFoundInBoth;
+    // loop through elements in second
+    for (const String& str : secondList) {
+        if (resultsFromFirst.find(str) == resultsFromFirst.end()) {
+            // element from secondList is not in firstList
+        } else {
+            // element is found in firstList!
+            resultsFoundInBoth.insert(str);
+        }
+    }
+    return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
+}
+
+/**
+ * Given a vector of clause results, find common elements
+ * in all the clause results and collate them into a
+ * single list of results. This function is O(n ^ 2).
+ *
+ * @param vector A vector of multiple clause results.
+ * @return A single list of results.
+ */
+ClauseResult findCommonElements(Vector<ClauseResult> vector)
+{
+    if (vector.empty()) {
+        return ClauseResult();
+    }
+    // perform a left fold over the list of clause results
+    size_t length = vector.size();
+    ClauseResult accumulatedElements = vector.at(0);
+    for (size_t i = 0; i < length - 1; i++) {
+        accumulatedElements = findCommonElements(accumulatedElements, vector.at(i + 1));
+    }
+    return accumulatedElements;
+}
+
 /*
  * Given a Vector<ClauseResults>, find results that are not related
  * to the synonym and convert them into a true/false check.
@@ -364,9 +414,7 @@ ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, 
             // skip the results (must be non-empty)
         }
     }
-
-    // TODO: Find common elements in all results lists
-    return std::vector<String>();
+    return findCommonElements(relatedResults);
 }
 
 /*
