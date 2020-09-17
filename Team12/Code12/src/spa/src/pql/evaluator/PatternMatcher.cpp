@@ -16,7 +16,7 @@
  * @param programExpression The tree of an Expression from
  *                          the SIMPLE program, to match the
  *                          clauseExpression to.
- * @param clauseExpression The tree of an Expression from a
+ * @param clauseExpression ExpressionSpec object from a
  *                         query clause, to match with a
  *                         subtree in programExpression.
  * @return True, if clauseExpression matches some subtree
@@ -26,7 +26,7 @@ Boolean doExpressionsMatch(const Expression* const programExpression, Expression
 {
     if (!programExpression->isArithmetic()) {
         // the expression is a reference, either constant or variable
-        return clauseExpression == programExpression;
+        return *(clauseExpression) == *(programExpression);
     } else {
         // arithmetic expression
         auto* arithExp = static_cast<const ArithmeticExpression* const>(programExpression); // NOLINT

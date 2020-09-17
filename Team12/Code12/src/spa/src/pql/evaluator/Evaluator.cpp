@@ -163,7 +163,7 @@ Boolean checkIfClauseRelatedToSynonym(Clause* clause, const Synonym& syn)
     } else if (type == PatternClauseType) {
         // NOLINTNEXTLINE
         auto* pnClause = static_cast<PatternClause*>(clause);
-        return pnClause->getEntRef().getValue() == syn;
+        return pnClause->getPatternSynonym() == syn || pnClause->getEntRef().getValue() == syn;
     } else {
         throw std::runtime_error("Unknown clause type in checkIfClauseRelatedToSynonym");
     }
