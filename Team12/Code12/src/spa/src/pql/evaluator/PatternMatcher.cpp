@@ -36,14 +36,60 @@ Boolean doExpressionsMatch(Expression* programExpression, Expression* clauseExpr
  */
 enum class SynonymAndClauseRelationship { Unrelated, Statement, Variable };
 
-std::vector<String> matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnClause,
-                                         SynonymAndClauseRelationship relationship)
-{}
+/**
+ * Given a synonym and an assign pattern clause,
+ * determines the relationship between the provided
+ * synonym and the clause provided.
+ *
+ * @param synonym Select synonym as specified in the query.
+ * @param pnClause Pattern clause as specified in the query.
+ *
+ * @return The relationship between the two entities.
+ */
+SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym& synonym, PatternClause* pnClause) {}
 
+/**
+ * Given the Abstract Syntax Tree node that represents
+ * a SIMPLE program assignment statement, check if the
+ * pattern clause matches the assign statement.
+ *
+ * @param assign The node representing the assignment statement.
+ * @param pnClause The pattern clause from the query.
+ *
+ * @return True, if the assign statement matches the clause.
+ *         False, if there was no match.
+ */
+Boolean matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnClause) {}
+
+/**
+ * Given a statement list node, find assign statements in the
+ * statement list that matches the given pattern clause of
+ * some query, and then return a list of results based on
+ * the relationship between the synonym and the clause.
+ *
+ * @param stmtLstNode The statement list node to traverse.
+ * @param pnClause The pattern clause to find.
+ * @param relationship Relationship between the synonym
+ *                     of the query and the pattern clause.
+ * @return Returns a list of query results.
+ */
 std::vector<String> findAssignInStatementList(StmtlstNode* stmtLstNode, PatternClause* pnClause,
                                               SynonymAndClauseRelationship relationship)
 {}
 
+/**
+ * Given an assignment pattern clause, retrieves the SIMPLE
+ * program from the Program Knowledge Base (root node of
+ * Abstract Syntax Tree) and tries to find the assignment
+ * statements, or assigned to variables, that match the
+ * expression pattern specified.
+ *
+ * @param synonym The Select synonym in the query.
+ * @param pnClause A pattern clause in the query.
+ * @param declarations Declarations table for the query.
+ *
+ * @return Returns a list of results found.
+ */
 std::vector<String> evaluateAssignPattern(const Synonym& synonym, PatternClause* pnClause,
                                           const DeclarationTable& declarations)
 {

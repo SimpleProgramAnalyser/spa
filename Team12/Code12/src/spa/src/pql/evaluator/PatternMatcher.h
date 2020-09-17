@@ -10,6 +10,16 @@
 #include <pql/preprocessor/AqTypes.h>
 #include <vector>
 
+/**
+ * Evaluates a pattern clause in the query with
+ * respect to the specified synonym in the query.
+ *
+ * @param synonym The Select synonym in the query.
+ * @param pnClause A pattern clause in the query.
+ * @param declarations Declarations table for the query.
+ *
+ * @return Returns a list of results found.
+ */
 std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause,
                                     const DeclarationTable& declarations);
 
