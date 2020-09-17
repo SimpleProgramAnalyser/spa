@@ -57,10 +57,19 @@ enum class SynonymAndClauseRelationship { Unrelated, Statement, Variable };
  *
  * @return The relationship between the two entities.
  */
-SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym& synonym, PatternClause* pnClause,
-                                                                   const DeclarationTable& declarations)
+SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym& synonym, PatternClause* pnClause)
 {
-    return SynonymAndClauseRelationship::Unrelated;
+    if (pnClause->getPatternSynonym() == synonym) {
+        return SynonymAndClauseRelationship::Statement;
+    }
+    Reference assignedToVariable = pnClause->getEntRef();
+    if (assignedToVariable.isNonStatementSynonym() && assignedToVariable.getValue() == synonym) {
+        return SynonymAndClauseRelationship::Variable;
+    } else if (assignedToVariable.isWildCard() || assignedToVariable.isNonStatementSynonym()) {
+        return SynonymAndClauseRelationship::Unrelated;
+    } else {
+        throw std::runtime_error("Could not match pattern clause in determineRelationshipForAssignPattern");
+    }
 }
 
 /**
