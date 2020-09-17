@@ -20,7 +20,6 @@
  *
  * @return Returns a list of results found.
  */
-std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause,
-                                    const DeclarationTable& declarations);
+std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause);
 
 #endif // SPA_PATTERN_MATCHER_H

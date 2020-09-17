@@ -161,13 +161,12 @@ std::vector<String> findAssignInStatementList(const StmtlstNode* const stmtLstNo
  *
  * @return Returns a list of results found.
  */
-std::vector<String> evaluateAssignPattern(const Synonym& synonym, PatternClause* pnClause,
-                                          const DeclarationTable& declarations)
+std::vector<String> evaluateAssignPattern(const Synonym& synonym, PatternClause* pnClause)
 {
     std::unordered_set<String> uniqueResult;
     ProgramNode* ast = getRootNode();
     List<ProcedureNode> procedureList = ast->procedureList;
-    SynonymAndClauseRelationship relationship = determineRelationshipForAssignPattern(synonym, pnClause, declarations);
+    SynonymAndClauseRelationship relationship = determineRelationshipForAssignPattern(synonym, pnClause);
     for (std::unique_ptr<ProcedureNode>& proc : procedureList) {
         std::vector<String> resultsFromProcedure
             = findAssignInStatementList(proc->statementListNode, pnClause, relationship);
@@ -177,11 +176,10 @@ std::vector<String> evaluateAssignPattern(const Synonym& synonym, PatternClause*
     return std::vector<String>(uniqueResult.begin(), uniqueResult.end());
 }
 
-std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause,
-                                    const DeclarationTable& declarations)
+std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause)
 {
     if (pnClause->getStatementType() == AssignPatternType) {
-        return evaluateAssignPattern(synonym, pnClause, declarations);
+        return evaluateAssignPattern(synonym, pnClause);
     } else {
         throw std::runtime_error("Unknown PatternClause type in evaluatePattern");
     }

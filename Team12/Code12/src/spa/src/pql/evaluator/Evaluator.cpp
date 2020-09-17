@@ -287,7 +287,7 @@ ClauseResult evaluateClause(const Synonym& synonym, Clause* clause, const Declar
         return evaluateSuchThat(synonym, static_cast<SuchThatClause*>(clause), declarations);
     } else if (type == PatternClauseType) {
         // NOLINTNEXTLINE
-        return evaluatePattern(synonym, static_cast<PatternClause*>(clause), declarations);
+        return evaluatePattern(synonym, static_cast<PatternClause*>(clause));
     } else {
         throw std::runtime_error("Unknown clause type in evaluateClause");
     }
