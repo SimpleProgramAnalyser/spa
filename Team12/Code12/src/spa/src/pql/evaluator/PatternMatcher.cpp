@@ -97,7 +97,25 @@ Boolean matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnC
  */
 std::vector<String> findAssignInStatementList(StmtlstNode* stmtLstNode, PatternClause* pnClause,
                                               SynonymAndClauseRelationship relationship)
-{}
+{
+    List<StatementNode>& statements = stmtLstNode->statementList;
+    std::unordered_set<String> resultsList;
+    for (std::unique_ptr<StatementNode>& currStmt : statements) {
+        if (currStmt->getStatementType() == AssignmentStatement) {
+            // NOLINTNEXTLINE
+            AssignmentStatementNode* assign = static_cast<AssignmentStatementNode*>(currStmt.get());
+            Boolean hasMatch = matchAssignStatement(assign, pnClause);
+            // if there is a match, check the relationship to add to list of results
+            if (hasMatch && relationship == SynonymAndClauseRelationship::Variable) {
+                resultsList.insert(assign->variable.varName);
+            } else if (hasMatch) {
+                // relationship == SynonymAndClauseRelationship::Statement or ::Unrelated
+                resultsList.insert(std::to_string(currStmt->getStatementNumber()));
+            }
+        }
+    }
+    return std::vector<String>(resultsList.begin(), resultsList.end());
+}
 
 /**
  * Given an assignment pattern clause, retrieves the SIMPLE

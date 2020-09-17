@@ -343,8 +343,8 @@ ClauseResult evaluateSuchThat(const Synonym& synonym, SuchThatClause* stClause, 
  * Given a Vector<ClauseResults>, find results that are not related
  * to the synonym and convert them into a true/false check.
  *
- * If the result is related, add the results into an unordered
- * set to ensure uniqueness.
+ * If the result is related, find the unique results that appear in
+ * all related lists and collate those into a single list.
  *
  * resultsList and relatednessList must be the same size, as
  * the relatedness list stores whether the results obtained
@@ -354,18 +354,19 @@ ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, 
 {
     size_t length = resultsList.size();
     assert(length == relatednessList.size()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    std::unordered_set<String> uniqueResults;
+    Vector<ClauseResult> relatedResults;
     for (size_t i = 0; i < length; i++) {
         if (relatednessList.at(i)) {
             // clause is related to synonym
-            std::copy(resultsList.at(i).begin(), resultsList.at(i).end(),
-                      std::inserter(uniqueResults, uniqueResults.end()));
+            relatedResults.push_back(resultsList.at(i));
         } else {
             // clause is unrelated
             // skip the results (must be non-empty)
         }
     }
-    return std::vector<String>(uniqueResults.begin(), uniqueResults.end());
+
+    // TODO: Find common elements in all results lists
+    return std::vector<String>();
 }
 
 /*
@@ -596,7 +597,7 @@ ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stCla
         Integer rightRefVal = std::stoi(rightRef.getValue());
         Boolean followsHolds = (isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)(leftRefVal, rightRefVal);
         if (followsHolds) {
-            result.push_back("true");
+            result.push_back("trueFollows");
         }
     } else if (leftRef.getValue() == rightRef.getValue()) {
         // Check if left == right, for Follows this will always return empty
@@ -693,7 +694,7 @@ ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause
             usesHolds = checkIfProcedureUses(leftRef.getValue(), rightRef.getValue());
         }
         if (usesHolds) {
-            result.push_back("true");
+            result.push_back("trueUses");
         }
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         if (leftRef.getValue() == synonym
@@ -758,7 +759,7 @@ ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stCl
             modifies = checkIfProcedureModifies(leftRef.getValue(), rightRef.getValue());
         }
         if (modifies) {
-            result.push_back("true");
+            result.push_back("trueModifies");
         }
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         if (leftRef.getValue() == synonym
@@ -820,7 +821,7 @@ ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClau
         Integer rightRefVal = std::stoi(rightRef.getValue());
         Boolean followsHolds = (isStar ? checkIfParentHoldsStar : checkIfParentHolds)(leftRefVal, rightRefVal);
         if (followsHolds) {
-            result.push_back("true");
+            result.push_back("trueParent");
         }
     } else if (leftRef.getValue() == rightRef.getValue()) {
         // Check if left == right, for Parent this will always return empty
