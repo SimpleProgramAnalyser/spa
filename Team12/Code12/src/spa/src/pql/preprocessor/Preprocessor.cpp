@@ -224,7 +224,7 @@ Clause* Preprocessor::processPatternClause(String clauseConstraint)
         return Clause::invalidClause(PatternClauseType);
     }
 
-    PatternClause* patternClause = new PatternClause(AssignPatternType, leftReference, rightExpressionSpec);
+    PatternClause* patternClause = new PatternClause(patternSynonym, AssignPatternType, leftReference, rightExpressionSpec);
     return patternClause;
 }
 

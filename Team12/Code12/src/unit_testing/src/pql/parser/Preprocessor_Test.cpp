@@ -60,7 +60,7 @@ TEST_CASE("Pattern a (_, \"x + y\")")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType, "x + y", LiteralExpressionType)
+              .addPatternClause("a", AssignPatternType, SynonymRefType, "a", AssignType, "x + y", LiteralExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -164,7 +164,7 @@ TEST_CASE("Such That Follows* Read")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("re")
               .addDeclaration("re", "read")
-              .addSuchThatClause("Follows*", SynonymRefType, "re", StmtType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "re", ReadType, IntegerRefType, "5", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -415,7 +415,7 @@ TEST_CASE("Such That Uses If and Literal Ident")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("ifs")
               .addDeclaration("ifs", "if")
-              .addSuchThatClause("Uses", SynonymRefType, "ifs", IfType, LiteralRefType, "\"x\"", NonExistentType)
+              .addSuchThatClause("Uses", SynonymRefType, "ifs", IfType, LiteralRefType, "x", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -448,7 +448,7 @@ TEST_CASE("Pattern Clause Wildcard leftRef, Expression rightRef")
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
                                               .addSelectSynonym("a")
                                               .addDeclaration("a", "assign")
-                                              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType,
+                                              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType,
                                                                 "x + y * z + a % d", LiteralExpressionType)
                                               .build();
 
@@ -459,13 +459,13 @@ TEST_CASE("Pattern Clause Wildcard leftRef, Expression rightRef")
 
 TEST_CASE("Pattern Clause Wildcard leftRef, Wildcard rightRef")
 {
-    AbstractQuery abstractQuery = processQuery("assign a; Select a pattern a (_, _)");
+    AbstractQuery abstractQuery = processQuery("assign asdf; Select asdf pattern asdf (_, _)");
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-              .addSelectSynonym("a")
-              .addDeclaration("a", "assign")
-              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType, "", WildcardExpressionType)
+              .addSelectSynonym("asdf")
+              .addDeclaration("asdf", "assign")
+              .addPatternClause("asdf", AssignPatternType, WildcardRefType, "_", NonExistentType, "", WildcardExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -473,14 +473,14 @@ TEST_CASE("Pattern Clause Wildcard leftRef, Wildcard rightRef")
     REQUIRE(equals);
 }
 
-TEST_CASE("Pattern Clause Wildcard leftRef, Wildcard Expression rightRef")
+TEST_CASE("Pattern Clause Wildcard leftRef, Extendable Expression rightRef")
 {
     AbstractQuery abstractQuery = processQuery("assign a; Select a pattern a (_, _\"x + y * z + a % d\"_)");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
                                               .addSelectSynonym("a")
                                               .addDeclaration("a", "assign")
-                                              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType,
+                                              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType,
                                                                 "x + y * z + a % d", ExtendableLiteralExpressionType)
                                               .build();
 
@@ -496,7 +496,7 @@ TEST_CASE("Pattern Clause with Parentheses in Expression")
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
                                               .addSelectSynonym("a")
                                               .addDeclaration("a", "assign")
-                                              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType,
+                                              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType,
                                                                 "x + y * (z + a)", ExtendableLiteralExpressionType)
                                               .build();
 
@@ -517,7 +517,7 @@ TEST_CASE("Pattern and Such That Clauses")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType, "x + y", LiteralExpressionType)
+              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y", LiteralExpressionType)
               .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "\"z\"", NonExistentType)
               .build();
 
@@ -534,8 +534,8 @@ TEST_CASE("Such That and Pattern Clauses 1")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "\"z\"", NonExistentType)
-              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType, "x + y", LiteralExpressionType)
+              .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
+              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y", LiteralExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -553,7 +553,7 @@ TEST_CASE("Such That and Pattern Clauses 2")
               .addDeclaration("a", "assign")
               .addDeclaration("s", "stmt")
               .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, SynonymRefType, "a", AssignType)
-              .addPatternClause(AssignPatternType, SynonymRefType, "a", AssignType, "_", WildcardExpressionType)
+              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "_", WildcardExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -646,6 +646,38 @@ TEST_CASE("Invalid Variable Name")
 TEST_CASE("Select as variable name")
 {
     AbstractQuery abstractQuery = processQuery("stmt stmt, Select; Select Select such that Follows(Select, stmt)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("Select")
+              .addDeclaration("stmt", "stmt")
+              .addDeclaration("Select", "stmt")
+              .addSuchThatClause("Follows", SynonymRefType, "Select", StmtType, SynonymRefType, "stmt", StmtType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("Case sensitivity of keywords")
+{
+    AbstractQuery abstractQuery = processQuery("Stmt s; Select s");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Case sensitivity of variable names")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select S");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Variable whitespace between tokens")
+{
+    AbstractQuery abstractQuery = processQuery(
+        "stmt     stmt   , Select\n; \n\nSelect  Select\t such\n that    Follows \n (    Select  ,\n stmt  )\n");
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()

@@ -63,7 +63,7 @@ public:
     Clause(Clause&&) = default;
     Clause& operator=(Clause&&) = delete;
     virtual ~Clause() = default;
-    virtual Boolean operator==(const Clause& clause);
+    virtual Boolean operator==(Clause& clause);
 };
 
 enum ReferenceType : char {
@@ -170,15 +170,17 @@ enum PatternStatementType : char { AssignPatternType = 0 };
 
 class PatternClause: public Clause {
 private:
+    Synonym patternSynonym;
     PatternStatementType patternStatementType;
     Reference entityReference;
     ExpressionSpec expressionSpec;
 
 public:
-    PatternClause(PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
+    PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
     PatternStatementType getStatementType();
     Reference getEntRef();
     ExpressionSpec getExprSpec();
+    Synonym getPatternSynonym();
     Boolean operator==(const PatternClause& patternClause);
 };
 
