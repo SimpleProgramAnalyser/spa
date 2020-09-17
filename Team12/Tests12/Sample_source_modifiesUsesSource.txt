@@ -11,6 +11,7 @@ procedure readPoint {
     } else {
         y = x + y;
     }
+
     if ((x < y) && (y < z)) then {
         normSq = y;
         while (y < z) {

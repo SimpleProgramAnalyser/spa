@@ -8,6 +8,7 @@ procedure raymarch {
     rd = 19;     
     dist = x * x + y * y + z * z;
     depth = depth;
+
     if (ro < rd) then {
         if (x < y) then {
             depth = notdepth;

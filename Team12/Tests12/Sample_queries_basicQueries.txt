@@ -58,12 +58,12 @@ stmt  		s1;	stmt         		s2;
 Select s1
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-13 - Invalid Queries
+13 - Invalid Queries (Select statement wrong)
 stmt s; variable v;
 Selec s
 None
 5000
-14 - Invalid Queries
+14 - Invalid Queries (no semicolon)
 stmt stmt
 Select stmt
 None

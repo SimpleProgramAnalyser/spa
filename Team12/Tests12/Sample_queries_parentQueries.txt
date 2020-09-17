@@ -108,7 +108,7 @@ procedure c;
 Select c such that Parent*(8,9)
 main, raymarch, sphere
 5000
-22 - Select Based on RHS
+22 - Select Based on RHS that is Relavant to Query
 stmt s;
 Select s such that Parent(8,s)
 9, 12

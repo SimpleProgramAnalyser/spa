@@ -78,7 +78,7 @@ procedure s;
 Select s such that Uses (s, "specialRead")
 mainPrint, readPoint, computeCentroid
 5000
-17 - Uses statement with 1 unknown synonym, Select based on LHS
+17 - Uses statement with 1 unknown synonym, Select based on LHS that is relavant to Query
 stmt s;
 Select s such that Uses (s, "y")
 2, 3, 6, 7, 8, 9, 10, 13, 16, 17, 18, 23, 24, 26, 29, 30, 31

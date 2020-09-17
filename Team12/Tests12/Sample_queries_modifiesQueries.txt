@@ -73,7 +73,7 @@ procedure s;
 Select s such that Modifies (s, "y")
 readPoint, computeCentroid
 5000
-17 - Modifies statement with 1 unknown synonym, Select based on LHS
+17 - Modifies statement with 1 unknown synonym, Select based on LHS, Select Relavant Statements
 stmt s;
 Select s such that Modifies (s, "y")
 3, 5, 6, 7, 13, 15, 17, 19, 23, 24, 30, 31

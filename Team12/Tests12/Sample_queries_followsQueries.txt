@@ -138,37 +138,37 @@ if s;
 Select s such that Follows(25,s)
 26
 5000
-29 - Select Based on LHS
+29 - Select Based on LHS (Statement)
 stmt s;
 Select s such that Follows(s, 11)
 10
 5000
-30 - Select Based on LHS 
+30 - Select Based on LHS (Assign)
 assign s;
 Select s such that Follows(s, 10)
 None
 5000
-31 - Select Based on LHS 
+31 - Select Based on LHS (Read)
 read s;
 Select s such that Follows(s, 15)
 14
 5000
-32 - Select Based on LHS 
+32 - Select Based on LHS (Print)
 print s;
 Select s such that Follows(s, 12)
 None
 5000
-33 - Select Based on LHS 
+33 - Select Based on LHS (Call)
 call s;
 Select s such that Follows(s, 33)
 None
 5000
-34 - Select Based on LHS 
+34 - Select Based on LHS (While)
 while s;
 Select s such that Follows(s, 9)
 8
 5000
-35 - Select Based on LHS 
+35 - Select Based on LHS (If)
 if s;
 Select s such that Follows(s, 7)
 3
