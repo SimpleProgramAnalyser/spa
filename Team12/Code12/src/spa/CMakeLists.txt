@@ -82,7 +82,12 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
@@ -91,7 +96,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
-        src/pql/evaluator/PatternMatcher.cpp src/pql/evaluator/PatternMatcher.h)
+)
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

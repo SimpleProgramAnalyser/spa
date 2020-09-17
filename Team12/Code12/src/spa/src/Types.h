@@ -21,7 +21,10 @@ using List = std::vector<std::unique_ptr<T>>;
 
 typedef List<String> StringList;
 
-typedef std::vector<String> StringVector;
+template <typename T>
+using Vector = std::vector<T>;
+
+typedef Vector<String> StringVector;
 
 enum StatementType : char {
     AnyStatement = 0,

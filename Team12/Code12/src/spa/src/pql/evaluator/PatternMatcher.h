@@ -3,8 +3,8 @@
  * to match a pattern clause in a Program Query Language query.
  */
 
-#ifndef SPA_PATTERN_MATCHER_H
-#define SPA_PATTERN_MATCHER_H
+#ifndef SPA_PQL_PATTERN_MATCHER_H
+#define SPA_PQL_PATTERN_MATCHER_H
 
 #include <Types.h>
 #include <pql/preprocessor/AqTypes.h>
@@ -21,4 +21,4 @@
  */
 std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause);
 
-#endif // SPA_PATTERN_MATCHER_H
+#endif // SPA_PQL_PATTERN_MATCHER_H

@@ -8,19 +8,17 @@
 #include <iterator>
 #include <stdexcept>
 
+#include "EvaluatorUtils.h"
 #include "PatternMatcher.h"
+#include "ResultsTable.h"
 #include "pkb/PKB.h"
 
-typedef Vector<String> ClauseResult;
-
 ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, const Vector<Boolean>& relatednessList);
-static ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
 RawQueryResult evaluateSyntacticallyValidQuery(AbstractQuery abstractQuery);
 ClauseResult evaluateSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
                                         const DeclarationTable& declarations);
 ClauseResult evaluateClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations);
 ClauseResult evaluateSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
-static StatementType mapToStatementType(DesignEntityType entType);
 
 ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
                                    const DeclarationTable& declarations, Boolean isStar);
@@ -29,23 +27,6 @@ ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClau
 ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
 ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stClause,
                                     const DeclarationTable& declarations);
-
-/*
- * An utility method to convert an integer vector to a string vector.
- * String vector is also what is returned from evaluating a clause.
- *
- * @param intList An integer vector to convert.
- *
- * @return The converted vector of strings, or ClauseResult.
- */
-ClauseResult convertToClauseResult(const Vector<Integer>& intList)
-{
-    ClauseResult strList;
-    for (Integer i : intList) {
-        strList.push_back(std::to_string(i));
-    }
-    return strList;
-}
 
 // Helper methods for PKB
 inline Vector<Integer> verifyStatementType(const StatementType& stmtType, Vector<StatementNumWithType>& result)
@@ -340,34 +321,6 @@ ClauseResult evaluateSuchThat(const Synonym& synonym, SuchThatClause* stClause, 
 }
 
 /**
- * Given two clause results, find common elements in
- * both of the clause results and return these
- * common elements in a single clause result.
- *
- * @param firstList The first clause result.
- * @param secondList The second clause result.
- * @return A single list of results.
- */
-ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)
-{
-    // initiate set of elements from first list
-    std::unordered_set<String> resultsFromFirst;
-    std::copy(firstList.begin(), firstList.end(), std::inserter(resultsFromFirst, resultsFromFirst.end()));
-    // initiate set to contain elements found in both
-    std::unordered_set<String> resultsFoundInBoth;
-    // loop through elements in second
-    for (const String& str : secondList) {
-        if (resultsFromFirst.find(str) == resultsFromFirst.end()) {
-            // element from secondList is not in firstList
-        } else {
-            // element is found in firstList!
-            resultsFoundInBoth.insert(str);
-        }
-    }
-    return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
-}
-
-/**
  * Given a vector of clause results, find common elements
  * in all the clause results and collate them into a
  * single list of results. This function is O(n ^ 2).
@@ -415,73 +368,6 @@ ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, 
         }
     }
     return findCommonElements(relatedResults);
-}
-
-/*
- * Given a synonym, retrieves the results for vacuously true queries,
- * i.e, retrieve all entity objects related to the design entity type
- * of the synonym (e.g, statement, while loops, procedures, etc).
- *
- * This method returns a RawResultFromClass, through which it will
- * set the isClauseRelatedToSynonym flag in the RawResultFromClass
- * to true.
- *
- * @param entTypeOfSynonym The design entity type of the synonym.
- *
- * @return Results
- * representing the results, from
- * the vacuously true statement.
- */
-ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)
-{
-    ClauseResult results;
-    if (isStatementDesignEntity(entTypeOfSynonym)) {
-        results = convertToClauseResult(getAllStatements(mapToStatementType(entTypeOfSynonym)));
-    } else if (entTypeOfSynonym == VariableType) {
-        results = getAllVariables();
-    } else if (entTypeOfSynonym == ProcedureType) {
-        results = getAllProcedures();
-    } else if (entTypeOfSynonym == ConstantType) {
-        // TODO: ??? Constant ???
-    } else {
-        throw std::runtime_error("Unknown DesignEntityType in retrieveAllMatching");
-    }
-    return results;
-}
-
-/*
- * Given a DesignEntityType, this function maps it to
- * a StatementType, which is a type compatible for calling
- * the PKB API
- *
- * @param entType The DesignEntityType to map to.
- *
- * @return StatementType This represents the corresponding,
- * mapped StatementType object.
- */
-StatementType mapToStatementType(DesignEntityType entType)
-{
-    StatementType mappedStmtType;
-    // TODO: Use a hash table instead
-    if (entType == StmtType) {
-        mappedStmtType = AnyStatement;
-    } else if (entType == ReadType) {
-        mappedStmtType = ReadStatement;
-    } else if (entType == PrintType) {
-        mappedStmtType = PrintStatement;
-    } else if (entType == CallType) {
-        mappedStmtType = CallStatement;
-    } else if (entType == WhileType) {
-        mappedStmtType = WhileStatement;
-    } else if (entType == IfType) {
-        mappedStmtType = IfStatement;
-    } else if (entType == AssignType) {
-        mappedStmtType = AssignmentStatement;
-    } else {
-        throw std::runtime_error("Wrong entity type in mapToStatementType");
-    }
-
-    return mappedStmtType;
 }
 
 /**
@@ -647,7 +533,7 @@ ClauseResult evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stCla
         if (followsHolds) {
             result.push_back("trueFollows");
         }
-    } else if (leftRef.getValue() == rightRef.getValue()) {
+    } else if (!leftRef.isWildCard() && leftRef.getValue() == rightRef.getValue()) {
         // Check if left == right, for Follows this will always return empty
         return result;
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
@@ -871,7 +757,7 @@ ClauseResult evaluateParentClause(const Synonym& synonym, SuchThatClause* stClau
         if (followsHolds) {
             result.push_back("trueParent");
         }
-    } else if (leftRef.getValue() == rightRef.getValue()) {
+    } else if (!leftRef.isWildCard() && leftRef.getValue() == rightRef.getValue()) {
         // Check if left == right, for Parent this will always return empty
         return result;
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
