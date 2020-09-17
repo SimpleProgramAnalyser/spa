@@ -71,18 +71,23 @@ Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, S
 
 // Procedure
 void insertIntoProcedureTable(const String& procName);
-Boolean getProcedureFromName(String procName);
+Boolean isProcedureInProgram(String procName);
 Vector<String> getAllProcedures();
 
 // Variable
 void insertIntoVariableTable(const String& varName);
-Boolean getVariableFromName(String varName);
+Boolean isVariableInProgram(String varName);
 Vector<String> getAllVariables();
 
 // Statement
 void insertIntoStatementTable(Integer stmtNum, StatementType stmtType);
-Boolean getStatementFromIndex(Integer stmtNum);
+Boolean isStatementInProgram(Integer stmtNum);
 Vector<Integer> getAllStatements(StatementType stmtType);
+
+// Constant
+void insertIntoConstantTable(Integer constant);
+Boolean isConstantInProgram(Integer constant);
+Vector<Integer> getAllConstants();
 
 // Root node
 void assignRootNode(ProgramNode* rootNodeToAssign);
@@ -98,6 +103,7 @@ public:
     ParentTable parentTable;
     UsesTable usesTable;
     ModifiesTable modifiesTable;
+    ConstantTable constantTable;
 };
 
 #endif // PKB_H

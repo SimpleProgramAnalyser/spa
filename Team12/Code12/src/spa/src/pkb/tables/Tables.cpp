@@ -4,6 +4,7 @@
 
 #include "Tables.h"
 
+// Procedure Table
 void ProcedureTable::insertIntoProcedureTable(const String& procName)
 {
     if (setOfProceduresNames.find(procName) == setOfProceduresNames.end()) {
@@ -11,17 +12,16 @@ void ProcedureTable::insertIntoProcedureTable(const String& procName)
         setOfProceduresNames.insert(procName);
     }
 }
-
 std::vector<String> ProcedureTable::getAllProcedures()
 {
     return listOfProcedureNames;
 }
-
-Boolean ProcedureTable::getProcedureFromName(const String& procName)
+Boolean ProcedureTable::isProcedureInProgram(const String& procName)
 {
-    return setOfProceduresNames.find(procName) == setOfProceduresNames.end();
+    return setOfProceduresNames.find(procName) != setOfProceduresNames.end();
 }
 
+// Variable Table
 void VariableTable::insertIntoVariableTable(const String& varName)
 {
     if (setOfVariables.find(varName) == setOfVariables.end()) {
@@ -29,17 +29,16 @@ void VariableTable::insertIntoVariableTable(const String& varName)
         setOfVariables.insert(varName);
     }
 }
-
 Vector<String> VariableTable::getAllVariables()
 {
     return listOfVariables;
 }
-
-Boolean VariableTable::getVariableFromName(const String& varName)
+Boolean VariableTable::isVariableInProgram(const String& varName)
 {
-    return setOfVariables.find(varName) == setOfVariables.end();
+    return setOfVariables.find(varName) != setOfVariables.end();
 }
 
+// Statement Table
 void StatementTable::insertIntoStatementTable(Integer stmtNum, StatementType stmtType)
 {
     if (setOfStatements.find(stmtNum) == setOfStatements.end()) {
@@ -48,13 +47,28 @@ void StatementTable::insertIntoStatementTable(Integer stmtNum, StatementType stm
         listOfAllStatement.byType[AnyStatement].push_back(stmtNum);
     }
 }
-
-Boolean StatementTable::getStatementFromIndex(Integer indexOfStmt)
+Boolean StatementTable::isStatementInProgram(Integer stmtNum)
 {
-    return setOfStatements.find(indexOfStmt) == setOfStatements.end();
+    return setOfStatements.find(stmtNum) != setOfStatements.end();
 }
-
-std::vector<Integer> StatementTable::getAllStatements(StatementType stmtType)
+Vector<Integer> StatementTable::getAllStatements(StatementType stmtType)
 {
     return listOfAllStatement.byType[stmtType];
+}
+
+// Constant Table
+void ConstantTable::insertIntoConstantTable(Integer constant)
+{
+    if (setOfConstants.find(constant) == setOfConstants.end()) {
+        setOfConstants.insert(constant);
+        listOfConstants.push_back(constant);
+    }
+}
+Boolean ConstantTable::isConstantInProgram(Integer constant)
+{
+    return setOfConstants.find(constant) != setOfConstants.end();
+}
+Vector<Integer> ConstantTable::getAllConstants()
+{
+    return listOfConstants;
 }
