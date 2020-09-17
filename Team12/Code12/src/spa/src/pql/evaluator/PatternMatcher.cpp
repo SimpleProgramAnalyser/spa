@@ -57,7 +57,10 @@ enum class SynonymAndClauseRelationship { Unrelated, Statement, Variable };
  *
  * @return The relationship between the two entities.
  */
-SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym& synonym, PatternClause* pnClause) {}
+SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym& synonym, PatternClause* pnClause)
+{
+    return SynonymAndClauseRelationship::Unrelated;
+}
 
 /**
  * Given the Abstract Syntax Tree node that represents
@@ -95,15 +98,16 @@ Boolean matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnC
  *                     of the query and the pattern clause.
  * @return Returns a list of query results.
  */
-std::vector<String> findAssignInStatementList(StmtlstNode* stmtLstNode, PatternClause* pnClause,
+std::vector<String> findAssignInStatementList(const StmtlstNode* const stmtLstNode, PatternClause* pnClause,
                                               SynonymAndClauseRelationship relationship)
 {
-    List<StatementNode>& statements = stmtLstNode->statementList;
+    const List<StatementNode>& statements = stmtLstNode->statementList;
     std::unordered_set<String> resultsList;
-    for (std::unique_ptr<StatementNode>& currStmt : statements) {
-        if (currStmt->getStatementType() == AssignmentStatement) {
+    for (const std::unique_ptr<StatementNode>& currStmt : statements) {
+        StatementType stmtType = currStmt->getStatementType();
+        if (stmtType == AssignmentStatement) {
             // NOLINTNEXTLINE
-            AssignmentStatementNode* assign = static_cast<AssignmentStatementNode*>(currStmt.get());
+            auto* assign = static_cast<AssignmentStatementNode*>(currStmt.get());
             Boolean hasMatch = matchAssignStatement(assign, pnClause);
             // if there is a match, check the relationship to add to list of results
             if (hasMatch && relationship == SynonymAndClauseRelationship::Variable) {
@@ -112,6 +116,23 @@ std::vector<String> findAssignInStatementList(StmtlstNode* stmtLstNode, PatternC
                 // relationship == SynonymAndClauseRelationship::Statement or ::Unrelated
                 resultsList.insert(std::to_string(currStmt->getStatementNumber()));
             }
+        } else if (stmtType == IfStatement) {
+            // NOLINTNEXTLINE
+            auto* ifNode = static_cast<IfStatementNode*>(currStmt.get());
+            std::insert_iterator<std::unordered_set<String>> setInserter
+                = std::inserter(resultsList, resultsList.end());
+            std::vector<String> resultsFromIf
+                = findAssignInStatementList(ifNode->ifStatementList, pnClause, relationship);
+            std::vector<String> resultsFromElse
+                = findAssignInStatementList(ifNode->elseStatementList, pnClause, relationship);
+            std::copy(resultsFromIf.begin(), resultsFromIf.end(), setInserter);
+            std::copy(resultsFromElse.begin(), resultsFromElse.end(), setInserter);
+        } else if (stmtType == WhileStatement) {
+            // NOLINTNEXTLINE
+            auto* whileNode = static_cast<WhileStatementNode*>(currStmt.get());
+            std::vector<String> resultsFromWhile
+                = findAssignInStatementList(whileNode->statementList, pnClause, relationship);
+            std::copy(resultsFromWhile.begin(), resultsFromWhile.end(), std::inserter(resultsList, resultsList.end()));
         }
     }
     return std::vector<String>(resultsList.begin(), resultsList.end());
@@ -135,7 +156,10 @@ std::vector<String> evaluateAssignPattern(const Synonym& synonym, PatternClause*
 {
     std::vector<String> result;
     ProgramNode* ast = getRootNode();
-
+    List<ProcedureNode> procedureList = ast->procedureList;
+    for (std::unique_ptr<ProcedureNode>& proc : procedureList) {
+        proc->statementListNode
+    }
     return result;
 }
 
