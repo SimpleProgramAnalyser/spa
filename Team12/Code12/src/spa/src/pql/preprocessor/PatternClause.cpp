@@ -27,10 +27,6 @@ Synonym PatternClause::getPatternSynonym()
 
 Boolean PatternClause::operator==(const PatternClause& patternClause)
 {
-    ExpressionSpec thisES = this->expressionSpec;
-    ExpressionSpec thatES = patternClause.expressionSpec;
-    Boolean equalsES = thisES == thatES;
-
     return this->patternSynonym == patternClause.patternSynonym
            && this->patternStatementType == patternClause.patternStatementType
            && this->entityReference == patternClause.entityReference
