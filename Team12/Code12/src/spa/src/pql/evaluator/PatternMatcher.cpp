@@ -57,7 +57,8 @@ enum class SynonymAndClauseRelationship { Unrelated, Statement, Variable };
  *
  * @return The relationship between the two entities.
  */
-SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym& synonym, PatternClause* pnClause)
+SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym& synonym, PatternClause* pnClause,
+                                                                   const DeclarationTable& declarations)
 {
     return SynonymAndClauseRelationship::Unrelated;
 }
@@ -154,13 +155,17 @@ std::vector<String> findAssignInStatementList(const StmtlstNode* const stmtLstNo
 std::vector<String> evaluateAssignPattern(const Synonym& synonym, PatternClause* pnClause,
                                           const DeclarationTable& declarations)
 {
-    std::vector<String> result;
+    std::unordered_set<String> uniqueResult;
     ProgramNode* ast = getRootNode();
     List<ProcedureNode> procedureList = ast->procedureList;
+    SynonymAndClauseRelationship relationship = determineRelationshipForAssignPattern(synonym, pnClause, declarations);
     for (std::unique_ptr<ProcedureNode>& proc : procedureList) {
-        proc->statementListNode
+        std::vector<String> resultsFromProcedure
+            = findAssignInStatementList(proc->statementListNode, pnClause, relationship);
+        std::copy(resultsFromProcedure.begin(), resultsFromProcedure.end(),
+                  std::inserter(uniqueResult, uniqueResult.end()));
     }
-    return result;
+    return std::vector<String>(uniqueResult.begin(), uniqueResult.end());
 }
 
 std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause,
