@@ -164,9 +164,9 @@ std::vector<String> evaluateAssignPattern(const Synonym& synonym, PatternClause*
 {
     std::unordered_set<String> uniqueResult;
     ProgramNode* ast = getRootNode();
-    List<ProcedureNode> procedureList = ast->procedureList;
+    const List<ProcedureNode>& procedureList = ast->procedureList;
     SynonymAndClauseRelationship relationship = determineRelationshipForAssignPattern(synonym, pnClause);
-    for (std::unique_ptr<ProcedureNode>& proc : procedureList) {
+    for (const std::unique_ptr<ProcedureNode>& proc : procedureList) {
         std::vector<String> resultsFromProcedure
             = findAssignInStatementList(proc->statementListNode, pnClause, relationship);
         std::copy(resultsFromProcedure.begin(), resultsFromProcedure.end(),
