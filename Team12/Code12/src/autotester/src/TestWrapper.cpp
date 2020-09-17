@@ -53,13 +53,12 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
     std::string::size_type pos_begin, pos_end = 0;
     std::string input = result.getResults();
 
-    input.erase(std::remove_if(input.begin(), input.end(), [](auto x) { return std::isspace(x); }), input.end());
-
     while ((pos_begin = input.find_first_not_of(",", pos_end)) != std::string::npos) {
         pos_end = input.find_first_of(",", pos_begin);
         if (pos_end == std::string::npos)
             pos_end = input.length();
-
+        std::string::iterator end_pos = std::remove(input.begin(), input.end(), ' ');
+        input.erase(end_pos, input.end());
         results.push_back(input.substr(pos_begin, pos_end - pos_begin));
     }
 }
