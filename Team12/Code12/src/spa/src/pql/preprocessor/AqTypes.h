@@ -152,11 +152,12 @@ enum ExpressionSpecType : char {
 
 class ExpressionSpec {
 private:
-    ExpressionSpecType expressionSpecType;
     Expression* expression;
     bool hasError;
 
 public:
+    ExpressionSpecType expressionSpecType;
+
     ExpressionSpec();
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);

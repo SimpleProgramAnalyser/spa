@@ -7,14 +7,14 @@ ExpressionSpec::ExpressionSpec(): hasError{false}
     expression = expressionPtr;
 }
 
-ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): expressionSpecType{exprSpecType}, hasError{false}
+ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): hasError{false}, expressionSpecType{exprSpecType}
 {
     Expression* expressionPtr = nullptr;
     expression = expressionPtr;
 }
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
-    expressionSpecType{exprSpecType}, expression(expr), hasError{false}
+    expression(expr), hasError{false}, expressionSpecType{exprSpecType}
 {}
 
 Expression* ExpressionSpec::getExpression()

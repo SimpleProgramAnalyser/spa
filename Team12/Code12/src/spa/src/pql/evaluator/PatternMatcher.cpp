@@ -11,7 +11,7 @@
  * Checks whether the clauseExpression can be found
  * within the programExpression. If it is not found,
  * check the subtrees of the programExpression
- * by calling doExpressionsMatch recursively.
+ * by calling doExpressionsMatchRecursive recursively.
  *
  * @param programExpression The tree of an Expression from
  *                          the SIMPLE program, to match the
@@ -22,7 +22,7 @@
  * @return True, if clauseExpression matches some subtree
  *         within programExpression. Otherwise, false.
  */
-Boolean doExpressionsMatch(const Expression* const programExpression, Expression* clauseExpression)
+Boolean doExpressionsMatchRecursive(const Expression* const programExpression, Expression* clauseExpression)
 {
     if (!programExpression->isArithmetic()) {
         // the expression is a reference, either constant or variable
@@ -30,8 +30,39 @@ Boolean doExpressionsMatch(const Expression* const programExpression, Expression
     } else {
         // arithmetic expression
         auto* arithExp = static_cast<const ArithmeticExpression* const>(programExpression); // NOLINT
-        return doExpressionsMatch(arithExp->leftFactor, clauseExpression)
-               && doExpressionsMatch(arithExp->rightFactor, clauseExpression);
+        return *(clauseExpression) == *(programExpression)
+               || doExpressionsMatchRecursive(arithExp->leftFactor, clauseExpression)
+               || doExpressionsMatchRecursive(arithExp->rightFactor, clauseExpression);
+    }
+}
+
+/**
+ * For a given query ExpressionSpec, check whether
+ * it matches an SIMPLE program expression.
+ *
+ * @param programExpression The tree of an Expression from
+ *                          the SIMPLE program, to match the
+ *                          expSpec to.
+ * @param expSpec The expression spec in the query.
+ *
+ * @return True, if the expression spec matches the
+ *         programExpression. Otherwise, false.
+ */
+Boolean doesExpressionSpecMatch(const Expression* programExpression, ExpressionSpec expSpec)
+{
+    ExpressionSpecType type = expSpec.expressionSpecType;
+    switch (type) {
+    case WildcardExpressionType:
+        // always matches with a wildcard
+        return true;
+    case LiteralExpressionType:
+        // check the top level for equality only
+        return *(programExpression) == *(expSpec.getExpression());
+    case ExtendableLiteralExpressionType:
+        // check all subtrees of the expression
+        return doExpressionsMatchRecursive(programExpression, expSpec.getExpression());
+    default:
+        throw std::runtime_error("Unknown or invalid expression type in doesExpressionSpecMatch");
     }
 }
 
@@ -90,7 +121,7 @@ Boolean matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnC
     if ((refType == LiteralRefType && assign->variable.varName == pnClause->getEntRef().getValue())
         || refType == WildcardRefType || refType == SynonymRefType) {
         // check whether expression matches
-        return doExpressionsMatch(assign->expression, pnClause->getExprSpec().getExpression());
+        return doesExpressionSpecMatch(assign->expression, pnClause->getExprSpec());
     } else {
         return false;
     }
