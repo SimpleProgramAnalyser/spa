@@ -68,6 +68,6 @@ DesignEntity Reference::getDesignEntity()
 
 Boolean Reference::operator==(const Reference& reference)
 {
-    return this->referenceType == reference.referenceType && this->referenceValue == referenceValue
+    return this->referenceType == reference.referenceType && this->referenceValue == reference.referenceValue
            && this->designEntity == reference.designEntity;
 }

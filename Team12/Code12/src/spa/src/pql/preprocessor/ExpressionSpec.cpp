@@ -36,6 +36,18 @@ ExpressionSpec ExpressionSpec::invalidExpressionSpec()
 
 Boolean ExpressionSpec::operator==(const ExpressionSpec& expressionSpec)
 {
-    return this->expressionSpecType == expressionSpec.expressionSpecType
-           && this->expression == expressionSpec.expression;
+
+    Boolean equalExpression = false;
+
+    if (!(this->expression) || !(expressionSpec.expression)) {
+        if (this->expression || expressionSpec.expression) {
+            return false;
+        } else {
+            equalExpression = true;
+        }
+    } else {
+        equalExpression = *(this->expression) == *(expressionSpec.expression);
+    }
+
+    return this->expressionSpecType == expressionSpec.expressionSpecType && equalExpression;
 }

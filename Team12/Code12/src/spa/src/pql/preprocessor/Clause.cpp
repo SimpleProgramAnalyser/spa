@@ -22,7 +22,15 @@ Clause* Clause::invalidClause(ClauseType clauseType)
     return c;
 }
 
-Boolean Clause::operator==(const Clause& clause)
+Boolean Clause::operator==(Clause& clause)
 {
-    return this->type == clause.type && this->hasError == clause.hasError;
+    if (this->type != clause.type) {
+        return false;
+    }
+
+    if (this->type == SuchThatClauseType) {
+        return dynamic_cast<SuchThatClause&>(*this) == dynamic_cast<SuchThatClause&>(clause);
+    } else {
+        return dynamic_cast<PatternClause&>(*this) == dynamic_cast<PatternClause&>(clause);
+    }
 }

@@ -52,7 +52,7 @@ AbstractQueryBuilder AbstractQueryBuilder::addSuchThatClause(String relRefType, 
     return *this;
 }
 
-AbstractQueryBuilder AbstractQueryBuilder::addPatternClause(PatternStatementType patternStatementType,
+AbstractQueryBuilder AbstractQueryBuilder::addPatternClause(Synonym s, PatternStatementType patternStatementType,
                                                             ReferenceType refType, ReferenceValue refValue,
                                                             DesignEntityType designEntityType, String exprString,
                                                             ExpressionSpecType exprSpecType)
@@ -62,7 +62,7 @@ AbstractQueryBuilder AbstractQueryBuilder::addPatternClause(PatternStatementType
     DesignEntity designEntity{designEntityType};
     Reference reference{refType, refValue, designEntity};
 
-    Clause* patternClause = new PatternClause(patternStatementType, reference, expressionSpec);
+    Clause* patternClause = new PatternClause(s, patternStatementType, reference, expressionSpec);
     clauseVector.add(patternClause);
 
     return *this;
