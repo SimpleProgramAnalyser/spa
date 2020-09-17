@@ -1,7 +1,8 @@
 #include "AqTypes.h"
 
-PatternClause::PatternClause(PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec):
-    Clause(PatternClauseType), patternStatementType(statementType), entityReference(entRef), expressionSpec(exprSpec)
+PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec):
+    Clause(PatternClauseType), patternSynonym(s), patternStatementType(statementType), entityReference(entRef),
+    expressionSpec(exprSpec)
 {}
 
 PatternStatementType PatternClause::getStatementType()
@@ -19,9 +20,15 @@ ExpressionSpec PatternClause::getExprSpec()
     return expressionSpec;
 }
 
+Synonym PatternClause::getPatternSynonym()
+{
+    return patternSynonym;
+}
+
 Boolean PatternClause::operator==(const PatternClause& patternClause)
 {
-    return this->patternStatementType == patternClause.patternStatementType
+    return this->patternSynonym == patternClause.patternSynonym
+           && this->patternStatementType == patternClause.patternStatementType
            && this->entityReference == patternClause.entityReference
            && this->expressionSpec == patternClause.expressionSpec;
 }
