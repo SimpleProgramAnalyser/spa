@@ -1,0 +1,250 @@
+1 - Select All Statements, Return None
+stmt s;
+Select s such that Parent (2,3)
+None
+5000
+2 - Select All Statements, Return All
+stmt s;
+Select s such that Parent (8,9)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
+5000
+3 - Select All Statements with Spaces
+stmt s;
+Select s such that Parent 		(8,9)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
+5000
+4 - Select All Statements Parent*
+stmt s;
+Select s such that Parent*(8,10)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
+5000
+5 - Select All Assignments
+assign a;
+Select a such that Parent(8,9)
+5000
+4, 5, 6, 7, 10, 11, 17, 18, 20, 21, 23
+6 - Select All Read
+read r;
+Select r such that Parent(8,9)
+13, 29, 33
+5000
+7 - Select All Print
+print p;
+Select p such that Parent(8,9)
+14, 28
+5000
+8 - Select All Call
+call c;
+Select c such that Parent(8,9)
+2, 25
+5000
+9 - Select All While
+while w;
+Select w such that Parent(8,9)
+16, 19, 22, 24, 26, 30, 31, 32
+5000
+10 - Select All If
+if i;
+Select i such that Parent(8,9)
+8, 9, 12, 15, 27
+5000
+11 - Select All Varialbe
+variable v;
+Select v such that Parent(8,9)
+depth, dist, epsilon, main, notdepth, p, raymarch, rd, ro, steps, x, y, z
+5000
+12 - Select All Constant
+constant c;
+Select c such that Parent(8,9)
+13, 19
+5000
+13 - Select All Procedure
+procedure c;
+Select c such that Parent(8,9)
+main, raymarch, sphere
+5000
+14 - Select All Assignments Parent*
+assign a;
+Select a such that Parent*(8,9)
+5000
+4, 5, 6, 7, 10, 11, 17, 18, 20, 21, 23
+6 - Select All Read Parent*
+read r;
+Select r such that Parent*(8,9)
+13, 29, 33
+5000
+15 - Select All Print Parent*
+print p;
+Select p such that Parent*(8,9)
+14, 28
+5000
+16 - Select All Call
+call c;
+Select c such that Parent*(8,9)
+2, 25
+5000
+17 - Select All While
+while w;
+Select w such that Parent*(8,9)
+16, 19, 22, 24, 26, 30, 31, 32
+5000
+18 - Select All If
+if i;
+Select i such that Parent*(8,9)
+8, 9, 12, 15, 27
+5000
+19 - Select All Varialbe
+variable v;
+Select v such that Parent*(8,9)
+depth, dist, epsilon, main, notdepth, p, raymarch, rd, ro, steps, x, y, z
+5000
+20 - Select All Constant
+constant c;
+Select c such that Parent*(8,9)
+13, 19
+5000
+21 - Select All Procedure
+procedure c;
+Select c such that Parent*(8,9)
+main, raymarch, sphere
+5000
+22 - Select Based on RHS
+stmt s;
+Select s such that Parent(8,s)
+9, 12
+5000
+23 - Select Based on RHS
+assign s;
+Select s such that Parent(22,s)
+23
+5000
+24 - Select Based on RHS
+read s;
+Select s such that Parent(27,s)
+29
+5000
+25 - Select Based on RHS
+print s;
+Select s such that Parent(27,s)
+28
+5000
+26 - Select Based on RHS
+call s;
+Select s such that Parent(24,s)
+25
+5000
+27 - Select Based on RHS
+while s;
+Select s such that Parent(15,s)
+16, 19
+5000
+28 - Select Based on RHS
+if s;
+Select s such that Parent(8,s)
+9, 12
+5000
+29 - Select Based on LHS
+stmt s;
+Select s such that Parent(s, 33)
+32
+5000
+30 - Select Based on LHS 
+assign s;
+Select s such that Parent(s, 33)
+None
+5000
+31 - Select Based on LHS 
+read s;
+Select s such that Parent(s, 33)
+None
+5000
+32 - Select Based on LHS 
+print s;
+Select s such that Parent(s, 33)
+None
+5000
+33 - Select Based on LHS 
+call s;
+Select s such that Parent(s, 33)
+None
+5000
+34 - Select Based on LHS 
+while s;
+Select s such that Parent(s, 33)
+32
+5000
+35 - Select Based on LHS 
+if s;
+Select s such that Parent(s, 28)
+27
+5000
+36 - Select Based on RHS
+stmt s;
+Select s such that Parent*(8,s)
+9, 10, 11, 12, 13, 14
+5000
+37 - Select Based on RHS
+assign s;
+Select s such that Parent*(8,s)
+10, 11
+5000
+38 - Select Based on RHS
+read s;
+Select s such that Parent*(26,s)
+29
+5000
+39 - Select Based on RHS
+print s;
+Select s such that Parent*(8,s)
+14
+5000
+40 - Select Based on RHS
+call s;
+Select s such that Parent*(15,s)
+None
+5000
+41 - Select Based on RHS
+while s;
+Select s such that Parent*(30,s)
+31, 32
+5000
+42 - Select Based on RHS
+if s;
+Select s such that Parent*(8,s)
+9, 12
+5000
+43 - Select Based on LHS
+stmt s;
+Select s such that Parent*(s, 33)
+30, 31, 32
+5000
+44 - Select Based on LHS 
+assign s;
+Select s such that Parent*(s, 33)
+None
+5000
+45 - Select Based on LHS 
+read s;
+Select s such that Parent*(s, 33)
+None
+5000
+46 - Select Based on LHS 
+print s;
+Select s such that Parent*(s, 33)
+None
+5000
+47 - Select Based on LHS 
+call s;
+Select s such that Parent*(s, 33)
+None
+5000
+48 - Select Based on LHS 
+while s;
+Select s such that Parent*(s, 33)
+30, 31, 32
+5000
+49 - Select Based on LHS 
+if s;
+Select s such that Parent*(s, 10)
+8, 9
+5000
