@@ -22,7 +22,18 @@
  * @return True, if clauseExpression matches some subtree
  *         within programExpression. Otherwise, false.
  */
-Boolean doExpressionsMatch(Expression* programExpression, Expression* clauseExpression) {}
+Boolean doExpressionsMatch(const Expression* const programExpression, Expression* clauseExpression)
+{
+    if (!programExpression->isArithmetic()) {
+        // the expression is a reference, either constant or variable
+        return clauseExpression == programExpression;
+    } else {
+        // arithmetic expression
+        auto* arithExp = static_cast<const ArithmeticExpression* const>(programExpression); // NOLINT
+        return doExpressionsMatch(arithExp->leftFactor, clauseExpression)
+               && doExpressionsMatch(arithExp->rightFactor, clauseExpression);
+    }
+}
 
 /**
  * An enum that represents certain states that the
@@ -59,7 +70,18 @@ SynonymAndClauseRelationship determineRelationshipForAssignPattern(const Synonym
  * @return True, if the assign statement matches the clause.
  *         False, if there was no match.
  */
-Boolean matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnClause) {}
+Boolean matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnClause)
+{
+    // check whether the variable that is being assigned to matches
+    ReferenceType refType = pnClause->getEntRef().getReferenceType();
+    if ((refType == LiteralRefType && assign->variable.varName == pnClause->getEntRef().getValue())
+        || refType == WildcardRefType || refType == SynonymRefType) {
+        // check whether expression matches
+        return doExpressionsMatch(assign->expression, pnClause->getExprSpec().getExpression());
+    } else {
+        return false;
+    }
+}
 
 /**
  * Given a statement list node, find assign statements in the
