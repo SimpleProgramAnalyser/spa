@@ -211,9 +211,9 @@ void insertIntoProcedureTable(const String& procName)
 {
     pkb.procedureTable.insertIntoProcedureTable(procName);
 }
-Boolean getProcedureFromName(const String& procName)
+Boolean isProcedureInProgram(const String& procName)
 {
-    return pkb.procedureTable.getProcedureFromName(procName);
+    return pkb.procedureTable.isProcedureInProgram(procName);
 }
 Vector<String> getAllProcedures()
 {
@@ -225,9 +225,9 @@ void insertIntoVariableTable(const String& varName)
 {
     pkb.variableTable.insertIntoVariableTable(varName);
 }
-Boolean getVariableFromName(const String& varName)
+Boolean isVariableInProgram(const String& varName)
 {
-    return pkb.variableTable.getVariableFromName(varName);
+    return pkb.variableTable.isVariableInProgram(varName);
 }
 Vector<String> getAllVariables()
 {
@@ -239,9 +239,9 @@ void insertIntoStatementTable(Integer stmtNum, StatementType stmtType)
 {
     pkb.statementTable.insertIntoStatementTable(stmtNum, stmtType);
 }
-Boolean getStatementFromIndex(Integer stmtNum)
+Boolean isStatementInProgram(Integer stmtNum)
 {
-    return pkb.statementTable.getStatementFromIndex(stmtNum);
+    return pkb.statementTable.isStatementInProgram(stmtNum);
 }
 Vector<Integer> getAllStatements(StatementType stmtType)
 {
@@ -257,4 +257,16 @@ void assignRootNode(ProgramNode* rootNodeToAssign)
 ProgramNode* getRootNode()
 {
     return pkb.rootNode;
+}
+void insertIntoConstantTable(Integer constant)
+{
+    pkb.constantTable.insertIntoConstantTable(constant);
+}
+Boolean isConstantInProgram(Integer constant)
+{
+    return pkb.constantTable.isConstantInProgram(constant);
+}
+Vector<Integer> getAllConstants()
+{
+    return pkb.constantTable.getAllConstants();
 }
