@@ -157,7 +157,6 @@ std::vector<String> findAssignInStatementList(const StmtlstNode* const stmtLstNo
  *
  * @param synonym The Select synonym in the query.
  * @param pnClause A pattern clause in the query.
- * @param declarations Declarations table for the query.
  *
  * @return Returns a list of results found.
  */
