@@ -5,6 +5,7 @@
 
 #include "FollowsExtractor.h"
 #include "ModifiesExtractor.h"
+#include "ParentExtractor.h"
 #include "SemanticErrorsValidator.h"
 #include "UsesExtractor.h"
 
@@ -19,6 +20,7 @@ Void extractDesign(ProgramNode& rootNode)
     }
 
     extractFollows(rootNode);
+    extractParent(rootNode);
     extractUses(rootNode, seValidator);
     extractModifies(rootNode, seValidator);
 }
