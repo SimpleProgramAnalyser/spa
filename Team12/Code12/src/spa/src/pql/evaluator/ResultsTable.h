@@ -17,11 +17,12 @@
 class ResultsTable {
 private:
     std::unordered_map<Synonym, ClauseResult> resultsMap;
-    const DeclarationTable& declarations;
+    DeclarationTable declarations;
     Boolean hasResult;
 
     Boolean checkIfSynonymInMap(const Synonym& syn);
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
+    ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList);
 
 public:
     /**

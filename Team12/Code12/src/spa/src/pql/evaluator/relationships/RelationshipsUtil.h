@@ -9,6 +9,8 @@
 #define SPA_QUERY_EVALUATOR_RELATIONSHIPS_UTIL_H
 
 #include "pkb/PKB.h"
+#include "pql/evaluator/ResultsTable.h"
+#include "pql/preprocessor/AqTypes.h"
 
 //================ HELPER METHODS FOR PKB ================
 
@@ -57,7 +59,7 @@ inline Vector<Integer> getAllChildStatements(Integer parent, StatementType stmtT
  *         type can match more than one result.
  *         Otherwise, false.
  */
-Boolean canMatchMultiple(const ReferenceType& refType)
+inline Boolean canMatchMultiple(const ReferenceType& refType)
 {
     return (refType == SynonymRefType || refType == WildcardRefType);
 }
@@ -72,7 +74,7 @@ Boolean canMatchMultiple(const ReferenceType& refType)
  *         type can only match one entity.
  *         Otherwise, false.
  */
-Boolean canMatchOnlyOne(const ReferenceType& refType)
+inline Boolean canMatchOnlyOne(const ReferenceType& refType)
 {
     return (refType == IntegerRefType || refType == LiteralRefType);
 }
@@ -94,7 +96,7 @@ Boolean canMatchOnlyOne(const ReferenceType& refType)
  */
 inline Boolean refHasConstraints(const Reference& ref, ResultsTable* resultsTable)
 {
-    return ref.getReferenceType() == SynonymRefType && resultsTable->checkIfSynonymHasConstraints(ref.getValue())
+    return ref.getReferenceType() == SynonymRefType && resultsTable->checkIfSynonymHasConstraints(ref.getValue());
 }
 
 #endif // SPA_QUERY_EVALUATOR_RELATIONSHIPS_UTIL_H

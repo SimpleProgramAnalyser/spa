@@ -5,18 +5,19 @@
 #include "Evaluator.h"
 
 #include <stdexcept>
+#include <utility>
 
 #include "PatternMatcher.h"
 #include "SuchThatEvaluator.h"
 
 RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
 {
-    Evaluator evaluator(abstractQuery);
+    Evaluator evaluator(abstractQuery, ResultsTable(abstractQuery.getDeclarationTable()));
     return evaluator.evaluateQuery();
 }
 
-Evaluator::Evaluator(const AbstractQuery& abstractQuery):
-    query(abstractQuery), resultsTable(ResultsTable(abstractQuery.getDeclarationTable()))
+Evaluator::Evaluator(const AbstractQuery& abstractQuery, ResultsTable resultsTable):
+    query(abstractQuery), resultsTable(std::move(resultsTable))
 {}
 
 RawQueryResult Evaluator::evaluateQuery()
@@ -42,7 +43,7 @@ RawQueryResult Evaluator::evaluateQuery()
 RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 {
     ClauseVector clauses = query.getClauses();
-    for (int i = 0; i < clauses.count(); i) {
+    for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);
         evaluateClause(clause);
         if (!resultsTable.hasResults()) {

@@ -32,17 +32,6 @@ ClauseResult convertToClauseResult(const Vector<Integer>& intList);
 StatementType mapToStatementType(DesignEntityType entType);
 
 /**
- * Given two clause results, find common elements in
- * both of the clause results and return these
- * common elements in a single clause result.
- *
- * @param firstList The first clause result.
- * @param secondList The second clause result.
- * @return A single list of results.
- */
-ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList);
-
-/**
  * Given a clause result, return another clause
  * result with all unique elements from the first
  * list. Duplicate elements will be removed.

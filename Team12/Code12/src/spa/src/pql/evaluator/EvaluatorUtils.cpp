@@ -39,25 +39,6 @@ StatementType mapToStatementType(DesignEntityType entType)
     return mappedStmtType;
 }
 
-ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)
-{
-    // initiate set of elements from first list
-    std::unordered_set<String> resultsFromFirst;
-    std::copy(firstList.begin(), firstList.end(), std::inserter(resultsFromFirst, resultsFromFirst.end()));
-    // initiate set to contain elements found in both
-    std::unordered_set<String> resultsFoundInBoth;
-    // loop through elements in second
-    for (const String& str : secondList) {
-        if (resultsFromFirst.find(str) == resultsFromFirst.end()) {
-            // element from secondList is not in firstList
-        } else {
-            // element is found in firstList!
-            resultsFoundInBoth.insert(str);
-        }
-    }
-    return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
-}
-
 ClauseResult removeDuplicates(const ClauseResult& list)
 {
     std::unordered_set<String> resultsFromList;

@@ -27,6 +27,34 @@ inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
 }
 
 /**
+ * Given two clause results, find common elements in
+ * both of the clause results and return these
+ * common elements in a single clause result.
+ *
+ * @param firstList The first clause result.
+ * @param secondList The second clause result.
+ * @return A single list of results.
+ */
+ClauseResult ResultsTable::findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)
+{
+    // initiate set of elements from first list
+    std::unordered_set<String> resultsFromFirst;
+    std::copy(firstList.begin(), firstList.end(), std::inserter(resultsFromFirst, resultsFromFirst.end()));
+    // initiate set to contain elements found in both
+    std::unordered_set<String> resultsFoundInBoth;
+    // loop through elements in second
+    for (const String& str : secondList) {
+        if (resultsFromFirst.find(str) == resultsFromFirst.end()) {
+            // element from secondList is not in firstList
+        } else {
+            // element is found in firstList!
+            resultsFoundInBoth.insert(str);
+        }
+    }
+    return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
+}
+
+/**
  * Associates a synonym with a set of results
  * in the table, assuming results are non-empty.
  *
