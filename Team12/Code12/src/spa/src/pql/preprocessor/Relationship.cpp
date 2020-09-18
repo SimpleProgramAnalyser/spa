@@ -92,8 +92,13 @@ Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType re
         Boolean rightRefIsInvalidEntityRef = !rightRef.isValidEntityRef();
         Boolean rightRefIsNonVariableSynonym
             = rightRef.getReferenceType() == SynonymRefType && rightRef.getDesignEntity().getType() != VariableType;
+        Boolean leftRefOfUsesIsRead = relRefType == UsesType && leftRef.getReferenceType() == SynonymRefType
+                                      && leftRef.getDesignEntity().getType() == ReadType;
+        Boolean leftRefOfModifiesIsPrint = relRefType == ModifiesType && leftRef.getReferenceType() == SynonymRefType
+                                           && leftRef.getDesignEntity().getType() == PrintType;
 
-        if (leftRefIsWildCard || rightRefIsInvalidEntityRef || rightRefIsNonVariableSynonym) {
+        if (leftRefIsWildCard || rightRefIsInvalidEntityRef || rightRefIsNonVariableSynonym || leftRefOfUsesIsRead
+            || leftRefOfModifiesIsPrint) {
             return false;
         }
 

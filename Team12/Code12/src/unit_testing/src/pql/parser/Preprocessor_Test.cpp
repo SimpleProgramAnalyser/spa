@@ -698,3 +698,25 @@ TEST_CASE("Variable whitespace between tokens")
 
     REQUIRE(equals);
 }
+
+
+TEST_CASE("Follows* with a space between between Follows and *")
+{
+    AbstractQuery abstractQuery = processQuery("stmt sa; Select sa such that Follows * (sa, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("ReadType as left reference of Uses")
+{
+    AbstractQuery abstractQuery = processQuery("read re; Select re such that Uses(re, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("PrintType as left reference of Modifies")
+{
+    AbstractQuery abstractQuery = processQuery("print pn; Select pn such that Modifies(pn, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
