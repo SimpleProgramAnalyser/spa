@@ -6,6 +6,7 @@
 
 #include "ResultsTable.h"
 
+#include <cassert>
 #include <utility>
 
 #include "pkb/PKB.h"
@@ -25,6 +26,24 @@ inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
     return resultsMap.find(syn) != resultsMap.end();
 }
 
+/**
+ * Associates a synonym with a set of results
+ * in the table, assuming results are non-empty.
+ *
+ * @param syn The synonym.
+ * @param results The results to associate with.
+ */
+void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResult& results)
+{
+    assert(!results.empty()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    if (checkIfSynonymInMap(syn)) {
+        resultsMap[syn] = findCommonElements(results, resultsMap[syn]);
+    } else {
+        // synonym is not found in table, associate results with synonym
+        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
+    }
+}
+
 void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)
 {
     // if results are empty, invalidate the entire results table
@@ -37,13 +56,17 @@ void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results
         return;
     }
     // else we get the synonym and store it in the table
-    Synonym syn = ref.getValue();
-    if (checkIfSynonymInMap(syn)) {
-        resultsMap[syn] = findCommonElements(results, resultsMap[syn]);
-    } else {
-        // synonym is not found in table, associate results with synonym
-        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
+    filterAfterVerification(ref.getValue(), results);
+}
+
+void ResultsTable::filterTable(const Synonym& syn, const ClauseResult& results)
+{
+    // if results are empty, invalidate the entire results table
+    if (results.empty()) {
+        hasResult = false;
+        return;
     }
+    filterAfterVerification(syn, results);
 }
 
 ClauseResult ResultsTable::get(const Synonym& syn)

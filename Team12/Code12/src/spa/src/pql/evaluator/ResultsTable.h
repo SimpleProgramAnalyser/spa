@@ -21,6 +21,7 @@ private:
     Boolean hasResult;
 
     Boolean checkIfSynonymInMap(const Synonym& syn);
+    void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
 
 public:
     /**
@@ -57,6 +58,22 @@ public:
      *                values will be removed eventually.
      */
     void filterTable(const Reference& ref, const ClauseResult& results);
+
+    /**
+     * Associates some results with a synonym, if the synonym
+     * does not already exist in the table. If the synonym
+     * exists, and is mapped to some results, find the common
+     * results in the table list and the new list provided,
+     * and store the common results in the table list instead.
+     * This effectively removes those results that are not in
+     * both lists, from the association table.
+     *
+     * @param ref Synonym for a Design Entity to associate with.
+     * @param results New results for this reference. This list
+     *                can contain duplicates, but the duplicate
+     *                values will be removed eventually.
+     */
+    void filterTable(const Synonym& syn, const ClauseResult& results);
 
     /**
      * Retrieves the list of results in the table for

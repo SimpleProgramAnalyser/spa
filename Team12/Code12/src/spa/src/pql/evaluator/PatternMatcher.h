@@ -16,7 +16,7 @@
  * Evaluates a pattern clause in the query, storing the results
  * of evaluation in a provided ResultsTable.
  *
- * @param synonym The Select synonym in the query.
+ * @param pnClause The pattern clause in the query.
  * @param resultsTable The results table to store the results in.
  */
 Void evaluatePattern(PatternClause* pnClause, ResultsTable* resultsTable);
