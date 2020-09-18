@@ -20,7 +20,7 @@ ResultsTable::ResultsTable(const DeclarationTable& decls): declarations(decls), 
  * @return True, if the synonym exists in the table.
  *         Otherwise, false.
  */
-inline Boolean ResultsTable::checkIfSynonymInTable(const Synonym& syn)
+inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
 {
     return resultsMap.find(syn) != resultsMap.end();
 }
@@ -38,7 +38,7 @@ void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results
     }
     // else we get the synonym and store it in the table
     Synonym syn = ref.getValue();
-    if (checkIfSynonymInTable(syn)) {
+    if (checkIfSynonymInMap(syn)) {
         resultsMap[syn] = findCommonElements(results, resultsMap[syn]);
     } else {
         // synonym is not found in table, associate results with synonym
@@ -51,7 +51,7 @@ ClauseResult ResultsTable::get(const Synonym& syn)
     if (!hasResults()) {
         // table is marked as having no results
         return std::vector<String>();
-    } else if (checkIfSynonymInTable(syn)) {
+    } else if (checkIfSynonymInMap(syn)) {
         return resultsMap[syn];
     } else {
         return retrieveAllMatching(getTypeOfSynonym(syn));
@@ -66,6 +66,17 @@ DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
 Boolean ResultsTable::hasResults() const
 {
     return hasResult;
+}
+
+Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
+{
+    if (!hasResults()) {
+        // there are no results, so by the specification of
+        // this method, the synonym is restricted
+        return true;
+    } else {
+        return checkIfSynonymInMap(syn);
+    }
 }
 
 ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)

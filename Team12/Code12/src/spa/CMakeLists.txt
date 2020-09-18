@@ -65,7 +65,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
 
-    # pql
+    # pql/preprocessor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
@@ -80,6 +80,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
+
+    # pql/evaluator
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.h
@@ -88,12 +90,25 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ModifiesEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ModifiesEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
+
+    # pql/projector
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/QueryResultFormatType.h
+
+    # pql manager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
 )

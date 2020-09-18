@@ -20,7 +20,7 @@ private:
     const DeclarationTable& declarations;
     Boolean hasResult;
 
-    Boolean checkIfSynonymInTable(const Synonym& syn);
+    Boolean checkIfSynonymInMap(const Synonym& syn);
 
 public:
     /**
@@ -88,6 +88,15 @@ public:
      *         an empty result.
      */
     Boolean hasResults() const;
+
+    /**
+     * Checks if a synonym has been restricted to only match a
+     * subset of all possible values due to another clause's
+     * results that were previously stored in the table.
+     *
+     * @return True, if synonym has been restricted.
+     */
+    Boolean checkIfSynonymHasConstraints(const Synonym& syn);
 };
 
 /**
