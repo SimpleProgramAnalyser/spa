@@ -45,6 +45,16 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
     for (int i = 0; i < clauses.count(); i) {
         Clause* clause = clauses.get(i);
         evaluateClause(clause);
+        if (!resultsTable.hasResults()) {
+            /*
+             * If one clause yields no results, then we can conclude
+             * immediately, that this query returns no results.
+             *
+             * As such, we don't have to continue processing
+             * the rest of the query.
+             */
+            break;
+        }
     }
     // call the result table to return the final result
     return RawQueryResult(resultsTable.get(query.getSelectSynonym()));

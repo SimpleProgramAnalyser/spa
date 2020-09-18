@@ -87,9 +87,9 @@ protected:
 public:
     Reference(ReferenceType refType, ReferenceValue refValue);
     Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt);
-    ReferenceType getReferenceType();
+    ReferenceType getReferenceType() const;
     DesignEntity getDesignEntity();
-    ReferenceValue getValue();
+    ReferenceValue getValue() const;
     Boolean isValidEntityRef();
     Boolean isValidStatementRef();
     Boolean isInvalid();

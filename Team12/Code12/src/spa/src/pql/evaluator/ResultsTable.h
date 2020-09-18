@@ -18,6 +18,7 @@ class ResultsTable {
 private:
     std::unordered_map<Synonym, ClauseResult> resultsMap;
     const DeclarationTable& declarations;
+    Boolean hasResult;
 
     Boolean checkIfSynonymInTable(const Synonym& syn);
 
@@ -46,10 +47,14 @@ public:
      * This effectively removes those results that are not in
      * both lists, from the association table.
      *
-     * @param syn The synonym to associate with.
-     * @param results New results for the synonym.
+     * If the reference is not a synonym, do nothing (unless the
+     * result list is empty). If the result list is empty,
+     * invalidate the entire result table.
+     *
+     * @param ref Reference for a Design Entity to associate with.
+     * @param results New results for this reference.
      */
-    void filterTable(const Synonym& syn, const ClauseResult& results);
+    void filterTable(const Reference& ref, const ClauseResult& results);
 
     /**
      * Retrieves the list of results in the table for
@@ -71,6 +76,18 @@ public:
      *         not in the table, return NonExistentType.
      */
     DesignEntityType getTypeOfSynonym(const Synonym& syn);
+
+    /**
+     * Returns true if the result table is marked as having
+     * no results at all, which happens if a clause returns
+     * no results. This would ensure that the entire program
+     * query returns no results.
+     *
+     * @return True, if so far all clauses have stored results
+     *         in the table. False, if a certain clause stored
+     *         an empty result.
+     */
+    Boolean hasResults() const;
 };
 
 /**

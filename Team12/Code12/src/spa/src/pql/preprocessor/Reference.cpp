@@ -51,12 +51,12 @@ Boolean Reference::isWildCard() // TODO: phase out
     return referenceType == WildcardRefType;
 }
 
-ReferenceType Reference::getReferenceType()
+ReferenceType Reference::getReferenceType() const
 {
     return referenceType;
 }
 
-ReferenceValue Reference::getValue()
+ReferenceValue Reference::getValue() const
 {
     return referenceValue;
 }

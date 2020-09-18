@@ -10,7 +10,8 @@
 
 #include "pkb/PKB.h"
 
-ResultsTable::ResultsTable(const DeclarationTable& decls): declarations(decls) {}
+// set hasResult to true at the start, since no clauses have been evaluated
+ResultsTable::ResultsTable(const DeclarationTable& decls): declarations(decls), hasResult(true) {}
 
 /**
  * Checks if a synonym exists in the results table.
@@ -24,8 +25,19 @@ inline Boolean ResultsTable::checkIfSynonymInTable(const Synonym& syn)
     return resultsMap.find(syn) != resultsMap.end();
 }
 
-void ResultsTable::filterTable(const Synonym& syn, const ClauseResult& results)
+void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)
 {
+    // if results are empty, invalidate the entire results table
+    if (results.empty()) {
+        hasResult = false;
+        return;
+    }
+    // check if reference is a synonym or not
+    if (ref.getReferenceType() == SynonymRefType) {
+        return;
+    }
+    // else we get the synonym and store it in the table
+    Synonym syn = ref.getValue();
     if (checkIfSynonymInTable(syn)) {
         resultsMap[syn] = findCommonElements(results, resultsMap[syn]);
     } else {
@@ -36,7 +48,10 @@ void ResultsTable::filterTable(const Synonym& syn, const ClauseResult& results)
 
 ClauseResult ResultsTable::get(const Synonym& syn)
 {
-    if (checkIfSynonymInTable(syn)) {
+    if (!hasResults()) {
+        // table is marked as having no results
+        return std::vector<String>();
+    } else if (checkIfSynonymInTable(syn)) {
         return resultsMap[syn];
     } else {
         return retrieveAllMatching(getTypeOfSynonym(syn));
@@ -46,6 +61,11 @@ ClauseResult ResultsTable::get(const Synonym& syn)
 DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
 {
     return declarations.getDesignEntityOfSynonym(syn).getType();
+}
+
+Boolean ResultsTable::hasResults() const
+{
+    return hasResult;
 }
 
 ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)

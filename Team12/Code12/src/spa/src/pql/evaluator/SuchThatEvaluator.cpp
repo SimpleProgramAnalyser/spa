@@ -41,27 +41,34 @@ inline Vector<Integer> getAllChildStatements(Integer parent, StatementType stmtT
     return verifyStatementType(stmtType, result);
 }
 
+Void evaluateFollowsClause(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable);
+Void evaluateModifiesClause(Reference leftRef, Reference rightRef, ResultsTable* resultsTable);
+Void evaluateParentClause(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable);
+Void evaluateUsesClause(Reference leftRef, Reference rightRef, ResultsTable* resultsTable);
+
 Void evaluateSuchThat(SuchThatClause* stClause, ResultsTable* resultsTable)
 {
     Relationship rel = stClause->getRelationship();
     RelationshipReferenceType relRefType = rel.getRelationship();
+    Reference leftRef = stClause->getRelationship().getLeftRef();
+    Reference rightRef = stClause->getRelationship().getRightRef();
     switch (relRefType) {
     case FollowsType:
-        return evaluateFollowsClause(synonym, stClause, declarations, false);
+        return evaluateFollowsClause(leftRef, rightRef, false, resultsTable);
     case FollowsStarType:
-        return evaluateFollowsClause(synonym, stClause, declarations, true);
+        return evaluateFollowsClause(leftRef, rightRef, true, resultsTable);
     case ParentType:
-        return evaluateParentClause(synonym, stClause, declarations, false);
+        return evaluateParentClause(leftRef, rightRef, false, resultsTable);
     case ParentStarType:
-        return evaluateParentClause(synonym, stClause, declarations, true);
+        return evaluateParentClause(leftRef, rightRef, true, resultsTable);
     case UsesType:
     case UsesStatementType:
     case UsesProcedureType:
-        return evaluateUsesClause(synonym, stClause, declarations);
+        return evaluateUsesClause(leftRef, rightRef, resultsTable);
     case ModifiesType:
     case ModifiesStatementType:
     case ModifiesProcedureType:
-        return evaluateModifiesClause(synonym, stClause, declarations);
+        return evaluateModifiesClause(leftRef, rightRef, resultsTable);
     default:
         throw std::runtime_error("Unknown relationship type in evaluateSuchThat");
     }
@@ -100,24 +107,18 @@ Boolean canMatchOnlyOne(const ReferenceType& refType)
 /*
  * Processes a single (such that, Follows) clause in a PQL query, with
  * respect to a given synonym. All results obtained from the clauses
- * will be with respect to that particular synonym. This method also
+ * will be stored in the results table. This method also
  * interacts with the PKB to obtain the results to the query.
  *
- * @param synonym The synonym that is to be selected.
- * @param stClause The Follows clause to evaluate.
- * @param declarations Table containing a map of variables
- *                     to their design entity type.
+ * @param leftRef The left reference in the Follows relationship.
+ * @param rightRef The right reference in the Follows relationship.
  * @param isStar Whether the Follows clause comes with an
  *               asterisk, indicating the transitive closure.
- *
- * @return Results for the Synonym in the Follows clause.
+ * @param resultsTable Table containing past results, to store
+ *                     the results of evaluating this clause
  */
-ClauseResult Evaluator::evaluateFollowsClause(const Synonym& synonym, SuchThatClause* stClause,
-                                              const DeclarationTable& declarations, Boolean isStar)
+Void evaluateFollowsClause(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable)
 {
-    ClauseResult result;
-    Reference leftRef = stClause->getRelationship().getLeftRef();
-    Reference rightRef = stClause->getRelationship().getRightRef();
     ReferenceType leftRefType = leftRef.getReferenceType();
     ReferenceType rightRefType = rightRef.getReferenceType();
     /*
@@ -160,25 +161,18 @@ ClauseResult Evaluator::evaluateFollowsClause(const Synonym& synonym, SuchThatCl
      *    operand. For Follows, this is impossible.
      */
     if (leftRefType == IntegerRefType && canMatchMultiple(rightRefType)) {
-        /*
-         * Check if clause is related to synonym, recall that a clause is related to
-         * synonym if and only if at least one of its operands is equals to given
-         * synonym in question.
-         */
         Integer leftValue = std::stoi(leftRef.getValue());
         // get the DesignEntityType of the right operand
+        // if it is wildcard, equivalent to any statement
         DesignEntityType rightSynonymType
-            = rightRef.isWildCard() ? StmtType : declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType();
+            = rightRef.isWildCard() ? StmtType : resultsTable->getTypeOfSynonym(rightRef.getValue());
         /*
          * Here there are many combinations/possibilities, of what the
          * right DesignEntityType can be, however with a some mapping,
          * function, we can simplify things.
          *
          * The function, would map DesignEntityType (pql/preprocessor/AqTypes.h)
-         * to StatementType (in Types.h).
-         *
-         * This function, is declared as a private member (of this class), please
-         * refer to its documentation for more details.
+         * to StatementType (in Types.h). It is declared in EvaluatorUtils.cpp.
          *
          * Note: Here we make a critical assumption, that we can never
          * have invalid DesignEntityType which would hence get mapped
@@ -187,36 +181,15 @@ ClauseResult Evaluator::evaluateFollowsClause(const Synonym& synonym, SuchThatCl
          */
         Vector<Integer> tempResult = (isStar ? getAllAfterStatementsStar
                                              : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
-        result = convertToClauseResult(tempResult);
+        resultsTable->filterTable(rightRef, convertToClauseResult(tempResult));
     } else if (canMatchMultiple(leftRefType) && rightRefType == IntegerRefType) {
-        /*
-         * Check if clause is related to synonym, recall that a clause is related to
-         * synonym if and only if at least one of its operands is equals to given
-         * synonym in question.
-         */
         // get the DesignEntityType of the left operand
         DesignEntityType leftSynonymType
-            = leftRef.isWildCard() ? StmtType : declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType();
+            = leftRef.isWildCard() ? StmtType : resultsTable->getTypeOfSynonym(leftRef.getValue());
         Integer rightValue = std::stoi(rightRef.getValue());
-        /*
-         * Here there are many combinations/possibilities, of what the
-         * right DesignEntityType can be, however with a some mapping,
-         * function, we can simplify things.
-         *
-         * The function, would map DesignEntityType (pql/preprocessor/AqTypes.h)
-         * to StatementType (in Types.h).
-         *
-         * This function, is declared as a private member (of this class), please
-         * refer to its documentation for more details.
-         *
-         * Note: Here we make a critical assumption, that we can never
-         * have invalid DesignEntityType which would hence get mapped
-         * to spurious StatementType. This is guaranteed due to our
-         * (robust) validation at the PQL Preprocessor side.
-         */
         Vector<Integer> tempResult = (isStar ? getAllBeforeStatementsStar
                                              : getAllBeforeStatements)(rightValue, mapToStatementType(leftSynonymType));
-        result = convertToClauseResult(tempResult);
+        resultsTable->filterTable(leftRef, convertToClauseResult(tempResult));
     } else if (leftRefType == IntegerRefType && rightRefType == IntegerRefType) {
         /*
          * For this case, in iteration 1, the clause is perpetually not
@@ -228,80 +201,52 @@ ClauseResult Evaluator::evaluateFollowsClause(const Synonym& synonym, SuchThatCl
         Integer rightRefVal = std::stoi(rightRef.getValue());
         Boolean followsHolds = (isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)(leftRefVal, rightRefVal);
         if (followsHolds) {
-            result.push_back("trueFollows");
+            std::vector<String> tempResult{"trueFollows"};
+            resultsTable->filterTable(leftRef, tempResult);
+        } else {
+            // we store an empty list to denote a lack of results
+            resultsTable->filterTable(leftRef, std::vector<String>());
         }
     } else if (!leftRef.isWildCard() && leftRef.getValue() == rightRef.getValue()) {
         // Check if left == right, for Follows this will always return empty
-        return result;
+        resultsTable->filterTable(leftRef, std::vector<String>());
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
-        /*
-         * Check if clause is related to synonym, recall that a clause is related to
-         * synonym if and only if at least one of its operands is equals to given
-         * synonym in question.
-         */
         // In this case, we can only get the DesignEntityType of both the left and right operands
-        StatementType leftRefStmtType
-            = leftRef.isWildCard()
-                  ? AnyStatement
-                  : mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType());
-        StatementType rightRefStmtType
-            = rightRef.isWildCard()
-                  ? AnyStatement
-                  : mapToStatementType(declarations.getDesignEntityOfSynonym(rightRef.getValue()).getType());
-        /*
-         * Here, there are 3 cases, and here's how we would handle them;
-         * 1. The left operand is related (appears) in the synonym.
-         *    Then, we just call the 'before' PKB API;
-         *    getAllBeforeStatementsTyped(..)
-         * 2. The right operand is related (appears) in the synonym.
-         *    Similarly, we just call the 'after' PKB API;
-         *    getAllAfterStatementsTyped(..)
-         * 3. Neither operands is related (appears) to the synonym.
-         *    This case is the most tricky, and technically,
-         *    we might have to call the 'before' and 'after' PKB API,
-         *    to determine if there are indeed results for this
-         *    clause.
-         *
-         *    However, we can just call the 'before' PKB API,
-         *    and if we get empty (or non-empty) result, it is guaranteed that
-         *    the 'after' PKB API method, would also yield an empty (or non-empty)
-         *    result (for we would get a Contradiction, had we not adopted this
-         *    reasoning).
-         *
-         *    Hence, we don't have to check the 'after' PKB API,
-         *    to determine if there are results there, should we get an
-         *    empty result when calling 'before' API, because the
-         *    'after' would be empty too.
-         */
-        std::vector<Integer> (*lookupPkbFunction)(StatementType, StatementType);
-        if (leftRef.getValue() == synonym) {
-            lookupPkbFunction = isStar ? getAllBeforeStatementsTypedStar : getAllBeforeStatementsTyped;
+        StatementType leftRefStmtType = leftRef.isWildCard()
+                                            ? AnyStatement
+                                            : mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
+        StatementType rightRefStmtType = rightRef.isWildCard()
+                                             ? AnyStatement
+                                             : mapToStatementType(resultsTable->getTypeOfSynonym(rightRef.getValue()));
+        if (isStar) {
+            resultsTable->filterTable(
+                leftRef, convertToClauseResult(getAllBeforeStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
+            resultsTable->filterTable(
+                rightRef, convertToClauseResult(getAllAfterStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
         } else {
-            lookupPkbFunction = isStar ? getAllAfterStatementsTypedStar : getAllAfterStatementsTyped;
+            resultsTable->filterTable(
+                leftRef, convertToClauseResult(getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType)));
+            resultsTable->filterTable(
+                rightRef, convertToClauseResult(getAllAfterStatementsTyped(leftRefStmtType, rightRefStmtType)));
         }
-        result = convertToClauseResult(lookupPkbFunction(leftRefStmtType, rightRefStmtType));
     } else {
         throw std::runtime_error("Error in evaluateFollowsClause: No synonyms or integers in Follows clause");
     }
-    return result;
 }
 
 /**
  * Processes a single Uses clause in a PQL query.
  *
- * @param synonym The name that is to be selected.
- * @param stClause The Uses clause to evaluate.
+ * @param leftRef The left reference in the Uses relationship.
+ * @param rightRef The right reference in the Uses relationship.
  * @param declarations Table containing a map of variables
  *                     to their design entity type.
  *
- * @return Results for the synonym in the Uses clause.
+ * @param resultsTable Table containing past results, to store
+ *                     the results of evaluating this clause
  */
-ClauseResult Evaluator::evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause,
-                                           const DeclarationTable& declarations)
+Void evaluateUsesClause(Reference leftRef, Reference rightRef, ResultsTable* resultsTable)
 {
-    ClauseResult result;
-    Reference leftRef = stClause->getRelationship().getLeftRef();
-    Reference rightRef = stClause->getRelationship().getRightRef();
     ReferenceType leftRefType = leftRef.getReferenceType();
     ReferenceType rightRefType = rightRef.getReferenceType();
 
