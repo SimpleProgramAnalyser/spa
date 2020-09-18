@@ -20,8 +20,8 @@ public:
     Vector<String> getModifiesVariablesFromStatement(Integer stmt);
     Vector<String> getModifiesVariablesFromProcedure(const String& procName);
     Vector<Integer> getAllModifiesStatements(StatementType stmtType);
-    Vector<String> getAllModifiesVariables(StatementType stmtType);
-    Vector<String> getAllModifiesVariables(const String& procName);
+    Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType);
+    Vector<String> getAllModifiesVariablesFromProgram();
     Vector<String> getAllModifiesProcedures();
 
 private:
@@ -39,7 +39,8 @@ private:
 
     // for getAllVar
     Array<Vector<String>, STATEMENT_TYPE_COUNT> stmttypeVarlistMap;
-    HashSet<String> allVarUsedByProc;
+    HashSet<String> allVarUsedByProcSet;
+    Vector<String> allVarUsedByProcList;
 
     // for getAllStmt
     Array<Vector<Integer>, STATEMENT_TYPE_COUNT> stmttypeStmtlistMap;

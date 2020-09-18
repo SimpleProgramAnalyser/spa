@@ -15,8 +15,12 @@ void UsesTable::addUsesRelationships(const String& procName, Vector<String> varN
         varProclistMap[varName].push_back(procName);
     }
 
-    // add to allVarUsedByProc
-    allVarUsedByProc.insert(varNames.begin(), varNames.end());
+    for (const auto& varName : varNames) {
+        if (allVarUsedByProcSet.find(varName) == allVarUsedByProcSet.end()) {
+            allVarUsedByProcSet.insert(varName);
+            allVarUsedByProcList.push_back(varName);
+        }
+    }
 
     // add to allUsesProc
     allUsesProc.push_back(procName);
@@ -79,13 +83,13 @@ Vector<Integer> UsesTable::getAllUsesStatements(StatementType stmtType)
 {
     return stmttypeStmtlistMap[stmtType];
 }
-Vector<String> UsesTable::getAllUsesVariables(StatementType stmtType)
+Vector<String> UsesTable::getAllUsesVariablesFromStatementType(StatementType stmtType)
 {
     return stmttypeVarlistMap[stmtType];
 }
-Vector<String> UsesTable::getAllUsesVariables(const String& procName)
+Vector<String> UsesTable::getAllUsesVariablesFromProgram()
 {
-    return procVarlistMap[procName];
+    return allVarUsedByProcList;
 }
 Vector<String> UsesTable::getAllUsesProcedures()
 {

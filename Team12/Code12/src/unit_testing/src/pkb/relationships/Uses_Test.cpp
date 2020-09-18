@@ -28,10 +28,10 @@ SCENARIO("Iteration 1 toy example Uses", "[uses][pkb]")
             THEN("tables should be populated")
             {
                 REQUIRE(!usesTable.getAllUsesProcedures().empty());
-                REQUIRE(!usesTable.getAllUsesVariables("compute").empty());
-                REQUIRE(!usesTable.getAllUsesVariables(StatementType::AnyStatement).empty());
-                REQUIRE(!usesTable.getAllUsesVariables(StatementType::AssignmentStatement).empty());
-                REQUIRE(!usesTable.getAllUsesVariables(StatementType::PrintStatement).empty());
+                REQUIRE(!usesTable.getAllUsesVariablesFromProgram().empty());
+                REQUIRE(!usesTable.getAllUsesVariablesFromStatementType(StatementType::AnyStatement).empty());
+                REQUIRE(!usesTable.getAllUsesVariablesFromStatementType(StatementType::AssignmentStatement).empty());
+                REQUIRE(!usesTable.getAllUsesVariablesFromStatementType(StatementType::PrintStatement).empty());
                 REQUIRE(!usesTable.getAllUsesStatements(StatementType::AnyStatement).empty());
                 REQUIRE(!usesTable.getAllUsesStatements(StatementType::AssignmentStatement).empty());
                 REQUIRE(!usesTable.getAllUsesStatements(StatementType::PrintStatement).empty());
@@ -42,15 +42,15 @@ SCENARIO("Iteration 1 toy example Uses", "[uses][pkb]")
                 REQUIRE(usesTable.getAllUsesStatements(StatementType::CallStatement).empty());
                 REQUIRE(usesTable.getAllUsesStatements(StatementType::WhileStatement).empty());
                 REQUIRE(usesTable.getAllUsesStatements(StatementType::IfStatement).empty());
-                REQUIRE(usesTable.getAllUsesVariables(StatementType::CallStatement).empty());
-                REQUIRE(usesTable.getAllUsesVariables(StatementType::WhileStatement).empty());
-                REQUIRE(usesTable.getAllUsesVariables(StatementType::IfStatement).empty());
+                REQUIRE(usesTable.getAllUsesVariablesFromStatementType(StatementType::CallStatement).empty());
+                REQUIRE(usesTable.getAllUsesVariablesFromStatementType(StatementType::WhileStatement).empty());
+                REQUIRE(usesTable.getAllUsesVariablesFromStatementType(StatementType::IfStatement).empty());
             }
 
             THEN("non-existent procedures should have negative results")
             {
                 REQUIRE_FALSE(usesTable.checkIfProcedureUses("wrong_proc", "num1"));
-                REQUIRE(usesTable.getAllUsesVariables("wrong_proc").empty());
+                REQUIRE(usesTable.getUsesVariablesFromProcedure("wrong_proc").empty());
             }
 
             THEN("non-existent statements should have negative results")
@@ -74,11 +74,12 @@ SCENARIO("Iteration 1 toy example Uses", "[uses][pkb]")
                 auto ans3 = Vector<String>{"ave"};
                 REQUIRE(usesTable.getUsesVariablesFromStatement(6) == ans3);
                 auto ans4 = Vector<String>{"num1", "num2", "num3", "ave", "sum"};
-                REQUIRE_THAT(usesTable.getAllUsesVariables(StatementType::AnyStatement), Catch::UnorderedEquals(ans4));
+                REQUIRE_THAT(usesTable.getAllUsesVariablesFromStatementType(StatementType::AnyStatement),
+                             Catch::UnorderedEquals(ans4));
                 auto ans5 = Vector<String>{"num1", "num2", "num3", "sum"};
-                REQUIRE_THAT(usesTable.getAllUsesVariables(StatementType::AssignmentStatement),
+                REQUIRE_THAT(usesTable.getAllUsesVariablesFromStatementType(StatementType::AssignmentStatement),
                              Catch::UnorderedEquals(ans5));
-                REQUIRE_THAT(usesTable.getAllUsesVariables(StatementType::PrintStatement),
+                REQUIRE_THAT(usesTable.getAllUsesVariablesFromStatementType(StatementType::PrintStatement),
                              Catch::UnorderedEquals(ans3));
             }
 

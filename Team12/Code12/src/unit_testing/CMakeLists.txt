@@ -21,6 +21,6 @@ file(GLOB_RECURSE pkb/relationships
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.h")
 
-add_executable(unit_testing ${srcs} ${headers} ${pql} ${frontend} ${pkb/relationships} src/pql/parser/AbstractQueryBuilder.cpp src/pql/parser/AbstractQueryBuilder.h)
+add_executable(unit_testing ${srcs} ${headers} ${pql} ${frontend} ${pkb/relationships} src/pql/parser/AbstractQueryBuilder.cpp src/pql/parser/AbstractQueryBuilder.h src/pkb/relationships/Modifies_Test.cpp)
 
 target_link_libraries(unit_testing spa)

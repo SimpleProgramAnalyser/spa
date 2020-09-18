@@ -705,11 +705,11 @@ ClauseResult evaluateUsesClause(const Synonym& synonym, SuchThatClause* stClause
             result = getAllUsesProcedures();
         } else if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
             // select variable with statement
-            result = getAllUsesVariables(
+            result = getAllUsesVariablesFromStatementType(
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
         } else {
             // select variable with procedure
-            result = getAllUsesVariables(leftRef.getValue());
+            result = getUsesVariablesFromProcedure(leftRef.getValue());
         }
     } else {
         throw std::runtime_error("Error in evaluateUsesClause: invalid arguments in Uses");
@@ -770,11 +770,11 @@ ClauseResult evaluateModifiesClause(const Synonym& synonym, SuchThatClause* stCl
             result = getAllModifiesProcedures();
         } else if (declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == StmtType) {
             // select variable with statement
-            result = getAllModifiesVariables(
+            result = getAllModifiesVariablesFromStatementType(
                 mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
         } else {
             // select variable with procedure
-            result = getAllModifiesVariables(leftRef.getValue());
+            result = getUsesVariablesFromProcedure(leftRef.getValue());
         }
     } else {
         throw std::runtime_error("Error in evaluateModifiesClause: invalid arguments in Modifies");
