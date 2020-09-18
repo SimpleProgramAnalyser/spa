@@ -5,9 +5,9 @@
 
 #include "FollowsExtractor.h"
 #include "ModifiesExtractor.h"
+#include "ParentExtractor.h"
 #include "SemanticErrorsValidator.h"
 #include "UsesExtractor.h"
-#include "ParentExtractor.h"
 
 Void extractDesign(ProgramNode& rootNode)
 {
