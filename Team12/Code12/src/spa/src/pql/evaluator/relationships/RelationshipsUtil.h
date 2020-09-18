@@ -77,4 +77,24 @@ Boolean canMatchOnlyOne(const ReferenceType& refType)
     return (refType == IntegerRefType || refType == LiteralRefType);
 }
 
+/**
+ * Given a Reference to some Design Entity, check if
+ * this reference is constrained by the results table.
+ * If the Reference is a wildcard, it cannot
+ * be constrained.
+ *
+ * @param ref The reference to be checked.
+ * @param resultsTable The results table to use.
+ *
+ * @return True, if ref is a synonym constrained by previously
+ *         identified clause results stored in resultsTable.
+ *         This returns false for refs that can match all
+ *         possible values of its type, like wildcards or
+ *         synonyms that have no other results.
+ */
+inline Boolean refHasConstraints(const Reference& ref, ResultsTable* resultsTable)
+{
+    return ref.getReferenceType() == SynonymRefType && resultsTable->checkIfSynonymHasConstraints(ref.getValue())
+}
+
 #endif // SPA_QUERY_EVALUATOR_RELATIONSHIPS_UTIL_H

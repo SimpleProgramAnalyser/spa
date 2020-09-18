@@ -90,6 +90,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/SuchThatEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/SuchThatEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.cpp

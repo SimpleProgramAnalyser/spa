@@ -33,7 +33,7 @@ void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results
         return;
     }
     // check if reference is a synonym or not
-    if (ref.getReferenceType() == SynonymRefType) {
+    if (ref.getReferenceType() != SynonymRefType) {
         return;
     }
     // else we get the synonym and store it in the table

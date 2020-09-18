@@ -94,7 +94,7 @@ public:
     Boolean isValidStatementRef();
     Boolean isInvalid();
     Boolean isProcedure();
-    Boolean isWildCard();
+    Boolean isWildCard() const;
     Boolean isNonStatementSynonym();
     static Reference invalidReference();
     Boolean operator==(const Reference& reference);
