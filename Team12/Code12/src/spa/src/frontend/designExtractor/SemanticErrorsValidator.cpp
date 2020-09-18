@@ -24,6 +24,11 @@ SemanticErrorsValidator::SemanticErrorsValidator(ProgramNode& progNode):
     }
 }
 
+/**
+ * Returns valid if the program is semantically valid.
+ *
+ * @return A boolean to indicate if the program is semantically valid
+ */
 Boolean SemanticErrorsValidator::isProgramValid()
 {
     if (!hasExecutedValidityChecks) {
@@ -33,6 +38,13 @@ Boolean SemanticErrorsValidator::isProgramValid()
     return programValidity;
 }
 
+/**
+ * Checks for all semantic errors in the program such as having
+ * duplicated procedure names, calling non-existing procedure
+ * and having recursive and cyclic calls.
+ *
+ * @return A boolean to indicate if the program is semantically valid
+ */
 Boolean SemanticErrorsValidator::checkForAllSemanticErrors()
 {
     List<ProcedureNode>* procedureList = &(programNode.procedureList);
@@ -82,6 +94,13 @@ Boolean SemanticErrorsValidator::checkForAllSemanticErrors()
     return !isCyclic(numberOfProcs);
 }
 
+/**
+ * Checks the call statement calls a valid procedure.
+ *
+ * @param stmtNode The statement node
+ * @param procedureNameSet The set of procedure names
+ * @param currProcNameIndex The index of the current procedure in the adjacencyMatrixOfCalls
+ */
 Boolean SemanticErrorsValidator::checkCallStatementCallsValidProcedure(
     StatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet, int currProcNameIndex)
 {
@@ -99,6 +118,13 @@ Boolean SemanticErrorsValidator::checkCallStatementCallsValidProcedure(
     return true;
 }
 
+/**
+ * Populates the adjacencyMatrixOfCalls with the statement Nodes.
+ *
+ * @param stmtNode The statement Node
+ * @param procedureNameSet The set of procedure names
+ * @param currProcNameIndex The index of the current procedure in the adjacencyMatrixOfCalls
+ */
 Void SemanticErrorsValidator::populateCallGraphWithStatementNode(StatementNode* stmtNode,
                                                                  std::unordered_map<std::string, int>& procedureNameSet,
                                                                  int currProcNameIndex)
@@ -120,6 +146,13 @@ Void SemanticErrorsValidator::populateCallGraphWithStatementNode(StatementNode* 
     }
 }
 
+/**
+ * Populates the adjacencyMatrixOfCalls with the IfStatement Node.
+ *
+ * @param stmtNode The IfStatement Node
+ * @param procedureNameSet The set of procedure names
+ * @param currProcNameIndex The index of the current procedure in the adjacencyMatrixOfCalls
+ */
 Void SemanticErrorsValidator::populateCallGraphWithIfStatement(IfStatementNode* stmtNode,
                                                                std::unordered_map<std::string, int>& procedureNameSet,
                                                                int currProcNameIndex)
@@ -140,6 +173,13 @@ Void SemanticErrorsValidator::populateCallGraphWithIfStatement(IfStatementNode* 
     }
 }
 
+/**
+ * Populates the adjacencyMatrixOfCalls with the WhileStatement Node.
+ *
+ * @param stmtNode The WhileStatement Node
+ * @param procedureNameSet The set of procedure names
+ * @param currProcNameIndex The index of the current procedure in the adjacencyMatrixOfCalls
+ */
 Void SemanticErrorsValidator::populateCallGraphWithWhileStatement(
     WhileStatementNode* stmtNode, std::unordered_map<std::string, int>& procedureNameSet, int currProcNameIndex)
 {
@@ -159,6 +199,14 @@ Void SemanticErrorsValidator::populateCallGraphWithWhileStatement(
     }
 }
 
+/**
+ * Adds an edge to the adjacencyMatrixOfCalls so that we can
+ * use it to identify cyclic calls.
+ *
+ * @param stmtNode The CallStatement node
+ * @param procedureNameSet The set of procedure names
+ * @param currProcNameIndex The index of the current procedure in the adjacencyMatrixOfCalls
+ */
 Void SemanticErrorsValidator::addCallEdge(CallStatementNode* stmtNode,
                                           std::unordered_map<std::string, int>& procedureNameSet, int currProcNameIndex)
 {
@@ -173,6 +221,13 @@ Void SemanticErrorsValidator::addCallEdge(CallStatementNode* stmtNode,
     adjacencyMatrixOfCalls.at(currProcNameIndex).at(procIndex) = true;
 }
 
+/**
+ * Returns the index of a procedure in the procedureNameSet.
+ *
+ * @param procedureNameSet The set of procedure names
+ * @param procName The procedure name
+ * @return The index of the named procedure in procedureNameSet
+ */
 int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, int> procedureNameSet,
                                               const std::string& procName)
 {
@@ -185,6 +240,15 @@ int SemanticErrorsValidator::getProcNameIndex(std::unordered_map<std::string, in
     return procIndex;
 }
 
+/**
+ * Helper function to check for cyclic calls using the
+ * adjacencyMatrixOfCalls.
+ *
+ * @param v The index of the current node
+ * @param visited[] The visited array to mark all the visited nodes
+ * @param recstack The current recursion stack
+ * @return A boolean indicating if there is a cycle
+ */
 bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack)
 {
     if (!visited[v]) {
@@ -205,6 +269,13 @@ bool SemanticErrorsValidator::isCyclicUtil(int v, bool visited[], bool* recStack
     return false;
 }
 
+/**
+ * Checks for cyclic calls in the program.
+ *
+ * @param procListSize The size of the procedure list to
+ *        initialise the visited and recStack arrays
+ * @return A boolean indicating is there is a cycle in the program.
+ */
 bool SemanticErrorsValidator::isCyclic(size_t procListSize)
 {
     // Mark all the vertices as not visited and not part of recursion stack
