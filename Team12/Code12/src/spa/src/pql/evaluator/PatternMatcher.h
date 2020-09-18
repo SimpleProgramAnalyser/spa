@@ -6,19 +6,19 @@
 #ifndef SPA_PQL_PATTERN_MATCHER_H
 #define SPA_PQL_PATTERN_MATCHER_H
 
-#include <Types.h>
-#include <pql/preprocessor/AqTypes.h>
 #include <vector>
 
+#include "ResultsTable.h"
+#include "Types.h"
+#include "pql/preprocessor/AqTypes.h"
+
 /**
- * Evaluates a pattern clause in the query with
- * respect to the specified synonym in the query.
+ * Evaluates a pattern clause in the query, storing the results
+ * of evaluation in a provided ResultsTable.
  *
  * @param synonym The Select synonym in the query.
- * @param pnClause A pattern clause in the query.
- *
- * @return Returns a list of results found.
+ * @param resultsTable The results table to store the results in.
  */
-std::vector<String> evaluatePattern(const Synonym& synonym, PatternClause* pnClause);
+Void evaluatePattern(PatternClause* pnClause, ResultsTable* resultsTable);
 
 #endif // SPA_PQL_PATTERN_MATCHER_H

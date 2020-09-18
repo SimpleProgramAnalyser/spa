@@ -225,9 +225,9 @@ private:
 public:
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
-    Synonym getSelectSynonym();
-    ClauseVector getClauses();
-    DeclarationTable getDeclarationTable();
+    Synonym getSelectSynonym() const;
+    ClauseVector getClauses() const;
+    DeclarationTable getDeclarationTable() const;
     Boolean isInvalid() const;
     Boolean operator==(const AbstractQuery& abstractQuery);
     AbstractQuery();
