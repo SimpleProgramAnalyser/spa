@@ -136,7 +136,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
     {
         // StmtType - AnyStatement type
         std::vector<String> actualAllModifiesVariablesByStatementType
-            = getAllUsesVariablesFromStatementType(AnyStatement);
+            = getAllModifiesVariablesFromStatementType(AnyStatement);
         std::unordered_set<String> actualAllModifiesVariablesByStatementTypeSet(
             actualAllModifiesVariablesByStatementType.begin(), actualAllModifiesVariablesByStatementType.end());
         std::unordered_set<String> expectedAllModifiesVariablesByStatementTypeSet
@@ -145,7 +145,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
 
         // StmtType - CallStatement type
         std::vector<String> actualAllModifiesVariablesByCallStatementType
-            = getAllUsesVariablesFromStatementType(CallStatement);
+            = getAllModifiesVariablesFromStatementType(CallStatement);
         std::unordered_set<String> actualAllModifiesVariablesByCallStatementTypeSet(
             actualAllModifiesVariablesByCallStatementType.begin(), actualAllModifiesVariablesByCallStatementType.end());
         std::unordered_set<String> expectedAllModifiesVariablesByCallStatementTypeSet
@@ -154,7 +154,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
 
         // StmtType - AssignmentStatement type
         std::vector<String> actualAllModifiesVariablesByAssignStatementType
-            = getAllUsesVariablesFromStatementType(AssignmentStatement);
+            = getAllModifiesVariablesFromStatementType(AssignmentStatement);
         std::unordered_set<String> actualAllModifiesVariablesByAssignStatementTypeSet(
             actualAllModifiesVariablesByAssignStatementType.begin(),
             actualAllModifiesVariablesByAssignStatementType.end());
@@ -165,7 +165,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
 
         // StmtType - WhileStatement type
         std::vector<String> actualAllModifiesVariablesByWhileStatementType
-            = getAllUsesVariablesFromStatementType(WhileStatement);
+            = getAllModifiesVariablesFromStatementType(WhileStatement);
         std::unordered_set<String> actualAllModifiesVariablesByWhileStatementTypeSet(
             actualAllModifiesVariablesByWhileStatementType.begin(),
             actualAllModifiesVariablesByWhileStatementType.end());
@@ -176,7 +176,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
 
         // StmtType - IfStatement type
         std::vector<String> actualAllModifiesVariablesByIfStatementType
-            = getAllUsesVariablesFromStatementType(IfStatement);
+            = getAllModifiesVariablesFromStatementType(IfStatement);
         std::unordered_set<String> actualAllModifiesVariablesByIfStatementTypeSet(
             actualAllModifiesVariablesByIfStatementType.begin(), actualAllModifiesVariablesByIfStatementType.end());
         std::unordered_set<String> expectedAllModifiesVariablesByIfStatementTypeSet = {"done", "depth"};
@@ -184,7 +184,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
 
         // StmtType - ReadStatement type
         std::vector<String> actualAllModifiesVariablesByReadStatementType
-            = getAllUsesVariablesFromStatementType(ReadStatement);
+            = getAllModifiesVariablesFromStatementType(ReadStatement);
         std::unordered_set<String> actualAllModifiesVariablesByReadStatementTypeSet(
             actualAllModifiesVariablesByReadStatementType.begin(), actualAllModifiesVariablesByReadStatementType.end());
         std::unordered_set<String> expectedAllModifiesVariablesByReadStatementTypeSet = {"steps", "depth", "p"};
@@ -192,7 +192,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
 
         // StmtType - PrintStatement type
         std::vector<String> actualAllModifiesVariablesByPrintStatementType
-            = getAllUsesVariablesFromStatementType(PrintStatement);
+            = getAllModifiesVariablesFromStatementType(PrintStatement);
         std::unordered_set<String> actualAllModifiesVariablesByPrintStatementTypeSet(
             actualAllModifiesVariablesByPrintStatementType.begin(),
             actualAllModifiesVariablesByPrintStatementType.end());
@@ -202,7 +202,7 @@ TEST_CASE("Multiple procedures Spheresdf Modifies")
     }
     SECTION("Modifies relationships stored correctly for test program - getAllModifiesVariablesFromProcedure")
     {
-        std::vector<String> actualAllModifiesVariablesByProcedureMain = getUsesVariablesFromProcedure("main");
+        std::vector<String> actualAllModifiesVariablesByProcedureMain = getModifiesVariablesFromProcedure("main");
         std::unordered_set<String> actualAllModifiesVariablesByProcedureMainSet(
             actualAllModifiesVariablesByProcedureMain.begin(), actualAllModifiesVariablesByProcedureMain.end());
         std::unordered_set<String> expectedAllModifiesVariablesByProcedureMainSet
