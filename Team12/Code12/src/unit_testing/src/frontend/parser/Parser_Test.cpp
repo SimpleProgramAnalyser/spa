@@ -1,4 +1,4 @@
-#include "ast_utils/AstUtils.h"
+#include "../../ast_utils/AstUtils.h"
 #include "catch.hpp"
 #include "frontend/parser/Parser.cpp"
 
