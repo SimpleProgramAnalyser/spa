@@ -6,53 +6,131 @@
 
 #include "RelationshipsUtil.h"
 
-Void evaluateUsesClause(Reference leftRef, Reference rightRef, ResultsTable* resultsTable)
-{
-    ReferenceType leftRefType = leftRef.getReferenceType();
-    ReferenceType rightRefType = rightRef.getReferenceType();
+class UsesExtractor {
+private:
+    Reference leftRef;
+    Reference rightRef;
+    ResultsTable* resultsTable;
+    // these will determine whether it is a statement or procedure Uses
+    ReferenceType leftRefType;
 
+    // case where left is known, right is variable
+    Void evaluateLeftKnown() const;
+    // case where left is variable, right is known (string)
+    Void evaluateRightKnown() const;
+    // case where both are variable
+    Void evaluateBothAny() const;
+    // case where both are known
+    Void evaluateBothKnown() const;
+
+public:
+    UsesExtractor(Reference leftRef, Reference rightRef, ResultsTable* resultsTable):
+        leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), resultsTable(resultsTable),
+        leftRefType(leftRef.getReferenceType())
+    {}
+    Void evaluateUsesClause();
+};
+
+Void evaluateUsesClause(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    UsesExtractor extractor(leftRef, rightRef, resultsTable);
+    extractor.evaluateUsesClause();
+}
+
+Void UsesExtractor::evaluateLeftKnown() const
+{
+    ClauseResult tempResult = leftRefType == IntegerRefType
+                                  ? getUsesVariablesFromStatement(std::stoi(leftRef.getValue()))
+                                  : getUsesVariablesFromProcedure(leftRef.getValue());
+    resultsTable->filterTable(rightRef, tempResult);
+}
+
+Void UsesExtractor::evaluateRightKnown() const
+{
+    DesignEntityType leftType = resultsTable->getTypeOfSynonym(leftRef.getValue());
+    if (isStatementDesignEntity(leftType)) {
+        resultsTable->filterTable(
+            leftRef, convertToClauseResult(getUsesStatements(rightRef.getValue(), mapToStatementType(leftType))));
+    } else {
+        // declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == ProcedureType
+        resultsTable->filterTable(leftRef, getUsesProcedures(rightRef.getValue()));
+    }
+}
+
+Void UsesExtractor::evaluateBothAny() const
+{
+    Boolean isStatementLeft
+        = leftRefType == SynonymRefType && isStatementDesignEntity(resultsTable->getTypeOfSynonym(leftRef.getValue()));
+    Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
+    Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
+    if (leftHasConstraints || rightHasConstraints) {
+        ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
+        ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
+        std::vector<String> tempResultForLeft;
+        std::vector<String> tempResultForRight;
+        // do a Cartesian product of both result lists and check each pair
+        for (const String& strLeft : previousResultsForLeft) {
+            for (const String& strRight : previousResultsForRight) {
+                Boolean followsHolds;
+                if (isStatementLeft) {
+                    followsHolds = checkIfStatementUses(std::stoi(strLeft), strRight);
+                } else {
+                    followsHolds = checkIfProcedureUses(strLeft, strRight);
+                }
+                if (followsHolds) {
+                    tempResultForLeft.push_back(strLeft);
+                    tempResultForRight.push_back(strRight);
+                }
+            }
+        }
+        resultsTable->filterTable(leftRef, tempResultForLeft);
+        resultsTable->filterTable(rightRef, tempResultForRight);
+    } else if (isStatementLeft) {
+        StatementType leftStmtType = mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
+        // select stmt
+        resultsTable->filterTable(leftRef, convertToClauseResult(getAllUsesStatements(leftStmtType)));
+        // select variable with statement
+        resultsTable->filterTable(rightRef, getAllUsesVariables(leftStmtType));
+    } else if (leftRefType == SynonymRefType) {
+        // select procedure
+        resultsTable->filterTable(leftRef, getAllUsesProcedures());
+        // select variable with procedure
+        resultsTable->filterTable(rightRef, getAllUsesVariables(leftRef.getValue()));
+    } else {
+        throw std::runtime_error("Unknown case in UsesExtractor::evaluateBothAny");
+    }
+}
+
+Void UsesExtractor::evaluateBothKnown() const
+{
+    Boolean usesHolds;
+    if (leftRefType == IntegerRefType) {
+        usesHolds = checkIfStatementUses(std::stoi(leftRef.getValue()), rightRef.getValue());
+    } else {
+        // leftRefType == LiteralRefType
+        usesHolds = checkIfProcedureUses(leftRef.getValue(), rightRef.getValue());
+    }
+    if (usesHolds) {
+        std::vector<String> tempResult{"trueUses"};
+        resultsTable->filterTable(leftRef, tempResult);
+    } else {
+        // we store an empty list to denote a lack of results
+        resultsTable->filterTable(leftRef, std::vector<String>());
+    }
+}
+
+Void UsesExtractor::evaluateUsesClause()
+{
+    ReferenceType rightRefType = rightRef.getReferenceType();
     if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {
-        result = leftRefType == IntegerRefType ? getUsesVariablesFromStatement(std::stoi(leftRef.getValue()))
-                                               : getUsesVariablesFromProcedure(leftRef.getValue());
+        evaluateLeftKnown();
     } else if (canMatchMultiple(leftRefType) && canMatchOnlyOne(rightRefType)) {
-        if (isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
-            result = convertToClauseResult(getUsesStatements(
-                rightRef.getValue(),
-                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
-        } else {
-            // declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == ProcedureType
-            result = getUsesProcedures(rightRef.getValue());
-        }
+        evaluateRightKnown();
     } else if (canMatchOnlyOne(leftRefType) && canMatchOnlyOne(rightRefType)) {
-        Boolean usesHolds;
-        if (leftRefType == IntegerRefType) {
-            usesHolds = checkIfStatementUses(std::stoi(leftRef.getValue()), rightRef.getValue());
-        } else {
-            // leftRefType == LiteralRefType
-            usesHolds = checkIfProcedureUses(leftRef.getValue(), rightRef.getValue());
-        }
-        if (usesHolds) {
-            result.push_back("trueUses");
-        }
+        evaluateBothKnown();
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
-        if (leftRef.getValue() == synonym
-            && isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
-            // select stmt
-            result = convertToClauseResult(getAllUsesStatements(
-                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())));
-        } else if (leftRef.getValue() == synonym) {
-            // select procedure
-            result = getAllUsesProcedures();
-        } else if (isStatementDesignEntity(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType())) {
-            // select variable with statement
-            result = getAllUsesVariables(
-                mapToStatementType(declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType()));
-        } else {
-            // select variable with procedure
-            result = getAllUsesVariables(leftRef.getValue());
-        }
+        evaluateBothAny();
     } else {
         throw std::runtime_error("Error in evaluateUsesClause: invalid arguments in Uses");
     }
-    return result;
 }

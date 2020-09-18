@@ -18,6 +18,6 @@
  * @param resultsTable Table containing past results, to store
  *                     the results of evaluating this clause
  */
-Void evaluateUsesClause(Reference leftRef, Reference rightRef, ResultsTable* resultsTable);
+Void evaluateUsesClause(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable);
 
 #endif // SPA_QUERY_USES_EVALUATOR_H

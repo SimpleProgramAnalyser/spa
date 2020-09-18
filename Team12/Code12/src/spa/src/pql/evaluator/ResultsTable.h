@@ -52,7 +52,9 @@ public:
      * invalidate the entire result table.
      *
      * @param ref Reference for a Design Entity to associate with.
-     * @param results New results for this reference.
+     * @param results New results for this reference. This list
+     *                can contain duplicates, but the duplicate
+     *                values will be removed eventually.
      */
     void filterTable(const Reference& ref, const ClauseResult& results);
 
@@ -98,17 +100,6 @@ public:
      */
     Boolean checkIfSynonymHasConstraints(const Synonym& syn);
 };
-
-/**
- * Given two clause results, find common elements in
- * both of the clause results and return these
- * common elements in a single clause result.
- *
- * @param firstList The first clause result.
- * @param secondList The second clause result.
- * @return A single list of results.
- */
-ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList);
 
 /*
  * Given a synonym, retrieves the results for vacuously true queries,

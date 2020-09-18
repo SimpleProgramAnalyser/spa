@@ -42,7 +42,7 @@ void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results
         resultsMap[syn] = findCommonElements(results, resultsMap[syn]);
     } else {
         // synonym is not found in table, associate results with synonym
-        resultsMap.insert(std::make_pair(syn, results));
+        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
     }
 }
 
@@ -77,25 +77,6 @@ Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
     } else {
         return checkIfSynonymInMap(syn);
     }
-}
-
-ClauseResult findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)
-{
-    // initiate set of elements from first list
-    std::unordered_set<String> resultsFromFirst;
-    std::copy(firstList.begin(), firstList.end(), std::inserter(resultsFromFirst, resultsFromFirst.end()));
-    // initiate set to contain elements found in both
-    std::unordered_set<String> resultsFoundInBoth;
-    // loop through elements in second
-    for (const String& str : secondList) {
-        if (resultsFromFirst.find(str) == resultsFromFirst.end()) {
-            // element from secondList is not in firstList
-        } else {
-            // element is found in firstList!
-            resultsFoundInBoth.insert(str);
-        }
-    }
-    return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
 }
 
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)

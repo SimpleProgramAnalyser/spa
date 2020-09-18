@@ -20,6 +20,7 @@
  * @param resultsTable Table containing past results, to store
  *                     the results of evaluating this clause
  */
-Void evaluateFollowsClause(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable);
+Void evaluateFollowsClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
+                           ResultsTable* resultsTable);
 
 #endif // SPA_QUERY_FOLLOWS_EVALUATOR_H

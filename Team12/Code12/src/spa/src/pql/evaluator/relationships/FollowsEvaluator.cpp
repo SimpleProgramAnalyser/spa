@@ -33,74 +33,47 @@ public:
     Void evaluateFollowsClause();
 };
 
-Void evaluateFollowsClause(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable)
+Void evaluateFollowsClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
+                           ResultsTable* resultsTable)
 {
-    FollowsExtractor extractor(std::move(leftRef), std::move(rightRef), isStar, resultsTable);
+    FollowsExtractor extractor(leftRef, rightRef, isStar, resultsTable);
     extractor.evaluateFollowsClause();
 }
 
 Void FollowsExtractor::evaluateLeftKnown() const
 {
     Integer leftValue = std::stoi(leftRef.getValue());
-    if (refHasConstraints(rightRef, resultsTable)) {
-        // need to loop through all possibilities for rightRef
-        std::vector<String> tempResult;
-        ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
-        for (const String& str : previousResultsForRight) {
-            // right must be an integer for Follows (statement number)
-            Boolean followsHolds = pkbBothKnownFunction(leftValue, std::stoi(str));
-            if (followsHolds) {
-                tempResult.push_back(str);
-            }
-        }
-        resultsTable->filterTable(rightRef, tempResult);
-    } else {
-        // get the exact DesignEntityType of the right operand
-        // if it is wildcard, equivalent to any statement
-        DesignEntityType rightSynonymType
-            = rightRef.isWildCard() ? StmtType : resultsTable->getTypeOfSynonym(rightRef.getValue());
-        /*
-         * Here there are many combinations/possibilities, of what the
-         * right DesignEntityType can be, however with a some mapping,
-         * function, we can simplify things.
-         *
-         * The function, would map DesignEntityType (pql/preprocessor/AqTypes.h)
-         * to StatementType (in Types.h). It is declared in EvaluatorUtils.cpp.
-         *
-         * Note: Here we make a critical assumption, that we can never
-         * have invalid DesignEntityType which would hence get mapped
-         * to spurious StatementType. This is guaranteed due to our
-         * (robust) validation at the PQL Preprocessor side.
-         */
-        Vector<Integer> tempResult = (isStar ? getAllAfterStatementsStar
-                                             : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
-        resultsTable->filterTable(rightRef, convertToClauseResult(tempResult));
-    }
+    // get the exact DesignEntityType of the right operand
+    // if it is wildcard, equivalent to any statement
+    DesignEntityType rightSynonymType
+        = rightRef.isWildCard() ? StmtType : resultsTable->getTypeOfSynonym(rightRef.getValue());
+    /*
+     * Here there are many combinations/possibilities, of what the
+     * right DesignEntityType can be, however with a some mapping,
+     * function, we can simplify things.
+     *
+     * The function, would map DesignEntityType (pql/preprocessor/AqTypes.h)
+     * to StatementType (in Types.h). It is declared in EvaluatorUtils.cpp.
+     *
+     * Note: Here we make a critical assumption, that we can never
+     * have invalid DesignEntityType which would hence get mapped
+     * to spurious StatementType. This is guaranteed due to our
+     * (robust) validation at the PQL Preprocessor side.
+     */
+    Vector<Integer> tempResult = (isStar ? getAllAfterStatementsStar
+                                         : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
+    resultsTable->filterTable(rightRef, convertToClauseResult(tempResult));
 }
 
 Void FollowsExtractor::evaluateRightKnown() const
 {
     Integer rightValue = std::stoi(rightRef.getValue());
-    if (refHasConstraints(leftRef, resultsTable)) {
-        // need to loop through all possibilities for leftRef
-        std::vector<String> tempResult;
-        ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
-        for (const String& str : previousResultsForLeft) {
-            // left must be an integer for Follows (statement number)
-            Boolean followsHolds = pkbBothKnownFunction(std::stoi(str), rightValue);
-            if (followsHolds) {
-                tempResult.push_back(str);
-            }
-        }
-        resultsTable->filterTable(rightRef, tempResult);
-    } else {
-        // get the DesignEntityType of the left operand
-        DesignEntityType leftSynonymType
-            = leftRef.isWildCard() ? StmtType : resultsTable->getTypeOfSynonym(leftRef.getValue());
-        Vector<Integer> tempResult = (isStar ? getAllBeforeStatementsStar
-                                             : getAllBeforeStatements)(rightValue, mapToStatementType(leftSynonymType));
-        resultsTable->filterTable(leftRef, convertToClauseResult(tempResult));
-    }
+    // get the DesignEntityType of the left operand
+    DesignEntityType leftSynonymType
+        = leftRef.isWildCard() ? StmtType : resultsTable->getTypeOfSynonym(leftRef.getValue());
+    Vector<Integer> tempResult = (isStar ? getAllBeforeStatementsStar
+                                         : getAllBeforeStatements)(rightValue, mapToStatementType(leftSynonymType));
+    resultsTable->filterTable(leftRef, convertToClauseResult(tempResult));
 }
 
 Void FollowsExtractor::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
@@ -131,7 +104,7 @@ Void FollowsExtractor::evaluateBothAny() const
                 Boolean followsHolds = pkbBothKnownFunction(std::stoi(strLeft), std::stoi(strRight));
                 if (followsHolds) {
                     tempResultForLeft.push_back(strLeft);
-                    tempResultForLeft.push_back(strRight);
+                    tempResultForRight.push_back(strRight);
                 }
             }
         }
