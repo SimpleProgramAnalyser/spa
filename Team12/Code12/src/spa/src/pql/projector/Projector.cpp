@@ -52,10 +52,6 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
          * RawResultFromClauses.
          */
         formattedResults.append(result).append(CommaStr);
-        // TODO: this is always false
-        if (i < i - 1) {
-            formattedResults.append(PipeStr);
-        }
     }
     formattedResults.append(rawQueryResult.get(len - 1));
     return FormattedQueryResult(formattedResults);
@@ -96,10 +92,6 @@ FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
          * RawResultFromClauses.
          */
         formattedResults.append(result).append(CommaStr);
-        // TODO: this is always false
-        if (i < i - 1) {
-            formattedResults.append(PipeStr);
-        }
     }
     formattedResults.append(rawQueryResult.get(len - 1));
     return FormattedQueryResult(formattedResults);
