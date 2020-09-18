@@ -20,7 +20,7 @@ public:
     AbstractQueryBuilder addSuchThatClause(String relRefType, ReferenceType leftRefType, ReferenceValue leftRefValue,
                                            DesignEntityType leftDesignEntityType, ReferenceType rightRefType,
                                            ReferenceValue rightRefValue, DesignEntityType rightDesignEntityType);
-    AbstractQueryBuilder addPatternClause(PatternStatementType patternStatementType, ReferenceType refType,
+    AbstractQueryBuilder addPatternClause(Synonym s, PatternStatementType patternStatementType, ReferenceType refType,
                                           ReferenceValue refValue, DesignEntityType designEntityType, String exprString,
                                           ExpressionSpecType exprSpecType);
     AbstractQuery build();
