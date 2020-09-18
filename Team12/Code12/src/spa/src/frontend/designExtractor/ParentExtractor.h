@@ -13,6 +13,6 @@
  * @param rootNode Root node of the AST.
  * @return Void.
  */
-Void extractParent(ProgramNode& rootNode);
+Void extractParent(const ProgramNode& rootNode);
 
 #endif // SPA_FRONTEND_PARENT_EXTRACTOR_H

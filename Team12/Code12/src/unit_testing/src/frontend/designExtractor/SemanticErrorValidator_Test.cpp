@@ -1,6 +1,6 @@
 #include <string>
 
-#include "ast_utils/AstUtils.h"
+#include "../../ast_utils/AstUtils.h"
 #include "catch.hpp"
 #include "frontend/designExtractor/SemanticErrorsValidator.h"
 

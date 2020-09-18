@@ -231,6 +231,7 @@ ParentList* extractParentReturnAdjacencyList(const ProgramNode& rootNode)
     }
 
     // loop through ParentList to find Parent* relationship
+    // Since only later statements can be children of earlier statements, we start from the last statement
     for (StatementNumber childStmt = numberOfStatements; 0 < childStmt; childStmt--) {
         StatementNumber currentParentStmt = parentList->at(childStmt);
 

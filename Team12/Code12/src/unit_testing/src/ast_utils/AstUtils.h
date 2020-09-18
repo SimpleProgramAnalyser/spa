@@ -51,13 +51,13 @@ String getProgram6String_sumDigitDuplicate();
 // Program 6: sumDigitsDuplicate, program with duplicate procedure
 ProgramNode* getProgram6Tree_sumDigitDuplicate();
 
-// Program 7: computeCentroid, program with multiple procedures
+// Program 7: computeCentroid, program with multiple procedures, with if, while, read, print, call, assign
 String getProgram7String_computeCentroid();
 // Get a syntactically incorrect version of program 7, with mismatched braces
 String getProgram7StringMismatchedBraces_computeCentroid();
 // Get a syntactically incorrect version of program 7, with mismatched brackets
 String getProgram7StringMismatchedBrackets_computeCentroid();
-// Program 7: computeCentroid, program with multiple procedures
+// Program 7: computeCentroid, program with multiple procedures, with if, while, read, print, call, assign
 ProgramNode* getProgram7Tree_computeCentroid();
 
 // Program 8: sumDigit but with a cyclic call (2 procedures)
@@ -116,5 +116,15 @@ ProgramNode* getProgram17Tree_sameVariableAndProcedureName();
 String getProgram18String_endWithWhile();
 // Program 18: Procedure ending with while statement, with multiple assign
 ProgramNode* getProgram18Tree_endWithWhile();
+
+// Program 19: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
+String getProgram19String_multipleProcedures();
+// Program 19: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
+ProgramNode* getProgram19Tree_multipleProcedures();
+
+// Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
+String getProgram20String_multipleProceduresSpheresdf();
+// Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
+ProgramNode* getProgram20Tree_multipleProceduresSpheresdf();
 
 #endif // UNIT_TESTING_AST_UTILS_H
