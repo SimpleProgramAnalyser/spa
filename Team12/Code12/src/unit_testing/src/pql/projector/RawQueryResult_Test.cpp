@@ -27,10 +27,16 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> empty resul
     size_t expectedCount = 0;
     Boolean expectedIsEmpty = true;
 
+    Boolean expectedIsSyntaxError = false;
+    String expectedErrorMessage;
+
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.count() == expectedCount);
     REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
+
+    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
 TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> single item in results vector")
@@ -52,11 +58,17 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> single item
     Boolean expectedIsEmpty = false;
     String expectedGetFirstItem = result;
 
+    Boolean expectedIsSyntaxError = false;
+    String expectedErrorMessage;
+
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.count() == expectedCount);
     REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
     REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
+
+    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
 TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> multiple items in results vector")
@@ -81,211 +93,326 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> multiple it
     String expectedGetFirstItem = result1;
     String expectedGetSecondItem = result2;
 
+    Boolean expectedIsSyntaxError = false;
+    String expectedErrorMessage;
+
 
     // === Check expected test results ===
     REQUIRE(rawQueryResult.count() == expectedCount);
     REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
     REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
     REQUIRE(rawQueryResult.get(1) == expectedGetSecondItem);
+
+    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
-/*
-TEST_CASE("RawQueryResult::emptyRawQueryResult() -> ")
+
+TEST_CASE("RawQueryResult::getSyntaxError() -> ")
 {
     // === Test set-up ===
-    Vector<Vector<Vector<String>>> results;
+    String errorMessage = "SIGSEV";
+
 
     // === Execute test method ===
-    RawQueryResult rawQueryResult = RawQueryResult::emptyRawQueryResult();
+    RawQueryResult rawQueryResult = RawQueryResult::getSyntaxError(errorMessage);
+
 
     // === Expected test results ===
-    Vector<Vector<Vector<String>>> expectedResults = results;
+    size_t expectedCount = 0;
+    Boolean expectedIsEmpty = true;
+
+    Boolean expectedIsSyntaxError = true;
+    String expectedErrorMessage = errorMessage;
+
 
     // === Check expected test results ===
-    REQUIRE(rawQueryResult.getResults() == expectedResults);
+    REQUIRE(rawQueryResult.count() == expectedCount);
+    REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
+
+    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
-TEST_CASE("RawQueryResult::isEmpty() -> empty results vector")
+TEST_CASE("RawQueryResult::sort() -> alphabets only")
 {
     // === Test set-up ===
-    Vector<Vector<String>> results;
+    Vector<String> results;
 
-    // === Execute test method ===
-    RawQueryResult rawQueryResult = RawQueryResult::emptyRawQueryResult();
+    String result1 = "proc b";
+    String result2 = "proc a";
+    String result3 = "proc c";
 
-    // === Expected test results ===
-    Boolean expectedEmpty = true;
+    results.push_back(result1);
+    results.push_back(result2);
+    results.push_back(result3);
 
-    // === Check expected test results ===
-    REQUIRE(rawQueryResult.isEmpty() == expectedEmpty);
-}
-
-TEST_CASE("RawQueryResult::isEmpty() -> non-empty results vector")
-{
-    // === Test set-up ===
-    Vector<Vector<Vector<String>>> results;
-    Vector<String> resultInner;
-
-    String a = "a";
-    String b = "b";
-
-    resultInner.push_back(a);
-    resultInner.push_back(b);
-
-    Vector<Vector<String>> resultOuter;
-    resultOuter.push_back(resultInner);
-
-    results.push_back(resultOuter);
-
-    // === Execute test method ===
     RawQueryResult rawQueryResult(results);
 
+
+    // === Execute test method ===
+    rawQueryResult.sort();
+
+
     // === Expected test results ===
-    Boolean expectedEmpty = false;
+    size_t expectedCount = 3;
+    Boolean expectedIsEmpty = false;
+    String expectedGetFirstItem = result2;
+    String expectedGetSecondItem = result1;
+    String expectedGetThirdItem = result3;
+
+    Boolean expectedIsSyntaxError = false;
+    String expectedErrorMessage;
+
 
     // === Check expected test results ===
-    REQUIRE(rawQueryResult.isEmpty() == expectedEmpty);
+    REQUIRE(rawQueryResult.count() == expectedCount);
+    REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
+    REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
+    REQUIRE(rawQueryResult.get(1) == expectedGetSecondItem);
+    REQUIRE(rawQueryResult.get(2) == expectedGetThirdItem);
+
+    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
+}
+
+TEST_CASE("RawQueryResult::sort() -> digits only")
+{
+    // === Test set-up ===
+    Vector<String> results;
+
+    String result1 = "2";
+    String result2 = "1";
+    String result3 = "3";
+
+    results.push_back(result1);
+    results.push_back(result2);
+    results.push_back(result3);
+
+    RawQueryResult rawQueryResult(results);
+
+
+    // === Execute test method ===
+    rawQueryResult.sort();
+
+
+    // === Expected test results ===
+    size_t expectedCount = 3;
+    Boolean expectedIsEmpty = false;
+    String expectedGetFirstItem = result2;
+    String expectedGetSecondItem = result1;
+    String expectedGetThirdItem = result3;
+
+    Boolean expectedIsSyntaxError = false;
+    String expectedErrorMessage;
+
+
+    // === Check expected test results ===
+    REQUIRE(rawQueryResult.count() == expectedCount);
+    REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
+    REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
+    REQUIRE(rawQueryResult.get(1) == expectedGetSecondItem);
+    REQUIRE(rawQueryResult.get(2) == expectedGetThirdItem);
+
+    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
 TEST_CASE(
-    "RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, all equals")
+    "RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, all equals, no syntax error")
 {
     // === Test set-up ===
-    Vector<Vector<Vector<String>>> results1;
-    Vector<String> resultInner11;
+    Vector<String> results1;
 
-    String a11 = "a";
-    String b11 = "b";
+    String result11 = "proc a";
+    String result12 = "proc b";
 
-    resultInner11.push_back(a11);
-    resultInner11.push_back(b11);
-
-    Vector<Vector<String>> resultOuter11;
-    resultOuter11.push_back(resultInner11);
-
-    results1.push_back(resultOuter11);
-
-    Vector<String> resultInner12;
-
-    String a12 = "c";
-    String b12 = "d";
-
-    resultInner12.push_back(a12);
-    resultInner12.push_back(b12);
-
-    Vector<Vector<String>> resultOuter12;
-    resultOuter12.push_back(resultInner12);
-
-    results1.push_back(resultOuter12);
+    results1.push_back(result11);
+    results1.push_back(result12);
 
     RawQueryResult rawQueryResult1(results1);
 
-    Vector<Vector<Vector<String>>> results2;
-    Vector<String> resultInner21;
+    Vector<String> results2;
 
-    String a21 = "a";
-    String b21 = "b";
+    String result21 = "proc a";
+    String result22 = "proc b";
 
-    resultInner21.push_back(a21);
-    resultInner21.push_back(b21);
-
-    Vector<Vector<String>> resultOuter21;
-    resultOuter21.push_back(resultInner21);
-
-    results2.push_back(resultOuter21);
-
-    Vector<String> resultInner22;
-
-    String a22 = "c";
-    String b22 = "d";
-
-    resultInner22.push_back(a22);
-    resultInner22.push_back(b22);
-
-    Vector<Vector<String>> resultOuter22;
-    resultOuter22.push_back(resultInner22);
-
-    results2.push_back(resultOuter22);
+    results2.push_back(result21);
+    results2.push_back(result22);
 
     RawQueryResult rawQueryResult2(results2);
 
+
     // === Execute test method ===
-    Boolean equality = (rawQueryResult1 == rawQueryResult2);
+    Boolean equals = rawQueryResult1 == rawQueryResult2;
+
 
     // === Expected test results ===
-    Boolean expectedEquality = true;
+    size_t expectedCount1 = 2;
+    Boolean expectedIsEmpty1 = false;
+    String expectedGetFirstItem1 = result11;
+    String expectedGetSecondItem1 = result12;
+
+    size_t expectedCount2 = 2;
+    Boolean expectedIsEmpty2 = false;
+    String expectedGetFirstItem2 = result21;
+    String expectedGetSecondItem2 = result22;
+
+    Boolean expectedEquals = true;
+
 
     // === Check expected test results ===
-    REQUIRE(equality == expectedEquality);
+    REQUIRE(rawQueryResult1.count() == expectedCount1);
+    REQUIRE(rawQueryResult1.isEmpty() == expectedIsEmpty1);
+    REQUIRE(rawQueryResult1.get(0) == expectedGetFirstItem1);
+    REQUIRE(rawQueryResult1.get(1) == expectedGetSecondItem1);
+
+    REQUIRE(rawQueryResult2.count() == expectedCount2);
+    REQUIRE(rawQueryResult2.isEmpty() == expectedIsEmpty2);
+    REQUIRE(rawQueryResult2.get(0) == expectedGetFirstItem2);
+    REQUIRE(rawQueryResult2.get(1) == expectedGetSecondItem2);
+
+    REQUIRE(equals == expectedEquals);
 }
 
 TEST_CASE("RawQueryResult::==(const RawQueryResult rawQueryResult) const -> multiple items in results vector, at least "
-          "one not equals")
+          "one not equals, no syntax error")
 {
     // === Test set-up ===
-    Vector<Vector<Vector<String>>> results1;
-    Vector<String> resultInner11;
+    Vector<String> results1;
 
-    String a11 = "a";
-    String b11 = "c";
+    String result11 = "proc a";
+    String result12 = "proc b";
 
-    resultInner11.push_back(a11);
-    resultInner11.push_back(b11);
-
-    Vector<Vector<String>> resultOuter11;
-    resultOuter11.push_back(resultInner11);
-
-    results1.push_back(resultOuter11);
-
-    Vector<String> resultInner12;
-
-    String a12 = "c";
-    String b12 = "d";
-
-    resultInner12.push_back(a12);
-    resultInner12.push_back(b12);
-
-    Vector<Vector<String>> resultOuter12;
-    resultOuter12.push_back(resultInner12);
-
-    results1.push_back(resultOuter12);
+    results1.push_back(result11);
+    results1.push_back(result12);
 
     RawQueryResult rawQueryResult1(results1);
 
-    Vector<Vector<Vector<String>>> results2;
-    Vector<String> resultInner21;
+    Vector<String> results2;
 
-    String a21 = "a";
-    String b21 = "b";
+    String result21 = "proc a";
+    String result22 = "proc c";
 
-    resultInner21.push_back(a21);
-    resultInner21.push_back(b21);
-
-    Vector<Vector<String>> resultOuter21;
-    resultOuter21.push_back(resultInner21);
-
-    results2.push_back(resultOuter21);
-
-    Vector<String> resultInner22;
-
-    String a22 = "c";
-    String b22 = "d";
-
-    resultInner22.push_back(a22);
-    resultInner22.push_back(b22);
-
-    Vector<Vector<String>> resultOuter22;
-    resultOuter22.push_back(resultInner22);
-
-    results2.push_back(resultOuter22);
+    results2.push_back(result21);
+    results2.push_back(result22);
 
     RawQueryResult rawQueryResult2(results2);
 
+
     // === Execute test method ===
-    Boolean equality = (rawQueryResult1 == rawQueryResult2);
+    Boolean equals = rawQueryResult1 == rawQueryResult2;
+
 
     // === Expected test results ===
-    Boolean expectedEquality = false;
+    size_t expectedCount1 = 2;
+    Boolean expectedIsEmpty1 = false;
+    String expectedGetFirstItem1 = result11;
+    String expectedGetSecondItem1 = result12;
+
+    size_t expectedCount2 = 2;
+    Boolean expectedIsEmpty2 = false;
+    String expectedGetFirstItem2 = result21;
+    String expectedGetSecondItem2 = result22;
+
+    Boolean expectedEquals = false;
+
 
     // === Check expected test results ===
-    REQUIRE(equality == expectedEquality);
-}*/
+    REQUIRE(rawQueryResult1.count() == expectedCount1);
+    REQUIRE(rawQueryResult1.isEmpty() == expectedIsEmpty1);
+    REQUIRE(rawQueryResult1.get(0) == expectedGetFirstItem1);
+    REQUIRE(rawQueryResult1.get(1) == expectedGetSecondItem1);
+
+    REQUIRE(rawQueryResult2.count() == expectedCount2);
+    REQUIRE(rawQueryResult2.isEmpty() == expectedIsEmpty2);
+    REQUIRE(rawQueryResult2.get(0) == expectedGetFirstItem2);
+    REQUIRE(rawQueryResult2.get(1) == expectedGetSecondItem2);
+
+    REQUIRE(equals == expectedEquals);
+}
+
+TEST_CASE(
+    "RawQueryResult::==(const RawQueryResult rawQueryResult) const -> same syntax error and error message")
+{
+    // === Test set-up ===
+    String errorMessage1 = "SIGSEV";
+
+    RawQueryResult rawQueryResult1 = RawQueryResult::getSyntaxError(errorMessage1);
+
+    String errorMessage2 = "SIGSEV";
+
+    RawQueryResult rawQueryResult2 = RawQueryResult::getSyntaxError(errorMessage2);
+
+
+    // === Execute test method ===
+    Boolean equals = rawQueryResult1 == rawQueryResult2;
+
+
+    // === Expected test results ===
+    size_t expectedCount1 = 0;
+    Boolean expectedIsEmpty1 = true;
+
+    Boolean expectedIsSyntaxError1 = true;
+    String expectedErrorMessage1 = errorMessage1;
+
+    size_t expectedCount2 = 0;
+    Boolean expectedIsEmpty2 = true;
+
+    Boolean expectedIsSyntaxError2 = true;
+    String expectedErrorMessage2 = errorMessage2;
+
+    Boolean expectedEquals = true;
+
+
+    // === Check expected test results ===
+    REQUIRE(rawQueryResult1.count() == expectedCount1);
+    REQUIRE(rawQueryResult1.isEmpty() == expectedIsEmpty1);
+
+    REQUIRE(rawQueryResult2.count() == expectedCount2);
+    REQUIRE(rawQueryResult2.isEmpty() == expectedIsEmpty2);
+
+    REQUIRE(equals == expectedEquals);
+}
+
+TEST_CASE(
+    "RawQueryResult::==(const RawQueryResult rawQueryResult) const -> same syntax error, different error message")
+{
+    // === Test set-up ===
+    String errorMessage1 = "SIGSEV";
+
+    RawQueryResult rawQueryResult1 = RawQueryResult::getSyntaxError(errorMessage1);
+
+    String errorMessage2 = "SEGFAULT";
+
+    RawQueryResult rawQueryResult2 = RawQueryResult::getSyntaxError(errorMessage2);
+
+
+    // === Execute test method ===
+    Boolean equals = rawQueryResult1 == rawQueryResult2;
+
+
+    // === Expected test results ===
+    size_t expectedCount1 = 0;
+    Boolean expectedIsEmpty1 = true;
+
+    Boolean expectedIsSyntaxError1 = true;
+    String expectedErrorMessage1 = errorMessage1;
+
+    size_t expectedCount2 = 0;
+    Boolean expectedIsEmpty2 = true;
+
+    Boolean expectedIsSyntaxError2 = true;
+    String expectedErrorMessage2 = errorMessage2;
+
+    Boolean expectedEquals = false;
+
+
+    // === Check expected test results ===
+    REQUIRE(rawQueryResult1.count() == expectedCount1);
+    REQUIRE(rawQueryResult1.isEmpty() == expectedIsEmpty1);
+
+    REQUIRE(rawQueryResult2.count() == expectedCount2);
+    REQUIRE(rawQueryResult2.isEmpty() == expectedIsEmpty2);
+
+    REQUIRE(equals == expectedEquals);
+}
