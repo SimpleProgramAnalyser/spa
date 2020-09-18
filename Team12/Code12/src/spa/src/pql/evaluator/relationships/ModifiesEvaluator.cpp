@@ -90,12 +90,12 @@ Void ModifiesEvaluator::evaluateBothAny() const
         // select stmt
         resultsTable->filterTable(leftRef, convertToClauseResult(getAllModifiesStatements(leftStmtType)));
         // select variable with statement
-        resultsTable->filterTable(rightRef, getAllModifiesVariables(leftStmtType));
+        resultsTable->filterTable(rightRef, getAllModifiesVariablesFromStatementType(leftStmtType));
     } else if (leftRefType == SynonymRefType) {
         // select procedure
         resultsTable->filterTable(leftRef, getAllModifiesProcedures());
         // select variable with procedure
-        resultsTable->filterTable(rightRef, getAllModifiesVariables(leftRef.getValue()));
+        resultsTable->filterTable(rightRef, getModifiesVariablesFromProcedure(leftRef.getValue()));
     } else {
         throw std::runtime_error("Unknown case in ModifiesExtractor::evaluateBothAny");
     }
