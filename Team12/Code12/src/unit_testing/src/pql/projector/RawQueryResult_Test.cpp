@@ -1,8 +1,10 @@
 /*
  * Unit tests for the public methods in RawQueryResult.cpp (under pql/projector).
  * Due to the OOP encapsulation, we cannot retrieve some private members of
- * the classes, and hence assume (give benefit of doubt) that the public
- * method; getResults(), is implemented correctly.
+ * the classes, and hence assume (give benefit of doubt) that the some public
+ * methods, e.g,; count(), get(), isEmpty() is implemented correctly. Although, we
+ * cannot test these methods in isolation, but would nonetheless test them
+ * (with other methods).
  */
 
 #include "Types.h"
@@ -10,89 +12,83 @@
 #include "pql/evaluator/Evaluator.h"
 #include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/RawQueryResult.h"
+
+TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> empty results vector")
+{
+    // === Test set-up ===
+    Vector<String> results;
+
+
+    // === Execute test method ===
+    RawQueryResult rawQueryResult(results);
+
+
+    // === Expected test results ===
+    size_t expectedCount = 0;
+    Boolean expectedIsEmpty = true;
+
+
+    // === Check expected test results ===
+    REQUIRE(rawQueryResult.count() == expectedCount);
+    REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
+}
+
+TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> single item in results vector")
+{
+    // === Test set-up ===
+    Vector<String> results;
+
+    String result = "proc";
+
+    results.push_back(result);
+
+
+    // === Execute test method ===
+    RawQueryResult rawQueryResult(results);
+
+
+    // === Expected test results ===
+    size_t expectedCount = 1;
+    Boolean expectedIsEmpty = false;
+    String expectedGetFirstItem = result;
+
+
+    // === Check expected test results ===
+    REQUIRE(rawQueryResult.count() == expectedCount);
+    REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
+    REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
+}
+
+TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> multiple items in results vector")
+{
+    // === Test set-up ===
+    Vector<String> results;
+
+    String result1 = "proc a";
+    String result2 = "proc b";
+
+    results.push_back(result1);
+    results.push_back(result2);
+
+
+    // === Execute test method ===
+    RawQueryResult rawQueryResult(results);
+
+
+    // === Expected test results ===
+    size_t expectedCount = 2;
+    Boolean expectedIsEmpty = false;
+    String expectedGetFirstItem = result1;
+    String expectedGetSecondItem = result2;
+
+
+    // === Check expected test results ===
+    REQUIRE(rawQueryResult.count() == expectedCount);
+    REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
+    REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
+    REQUIRE(rawQueryResult.get(1) == expectedGetSecondItem);
+}
 /*
-TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> empty results vector")
-{
-    // === Test set-up ===
-    Vector<Vector<Vector<String>>> results;
-
-    // === Execute test method ===
-    RawQueryResult rawQueryResult(results);
-
-    // === Expected test results ===
-    Vector<Vector<Vector<String>>> expectedResults = results;
-
-    // === Check expected test results ===
-    REQUIRE(rawQueryResult.getResults() == expectedResults);
-}
-
-TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> single item in results vector")
-{
-    // === Test set-up ===
-    Vector<Vector<Vector<String>>> results;
-    Vector<String> resultInner;
-
-    String a = "a";
-    String b = "b";
-
-    resultInner.push_back(a);
-    resultInner.push_back(b);
-
-    Vector<Vector<String>> resultOuter;
-    resultOuter.push_back(resultInner);
-
-    results.push_back(resultOuter);
-
-    // === Execute test method ===
-    RawQueryResult rawQueryResult(results);
-
-    // === Expected test results ===
-    Vector<Vector<Vector<String>>> expectedResults = results;
-
-    // === Check expected test results ===
-    REQUIRE(rawQueryResult.getResults() == expectedResults);
-}
-
-TEST_CASE("RawQueryResult::RawQueryResult(Vector<Vector<String>> results) -> multiple items in results vector")
-{
-    // === Test set-up ===
-    Vector<Vector<Vector<String>>> results;
-    Vector<String> resultInner1;
-
-    String a1 = "a";
-    String b1 = "b";
-
-    resultInner1.push_back(a1);
-    resultInner1.push_back(b1);
-
-    Vector<Vector<String>> resultOuter1;
-    resultOuter1.push_back(resultInner1);
-
-    results.push_back(resultOuter1);
-
-    Vector<String> resultInner2;
-
-    String a2 = "c";
-    String b2 = "d";
-
-    resultInner2.push_back(a2);
-    resultInner2.push_back(b2);
-
-    Vector<Vector<String>> resultOuter2;
-    resultOuter2.push_back(resultInner2);
-
-    results.push_back(resultOuter2);
-
-    // === Execute test method ===
-    RawQueryResult rawQueryResult(results);
-
-    // === Expected test results ===
-    Vector<Vector<Vector<String>>> expectedResults = results;
-
-    // === Check expected test results ===
-    REQUIRE(rawQueryResult.getResults() == expectedResults);
-}
-
 TEST_CASE("RawQueryResult::emptyRawQueryResult() -> ")
 {
     // === Test set-up ===
