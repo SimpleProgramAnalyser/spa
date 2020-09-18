@@ -41,13 +41,13 @@ Vector<Integer> getAllUsesStatements(StatementType stmtType)
 {
     return pkb.usesTable.getAllUsesStatements(stmtType);
 }
-Vector<String> getAllUsesVariables(StatementType stmtType)
+Vector<String> getAllUsesVariablesFromStatementType(StatementType stmtType)
 {
-    return pkb.usesTable.getAllUsesVariables(stmtType);
+    return pkb.usesTable.getAllUsesVariablesFromStatementType(stmtType);
 }
-Vector<String> getAllUsesVariables(const String& procName)
+Vector<String> getAllUsesVariablesFromProgram()
 {
-    return pkb.usesTable.getAllUsesVariables(procName);
+    return pkb.usesTable.getAllUsesVariablesFromProgram();
 }
 Vector<String> getAllUsesProcedures()
 {
@@ -142,13 +142,13 @@ Vector<Integer> getAllModifiesStatements(StatementType stmtType)
 {
     return pkb.modifiesTable.getAllModifiesStatements(stmtType);
 }
-Vector<String> getAllModifiesVariables(StatementType stmtType)
+Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType)
 {
-    return pkb.modifiesTable.getAllModifiesVariables(stmtType);
+    return pkb.modifiesTable.getAllModifiesVariablesFromStatementType(stmtType);
 }
-Vector<String> getAllModifiesVariables(const String& procName)
+Vector<String> getAllModifiesVariablesFromProgram()
 {
-    return pkb.modifiesTable.getAllModifiesVariables(procName);
+    return pkb.modifiesTable.getAllModifiesVariablesFromProgram();
 }
 Vector<String> getAllModifiesProcedures()
 {

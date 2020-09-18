@@ -21,8 +21,8 @@ Vector<String> getUsesProcedures(const String& varName);
 Vector<String> getUsesVariablesFromStatement(Integer stmt);
 Vector<String> getUsesVariablesFromProcedure(const String& procName);
 Vector<Integer> getAllUsesStatements(StatementType stmtType);
-Vector<String> getAllUsesVariables(StatementType stmtType);
-Vector<String> getAllUsesVariables(const String& procName);
+Vector<String> getAllUsesVariablesFromStatementType(StatementType stmtType);
+Vector<String> getAllUsesVariablesFromProgram();
 Vector<String> getAllUsesProcedures();
 
 // Modifies
@@ -35,8 +35,8 @@ Vector<String> getModifiesProcedures(const String& varName);
 Vector<String> getModifiesVariablesFromStatement(Integer stmt);
 Vector<String> getModifiesVariablesFromProcedure(const String& procName);
 Vector<Integer> getAllModifiesStatements(StatementType stmtType);
-Vector<String> getAllModifiesVariables(StatementType stmtType);
-Vector<String> getAllModifiesVariables(const String& procName);
+Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType);
+Vector<String> getAllModifiesVariablesFromProgram();
 Vector<String> getAllModifiesProcedures();
 
 // Parent
