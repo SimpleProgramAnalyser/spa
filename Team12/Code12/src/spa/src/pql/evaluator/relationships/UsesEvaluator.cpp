@@ -6,7 +6,7 @@
 
 #include "RelationshipsUtil.h"
 
-class UsesExtractor {
+class UsesEvaluator {
 private:
     Reference leftRef;
     Reference rightRef;
@@ -24,7 +24,7 @@ private:
     Void evaluateBothKnown() const;
 
 public:
-    UsesExtractor(Reference leftRef, Reference rightRef, ResultsTable* resultsTable):
+    UsesEvaluator(Reference leftRef, Reference rightRef, ResultsTable* resultsTable):
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), resultsTable(resultsTable),
         leftRefType(leftRef.getReferenceType())
     {}
@@ -33,11 +33,11 @@ public:
 
 Void evaluateUsesClause(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
 {
-    UsesExtractor extractor(leftRef, rightRef, resultsTable);
-    extractor.evaluateUsesClause();
+    UsesEvaluator evaluator(leftRef, rightRef, resultsTable);
+    evaluator.evaluateUsesClause();
 }
 
-Void UsesExtractor::evaluateLeftKnown() const
+Void UsesEvaluator::evaluateLeftKnown() const
 {
     ClauseResult tempResult = leftRefType == IntegerRefType
                                   ? getUsesVariablesFromStatement(std::stoi(leftRef.getValue()))
@@ -45,7 +45,7 @@ Void UsesExtractor::evaluateLeftKnown() const
     resultsTable->filterTable(rightRef, tempResult);
 }
 
-Void UsesExtractor::evaluateRightKnown() const
+Void UsesEvaluator::evaluateRightKnown() const
 {
     DesignEntityType leftType = resultsTable->getTypeOfSynonym(leftRef.getValue());
     if (isStatementDesignEntity(leftType)) {
@@ -57,7 +57,7 @@ Void UsesExtractor::evaluateRightKnown() const
     }
 }
 
-Void UsesExtractor::evaluateBothAny() const
+Void UsesEvaluator::evaluateBothAny() const
 {
     Boolean isStatementLeft
         = leftRefType == SynonymRefType && isStatementDesignEntity(resultsTable->getTypeOfSynonym(leftRef.getValue()));
@@ -101,7 +101,7 @@ Void UsesExtractor::evaluateBothAny() const
     }
 }
 
-Void UsesExtractor::evaluateBothKnown() const
+Void UsesEvaluator::evaluateBothKnown() const
 {
     Boolean usesHolds;
     if (leftRefType == IntegerRefType) {
@@ -119,7 +119,7 @@ Void UsesExtractor::evaluateBothKnown() const
     }
 }
 
-Void UsesExtractor::evaluateUsesClause()
+Void UsesEvaluator::evaluateUsesClause()
 {
     ReferenceType rightRefType = rightRef.getReferenceType();
     if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {
@@ -131,6 +131,6 @@ Void UsesExtractor::evaluateUsesClause()
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         evaluateBothAny();
     } else {
-        throw std::runtime_error("Error in evaluateUsesClause: invalid arguments in Uses");
+        throw std::runtime_error("Error in UsesExtractor::evaluateUsesClause: invalid arguments in Uses");
     }
 }

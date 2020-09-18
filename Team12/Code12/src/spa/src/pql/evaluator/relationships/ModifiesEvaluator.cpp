@@ -6,7 +6,7 @@
 
 #include "RelationshipsUtil.h"
 
-class ModifiesExtractor {
+class ModifiesEvaluator {
 private:
     Reference leftRef;
     Reference rightRef;
@@ -24,7 +24,7 @@ private:
     Void evaluateBothKnown() const;
 
 public:
-    ModifiesExtractor(Reference leftRef, Reference rightRef, ResultsTable* resultsTable):
+    ModifiesEvaluator(Reference leftRef, Reference rightRef, ResultsTable* resultsTable):
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), resultsTable(resultsTable),
         leftRefType(leftRef.getReferenceType())
     {}
@@ -33,19 +33,19 @@ public:
 
 Void evaluateModifiesClause(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
 {
-    ModifiesExtractor extractor(leftRef, rightRef, resultsTable);
-    extractor.evaluateModifiesClause();
+    ModifiesEvaluator evaluator(leftRef, rightRef, resultsTable);
+    evaluator.evaluateModifiesClause();
 }
 
-Void ModifiesExtractor::evaluateLeftKnown() const
+Void ModifiesEvaluator::evaluateLeftKnown() const
 {
     ClauseResult tempResult = leftRefType == IntegerRefType
-                              ? getModifiesVariablesFromStatement(std::stoi(leftRef.getValue()))
-                              : getModifiesVariablesFromProcedure(leftRef.getValue());
+                                  ? getModifiesVariablesFromStatement(std::stoi(leftRef.getValue()))
+                                  : getModifiesVariablesFromProcedure(leftRef.getValue());
     resultsTable->filterTable(rightRef, tempResult);
 }
 
-Void ModifiesExtractor::evaluateRightKnown() const
+Void ModifiesEvaluator::evaluateRightKnown() const
 {
     DesignEntityType leftType = resultsTable->getTypeOfSynonym(leftRef.getValue());
     if (isStatementDesignEntity(leftType)) {
@@ -57,7 +57,7 @@ Void ModifiesExtractor::evaluateRightKnown() const
     }
 }
 
-Void ModifiesExtractor::evaluateBothAny() const
+Void ModifiesEvaluator::evaluateBothAny() const
 {
     Boolean isStatementLeft
         = leftRefType == SynonymRefType && isStatementDesignEntity(resultsTable->getTypeOfSynonym(leftRef.getValue()));
@@ -101,7 +101,7 @@ Void ModifiesExtractor::evaluateBothAny() const
     }
 }
 
-Void ModifiesExtractor::evaluateBothKnown() const
+Void ModifiesEvaluator::evaluateBothKnown() const
 {
     Boolean modifiesHolds;
     if (leftRefType == IntegerRefType) {
@@ -119,7 +119,7 @@ Void ModifiesExtractor::evaluateBothKnown() const
     }
 }
 
-Void ModifiesExtractor::evaluateModifiesClause()
+Void ModifiesEvaluator::evaluateModifiesClause()
 {
     ReferenceType rightRefType = rightRef.getReferenceType();
     if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {
@@ -131,6 +131,6 @@ Void ModifiesExtractor::evaluateModifiesClause()
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         evaluateBothAny();
     } else {
-        throw std::runtime_error("Error in evaluateModifiesClause: invalid arguments in Modifies");
+        throw std::runtime_error("Error in ModifiesExtractor::evaluateModifiesClause: invalid arguments in Modifies");
     }
 }

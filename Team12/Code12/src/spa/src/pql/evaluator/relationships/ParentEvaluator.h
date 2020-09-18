@@ -17,6 +17,7 @@
  *
  * @return Results for the synonym in the Parent clause.
  */
-Void evaluateParentClause(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable);
+Void evaluateParentClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
+                          ResultsTable* resultsTable);
 
 #endif // SPA_QUERY_PARENT_EVALUATOR_H

@@ -8,7 +8,7 @@
 
 #include "RelationshipsUtil.h"
 
-class FollowsExtractor {
+class FollowsEvaluator {
 private:
     Reference leftRef;
     Reference rightRef;
@@ -26,7 +26,7 @@ private:
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
 
 public:
-    FollowsExtractor(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable):
+    FollowsEvaluator(Reference leftRef, Reference rightRef, Boolean isStar, ResultsTable* resultsTable):
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), isStar(isStar), resultsTable(resultsTable),
         pkbBothKnownFunction(isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)
     {}
@@ -36,11 +36,11 @@ public:
 Void evaluateFollowsClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
                            ResultsTable* resultsTable)
 {
-    FollowsExtractor extractor(leftRef, rightRef, isStar, resultsTable);
-    extractor.evaluateFollowsClause();
+    FollowsEvaluator evaluator(leftRef, rightRef, isStar, resultsTable);
+    evaluator.evaluateFollowsClause();
 }
 
-Void FollowsExtractor::evaluateLeftKnown() const
+Void FollowsEvaluator::evaluateLeftKnown() const
 {
     Integer leftValue = std::stoi(leftRef.getValue());
     // get the exact DesignEntityType of the right operand
@@ -60,12 +60,12 @@ Void FollowsExtractor::evaluateLeftKnown() const
      * to spurious StatementType. This is guaranteed due to our
      * (robust) validation at the PQL Preprocessor side.
      */
-    Vector<Integer> tempResult = (isStar ? getAllAfterStatementsStar
-                                         : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
+    Vector<Integer> tempResult
+        = (isStar ? getAllAfterStatementsStar : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
     resultsTable->filterTable(rightRef, convertToClauseResult(tempResult));
 }
 
-Void FollowsExtractor::evaluateRightKnown() const
+Void FollowsEvaluator::evaluateRightKnown() const
 {
     Integer rightValue = std::stoi(rightRef.getValue());
     // get the DesignEntityType of the left operand
@@ -76,8 +76,13 @@ Void FollowsExtractor::evaluateRightKnown() const
     resultsTable->filterTable(leftRef, convertToClauseResult(tempResult));
 }
 
-Void FollowsExtractor::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
+Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
 {
+    /*
+     * For this case, in iteration 1, the clause is perpetually not
+     * related to any synonym (because the wildcard to converted
+     * to any StmtType, hence no checking needs to be done here).
+     */
     Boolean followsHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
     if (followsHolds) {
         std::vector<String> tempResult{"trueFollows"};
@@ -88,7 +93,7 @@ Void FollowsExtractor::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal
     }
 }
 
-Void FollowsExtractor::evaluateBothAny() const
+Void FollowsEvaluator::evaluateBothAny() const
 {
     Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
     Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
@@ -132,7 +137,7 @@ Void FollowsExtractor::evaluateBothAny() const
     }
 }
 
-Void FollowsExtractor::evaluateFollowsClause()
+Void FollowsEvaluator::evaluateFollowsClause()
 {
     ReferenceType leftRefType = leftRef.getReferenceType();
     ReferenceType rightRefType = rightRef.getReferenceType();
@@ -180,12 +185,6 @@ Void FollowsExtractor::evaluateFollowsClause()
     } else if (canMatchMultiple(leftRefType) && rightRefType == IntegerRefType) {
         evaluateRightKnown();
     } else if (leftRefType == IntegerRefType && rightRefType == IntegerRefType) {
-        /*
-         * For this case, in iteration 1, the clause is perpetually not
-         * related to the select synonym (because the wildcard to converted
-         * to any StmtType, hence no checking needs to be done here (if
-         * clause is related to select synonym).
-         */
         Integer leftRefVal = std::stoi(leftRef.getValue());
         Integer rightRefVal = std::stoi(rightRef.getValue());
         evaluateBothKnown(leftRefVal, rightRefVal);
@@ -195,6 +194,7 @@ Void FollowsExtractor::evaluateFollowsClause()
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         evaluateBothAny();
     } else {
-        throw std::runtime_error("Error in evaluateFollowsClause: No synonyms or integers in Follows clause");
+        throw std::runtime_error(
+            "Error in FollowsExtractor::evaluateFollowsClause: No synonyms or integers in Follows clause");
     }
 }
