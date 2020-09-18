@@ -302,14 +302,12 @@ of their own, hence they are also known as "container statements".
 
 == PKB
 
-=== Statements Table API
-*Overview*: The Statements Table API describes the methods available to extract information
-related to statements.
+=== Statement Table API
+
+*Overview*: The Statement Table API describes the methods available to extract information related to statements.
 
 * <<getAllStatements>>
-* <<getStatementFromIndex>>
-* <<getStatementsForConstants>>
-* <<getStatementsPatternMatching>>
+* <<isStatementInProgram>>
 * <<insertIntoStatementTable>>
 
 '''
@@ -317,44 +315,28 @@ related to statements.
 [#getAllStatements]
 `*STATEMENT_LIST* getAllStatements(*DESIGN_ENT_STMT_NAME* stmtType);`
 
-*Description*: Returns a *STATEMENT_LIST* of all the statements in the Statements Table.
+*Description*: Returns a *STATEMENT_LIST* of all the statements in the Statement Table.
 
 '''
 
-[#getStatementFromIndex]
-`*STATEMENT* getStatementFromIndex(*INTEGER* index);`
+[#isStatementInProgram]
+`*BOOLEAN* isStatementInProgram(*INTEGER* number);`
 
-*Description*: Returns the *STATEMENT* with the corresponding `index`.
-
-'''
-
-[#getStatementsForConstants]
-`*STATEMENT_LIST* getStatementsForConstant(*INTEGER* constant);`
-
-*Description*: Returns a *STATEMENT_LIST* with all the statements that contains `constant`.
-
-'''
-[#getStatementsPatternMatching]
-`*STATEMENT_LIST* getStatementsPatternMatching(*NODE* astNode, *BOOLEAN* allowBefore,
-*BOOLEAN* allowAfter, *DESIGN_ENT_STMT_NAME* stmtType);`
-
-*Description*: // TODO
+*Description*: Returns a *BOOLEAN* stating whether statement is in the Statement Table.
 
 '''
 
 [#insertIntoStatementTable]
-`*VOID* insertIntoStatementTable(*STATEMENT* statement, *INTEGER* lineNumber);`
+`*VOID* insertIntoStatementTable(*INTEGER* number, *STATEMENT_TYPE* type);`
 
-*Description*: Inserts a *STATEMENT* `statement` with is corresponding `lineNumber`
-into the Statements Table.
+*Description*: Inserts a *STATEMENT* `statement` with its corresponding *STATEMENT_TYPE* into the Statement Table.
 
-=== VarTable API
-*Overview*: The VarTable API describes the methods available to extract information
-related to variables in the processed SIMPLE program.
+=== Variable Table API
+
+*Overview*: The Variable Table API describes the methods available to extract information related to variables in the processed SIMPLE program.
 
 * <<getAllVariables>>
-* <<getIndexFromVariable>>
-* <<getVariableIndex>>
+* <<isVariableInProgram>>
 * <<insertIntoVariableTable>>
 
 '''
@@ -362,38 +344,28 @@ related to variables in the processed SIMPLE program.
 [#getAllVariables]
 `*VARIABLE_LIST* getAllVariables();`
 
-*Description*: Returns a *VARIABLE_LIST* of all variables stored in the VarTable.
+*Description*: Returns a *VARIABLE_LIST* of all variables stored in the Variable Table.
 
 '''
 
-[#getIndexFromVariable]
-`*INTEGER* getIndexFromVariable(*VARIABLE* var);`
+[#isVariableInProgram]
+`*BOOLEAN* isVariableInProgram(*VARIABLE* var);`
 
-*Description*: Returns the *INTEGER* key of `var` in the VarTable.
-
-'''
-
-[#getVariableIndex]
-`*VARIABLE* getVariableIndex(*INTEGER* index);`
-
-*Description*: Returns the *VARIABLE* with `index` as its key in the VarTable.
-If no there is no such `index`, the function throws an *INVALID_INDEX_ERROR*.
+*Description*: Returns a *BOOLEAN* stating whether variable is in the Variable Table.
 
 '''
 
 [#insertIntoVariableTable]
-`*INTEGER* insertIntoVariableTable(*VARIABLE* var);`
+`*VOID* insertIntoVariableTable(*VARIABLE* var);`
 
-*Description*: Inserts the *VARIABLE* `var` into VarTable. Returns the index that `var`
-is stored at in the VarTable.
+*Description*: Inserts the *VARIABLE* `var` into Variable Table.
 
-=== ProcTable API
-*Overview*: The ProcTable API describes the methods available to extract information
-related to procedures in the processed SIMPLE program.
+=== Procedure Table API
+
+*Overview*: The Procedure Table API describes the methods available to extract information related to procedures in the processed SIMPLE program.
 
 * <<getAllProcedures>>
-* <<getProcedureIndex>>
-* <<getProcedureFromIndex>>
+* <<isProcedureInProgram>>
 * <<insertIntoProcedureTable>>
 
 '''
@@ -401,34 +373,54 @@ related to procedures in the processed SIMPLE program.
 [#getAllProcedures]
 `*PROCEDURE_LIST* getAllProcedures();`
 
-*Description*: Returns a *PROCEDURE_LIST* of all procedures stored in the ProcTable.
+*Description*: Returns a *PROCEDURE_LIST* of all procedures stored in the Procedure Table.
 
 '''
 
-[#getProcedureIndex]
-`*INTEGER* getProcedureIndex(*PROCEDURE* proc);`
+[#isProcedureInProgram]
+`*BOOLEAN* isProcedureInProgram(*PROCEDURE* proc);`
 
-*Description*: Returns the *INTEGER* key of `proc` in the ProcTable.
-
-'''
-
-[#getProcedureFromIndex]
-`*PROCEDURE* getProcedureFromIndex(*INTEGER* index);`
-
-*Description*: Returns the *PROCEDURE* with `index` as its key in the ProcTable.
-If no there is no such `index`, the function throws an *INVALID_INDEX_ERROR*.
+*Description*: Returns a *BOOLEAN* stating whether procedure is in the Procedure Table.
 
 '''
 
 [#insertIntoProcedureTable]
-`*INTEGER* insertIntoVariableTable(*VARIABLE* var);`
+`*VOID* insertIntoProcedureTable(*PROCEDURE* proc);`
 
-*Description*: Inserts the *VARIABLE* `var` into VarTable. Returns the index that `var`
-is stored at in the VarTable.
+*Description*: Inserts the *PROCEDURE* `proc` into Procedure Table.
+
+=== Constant Table API
+
+*Overview*: The Constant Table API describes the methods available to extract information related to constantedures in the processed SIMPLE program.
+
+* <<getAllConstants>>
+* <<isConstantInProgram>>
+* <<insertIntoConstantTable>>
+
+'''
+
+[#getAllConstants]
+`*CONSTANT_LIST* getAllConstants();`
+
+*Description*: Returns a *CONSTANT_LIST* of all constantedures stored in the Constant Table.
+
+'''
+
+[#isConstantInProgram]
+`*BOOLEAN* isConstantInProgram(*CONSTANT* constant);`
+
+*Description*: Returns a *BOOLEAN* stating whether constantedure is in the Constant Table.
+
+'''
+
+[#insertIntoConstantTable]
+`*VOID* insertIntoConstantTable(*CONSTANT* constant);`
+
+*Description*: Inserts the *CONSTANT* `constant` into Constant Table.
 
 === Uses API
-*Overview*: The Uses API describes the methods available to extract information
-related to the Uses relationships in the processed SIMPLE program.
+
+*Overview*: The Uses API describes the methods available to extract information related to the Uses relationships in the processed SIMPLE program.
 
 * <<addUsesRelationships>>
 * <<checkIfProcedureUses>>

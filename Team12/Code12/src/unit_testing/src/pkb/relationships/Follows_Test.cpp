@@ -12,13 +12,16 @@ procedure compute {
 }
 */
 
-typedef Vector<Pair<Integer, StatementType>> vector;
 SCENARIO("Iteration 1 toy example Follows", "[follows][pkb]")
 {
     FollowsTable followsTable = FollowsTable();
     GIVEN("some Follows relationships")
     {
-        vector stmtList;
+        Vector<Pair<Integer, StatementType>> stmtList{
+            std::make_pair(1, ReadStatement),       std::make_pair(2, ReadStatement),
+            std::make_pair(3, ReadStatement),       std::make_pair(4, AssignmentStatement),
+            std::make_pair(5, AssignmentStatement), std::make_pair(6, PrintStatement),
+        };
         WHEN("relationships are added to Follows table")
         {
             for (auto it = stmtList.begin(); it != stmtList.end() - 1; it++) {
