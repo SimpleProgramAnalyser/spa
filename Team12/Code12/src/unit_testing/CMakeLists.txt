@@ -8,6 +8,10 @@ file(GLOB headers
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/ast_utils/AstUtils.h")
+file(GLOB_RECURSE frontend
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/*.hpp")
 file(GLOB_RECURSE pql
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.h"
@@ -17,6 +21,6 @@ file(GLOB_RECURSE pkb/relationships
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.h")
 
-add_executable(unit_testing ${srcs} ${headers} ${pql} ${pkb/relationships} src/pql/parser/AbstractQueryBuilder.cpp src/pql/parser/AbstractQueryBuilder.h)
+add_executable(unit_testing ${srcs} ${headers} ${pql} ${frontend} ${pkb/relationships} src/pql/parser/AbstractQueryBuilder.cpp src/pql/parser/AbstractQueryBuilder.h src/pkb/relationships/Modifies_Test.cpp)
 
 target_link_libraries(unit_testing spa)

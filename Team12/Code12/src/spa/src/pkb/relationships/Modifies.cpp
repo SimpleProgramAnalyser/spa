@@ -15,8 +15,13 @@ void ModifiesTable::addModifiesRelationships(const String& procName, Vector<Stri
         varProclistMap[varName].push_back(procName);
     }
 
-    // add to allVarUsedByProc
-    allVarUsedByProc.insert(varNames.begin(), varNames.end());
+    for (const auto& varName : varNames) {
+        // add to allVarUsedByProcSet
+        if (allVarUsedByProcSet.find(varName) == allVarUsedByProcSet.end()) {
+            allVarUsedByProcSet.insert(varName);
+            allVarUsedByProcList.push_back(varName);
+        }
+    }
 
     // add to allModifiesProc
     allModifiesProc.push_back(procName);
@@ -79,13 +84,13 @@ Vector<Integer> ModifiesTable::getAllModifiesStatements(StatementType stmtType)
 {
     return stmttypeStmtlistMap[stmtType];
 }
-Vector<String> ModifiesTable::getAllModifiesVariables(StatementType stmtType)
+Vector<String> ModifiesTable::getAllModifiesVariablesFromStatementType(StatementType stmtType)
 {
     return stmttypeVarlistMap[stmtType];
 }
-Vector<String> ModifiesTable::getAllModifiesVariables(const String& procName)
+Vector<String> ModifiesTable::getAllModifiesVariablesFromProgram()
 {
-    return procVarlistMap[procName];
+    return allVarUsedByProcList;
 }
 Vector<String> ModifiesTable::getAllModifiesProcedures()
 {

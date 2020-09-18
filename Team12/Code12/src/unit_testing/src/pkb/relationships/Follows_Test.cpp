@@ -27,7 +27,7 @@ SCENARIO("Iteration 1 toy example Follows", "[follows][pkb]")
             for (auto it = stmtList.begin(); it != stmtList.end() - 1; it++) {
                 followsTable.addFollowsRelationships(it->first, it->second, (it + 1)->first, (it + 1)->second);
                 followsTable.addFollowsRelationshipsStar(it->first, it->second,
-                                                         Vector<Pair<Integer, StatementType>>(it+1, stmtList.end()));
+                                                         Vector<Pair<Integer, StatementType>>(it + 1, stmtList.end()));
             }
             THEN("tables should be populated")
             {
@@ -47,6 +47,139 @@ SCENARIO("Iteration 1 toy example Follows", "[follows][pkb]")
                 REQUIRE(followsTable.getAllAfterStatementsTypedStar(IfStatement, IfStatement).empty());
                 REQUIRE(followsTable.getAllAfterStatementsTypedStar(WhileStatement, IfStatement).empty());
                 REQUIRE(followsTable.getAllAfterStatementsTypedStar(WhileStatement, CallStatement).empty());
+            }
+            THEN("first-order relationships are correct")
+            {
+                for (int i = 1; i < 6; i++) {
+                    REQUIRE(followsTable.checkIfFollowsHolds(i, i + 1));
+                    for (int j = i + 1; j <= 6; j++) {
+                        REQUIRE(followsTable.checkIfFollowsHoldsStar(i, j));
+                    }
+                }
+            }
+            THEN("second-order relationships are correct (no star)")
+            {
+                // select s such that Follows(s,s1): 1,2,3,4,5
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(AnyStatement, AnyStatement)
+                        == Vector<Integer>{1, 2, 3, 4, 5});
+                // select s1 such that Follows(s,s1): 1,2,3,4,5
+                REQUIRE(followsTable.getAllAfterStatementsTyped(AnyStatement, AnyStatement)
+                        == Vector<Integer>{2, 3, 4, 5, 6});
+
+                // select a such that Follows(a,a1): 4
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(AssignmentStatement, AssignmentStatement)
+                        == Vector<Integer>{4});
+                // select a1 such that Follows(a,a1): 5
+                REQUIRE(followsTable.getAllAfterStatementsTyped(AssignmentStatement, AssignmentStatement)
+                        == Vector<Integer>{5});
+
+                // select re such that Follows(re,re1): 1,2
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(ReadStatement, ReadStatement)
+                        == Vector<Integer>{1, 2});
+                // select re1 such that Follows(re,re1): 2,3
+                REQUIRE(followsTable.getAllAfterStatementsTyped(ReadStatement, ReadStatement) == Vector<Integer>{2, 3});
+
+                // select s such that Follows(s,a): 3,4
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(AnyStatement, AssignmentStatement)
+                        == Vector<Integer>{3, 4});
+                // select a such that Follows(s,a): 4,5
+                REQUIRE(followsTable.getAllAfterStatementsTyped(AnyStatement, AssignmentStatement)
+                        == Vector<Integer>{4, 5});
+                // select a such that Follows(a,s): 4,5
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(AssignmentStatement, AnyStatement)
+                        == Vector<Integer>{4, 5});
+                // select s such that Follows(a,s): 5,6
+                REQUIRE(followsTable.getAllAfterStatementsTyped(AssignmentStatement, AnyStatement)
+                        == Vector<Integer>{5, 6});
+
+                // select s such that Follows(s,r): 1,2
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(AnyStatement, ReadStatement) == Vector<Integer>{1, 2});
+                // select r such that Follows(s,r): 2,3
+                REQUIRE(followsTable.getAllAfterStatementsTyped(AnyStatement, ReadStatement) == Vector<Integer>{2, 3});
+                // select r such that Follows(r,s): 1,2,3
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(ReadStatement, AnyStatement)
+                        == Vector<Integer>{1, 2, 3});
+                // select s such that Follows(r,s): 2,3,4
+                REQUIRE(followsTable.getAllAfterStatementsTyped(ReadStatement, AnyStatement)
+                        == Vector<Integer>{2, 3, 4});
+
+                // select s such that Follows(s,p): 5
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(AnyStatement, PrintStatement) == Vector<Integer>{5});
+                // select p such that Follows(s,p): 6
+                REQUIRE(followsTable.getAllAfterStatementsTyped(AnyStatement, PrintStatement) == Vector<Integer>{6});
+                // select s such that Follows(p,s): None
+                REQUIRE(followsTable.getAllBeforeStatementsTyped(PrintStatement, AnyStatement).empty());
+                // select p such that Follows(p,s): None
+                REQUIRE(followsTable.getAllAfterStatementsTyped(PrintStatement, AnyStatement).empty());
+            }
+
+            // procedure compute {
+            //    1.  read num1;
+            //    2.  read num2;
+            //    3.  read num3;
+            //    4.  sum = (num1 + num2) * num3;
+            //    5.  ave = sum / 3;
+            //    6.  print ave;
+            //}
+            THEN("second-order relationships are correct (star)")
+            {
+                // select s such that Follows*(s,s1): 1,2,3,4,5
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(AnyStatement, AnyStatement)
+                        == Vector<Integer>{1, 2, 3, 4, 5});
+                // select s1 such that Follows*(s,s1): 1,2,3,4,5
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(AnyStatement, AnyStatement)
+                        == Vector<Integer>{2, 3, 4, 5, 6});
+
+                // select a such that Follows*(a,a1): 4
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(AssignmentStatement, AssignmentStatement)
+                        == Vector<Integer>{4});
+                // select a1 such that Follows*(a,a1): 5
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(AssignmentStatement, AssignmentStatement)
+                        == Vector<Integer>{5});
+
+                // select re such that Follows*(re,re1): 1,2
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(ReadStatement, ReadStatement)
+                        == Vector<Integer>{1, 2});
+                // select re1 such that Follows*(re,re1): 2,3
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(ReadStatement, ReadStatement)
+                        == Vector<Integer>{2, 3});
+
+                // select s such that Follows*(s,a): 3,4
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(AnyStatement, AssignmentStatement)
+                        == Vector<Integer>{1, 2, 3, 4});
+                // select a such that Follows*(s,a): 4,5
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(AnyStatement, AssignmentStatement)
+                        == Vector<Integer>{4, 5});
+                // select a such that Follows*(a,s): 4,5
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(AssignmentStatement, AnyStatement)
+                        == Vector<Integer>{4, 5});
+                // select s such that Follows*(a,s): 5,6
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(AssignmentStatement, AnyStatement)
+                        == Vector<Integer>{5, 6});
+
+                // select s such that Follows*(s,r): 1,2
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(AnyStatement, ReadStatement)
+                        == Vector<Integer>{1, 2});
+                // select r such that Follows*(s,r): 2,3
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(AnyStatement, ReadStatement)
+                        == Vector<Integer>{2, 3});
+                // select r such that Follows*(r,s): 1,2,3
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(ReadStatement, AnyStatement)
+                        == Vector<Integer>{1, 2, 3});
+                // select s such that Follows*(r,s): 2,3,4
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(ReadStatement, AnyStatement)
+                        == Vector<Integer>{2, 3, 4, 5, 6});
+
+                // select s such that Follows*(s,p): 5
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(AnyStatement, PrintStatement)
+                        == Vector<Integer>{1, 2, 3, 4, 5});
+                // select p such that Follows*(s,p): 6
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(AnyStatement, PrintStatement)
+                        == Vector<Integer>{6});
+                // select s such that Follows*(p,s): None
+                REQUIRE(followsTable.getAllBeforeStatementsTypedStar(PrintStatement, AnyStatement).empty());
+                // select p such that Follows*(p,s): None
+                REQUIRE(followsTable.getAllAfterStatementsTypedStar(PrintStatement, AnyStatement).empty());
             }
         }
     }

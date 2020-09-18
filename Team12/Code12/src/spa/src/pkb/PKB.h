@@ -21,9 +21,13 @@ Vector<String> getUsesProcedures(const String& varName);
 Vector<String> getUsesVariablesFromStatement(Integer stmt);
 Vector<String> getUsesVariablesFromProcedure(const String& procName);
 Vector<Integer> getAllUsesStatements(StatementType stmtType);
-Vector<String> getAllUsesVariables(StatementType stmtType);
-Vector<String> getAllUsesVariables(const String& procName);
+Vector<String> getAllUsesVariablesFromStatementType(StatementType stmtType);
+Vector<String> getAllUsesVariablesFromProgram();
 Vector<String> getAllUsesProcedures();
+// TODO: implement these
+// TODO: extend to other tables
+Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType);
+Vector<Pair<String, String>> getAllUsesProcedureTuple();
 
 // Modifies
 void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames);
@@ -35,9 +39,12 @@ Vector<String> getModifiesProcedures(const String& varName);
 Vector<String> getModifiesVariablesFromStatement(Integer stmt);
 Vector<String> getModifiesVariablesFromProcedure(const String& procName);
 Vector<Integer> getAllModifiesStatements(StatementType stmtType);
-Vector<String> getAllModifiesVariables(StatementType stmtType);
-Vector<String> getAllModifiesVariables(const String& procName);
+Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType);
+Vector<String> getAllModifiesVariablesFromProgram();
 Vector<String> getAllModifiesProcedures();
+// TODO: implement
+Vector<Pair<Integer, String>> getAllModifiesStatementTuple(StatementType stmtType);
+Vector<Pair<String, String>> getAllModifiesProcedureTuple();
 
 // Parent
 void addParentRelationships(Integer parent, StatementType parentType, Integer child, StatementType childType);
@@ -53,6 +60,9 @@ Vector<Integer> getAllParentStatementsTyped(StatementType stmtTypeOfParent, Stat
 Vector<Integer> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+// TODO: implement
+Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 
 // Follows
 void addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after, StatementType afterStmtType);
@@ -68,6 +78,9 @@ Vector<Integer> getAllBeforeStatementsTyped(StatementType stmtTypeOfBefore, Stat
 Vector<Integer> getAllBeforeStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
+// TODO: implement
+Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
+Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 
 // Procedure
 void insertIntoProcedureTable(const String& procName);

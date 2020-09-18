@@ -3,107 +3,170 @@
  * for Follows and Follows* relationships.
  */
 
+#include "../../unit_testing/src/ast_utils/AstUtils.h"
 #include "catch.hpp"
 #include "frontend/FrontendManager.h"
 #include "pkb/PKB.h"
 
-String getTestProgram()
+TEST_CASE("Follows relationships stored correctly for test program - getAllBeforeStatementsTyped")
 {
-    String spheresdf = "\
-procedure main { \t\n\
-     read steps;\n\
-     call raymarch;\n\
-     print depth; }\n\
-\n\
-procedure raymarch {\n\
-     ro = 13;\n\
-     rd = 19;\n\
-     read depth; \n\
-    while (count < steps) {\n\
-            print depth;\n\
-            po = ro + rd * depth;\n\
-          call spheresdf;\n\
-          if (dist < epsilon) then {\n\
-                  done = depth; }\n\
-                else {\n\
-                  depth = depth + dist;} \n\
-          count = count + 1; }}\n\
-\n\
-procedure spheresdf {\n\
-     dist = x * x + y * y + z * z;\n\
-     x = dist;\n\
-     depth = depth;\n\
-     read p;\n\
-     while (x != p) {\n\
-            p = x;\n\
-            x = (dist / x + x) / 2; } \n\
-      dist = x - 1;\n\
-      x = x * x + y * y / 2; }\n\
-";
-    /*
-Annotated with statement numbers:
-procedure main {
-1.     read steps;
-2.     call raymarch;
-3.     print depth; }
+    parseSimple(getProgram20String_multipleProceduresSpheresdf());
 
-procedure raymarch {
-4.     ro = 13;
-5.     rd = 19;
-6.     read depth;
-7.     while (count < steps) {
-8.            print depth;
-9.            po = ro + rd * depth;
-10.          call spheresdf;
-11.          if (dist < epsilon) then {
-12.                  done = depth; }
-                else {
-13.                  depth = depth + dist;}
-14.          count = count + 1; }}
-
-procedure spheresdf {
-15.     dist = x * x + y * y + z * z;
-16.     x = dist;
-17.     depth = depth;
-18.     read p;
-19.     while (x != p) {
-20.            p = x;
-21.            x = (dist / x + x) / 2; }
-22.      dist = x - 1;
-23.      x = x * x + y * y / 2; }
-    */
-    return spheresdf;
-}
-
-TEST_CASE("Follows relationships stored correctly for test program")
-{
-    parseSimple(getTestProgram());
+    // Before - AnyStatement type, After - AnyStatement type
     std::vector<Integer> actualBefore = getAllBeforeStatementsTyped(AnyStatement, AnyStatement);
     std::unordered_set<Integer> actualBeforeSet(actualBefore.begin(), actualBefore.end());
     std::unordered_set<Integer> expectedBeforeSet = {1, 2, 4, 5, 6, 8, 9, 10, 11, 15, 16, 17, 18, 19, 20, 22};
     REQUIRE(actualBeforeSet == expectedBeforeSet);
 
-    std::vector<Integer> actualAfter = getAllAfterStatementsTyped(AnyStatement, AnyStatement);
-    std::unordered_set<Integer> actualAfterSet(actualAfter.begin(), actualAfter.end());
-    std::unordered_set<Integer> expectedAfterSet = {2, 3, 5, 6, 7, 9, 10, 11, 14, 16, 17, 18, 19, 21, 22, 23};
-    REQUIRE(actualAfterSet == expectedAfterSet);
+    // Before - WhileStatement type, After - CallStatement type
+    std::vector<Integer> actualBeforeWhileCall = getAllBeforeStatementsTyped(WhileStatement, CallStatement);
+    std::unordered_set<Integer> actualBeforeWhileCallSet(actualBeforeWhileCall.begin(), actualBeforeWhileCall.end());
+    std::unordered_set<Integer> expectedBeforeWhileCallSet = {};
+    REQUIRE(actualBeforeWhileCallSet == expectedBeforeWhileCallSet);
 }
 
-TEST_CASE("Follows* relationships stored correctly for test program")
+TEST_CASE("Follows relationships stored correctly for test program - getAllAfterStatementsTyped")
 {
-    parseSimple(getTestProgram());
+    // Before - AnyStatement type, After - AnyStatement type
+    std::vector<Integer> actualAfterTyped = getAllAfterStatementsTyped(AnyStatement, AnyStatement);
+    std::unordered_set<Integer> actualAfterTypedSet(actualAfterTyped.begin(), actualAfterTyped.end());
+    std::unordered_set<Integer> expectedAfterTypedSet = {2, 3, 5, 6, 7, 9, 10, 11, 14, 16, 17, 18, 19, 21, 22, 23};
+    REQUIRE(actualAfterTypedSet == expectedAfterTypedSet);
+
+    // Before - WhileStatement type, After - AssignmentStatement type
+    std::vector<Integer> actualAfterWhileAssign = getAllAfterStatementsTyped(WhileStatement, AssignmentStatement);
+    std::unordered_set<Integer> actualAfterWhileAssignSet(actualAfterWhileAssign.begin(), actualAfterWhileAssign.end());
+    std::unordered_set<Integer> expectedAfterWhileAssignSet = {22};
+    REQUIRE(actualAfterWhileAssignSet == expectedAfterWhileAssignSet);
+}
+
+TEST_CASE("Follows* relationships stored correctly for test program - getAllBeforeStatementsTypedStar")
+{
+    // Before - AnyStatement type, After - CallStatement type
     std::vector<Integer> actualBeforeCall = getAllBeforeStatementsTypedStar(AnyStatement, CallStatement);
     std::unordered_set<Integer> actualBeforeCallSet(actualBeforeCall.begin(), actualBeforeCall.end());
     std::unordered_set<Integer> expectedBeforeCallSet = {1, 8, 9};
     REQUIRE(actualBeforeCallSet == expectedBeforeCallSet);
 
+    // Before - AnyStatement type, After - PrintStatement type
     std::vector<Integer> actualBeforePrint = getAllBeforeStatementsTypedStar(AnyStatement, PrintStatement);
     std::unordered_set<Integer> actualBeforePrintSet(actualBeforePrint.begin(), actualBeforePrint.end());
     std::unordered_set<Integer> expectedBeforePrintSet = {1, 2};
     REQUIRE(actualBeforePrintSet == expectedBeforePrintSet);
 
+    // Before - AnyStatement type, After - WhileStatement type
+    std::vector<Integer> actualBeforeWhile = getAllBeforeStatementsTypedStar(AnyStatement, WhileStatement);
+    std::unordered_set<Integer> actualBeforeWhileSet(actualBeforeWhile.begin(), actualBeforeWhile.end());
+    std::unordered_set<Integer> expectedBeforeWhileSet = {4, 5, 6, 15, 16, 17, 18};
+    REQUIRE(actualBeforeWhileSet == expectedBeforeWhileSet);
+
+    // Before - AnyStatement type, After - IfStatement type
+    std::vector<Integer> actualBeforeIf = getAllBeforeStatementsTypedStar(AnyStatement, IfStatement);
+    std::unordered_set<Integer> actualBeforeIfSet(actualBeforeIf.begin(), actualBeforeIf.end());
+    std::unordered_set<Integer> expectedBeforeIfSet = {8, 9, 10};
+    REQUIRE(actualBeforeIfSet == expectedBeforeIfSet);
+
+    // Before - WhileStatement type, After - AnyStatement type
+    std::vector<Integer> actualBeforeWhileAny = getAllBeforeStatementsTypedStar(WhileStatement, AnyStatement);
+    std::unordered_set<Integer> actualBeforeWhileAnySet(actualBeforeWhileAny.begin(), actualBeforeWhileAny.end());
+    std::unordered_set<Integer> expectedBeforeWhileAnySet = {19};
+    REQUIRE(actualBeforeWhileAnySet == expectedBeforeWhileAnySet);
+
+    // Before - WhileStatement type, After - CallStatement type
+    std::vector<Integer> actualBeforeWhileCall = getAllBeforeStatementsTypedStar(WhileStatement, CallStatement);
+    std::unordered_set<Integer> actualBeforeWhileCallSet(actualBeforeWhileCall.begin(), actualBeforeWhileCall.end());
+    std::unordered_set<Integer> expectedBeforeWhileCallSet = {};
+    REQUIRE(actualBeforeWhileCallSet == expectedBeforeWhileCallSet);
+
+    // Before - WhileStatement type, After - IfStatement type
+    std::vector<Integer> actualBeforeWhileIf = getAllBeforeStatementsTypedStar(WhileStatement, IfStatement);
+    std::unordered_set<Integer> actualBeforeWhileIfSet(actualBeforeWhileIf.begin(), actualBeforeWhileIf.end());
+    std::unordered_set<Integer> expectedBeforeWhileIfSet = {};
+    REQUIRE(actualBeforeWhileIfSet == expectedBeforeWhileIfSet);
+
+    // Before - IfStatement type, After - AnyStatement type
+    std::vector<Integer> actualBeforeIfAny = getAllBeforeStatementsTypedStar(IfStatement, AnyStatement);
+    std::unordered_set<Integer> actualBeforeIfAnySet(actualBeforeIfAny.begin(), actualBeforeIfAny.end());
+    std::unordered_set<Integer> expectedBeforeIfAnySet = {11};
+    REQUIRE(actualBeforeIfAnySet == expectedBeforeIfAnySet);
+}
+
+TEST_CASE("Follows* relationships stored correctly for test program - getAllAfterStatementsTypedStar")
+{
+    // Before - AnyStatement type, After - PrintStatement type
     std::vector<Integer> actualAfterPrint = getAllAfterStatementsTypedStar(AnyStatement, PrintStatement);
     std::unordered_set<Integer> actualAfterPrintSet(actualAfterPrint.begin(), actualAfterPrint.end());
     std::unordered_set<Integer> expectedAfterPrintSet = {3};
     REQUIRE(actualAfterPrintSet == expectedAfterPrintSet);
+
+    // Before - AnyStatement type, After - CallStatement type
+    std::vector<Integer> actualAfterCall = getAllAfterStatementsTypedStar(AnyStatement, CallStatement);
+    std::unordered_set<Integer> actualAfterCallSet(actualAfterCall.begin(), actualAfterCall.end());
+    std::unordered_set<Integer> expectedAfterCallSet = {2, 10};
+    REQUIRE(actualAfterCallSet == expectedAfterCallSet);
+
+    // Before - AnyStatement type, After - IfStatement type
+    std::vector<Integer> actualAfterIf = getAllAfterStatementsTypedStar(AnyStatement, IfStatement);
+    std::unordered_set<Integer> actualAfterIfSet(actualAfterIf.begin(), actualAfterIf.end());
+    std::unordered_set<Integer> expectedAfterIfSet = {11};
+    REQUIRE(actualAfterIfSet == expectedAfterIfSet);
+
+    // Before - AnyStatement type, After - AssignmentStatement type
+    std::vector<Integer> actualAfterAssign = getAllAfterStatementsTypedStar(AnyStatement, AssignmentStatement);
+    std::unordered_set<Integer> actualAfterAssignSet(actualAfterAssign.begin(), actualAfterAssign.end());
+    std::unordered_set<Integer> expectedAfterAssignSet = {5, 9, 14, 16, 17, 21, 22, 23};
+    REQUIRE(actualAfterAssignSet == expectedAfterAssignSet);
+
+    // Before - WhileStatement type, After - AssignmentStatement type
+    std::vector<Integer> actualAfterWhileAssign = getAllAfterStatementsTypedStar(WhileStatement, AssignmentStatement);
+    std::unordered_set<Integer> actualAfterWhileAssignSet(actualAfterWhileAssign.begin(), actualAfterWhileAssign.end());
+    std::unordered_set<Integer> expectedAfterWhileAssignSet = {22, 23};
+    REQUIRE(actualAfterWhileAssignSet == expectedAfterWhileAssignSet);
+
+    // Before - IfStatement type, After - AssignmentStatement type
+    std::vector<Integer> actualAfterIfAssign = getAllAfterStatementsTypedStar(IfStatement, AssignmentStatement);
+    std::unordered_set<Integer> actualAfterIfAssignSet(actualAfterIfAssign.begin(), actualAfterIfAssign.end());
+    std::unordered_set<Integer> expectedAfterIfAssignSet = {14};
+    REQUIRE(actualAfterIfAssignSet == expectedAfterIfAssignSet);
+}
+
+TEST_CASE("Follows* relationships stored correctly for test program - getAllAfterStatementsStar")
+{
+    // Before Integer - 1, After - AnyStatement type
+    std::vector<Integer> actualAfterStatement1Any = getAllAfterStatementsStar(1, AnyStatement);
+    std::unordered_set<Integer> actualAfterStatement1AnySet(actualAfterStatement1Any.begin(),
+                                                            actualAfterStatement1Any.end());
+    std::unordered_set<Integer> expectedAfterStatement1AnySet = {2, 3};
+    REQUIRE(actualAfterStatement1AnySet == expectedAfterStatement1AnySet);
+
+    // Before Integer - 2, After - PrintStatement type
+    std::vector<Integer> actualAfterStatementPrint = getAllAfterStatementsStar(1, PrintStatement);
+    std::unordered_set<Integer> actualAfterStatementPrintSet(actualAfterStatementPrint.begin(),
+                                                             actualAfterStatementPrint.end());
+    std::unordered_set<Integer> expectedAfterStatementPrintSet = {3};
+    REQUIRE(actualAfterStatementPrintSet == expectedAfterStatementPrintSet);
+
+    // Before Integer - 23, After - AnyStatement type
+    std::vector<Integer> actualAfterStatement23Any = getAllAfterStatementsStar(23, AnyStatement);
+    std::unordered_set<Integer> actualAfterStatement23AnySet(actualAfterStatement23Any.begin(),
+                                                             actualAfterStatement23Any.end());
+    std::unordered_set<Integer> expectedAfterStatement23AnySet = {};
+    REQUIRE(actualAfterStatement23AnySet == expectedAfterStatement23AnySet);
+}
+
+TEST_CASE("Follows* relationships stored correctly for test program - getAllBeforeStatementsStar")
+{
+    // After Integer - 1, Before - AnyStatement type
+    std::vector<Integer> actualBeforeStatementAny = getAllBeforeStatementsStar(1, AnyStatement);
+    std::unordered_set<Integer> actualBeforeStatementAnySet(actualBeforeStatementAny.begin(),
+                                                            actualBeforeStatementAny.end());
+    std::unordered_set<Integer> expectedBeforeStatementAnySet = {};
+    REQUIRE(actualBeforeStatementAnySet == expectedBeforeStatementAnySet);
+
+    // After Integer - 23, Before - AssignmentStatement type
+    std::vector<Integer> actualBeforeStatementAssign = getAllBeforeStatementsStar(23, AssignmentStatement);
+    std::unordered_set<Integer> actualBeforeStatementAssignSet(actualBeforeStatementAssign.begin(),
+                                                               actualBeforeStatementAssign.end());
+    std::unordered_set<Integer> expectedBeforeStatementAssignSet = {15, 16, 17, 22};
+    REQUIRE(actualBeforeStatementAssignSet == expectedBeforeStatementAssignSet);
 }
