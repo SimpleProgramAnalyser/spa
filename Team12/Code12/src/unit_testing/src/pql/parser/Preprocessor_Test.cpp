@@ -425,14 +425,21 @@ TEST_CASE("Such That Uses If and Literal Ident")
 
 TEST_CASE("Such That Modifies NonVariable Returns Error")
 {
-    AbstractQuery abstractQuery = processQuery("variable v; stmt s; Select v such that Modifies (a, s)");
+    AbstractQuery abstractQuery = processQuery("assign a; stmt s; Select a such that Modifies (a, s)");
 
     REQUIRE(abstractQuery.isInvalid());
 }
 
 TEST_CASE("Such That Uses NonVariable Returns Error")
 {
-    AbstractQuery abstractQuery = processQuery("stmt s; read re; Select v such that Uses (s, re)");
+    AbstractQuery abstractQuery = processQuery("stmt s; read re; Select s such that Uses (s, re)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Such That Uses Constant Returns Error")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; constant c; Select s such that Uses (s, c)");
 
     REQUIRE(abstractQuery.isInvalid());
 }
