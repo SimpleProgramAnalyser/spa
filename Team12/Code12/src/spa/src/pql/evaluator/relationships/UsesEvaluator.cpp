@@ -52,7 +52,7 @@ Void UsesExtractor::evaluateRightKnown() const
         resultsTable->filterTable(
             leftRef, convertToClauseResult(getUsesStatements(rightRef.getValue(), mapToStatementType(leftType))));
     } else {
-        // declarations.getDesignEntityOfSynonym(leftRef.getValue()).getType() == ProcedureType
+        // left ref is a procedure
         resultsTable->filterTable(leftRef, getUsesProcedures(rightRef.getValue()));
     }
 }
