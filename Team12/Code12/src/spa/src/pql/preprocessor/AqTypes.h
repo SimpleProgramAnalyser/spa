@@ -138,7 +138,7 @@ private:
     Relationship relationship;
 
 public:
-    SuchThatClause(Relationship& r);
+    explicit SuchThatClause(Relationship& r);
     Relationship getRelationship();
     Boolean operator==(const SuchThatClause& suchThatClause);
 };
@@ -153,7 +153,7 @@ enum ExpressionSpecType : char {
 class ExpressionSpec {
 private:
     ExpressionSpecType expressionSpecType;
-    Expression* expression;
+    std::unique_ptr<Expression> expression;
     bool hasError;
 
 public:
@@ -200,16 +200,22 @@ public:
 
 class ClauseVector {
 private:
-    std::vector<Clause*> clauses;
+    List<Clause> clauses;
     Boolean hasError;
+    explicit ClauseVector(Boolean hasError) noexcept;
 
 public:
     ClauseVector() noexcept;
+    ~ClauseVector() = default;
+    ClauseVector(const ClauseVector&) = delete;
+    ClauseVector operator=(const ClauseVector&) = delete;
+    ClauseVector(ClauseVector&&) = default;
+    ClauseVector& operator=(ClauseVector&&) = default;
+
     static ClauseVector invalidClauseVector();
     Void add(Clause* clause);
-    Clause* get(Integer index);
-    Integer count();
-    Integer totalNumClauses();
+    Clause* get(Integer index) const;
+    Integer count() const;
     Boolean isInvalid() const;
     Boolean operator==(const ClauseVector& clauseVector);
 };
@@ -220,13 +226,15 @@ private:
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
+    AbstractQuery(Boolean hasError);
 
 public:
+    AbstractQuery(Synonym synonym, DeclarationTable& declarations);
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
-    Synonym getSelectSynonym();
-    ClauseVector getClauses();
-    DeclarationTable getDeclarationTable();
+    Synonym getSelectSynonym() const;
+    const ClauseVector& getClauses() const;
+    DeclarationTable getDeclarationTable() const;
     Boolean isInvalid() const;
     Boolean operator==(const AbstractQuery& abstractQuery);
     AbstractQuery();

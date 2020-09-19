@@ -2,11 +2,11 @@
 
 #include "frontend/parser/Parser.h"
 
-StringPair splitByFirstDelimiter(String str, char c);
+StringPair splitByFirstDelimiter(const String& str, char c);
 StringVector splitByFirstConsecutiveWhitespace(String str);
 Boolean containsOpenParentheses(String str);
 Boolean isEnclosedWith(String str, char leftEnd, char rightEnd);
-StringPair splitDeclarationAndSelectClause(String query);
+StringPair splitDeclarationAndSelectClause(const String& query);
 std::pair<Boolean, Integer> countNumOfOpenParentheses(String token, Integer previousNumOfOpenParentheses);
 
 /**
@@ -31,11 +31,11 @@ AbstractQuery Preprocessor::processQuery(String query)
     String synonymAndClausesString = trimWhitespace(splitQuery.second);
 
     // Process declarations into declaration table
-    DeclarationTable declarationTable = processDeclarations(declarationString);
-    if (declarationTable.isInvalid()) {
+    DeclarationTable processedDeclarations = processDeclarations(declarationString);
+    if (processedDeclarations.isInvalid()) {
         return AbstractQuery::invalidAbstractQuery();
     }
-    this->declarationTable = declarationTable;
+    this->declarationTable = processedDeclarations;
 
     // Extract select synonym
     StringVector selectAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClausesString);
@@ -59,13 +59,13 @@ AbstractQuery Preprocessor::processQuery(String query)
     }
 
     Synonym selectSynonym = synonymAndClausesVector.at(0);
-    if (!isValidSynonym(selectSynonym) || !declarationTable.hasSynonym(selectSynonym)) {
+    if (!isValidSynonym(selectSynonym) || !processedDeclarations.hasSynonym(selectSynonym)) {
         return AbstractQuery::invalidAbstractQuery();
     }
 
     // Only select a synonym, with no other clauses
     if (synonymAndClausesVector.size() == 1) {
-        AbstractQuery abstractQuery(selectSynonym, declarationTable, *(new ClauseVector()));
+        AbstractQuery abstractQuery(selectSynonym, processedDeclarations);
         return abstractQuery;
     }
 
@@ -76,7 +76,7 @@ AbstractQuery Preprocessor::processQuery(String query)
         return AbstractQuery::invalidAbstractQuery();
     }
 
-    AbstractQuery aq(selectSynonym, declarationTable, clausesVector);
+    AbstractQuery aq(selectSynonym, processedDeclarations, clausesVector);
     return aq;
 }
 
@@ -91,10 +91,10 @@ AbstractQuery Preprocessor::processQuery(String query)
  * @return              ClauseVector of all clauses in the
  *                      clausesString.
  */
-ClauseVector Preprocessor::processClauses(String clausesString)
+ClauseVector Preprocessor::processClauses(const String& clausesString)
 {
     ClauseVector clauseVector;
-    String* currentClauseConstraint = new String();
+    String currentClauseConstraint;
     Boolean hasCurrentClause = false;
     Boolean isPreviousTokenSuch = false; // is the previous token "such"
     ClauseType currentClauseType;
@@ -145,7 +145,7 @@ ClauseVector Preprocessor::processClauses(String clausesString)
                 isPreviousTokenSuch = false;
                 currentClauseType = SuchThatClauseType;
             } else {
-                currentClauseConstraint->append(*token);
+                currentClauseConstraint.append(*token);
 
                 std::pair<Boolean, Integer> result = countNumOfOpenParentheses(*token, numOfOpenedParentheses);
                 if (!result.first) {
@@ -171,9 +171,9 @@ ClauseVector Preprocessor::processClauses(String clausesString)
                         Clause* clause;
 
                         if (currentClauseType == SuchThatClauseType) {
-                            clause = processSuchThatClause(*currentClauseConstraint);
+                            clause = processSuchThatClause(currentClauseConstraint);
                         } else { // PatternClause
-                            clause = processPatternClause(*currentClauseConstraint);
+                            clause = processPatternClause(currentClauseConstraint);
                         }
 
                         if (clause->isInvalid()) {
@@ -185,7 +185,7 @@ ClauseVector Preprocessor::processClauses(String clausesString)
                         hasCurrentClause = false;
                         numOfOpenedParentheses = 0;
                         numOfTokensWithoutOpenParentheses = 0;
-                        currentClauseConstraint = new String();
+                        currentClauseConstraint.clear();
                         hasOpenParentheses = false;
                     }
                 }
@@ -194,9 +194,11 @@ ClauseVector Preprocessor::processClauses(String clausesString)
         }
     }
 
-    if (!currentClauseConstraint->empty()) {
+    if (!currentClauseConstraint.empty()) {
         return ClauseVector::invalidClauseVector();
     }
+
+    delete splitStringList;
 
     return clauseVector;
 }
@@ -238,8 +240,7 @@ Clause* Preprocessor::processSuchThatClause(String clauseConstraint)
         return Clause::invalidClause(SuchThatClauseType);
     }
 
-    auto* suchThatClause = new SuchThatClause(relationship);
-    return suchThatClause;
+    return new SuchThatClause(relationship);
 }
 
 /**
@@ -278,9 +279,7 @@ Clause* Preprocessor::processPatternClause(String clauseConstraint)
         return Clause::invalidClause(PatternClauseType);
     }
 
-    PatternClause* patternClause
-        = new PatternClause(patternSynonym, AssignPatternType, leftReference, rightExpressionSpec);
-    return patternClause;
+    return new PatternClause(patternSynonym, AssignPatternType, leftReference, std::move(rightExpressionSpec));
 }
 
 /**
@@ -392,19 +391,19 @@ Reference Preprocessor::createReference(String ref)
  * @return                      A DeclarationTable that stores all stated
  *                              declarations in the declarationsString.
  */
-DeclarationTable Preprocessor::processDeclarations(String declarationsString)
+DeclarationTable Preprocessor::processDeclarations(const String& declarationsString)
 {
-    DeclarationTable declarationTable;
+    DeclarationTable newDeclarations;
 
     StringList* tokenizedStringList = splitProgram(declarationsString);
-    DesignEntity* currentDesignEntityPtr;
+    DesignEntity currentDesignEntity;
     bool hasCurrentDesignEntity = false;
     bool isPreviousTokenASynonym = false;
 
-    for (auto& token : *tokenizedStringList) {
+    for (std::unique_ptr<std::string>& token : *tokenizedStringList) {
         if (!hasCurrentDesignEntity) {
-            currentDesignEntityPtr = new DesignEntity(*token);
-            if (currentDesignEntityPtr->getType() == NonExistentType) {
+            currentDesignEntity = DesignEntity(*token);
+            if (currentDesignEntity.getType() == NonExistentType) {
                 return DeclarationTable::invalidDeclarationTable();
             }
 
@@ -429,17 +428,17 @@ DeclarationTable Preprocessor::processDeclarations(String declarationsString)
                 // Syntax error e.g. while w w1;
                 return DeclarationTable::invalidDeclarationTable();
             } else {
-                if (!isValidSynonym(*token) || declarationTable.hasSynonym(*token)) {
+                if (!isValidSynonym(*token) || newDeclarations.hasSynonym(*token)) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
 
-                declarationTable.addDeclaration(*token, *currentDesignEntityPtr);
+                newDeclarations.addDeclaration(*token, currentDesignEntity);
                 isPreviousTokenASynonym = true;
             }
         }
     }
-
-    return declarationTable;
+    delete tokenizedStringList;
+    return newDeclarations;
 }
 
 // Utils
@@ -455,31 +454,31 @@ DeclarationTable Preprocessor::processDeclarations(String declarationsString)
  * @param c Delimiter.
  * @return Pair of Strings split by delimiter.
  */
-StringPair splitByFirstDelimiter(String str, char c)
+StringPair splitByFirstDelimiter(const String& str, char c)
 {
     StringPair stringVector;
     const char* currentChar = str.c_str();
-    String* currentToken = new String();
+    String currentToken;
 
     // Find first delimiter
     while (*currentChar != c && *currentChar != '\0') {
-        currentToken->push_back(*currentChar);
+        currentToken.push_back(*currentChar);
         currentChar++;
     }
 
-    String leftString = *currentToken;
-    currentToken = new String();
+    String leftString = currentToken;
+    currentToken.clear();
 
     if (*currentChar != '\0') {
         currentChar++; // Skips '('
     }
 
     while (*currentChar != '\0') {
-        currentToken->push_back(*currentChar);
+        currentToken.push_back(*currentChar);
         currentChar++;
     }
 
-    return std::make_pair(leftString, *currentToken);
+    return std::make_pair(leftString, currentToken);
 }
 
 /**
@@ -491,11 +490,11 @@ StringPair splitByFirstDelimiter(String str, char c)
  * @param query String to be split.
  * @return Pair of Strings split by delimiter.
  */
-StringPair splitDeclarationAndSelectClause(String query)
+StringPair splitDeclarationAndSelectClause(const String& query)
 {
     StringPair stringVector;
     std::size_t indexOfLastDelimiter = query.find_last_of(';', query.size() - 1);
-    if (indexOfLastDelimiter == -1) {
+    if (indexOfLastDelimiter == static_cast<std::size_t>(-1)) {
         return std::make_pair("", "");
     }
 
@@ -521,17 +520,17 @@ StringPair splitDeclarationAndSelectClause(String query)
 StringVector splitByFirstConsecutiveWhitespace(String str)
 {
     const char* currentChar = str.c_str();
-    String* currentToken = new String();
+    String currentToken;
     StringVector splitByFirstWhitespaceVector;
 
     // Find first whitespace
     while (!isWhitespace(currentChar) && *currentChar != '\0') {
-        currentToken->push_back(*currentChar);
+        currentToken.push_back(*currentChar);
         currentChar++;
     }
 
-    splitByFirstWhitespaceVector.push_back(*currentToken);
-    currentToken = new String();
+    splitByFirstWhitespaceVector.push_back(currentToken);
+    currentToken.clear();
 
     // Skip past all whitespaces
     while (isWhitespace(currentChar)) {
@@ -539,11 +538,11 @@ StringVector splitByFirstConsecutiveWhitespace(String str)
     }
 
     while (*currentChar != '\0') {
-        currentToken->push_back(*currentChar);
+        currentToken.push_back(*currentChar);
         currentChar++;
     }
 
-    splitByFirstWhitespaceVector.push_back(*currentToken);
+    splitByFirstWhitespaceVector.push_back(currentToken);
     return splitByFirstWhitespaceVector;
 }
 

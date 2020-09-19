@@ -14,8 +14,8 @@ typedef Vector<String> ClauseResult;
 
 ClauseResult filterResultsRelatedToSyn(const Vector<ClauseResult>& resultsList, const Vector<Boolean>& relatednessList);
 static ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
-RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery);
-ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
+RawQueryResult processSyntacticallyValidQuery(const AbstractQuery& abstractQuery);
+ClauseResult processSingleSynonymQuery(const Synonym& synonym, const ClauseVector& clauses,
                                        const DeclarationTable& declarations);
 ClauseResult processClause(const Synonym& synonym, Clause* clause, const DeclarationTable& declarations);
 ClauseResult processSuchThat(const Synonym& synonym, SuchThatClause* stClause, const DeclarationTable& declarations);
@@ -117,10 +117,10 @@ RawQueryResult Evaluator::evaluateQuery(const AbstractQuery& query)
  * valid but yields no result, an empty RawQueryResult
  * would be returned).
  */
-RawQueryResult processSyntacticallyValidQuery(AbstractQuery abstractQuery)
+RawQueryResult processSyntacticallyValidQuery(const AbstractQuery& abstractQuery)
 {
     Vector<Synonym> synonyms{(abstractQuery.getSelectSynonym())};
-    ClauseVector clauses = abstractQuery.getClauses();
+    const ClauseVector& clauses = abstractQuery.getClauses();
     DeclarationTable declarations = abstractQuery.getDeclarationTable();
     Vector<ClauseResult> results;
     if (synonyms.size() == 1) {
@@ -205,7 +205,7 @@ Boolean checkIfClauseRelatedToSynonym(Clause* clause, const Synonym& syn)
  * for more details), evaluated with respect
  * to a particular synonym.
  */
-ClauseResult processSingleSynonymQuery(const Synonym& synonym, ClauseVector clauses,
+ClauseResult processSingleSynonymQuery(const Synonym& synonym, const ClauseVector& clauses,
                                        const DeclarationTable& declarations)
 {
     Vector<ClauseResult> resultsList;
