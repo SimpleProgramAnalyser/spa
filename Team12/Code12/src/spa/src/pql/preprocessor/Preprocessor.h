@@ -12,7 +12,7 @@ private:
     Clause* processSuchThatClause(String clauseConstraint);
     Clause* processPatternClause(String clauseConstraint);
     Reference createReference(String ref);
-    ExpressionSpec createExpressionSpec(String ref);
+    ExpressionSpec createExpressionSpec(String exprSpecString);
     Expression* createExpression(String literal);
 
 public:

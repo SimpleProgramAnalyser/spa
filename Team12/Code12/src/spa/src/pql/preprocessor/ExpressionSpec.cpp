@@ -37,8 +37,9 @@ ExpressionSpec ExpressionSpec::invalidExpressionSpec()
 Boolean ExpressionSpec::operator==(const ExpressionSpec& expressionSpec)
 {
 
-    Boolean equalExpression = false;
+    Boolean equalExpression;
 
+    // Check if either expression is NULL
     if (!(this->expression) || !(expressionSpec.expression)) {
         if (this->expression || expressionSpec.expression) {
             return false;
