@@ -17,16 +17,10 @@ class PatternMatcherTuple {
 private:
     std::vector<String> assignStatementResults;
     std::unordered_set<String> variableResults;
+    std::vector<std::pair<Integer, String>> relationshipsResults;
 
 public:
     PatternMatcherTuple() = default;
-
-    PatternMatcherTuple(std::vector<String> assignStatementResults, std::vector<String> variableResults):
-        assignStatementResults(std::move(assignStatementResults))
-    {
-        std::copy(variableResults.begin(), variableResults.end(),
-                  std::inserter(variableResults, variableResults.end()));
-    }
 
     /**
      * Adds a matching assign statement to the result lists.
@@ -35,6 +29,7 @@ public:
     {
         assignStatementResults.push_back(std::to_string(assignStatementNumber));
         variableResults.insert(variable);
+        relationshipsResults.emplace_back(assignStatementNumber, variable);
     }
 
     /**
@@ -47,6 +42,8 @@ public:
                                             pmt.assignStatementResults.cend());
         std::copy(pmt.variableResults.begin(), pmt.variableResults.end(),
                   std::inserter(this->variableResults, this->variableResults.end()));
+        this->relationshipsResults.insert(this->relationshipsResults.cend(), pmt.relationshipsResults.cbegin(),
+                                          pmt.relationshipsResults.cend());
     }
 
     /**
@@ -63,6 +60,14 @@ public:
     std::vector<String> getVariables() const
     {
         return std::vector<String>(variableResults.begin(), variableResults.end());
+    }
+
+    /**
+     * Gets the list of results for matching relationships.
+     */
+    std::vector<std::pair<Integer, String>> getRelationships() const
+    {
+        return relationshipsResults;
     }
 };
 
@@ -256,6 +261,8 @@ Void evaluateAssignPattern(PatternClause* pnClause, ResultsTable* resultsTable)
     // store results in ResultTable
     resultsTable->filterTable(pnClause->getPatternSynonym(), allResults.getAssignStatements());
     resultsTable->filterTable(pnClause->getEntRef(), allResults.getVariables());
+    resultsTable->associateRelationships(
+        allResults.getRelationships(), Reference(SynonymRefType, pnClause->getPatternSynonym()), pnClause->getEntRef());
 }
 
 Void evaluatePattern(PatternClause* pnClause, ResultsTable* resultsTable)
