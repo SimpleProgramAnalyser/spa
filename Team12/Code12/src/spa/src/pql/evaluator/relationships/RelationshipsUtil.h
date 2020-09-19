@@ -12,12 +12,12 @@
 #include "pql/evaluator/ResultsTable.h"
 #include "pql/preprocessor/AqTypes.h"
 
-//================ HELPER METHODS FOR PKB ================
+//================ HELPER METHODS FOR PKB (Follows and Parent) ================
 
-inline Vector<Integer> verifyStatementType(const StatementType& stmtType, Vector<StatementNumWithType>& result)
+inline Vector<Integer> verifyStatementType(const StatementType& stmtType, const Vector<StatementNumWithType>& result)
 {
     if (!result.empty() && result.at(0).second == stmtType) {
-        return std::vector<Integer>(result.at(0).first);
+        return std::vector<Integer>{result.at(0).first};
     } else {
         return std::vector<Integer>();
     }
@@ -32,7 +32,8 @@ inline Vector<Integer> getAllBeforeStatements(Integer after, StatementType stmtT
 inline Vector<Integer> getAllAfterStatements(Integer before, StatementType stmtType)
 {
     Vector<StatementNumWithType> result = getAfterStatement(before);
-    return verifyStatementType(stmtType, result);
+    Vector<Integer> check = verifyStatementType(stmtType, result);
+    return check;
 }
 
 inline Vector<Integer> getAllParentStatements(Integer child, StatementType stmtType)
