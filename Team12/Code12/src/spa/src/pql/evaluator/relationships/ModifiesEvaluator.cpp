@@ -19,6 +19,7 @@ private:
     // case where left is variable, right is known (string)
     Void evaluateRightKnown() const;
     // case where both are variable
+    Void evaluateBothAnyConstrained(Boolean isStatementLeft) const;
     Void evaluateBothAny() const;
     // case where both are known
     Void evaluateBothKnown() const;
@@ -57,6 +58,55 @@ Void ModifiesEvaluator::evaluateRightKnown() const
     }
 }
 
+Void ModifiesEvaluator::evaluateBothAnyConstrained(Boolean isStatementLeft) const
+{
+    std::vector<String> tempResultForLeft;
+    std::vector<String> tempResultForRight;
+    std::vector<std::pair<String, String>> tempResultForRelationships;
+    Boolean leftAndRightRelated = refsHaveRelationship(leftRef, rightRef, resultsTable);
+    // check if variables have relations determined by previous clauses
+    if (leftAndRightRelated) {
+        // refsHaveRelationship guarantees both left and right are synonyms
+        std::vector<std::pair<String, String>> relationsList
+            = resultsTable->getRelationships(leftRef.getValue(), rightRef.getValue());
+        for (const std::pair<String, String>& relation : relationsList) {
+            Boolean modifiesHolds;
+            if (isStatementLeft) {
+                modifiesHolds = checkIfStatementModifies(std::stoi(relation.first), relation.second);
+            } else {
+                modifiesHolds = checkIfProcedureModifies(relation.first, relation.second);
+            }
+            if (modifiesHolds) {
+                tempResultForLeft.push_back(relation.first);
+                tempResultForRight.push_back(relation.second);
+                tempResultForRelationships.push_back(relation);
+            }
+        }
+    } else {
+        ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
+        ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
+        // do a Cartesian product of both result lists and check each pair
+        for (const String& strLeft : previousResultsForLeft) {
+            for (const String& strRight : previousResultsForRight) {
+                Boolean modifiesHolds;
+                if (isStatementLeft) {
+                    modifiesHolds = checkIfStatementModifies(std::stoi(strLeft), strRight);
+                } else {
+                    modifiesHolds = checkIfProcedureModifies(strLeft, strRight);
+                }
+                if (modifiesHolds) {
+                    tempResultForLeft.push_back(strLeft);
+                    tempResultForRight.push_back(strRight);
+                    tempResultForRelationships.emplace_back(strLeft, strRight);
+                }
+            }
+        }
+    }
+    resultsTable->filterTable(leftRef, tempResultForLeft);
+    resultsTable->filterTable(rightRef, tempResultForRight);
+    resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
+}
+
 Void ModifiesEvaluator::evaluateBothAny() const
 {
     Boolean isStatementLeft
@@ -64,30 +114,7 @@ Void ModifiesEvaluator::evaluateBothAny() const
     Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
     Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
     if (leftHasConstraints || rightHasConstraints) {
-        ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
-        ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
-        std::vector<String> tempResultForLeft;
-        std::vector<String> tempResultForRight;
-        std::vector<std::pair<String, String>> tempResultForRelationships;
-        // do a Cartesian product of both result lists and check each pair
-        for (const String& strLeft : previousResultsForLeft) {
-            for (const String& strRight : previousResultsForRight) {
-                Boolean followsHolds;
-                if (isStatementLeft) {
-                    followsHolds = checkIfStatementModifies(std::stoi(strLeft), strRight);
-                } else {
-                    followsHolds = checkIfProcedureModifies(strLeft, strRight);
-                }
-                if (followsHolds) {
-                    tempResultForLeft.push_back(strLeft);
-                    tempResultForRight.push_back(strRight);
-                    tempResultForRelationships.emplace_back(strLeft, strRight);
-                }
-            }
-        }
-        resultsTable->filterTable(leftRef, tempResultForLeft);
-        resultsTable->filterTable(rightRef, tempResultForRight);
-        resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
+        evaluateBothAnyConstrained(isStatementLeft);
     } else if (isStatementLeft) {
         StatementType leftStmtType = mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
         // select stmt

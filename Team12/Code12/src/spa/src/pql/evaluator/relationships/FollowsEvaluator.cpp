@@ -21,6 +21,7 @@ private:
     // case where left is variable, right is known (integer)
     Void evaluateRightKnown() const;
     // case where both are variable
+    Void evaluateBothAnyConstrained() const;
     Void evaluateBothAny() const;
     // case where both are known
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
@@ -93,16 +94,29 @@ Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal
     }
 }
 
-Void FollowsEvaluator::evaluateBothAny() const
+Void FollowsEvaluator::evaluateBothAnyConstrained() const
 {
-    Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
-    Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
-    if (leftHasConstraints || rightHasConstraints) {
+    std::vector<String> tempResultForLeft;
+    std::vector<String> tempResultForRight;
+    std::vector<std::pair<String, String>> tempResultForRelationships;
+    Boolean leftAndRightRelated = refsHaveRelationship(leftRef, rightRef, resultsTable);
+    // check if variables have relations determined by previous clauses
+    if (leftAndRightRelated) {
+        // refsHaveRelationship guarantees both left and right are synonyms
+        std::vector<std::pair<String, String>> relationsList
+            = resultsTable->getRelationships(leftRef.getValue(), rightRef.getValue());
+        for (const std::pair<String, String>& relation : relationsList) {
+            // for Follows, both are guaranteed to be integer
+            Boolean followsHolds = pkbBothKnownFunction(std::stoi(relation.first), std::stoi(relation.second));
+            if (followsHolds) {
+                tempResultForLeft.push_back(relation.first);
+                tempResultForRight.push_back(relation.second);
+                tempResultForRelationships.emplace_back(relation.first, relation.second);
+            }
+        }
+    } else {
         ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
         ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
-        std::vector<String> tempResultForLeft;
-        std::vector<String> tempResultForRight;
-        std::vector<std::pair<String, String>> tempResultForRelationships;
         // do a Cartesian product of both result lists and check each pair
         for (const String& strLeft : previousResultsForLeft) {
             for (const String& strRight : previousResultsForRight) {
@@ -115,9 +129,18 @@ Void FollowsEvaluator::evaluateBothAny() const
                 }
             }
         }
-        resultsTable->filterTable(leftRef, tempResultForLeft);
-        resultsTable->filterTable(rightRef, tempResultForRight);
-        resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
+    }
+    resultsTable->filterTable(leftRef, tempResultForLeft);
+    resultsTable->filterTable(rightRef, tempResultForRight);
+    resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
+}
+
+Void FollowsEvaluator::evaluateBothAny() const
+{
+    Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
+    Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
+    if (leftHasConstraints || rightHasConstraints) {
+        evaluateBothAnyConstrained();
     } else {
         // In this case, we can only get the DesignEntityType of both the left and right operands
         StatementType leftRefStmtType = leftRef.isWildCard()
