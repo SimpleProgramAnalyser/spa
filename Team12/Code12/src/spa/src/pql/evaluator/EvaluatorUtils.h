@@ -24,7 +24,7 @@ public:
     Synonym synonym;
     String value;
 
-    PotentialValue(Synonym s, String val): synonym(std::move(s)), value(std::move(val)) {}
+    PotentialValue(Synonym synonym, String value): synonym(std::move(synonym)), value(std::move(value)) {}
 
     bool operator==(const PotentialValue& pv) const
     {

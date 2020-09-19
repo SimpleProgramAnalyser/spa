@@ -90,5 +90,49 @@ void RelationshipsGraph::deleteFromGraph(const PotentialValue& pv, ResultsTable*
             // we update the results table
             resultsTable->eliminatePotentialValue(affected.synonym, affected.value);
         }
+        // clear synonyms relationship from cache
+        if (synonymRelationshipsCache.find(affected.synonym) != synonymRelationshipsCache.end()
+            && synonymRelationshipsCache[affected.synonym].find(pv.synonym)
+                   != synonymRelationshipsCache[affected.synonym].end()) {
+            // delete the cached relationship between synonyms, even if there could
+            // still be relationships between them for other potential values
+            synonymRelationshipsCache[affected.synonym].erase(pv.synonym);
+        }
     }
+    // clear synonym from cache, even though the synonym may still
+    // have other potential values with relationships
+    if (synonymRelationshipsCache.find(pv.synonym) != synonymRelationshipsCache.end()) {
+        synonymRelationshipsCache.erase(pv.synonym);
+    }
+}
+
+Boolean RelationshipsGraph::checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym)
+{
+    if (synonymRelationshipsCache.find(firstSynonym) != synonymRelationshipsCache.end()) {
+        return synonymRelationshipsCache[firstSynonym].find(secondSynonym)
+               != synonymRelationshipsCache[firstSynonym].end();
+    } else if (synonymRelationshipsCache.find(secondSynonym) != synonymRelationshipsCache.end()) {
+        return synonymRelationshipsCache[secondSynonym].find(firstSynonym)
+               != synonymRelationshipsCache[secondSynonym].end();
+    } else {
+        return false;
+    }
+}
+
+Boolean RelationshipsGraph::checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv)
+{
+    if (relationshipsTable.find(firstPv) != relationshipsTable.end()) {
+        return relationshipsTable[firstPv].find(secondPv) != relationshipsTable[firstPv].end();
+    } else {
+        return false;
+    }
+}
+
+std::vector<PotentialValue> RelationshipsGraph::retrieveRelationships(const PotentialValue& value)
+{
+    std::vector<PotentialValue> resultsList;
+    if (relationshipsTable.find(value) != relationshipsTable.end()) {
+        resultsList.insert(resultsList.end(), relationshipsTable[value].begin(), relationshipsTable[value].end());
+    }
+    return resultsList;
 }

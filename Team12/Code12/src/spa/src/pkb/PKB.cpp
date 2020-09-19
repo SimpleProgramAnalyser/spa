@@ -55,7 +55,10 @@ Vector<String> getAllUsesProcedures()
 }
 Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType)
 {
-    return Vector<Pair<Integer, String>>();
+    return Vector<Pair<Integer, String>>{{9, "ro"},    {9, "rd"},     {9, "depth"}, {12, "depth"}, {13, "depth"},
+                                         {13, "dist"}, {14, "count"}, {15, "x"},    {15, "y"},     {15, "z"},
+                                         {16, "dist"}, {17, "depth"}, {20, "x"},    {21, "dist"},  {21, "x"},
+                                         {22, "x"},    {23, "x"},     {23, "y"}};
 }
 Vector<Pair<String, String>> getAllUsesProcedureTuple()
 {

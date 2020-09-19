@@ -203,6 +203,32 @@ public:
      */
     void associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Reference& leftRef,
                                 const Reference& rightRef);
+
+    /**
+     * Checks the relationship table for two synonyms, to
+     * see whether there is any relationships between the
+     * potential values of the two.
+     *
+     * @param leftSynonym Left synonym to be checked.
+     * @param rightSynonym Right synonym to be checked.
+     * @return True, if some clause has restricted the
+     *         left and right to certain relationships.
+     */
+    Boolean checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+
+    /**
+     * Gets all registered relationships between two synonyms
+     * in the relationships table. Note that if no such
+     * relationships exist, there may be a runtime error!
+     * Use checkIfHaveRelationships to determine whether
+     * the relationships exist before calling this method.
+     *
+     * @param leftSynonym Left synonym of the relationship.
+     * @param rightSynonym Right synonym of the relationship.
+     * @return Pairs of the possible (left, right) values in
+     *         the relationships table.
+     */
+    std::vector<std::pair<String, String>> getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
 };
 
 /*
@@ -232,6 +258,13 @@ class RelationshipsGraph {
 private:
     std::unordered_map<PotentialValue, std::unordered_set<PotentialValue, PotentialValueHasher>, PotentialValueHasher>
         relationshipsTable;
+    /**
+     * If a relationship between two synonyms is found in the cache, then
+     * it is certain that their potential values have some relationship
+     * within relationshipsTable. If it is not found, a manual search of
+     * relationshipsTable is required.
+     */
+    std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
 
     void associate(const PotentialValue& firstKey, const PotentialValue& secondKey);
     void deleteEdge(const PotentialValue& firstKey, const PotentialValue& secondKey);
@@ -244,6 +277,19 @@ private:
             PotentialValue firstKey(firstSynonym, firstToString(value.first));
             PotentialValue secondKey(secondSynonym, secondToString(value.second));
             associate(firstKey, secondKey);
+        }
+        // store the relationships in cache
+        if (!valueRelationships.empty()) {
+            if (synonymRelationshipsCache.find(firstSynonym) == synonymRelationshipsCache.end()) {
+                synonymRelationshipsCache.insert(
+                    std::pair<Synonym, std::unordered_set<Synonym>>(firstSynonym, std::unordered_set<Synonym>()));
+            }
+            synonymRelationshipsCache[firstSynonym].insert(secondSynonym);
+            if (synonymRelationshipsCache.find(secondSynonym) == synonymRelationshipsCache.end()) {
+                synonymRelationshipsCache.insert(
+                    std::pair<Synonym, std::unordered_set<Synonym>>(secondSynonym, std::unordered_set<Synonym>()));
+            }
+            synonymRelationshipsCache[secondSynonym].insert(firstSynonym);
         }
     }
 
@@ -290,6 +336,46 @@ public:
      *                     synonyms can be removed as well
      */
     void deleteFromGraph(const PotentialValue& pv, ResultsTable* resultsTable);
+
+    /**
+     * Checks whether two synonyms have relationships in the
+     * relationships table cache. If this returns false, the
+     * two synonyms could still have a relationship, but it
+     * would require iterating over the entire relationship
+     * table to determine. If this returns true, then it is
+     * certain that firstSynonym and secondSynonym have some
+     * potential values that affect each other.
+     *
+     * @param firstSynonym The first synonym to be checked.
+     * @param secondSynonym The second synonym to be checked.
+     *
+     * @return True, if it is certain that firstSynonym and
+     *         secondSynonym has relationships in the graph.
+     *         If it is uncertain, but not impossible, false.
+     */
+    Boolean checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym);
+
+    /**
+     * Checks if two potential values are related in the
+     * relationships table.
+     *
+     * @param firstPv The first potential value.
+     * @param secondPv The second potential value.
+     * @return True, if both values exist in the table and
+     *         there is a relationship between them.
+     *         Otherwise, false.
+     */
+    Boolean checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv);
+
+    /**
+     * Retrieves all values related to a potential value
+     * as stored in relationships table.
+     *
+     * @param value The potential value to look up.
+     * @return List of all other potential values that are
+     *         related to it.
+     */
+    std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value);
 };
 
 #endif // SPA_PQL_RESULTS_TABLE_H

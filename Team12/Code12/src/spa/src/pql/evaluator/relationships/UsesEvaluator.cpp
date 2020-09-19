@@ -19,6 +19,7 @@ private:
     // case where left is variable, right is known (string)
     Void evaluateRightKnown() const;
     // case where both are variable
+    Void evaluateBothAnyConstrained(Boolean isStatementLeft) const;
     Void evaluateBothAny() const;
     // case where both are known
     Void evaluateBothKnown() const;
@@ -57,37 +58,63 @@ Void UsesEvaluator::evaluateRightKnown() const
     }
 }
 
-Void UsesEvaluator::evaluateBothAny() const
+Void UsesEvaluator::evaluateBothAnyConstrained(Boolean isStatementLeft) const
 {
-    Boolean isStatementLeft
-        = leftRefType == SynonymRefType && isStatementDesignEntity(resultsTable->getTypeOfSynonym(leftRef.getValue()));
-    Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
-    Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
-    if (leftHasConstraints || rightHasConstraints) {
+    std::vector<String> tempResultForLeft;
+    std::vector<String> tempResultForRight;
+    std::vector<std::pair<String, String>> tempResultForRelationships;
+    Boolean leftAndRightRelated = refsHaveRelationship(leftRef, rightRef, resultsTable);
+    // check if variables have relations determined by previous clauses
+    if (leftAndRightRelated) {
+        // refsHaveRelationship guarantees both left and right are synonyms
+        std::vector<std::pair<String, String>> relationsList
+            = resultsTable->getRelationships(leftRef.getValue(), rightRef.getValue());
+        for (const std::pair<String, String>& relation : relationsList) {
+            Boolean usesHolds;
+            if (isStatementLeft) {
+                usesHolds = checkIfStatementUses(std::stoi(relation.first), relation.second);
+            } else {
+                usesHolds = checkIfProcedureUses(relation.first, relation.second);
+            }
+            if (usesHolds) {
+                tempResultForLeft.push_back(relation.first);
+                tempResultForRight.push_back(relation.second);
+                tempResultForRelationships.push_back(relation);
+            }
+        }
+    } else {
         ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
         ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
-        std::vector<String> tempResultForLeft;
-        std::vector<String> tempResultForRight;
-        std::vector<std::pair<String, String>> tempResultForRelationships;
         // do a Cartesian product of both result lists and check each pair
         for (const String& strLeft : previousResultsForLeft) {
             for (const String& strRight : previousResultsForRight) {
-                Boolean followsHolds;
+                Boolean usesHolds;
                 if (isStatementLeft) {
-                    followsHolds = checkIfStatementUses(std::stoi(strLeft), strRight);
+                    usesHolds = checkIfStatementUses(std::stoi(strLeft), strRight);
                 } else {
-                    followsHolds = checkIfProcedureUses(strLeft, strRight);
+                    usesHolds = checkIfProcedureUses(strLeft, strRight);
                 }
-                if (followsHolds) {
+                if (usesHolds) {
                     tempResultForLeft.push_back(strLeft);
                     tempResultForRight.push_back(strRight);
                     tempResultForRelationships.emplace_back(strLeft, strRight);
                 }
             }
         }
-        resultsTable->filterTable(leftRef, tempResultForLeft);
-        resultsTable->filterTable(rightRef, tempResultForRight);
-        resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
+    }
+    resultsTable->filterTable(leftRef, tempResultForLeft);
+    resultsTable->filterTable(rightRef, tempResultForRight);
+    resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
+}
+
+Void UsesEvaluator::evaluateBothAny() const
+{
+    Boolean isStatementLeft
+        = leftRefType == SynonymRefType && isStatementDesignEntity(resultsTable->getTypeOfSynonym(leftRef.getValue()));
+    Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
+    Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
+    if ((leftHasConstraints || rightHasConstraints)) {
+        evaluateBothAnyConstrained(isStatementLeft);
     } else if (isStatementLeft) {
         StatementType leftStmtType = mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
         // select stmt

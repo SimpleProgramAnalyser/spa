@@ -195,6 +195,42 @@ void ResultsTable::associateRelationships(Vector<Pair<Integer, Integer>> valueRe
     this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
 }
 
+Boolean ResultsTable::checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
+{
+    if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
+        return true;
+    }
+    ClauseResult resultsForLeft = get(leftSynonym);
+    ClauseResult resultsForRight = get(rightSynonym);
+    for (const String& leftResult : resultsForLeft) {
+        for (const String& rightResult : resultsForRight) {
+            if (relationships->checkIfRelated(PotentialValue(leftSynonym, leftResult),
+                                              PotentialValue(rightSynonym, rightResult))) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+std::vector<std::pair<String, String>> ResultsTable::getRelationships(const Synonym& leftSynonym,
+                                                                      const Synonym& rightSynonym)
+{
+    ClauseResult resultsForLeft = get(leftSynonym);
+    std::vector<std::pair<String, String>> relationshipsList;
+    for (const String& value : resultsForLeft) {
+        std::vector<PotentialValue> relatedValues
+            = relationships->retrieveRelationships(PotentialValue(leftSynonym, value));
+        for (const PotentialValue& pv : relatedValues) {
+            if (pv.synonym == rightSynonym) {
+                relationshipsList.emplace_back(value, pv.value);
+            }
+            // if pv is not for right synonym, ignore
+        }
+    }
+    return relationshipsList;
+}
+
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)
 {
     ClauseResult results;
