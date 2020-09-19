@@ -91,7 +91,7 @@ Select s such that Uses (s, "z")
 19 - Uses statement with 1 unknown synonym, Select based on LHS
 assign s;
 Select s such that Uses (s, "normSq")
-19, 40
+19
 5000
 20 - Uses statement with 1 unknown synonym, Select based on LHS
 call s;
@@ -101,7 +101,7 @@ Select s such that Uses (s, "y")
 21 - Uses statement with 1 unknown synonym, Select based on LHS
 while s;
 Select s such that Uses (s, "y")
-9, 24, 30
+9, 17, 24, 30
 5000
 22 - Uses statement with 1 unknown synonym, Select based on LHS
 if s;
@@ -131,7 +131,7 @@ cenX, normSq, readPoint, specialRead, x, y, z
 27 - Uses statement with 1 unknown synonym, Select based on RHS (while with call inside)
 variable s;
 Select s such that Uses (24, s)
-x, y, z count, cenX, cenY, readPoint, specialRead
+x, y, z, count, cenX, cenY, readPoint, specialRead, normSq
 5000
 28 - Uses statement with 1 unknown synonym, Select based on RHS (if)
 variable s;
