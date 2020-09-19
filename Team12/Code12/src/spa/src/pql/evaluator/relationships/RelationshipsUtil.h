@@ -16,7 +16,7 @@
 
 inline Vector<Integer> verifyStatementType(const StatementType& stmtType, const Vector<StatementNumWithType>& result)
 {
-    if (!result.empty() && result.at(0).second == stmtType) {
+    if (!result.empty() && (result.at(0).second == stmtType || stmtType == AnyStatement)) {
         return std::vector<Integer>{result.at(0).first};
     } else {
         return std::vector<Integer>();
