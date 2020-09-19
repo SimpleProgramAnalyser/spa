@@ -138,15 +138,17 @@ public:
      * values already exist in the results table. If the values
      * do not exist, the behaviour of other methods is undefined.
      *
+     * If the references are not synonyms, do nothing.
+     *
      * @param valueRelationships List of relationships between
      *                           potential values.
-     * @param firstSynonym The synonym that the first value
+     * @param leftRef The reference that the first value
      *                     corresponds to.
-     * @param firstSynonym The synonym that the second
+     * @param rightRef The reference that the second
      *                     value corresponds to.
      */
-    void associateRelationships(Vector<Pair<String, String>> valueRelationships, const Synonym& firstSynonym,
-                                const Synonym& secondSynonym);
+    void associateRelationships(Vector<Pair<String, String>> valueRelationships, const Reference& leftRef,
+                                const Reference& rightRef);
 
     /**
      * Adds a list of relationships between potential values
@@ -154,15 +156,17 @@ public:
      * values already exist in the results table. If the values
      * do not exist, the behaviour of other methods is undefined.
      *
+     * If the references are not synonyms, do nothing.
+     *
      * @param valueRelationships List of relationships between
      *                           potential values.
-     * @param firstSynonym The synonym that the first value
+     * @param leftRef The reference that the first value
      *                     corresponds to.
-     * @param firstSynonym The synonym that the second
+     * @param rightRef The reference that the second
      *                     value corresponds to.
      */
-    void associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Synonym& firstSynonym,
-                                const Synonym& secondSynonym);
+    void associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Reference& leftRef,
+                                const Reference& rightRef);
 
     /**
      * Adds a list of relationships between potential values
@@ -170,15 +174,17 @@ public:
      * values already exist in the results table. If the values
      * do not exist, the behaviour of other methods is undefined.
      *
+     * If the references are not synonyms, do nothing.
+     *
      * @param valueRelationships List of relationships between
      *                           potential values.
-     * @param firstSynonym The synonym that the first value
+     * @param leftRef The reference that the first value
      *                     corresponds to.
-     * @param firstSynonym The synonym that the second
+     * @param rightRef The reference that the second
      *                     value corresponds to.
      */
-    void associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Synonym& firstSynonym,
-                                const Synonym& secondSynonym);
+    void associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Reference& leftRef,
+                                const Reference& rightRef);
 
     /**
      * Adds a list of relationships between potential values
@@ -186,15 +192,17 @@ public:
      * values already exist in the results table. If the values
      * do not exist, the behaviour of other methods is undefined.
      *
+     * If the references are not synonyms, do nothing.
+     *
      * @param valueRelationships List of relationships between
      *                           potential values.
-     * @param firstSynonym The synonym that the first value
+     * @param leftRef The reference that the first value
      *                     corresponds to.
-     * @param firstSynonym The synonym that the second
+     * @param rightRef The reference that the second
      *                     value corresponds to.
      */
-    void associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Synonym& firstSynonym,
-                                const Synonym& secondSynonym);
+    void associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Reference& leftRef,
+                                const Reference& rightRef);
 };
 
 /*

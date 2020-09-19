@@ -102,6 +102,7 @@ Void FollowsEvaluator::evaluateBothAny() const
         ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
         std::vector<String> tempResultForLeft;
         std::vector<String> tempResultForRight;
+        std::vector<std::pair<String, String>> tempResultForRelationships;
         // do a Cartesian product of both result lists and check each pair
         for (const String& strLeft : previousResultsForLeft) {
             for (const String& strRight : previousResultsForRight) {
@@ -110,11 +111,13 @@ Void FollowsEvaluator::evaluateBothAny() const
                 if (followsHolds) {
                     tempResultForLeft.push_back(strLeft);
                     tempResultForRight.push_back(strRight);
+                    tempResultForRelationships.emplace_back(strLeft, strRight);
                 }
             }
         }
         resultsTable->filterTable(leftRef, tempResultForLeft);
         resultsTable->filterTable(rightRef, tempResultForRight);
+        resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
     } else {
         // In this case, we can only get the DesignEntityType of both the left and right operands
         StatementType leftRefStmtType = leftRef.isWildCard()
@@ -128,11 +131,15 @@ Void FollowsEvaluator::evaluateBothAny() const
                 leftRef, convertToClauseResult(getAllBeforeStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
             resultsTable->filterTable(
                 rightRef, convertToClauseResult(getAllAfterStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
+            resultsTable->associateRelationships(getAllFollowsTupleStar(leftRefStmtType, rightRefStmtType), leftRef,
+                                                 rightRef);
         } else {
             resultsTable->filterTable(
                 leftRef, convertToClauseResult(getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType)));
             resultsTable->filterTable(
                 rightRef, convertToClauseResult(getAllAfterStatementsTyped(leftRefStmtType, rightRefStmtType)));
+            resultsTable->associateRelationships(getAllFollowsTuple(leftRefStmtType, rightRefStmtType), leftRef,
+                                                 rightRef);
         }
     }
 }

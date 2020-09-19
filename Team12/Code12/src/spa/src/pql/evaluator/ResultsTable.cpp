@@ -151,28 +151,48 @@ void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String&
     }
 }
 
-void ResultsTable::associateRelationships(Vector<Pair<String, String>> valueRelationships, const Synonym& firstSynonym,
-                                          const Synonym& secondSynonym)
+void ResultsTable::associateRelationships(Vector<Pair<String, String>> valueRelationships, const Reference& leftRef,
+                                          const Reference& rightRef)
 {
-    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
+    // short-circuit if relationships are empty, or refs are not synonyms
+    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
+        || rightRef.getReferenceType() != SynonymRefType) {
+        return;
+    }
+    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
 }
 
-void ResultsTable::associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Synonym& firstSynonym,
-                                          const Synonym& secondSynonym)
+void ResultsTable::associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Reference& leftRef,
+                                          const Reference& rightRef)
 {
-    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
+    // short-circuit if relationships are empty, or refs are not synonyms
+    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
+        || rightRef.getReferenceType() != SynonymRefType) {
+        return;
+    }
+    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
 }
 
-void ResultsTable::associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Synonym& firstSynonym,
-                                          const Synonym& secondSynonym)
+void ResultsTable::associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Reference& leftRef,
+                                          const Reference& rightRef)
 {
-    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
+    // short-circuit if relationships are empty, or refs are not synonyms
+    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
+        || rightRef.getReferenceType() != SynonymRefType) {
+        return;
+    }
+    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
 }
 
-void ResultsTable::associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships,
-                                          const Synonym& firstSynonym, const Synonym& secondSynonym)
+void ResultsTable::associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Reference& leftRef,
+                                          const Reference& rightRef)
 {
-    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
+    // short-circuit if relationships are empty, or refs are not synonyms
+    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
+        || rightRef.getReferenceType() != SynonymRefType) {
+        return;
+    }
+    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
 }
 
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)

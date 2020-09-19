@@ -68,6 +68,7 @@ Void ModifiesEvaluator::evaluateBothAny() const
         ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
         std::vector<String> tempResultForLeft;
         std::vector<String> tempResultForRight;
+        std::vector<std::pair<String, String>> tempResultForRelationships;
         // do a Cartesian product of both result lists and check each pair
         for (const String& strLeft : previousResultsForLeft) {
             for (const String& strRight : previousResultsForRight) {
@@ -80,22 +81,28 @@ Void ModifiesEvaluator::evaluateBothAny() const
                 if (followsHolds) {
                     tempResultForLeft.push_back(strLeft);
                     tempResultForRight.push_back(strRight);
+                    tempResultForRelationships.emplace_back(strLeft, strRight);
                 }
             }
         }
         resultsTable->filterTable(leftRef, tempResultForLeft);
         resultsTable->filterTable(rightRef, tempResultForRight);
+        resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
     } else if (isStatementLeft) {
         StatementType leftStmtType = mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
         // select stmt
         resultsTable->filterTable(leftRef, convertToClauseResult(getAllModifiesStatements(leftStmtType)));
         // select variable with statement
         resultsTable->filterTable(rightRef, getAllModifiesVariablesFromStatementType(leftStmtType));
+        // select all tuples Modifies(stmt, variable)
+        resultsTable->associateRelationships(getAllModifiesStatementTuple(leftStmtType), leftRef, rightRef);
     } else if (leftRefType == SynonymRefType) {
         // select procedure
         resultsTable->filterTable(leftRef, getAllModifiesProcedures());
         // select variable with procedure
         resultsTable->filterTable(rightRef, getModifiesVariablesFromProcedure(leftRef.getValue()));
+        // select all tuples Modifies(procedure, variable)
+        resultsTable->associateRelationships(getAllModifiesProcedureTuple(), leftRef, rightRef);
     } else {
         throw std::runtime_error("Unknown case in ModifiesExtractor::evaluateBothAny");
     }

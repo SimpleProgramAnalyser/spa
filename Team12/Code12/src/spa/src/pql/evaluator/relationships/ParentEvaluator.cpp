@@ -84,6 +84,7 @@ Void ParentEvaluator::evaluateBothAny() const
         ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
         std::vector<String> tempResultForLeft;
         std::vector<String> tempResultForRight;
+        std::vector<std::pair<String, String>> tempResultForRelationships;
         // do a Cartesian product of both result lists and check each pair
         for (const String& strLeft : previousResultsForLeft) {
             for (const String& strRight : previousResultsForRight) {
@@ -92,11 +93,13 @@ Void ParentEvaluator::evaluateBothAny() const
                 if (parentHolds) {
                     tempResultForLeft.push_back(strLeft);
                     tempResultForRight.push_back(strRight);
+                    tempResultForRelationships.emplace_back(strLeft, strRight);
                 }
             }
         }
         resultsTable->filterTable(leftRef, tempResultForLeft);
         resultsTable->filterTable(rightRef, tempResultForRight);
+        resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
     } else {
         // In this case, we can only get the DesignEntityType of both the left and right operands
         StatementType leftRefStmtType = leftRef.isWildCard()
@@ -110,11 +113,15 @@ Void ParentEvaluator::evaluateBothAny() const
                 leftRef, convertToClauseResult(getAllParentStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
             resultsTable->filterTable(
                 rightRef, convertToClauseResult(getAllChildStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
+            resultsTable->associateRelationships(getAllParentTupleStar(leftRefStmtType, rightRefStmtType), leftRef,
+                                                 rightRef);
         } else {
             resultsTable->filterTable(
                 leftRef, convertToClauseResult(getAllParentStatementsTyped(leftRefStmtType, rightRefStmtType)));
             resultsTable->filterTable(
                 rightRef, convertToClauseResult(getAllChildStatementsTyped(leftRefStmtType, rightRefStmtType)));
+            resultsTable->associateRelationships(getAllParentTuple(leftRefStmtType, rightRefStmtType), leftRef,
+                                                 rightRef);
         }
     }
 }
