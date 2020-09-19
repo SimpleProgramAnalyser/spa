@@ -134,8 +134,8 @@ ParserReturnType<std::unique_ptr<T>> getSyntaxError()
     return ParserReturnType<std::unique_ptr<T>>(std::unique_ptr<T>{}, -1);
 }
 
-ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(frontend::TokenList* programTokens,
-                                                                                TokenListIndex index)
+ParserReturnType<std::unique_ptr<ReferenceExpression>>
+parseReferenceExpression(frontend::TokenList* programTokens, TokenListIndex index, Boolean isUpdatingPkb)
 {
     TokenListIndex numberOfTokens = programTokens->size();
     if (index < 0 || index >= numberOfTokens) {
@@ -145,14 +145,19 @@ ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(
     frontend::Tag tokenTag = programTokens->at(index)->tokenTag;
     if (frontend::isIdentifierTag(tokenTag)) {
         String variable = programTokens->at(index)->rawString;
-        insertIntoVariableTable(variable);
+        if (isUpdatingPkb) {
+            insertIntoVariableTable(variable);
+        }
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
             std::unique_ptr<ReferenceExpression>(createRefExpr(variable)), index + 1);
     } else if (tokenTag == frontend::ConstantTag) {
         // stoi should succeed unless there is a bug in the tokeniser
+        Integer constant = std::stoi(programTokens->at(index)->rawString);
+        if (isUpdatingPkb) {
+            insertIntoConstantTable(constant);
+        }
         return ParserReturnType<std::unique_ptr<ReferenceExpression>>(
-            std::unique_ptr<ReferenceExpression>(createRefExpr(std::stoi(programTokens->at(index)->rawString))),
-            index + 1);
+            std::unique_ptr<ReferenceExpression>(createRefExpr(constant)), index + 1);
     } else {
         // syntax error, not a reference expression
         return getSyntaxError<ReferenceExpression>();
@@ -161,10 +166,13 @@ ParserReturnType<std::unique_ptr<ReferenceExpression>> parseReferenceExpression(
 
 // forward declaration for parseArithmeticExpression
 ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenList* programTokens,
-                                                              TokenListIndex startIndex, TokenListIndex endIndex);
+                                                              TokenListIndex startIndex, TokenListIndex endIndex,
+                                                              Boolean isUpdatingPkb);
 
-ParserReturnType<std::unique_ptr<ArithmeticExpression>>
-parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex startIndex, TokenListIndex endIndex)
+ParserReturnType<std::unique_ptr<ArithmeticExpression>> parseArithmeticExpression(frontend::TokenList* programTokens,
+                                                                                  TokenListIndex startIndex,
+                                                                                  TokenListIndex endIndex,
+                                                                                  Boolean isUpdatingPkb)
 {
     // ==========================================================================================
     // define expression => ex; parseExpression function => pE;
@@ -282,14 +290,14 @@ parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex sta
     }
 
     // create left expression
-    leftExpr = parseExpression(programTokens, startIndex, operatorIndex - 1);
+    leftExpr = parseExpression(programTokens, startIndex, operatorIndex - 1, isUpdatingPkb);
     // check validity of left expression
     if (leftExpr.nextUnparsedToken < 0) {
         // syntax error in left expression
         return getSyntaxError<ArithmeticExpression>();
     }
     // create right expression
-    rightExpr = parseExpression(programTokens, operatorIndex + 1, endIndex);
+    rightExpr = parseExpression(programTokens, operatorIndex + 1, endIndex, isUpdatingPkb);
     // check validity of right expression
     if (rightExpr.nextUnparsedToken < 0) {
         // syntax error in right expression
@@ -303,7 +311,8 @@ parseArithmeticExpression(frontend::TokenList* programTokens, TokenListIndex sta
 }
 
 ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenList* programTokens,
-                                                              TokenListIndex startIndex, TokenListIndex endIndex)
+                                                              TokenListIndex startIndex, TokenListIndex endIndex,
+                                                              Boolean isUpdatingPkb)
 {
     // possible combinations, where e is an expression:
     // ---------------------------------------------------
@@ -323,7 +332,7 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
         && (frontend::isIdentifierTag(programTokens->at(startIndex)->tokenTag)
             || programTokens->at(startIndex)->tokenTag == frontend::ConstantTag)) {
         ParserReturnType<std::unique_ptr<ReferenceExpression>> refExp
-            = parseReferenceExpression(programTokens, startIndex);
+            = parseReferenceExpression(programTokens, startIndex, isUpdatingPkb);
         // upcast to Expression
         return ParserReturnType<std::unique_ptr<Expression>>(std::move(refExp.astNode), refExp.nextUnparsedToken);
     } else if (startIndex == endIndex) {
@@ -335,11 +344,11 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
     if (programTokens->at(startIndex)->tokenTag == frontend::BracketOpenTag
         && getBracketEnd(programTokens, startIndex) == endIndex) {
 
-        return parseExpression(programTokens, startIndex + 1, endIndex - 1);
+        return parseExpression(programTokens, startIndex + 1, endIndex - 1, isUpdatingPkb);
     }
 
     ParserReturnType<std::unique_ptr<ArithmeticExpression>> arithExp
-        = parseArithmeticExpression(programTokens, startIndex, endIndex);
+        = parseArithmeticExpression(programTokens, startIndex, endIndex, isUpdatingPkb);
     // upcast to Expression
     return ParserReturnType<std::unique_ptr<Expression>>(std::move(arithExp.astNode), arithExp.nextUnparsedToken);
 }
@@ -347,7 +356,7 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
 Expression* parseExpression(StringList* lexedExpression)
 {
     return parseExpression(frontend::tokeniseSimple(lexedExpression), 0,
-                           lexedExpression->size() - 1 /* assuming token list has same length */)
+                           lexedExpression->size() - 1 /* assuming token list has same length */, false)
         .astNode.release();
 }
 
@@ -374,14 +383,14 @@ parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex sta
     }
     // parse first expression
     ParserReturnType<std::unique_ptr<Expression>> firstExpr
-        = parseExpression(programTokens, startIndex, relationalOperator - 1);
+        = parseExpression(programTokens, startIndex, relationalOperator - 1, true);
     if (firstExpr.nextUnparsedToken < 0) {
         // syntax error in first expression
         return getSyntaxError<RelationalExpression>();
     }
     // parse second expression, assume it is until the endIndex
     ParserReturnType<std::unique_ptr<Expression>> secondExpr
-        = parseExpression(programTokens, firstExpr.nextUnparsedToken + 1 /* skip over operator */, endIndex);
+        = parseExpression(programTokens, firstExpr.nextUnparsedToken + 1 /* skip over operator */, endIndex, true);
     if (secondExpr.nextUnparsedToken < 0) {
         // syntax error in second expression
         return getSyntaxError<RelationalExpression>();
@@ -780,7 +789,7 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
         if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer)->tokenTag == frontend::SemicolonTag
             && tokenPointer - 1 >= startIndex + 2) {
 
-            expression = parseExpression(programTokens, startIndex + 2, tokenPointer - 1);
+            expression = parseExpression(programTokens, startIndex + 2, tokenPointer - 1, true);
         } else {
             // missing semicolon for assign statement
             return getSyntaxError<AssignmentStatementNode>();
