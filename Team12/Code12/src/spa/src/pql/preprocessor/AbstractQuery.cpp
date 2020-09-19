@@ -4,15 +4,15 @@ AbstractQuery::AbstractQuery(Synonym synonym, DeclarationTable& declarations, Cl
     selectSynonym(std::move(synonym)), clauses(clauseVector), declarationTable(declarations), hasError(false)
 {}
 
-Synonym AbstractQuery::getSelectSynonym()
+Synonym AbstractQuery::getSelectSynonym() const
 {
     return selectSynonym;
 }
-ClauseVector AbstractQuery::getClauses()
+ClauseVector AbstractQuery::getClauses() const
 {
     return clauses;
 }
-DeclarationTable AbstractQuery::getDeclarationTable()
+DeclarationTable AbstractQuery::getDeclarationTable() const
 {
     return declarationTable;
 }

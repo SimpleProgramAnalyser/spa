@@ -46,17 +46,17 @@ Boolean Reference::isNonStatementSynonym()
     return designEntityType == ProcedureType || designEntityType == VariableType || designEntityType == ConstantType;
 }
 
-Boolean Reference::isWildCard() // TODO: phase out
+Boolean Reference::isWildCard() const // TODO: phase out
 {
     return referenceType == WildcardRefType;
 }
 
-ReferenceType Reference::getReferenceType()
+ReferenceType Reference::getReferenceType() const
 {
     return referenceType;
 }
 
-ReferenceValue Reference::getValue()
+ReferenceValue Reference::getValue() const
 {
     return referenceValue;
 }

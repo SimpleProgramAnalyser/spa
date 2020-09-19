@@ -87,14 +87,14 @@ protected:
 public:
     Reference(ReferenceType refType, ReferenceValue refValue);
     Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt);
-    ReferenceType getReferenceType();
+    ReferenceType getReferenceType() const;
     DesignEntity getDesignEntity();
-    ReferenceValue getValue();
+    ReferenceValue getValue() const;
     Boolean isValidEntityRef();
     Boolean isValidStatementRef();
     Boolean isInvalid();
     Boolean isProcedure();
-    Boolean isWildCard();
+    Boolean isWildCard() const;
     Boolean isNonStatementSynonym();
     static Reference invalidReference();
     Boolean operator==(const Reference& reference);
@@ -152,11 +152,12 @@ enum ExpressionSpecType : char {
 
 class ExpressionSpec {
 private:
-    ExpressionSpecType expressionSpecType;
     Expression* expression;
     bool hasError;
 
 public:
+    ExpressionSpecType expressionSpecType;
+
     ExpressionSpec();
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
@@ -224,9 +225,9 @@ private:
 public:
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
-    Synonym getSelectSynonym();
-    ClauseVector getClauses();
-    DeclarationTable getDeclarationTable();
+    Synonym getSelectSynonym() const;
+    ClauseVector getClauses() const;
+    DeclarationTable getDeclarationTable() const;
     Boolean isInvalid() const;
     Boolean operator==(const AbstractQuery& abstractQuery);
     AbstractQuery();
