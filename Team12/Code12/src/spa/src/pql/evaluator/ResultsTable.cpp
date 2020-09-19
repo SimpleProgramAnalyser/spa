@@ -6,13 +6,17 @@
 
 #include "ResultsTable.h"
 
+#include <algorithm>
 #include <cassert>
 #include <utility>
 
 #include "pkb/PKB.h"
 
 // set hasResult to true at the start, since no clauses have been evaluated
-ResultsTable::ResultsTable(const DeclarationTable& decls): declarations(decls), hasResult(true) {}
+ResultsTable::ResultsTable(DeclarationTable decls):
+    declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
+    hasResult(true)
+{}
 
 /**
  * Checks if a synonym exists in the results table.
@@ -27,27 +31,33 @@ inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
 }
 
 /**
- * Given two clause results, find common elements in
- * both of the clause results and return these
- * common elements in a single clause result.
+ * Given a new clause results, find common elements with
+ * the new clause results and the old results for the
+ * synonym already registered in the table.
  *
- * @param firstList The first clause result.
- * @param secondList The second clause result.
+ * This method assumes the synonym is already in
+ * the table. If the synonym is not, there may
+ * be a runtime error!
+ *
+ * @param newResults The first clause result.
+ * @param syn The synonym for the result.
  * @return A single list of results.
  */
-ClauseResult ResultsTable::findCommonElements(const ClauseResult& firstList, const ClauseResult& secondList)
+ClauseResult ResultsTable::findCommonElements(const ClauseResult& newResults, const Synonym& synonym)
 {
     // initiate set of elements from first list
-    std::unordered_set<String> resultsFromFirst;
-    std::copy(firstList.begin(), firstList.end(), std::inserter(resultsFromFirst, resultsFromFirst.end()));
+    std::unordered_set<String> newResultsSet;
+    std::copy(newResults.begin(), newResults.end(), std::inserter(newResultsSet, newResultsSet.end()));
     // initiate set to contain elements found in both
     std::unordered_set<String> resultsFoundInBoth;
-    // loop through elements in second
-    for (const String& str : secondList) {
-        if (resultsFromFirst.find(str) == resultsFromFirst.end()) {
-            // element from secondList is not in firstList
+    // loop through elements from previous results
+    for (const String& str : resultsMap[synonym]) {
+        if (newResultsSet.find(str) == newResultsSet.end()) {
+            // element from old results is not in newResults
+            // we try to remove relationships for this element
+            relationships->deleteFromGraph(PotentialValue(synonym, str), this);
         } else {
-            // element is found in firstList!
+            // element is found in newResults!
             resultsFoundInBoth.insert(str);
         }
     }
@@ -65,7 +75,7 @@ void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResul
 {
     assert(!results.empty()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     if (checkIfSynonymInMap(syn)) {
-        resultsMap[syn] = findCommonElements(results, resultsMap[syn]);
+        resultsMap[syn] = findCommonElements(results, syn);
     } else {
         // synonym is not found in table, associate results with synonym
         resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
@@ -128,6 +138,41 @@ Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
     } else {
         return checkIfSynonymInMap(syn);
     }
+}
+
+void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
+{
+    if (resultsMap.find(synonym) != resultsMap.end()) {
+        ClauseResult& rawResultsForSynonym = resultsMap[synonym];
+        auto position = std::find(rawResultsForSynonym.begin(), rawResultsForSynonym.end(), value);
+        if (position != rawResultsForSynonym.end()) {
+            rawResultsForSynonym.erase(position);
+        }
+    }
+}
+
+void ResultsTable::associateRelationships(Vector<Pair<String, String>> valueRelationships, const Synonym& firstSynonym,
+                                          const Synonym& secondSynonym)
+{
+    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
+}
+
+void ResultsTable::associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Synonym& firstSynonym,
+                                          const Synonym& secondSynonym)
+{
+    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
+}
+
+void ResultsTable::associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Synonym& firstSynonym,
+                                          const Synonym& secondSynonym)
+{
+    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
+}
+
+void ResultsTable::associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships,
+                                          const Synonym& firstSynonym, const Synonym& secondSynonym)
+{
+    this->relationships->insertRelationships(std::move(valueRelationships), firstSynonym, secondSynonym);
 }
 
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)

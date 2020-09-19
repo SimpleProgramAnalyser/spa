@@ -2,8 +2,8 @@
  * Methods to evaluate such that clauses
  * with Follows relationships
  */
-#ifndef SPA_QUERY_FOLLOWS_EVALUATOR_H
-#define SPA_QUERY_FOLLOWS_EVALUATOR_H
+#ifndef SPA_PQL_FOLLOWS_EVALUATOR_H
+#define SPA_PQL_FOLLOWS_EVALUATOR_H
 
 #include "pql/evaluator/ResultsTable.h"
 
@@ -23,4 +23,4 @@
 Void evaluateFollowsClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
                            ResultsTable* resultsTable);
 
-#endif // SPA_QUERY_FOLLOWS_EVALUATOR_H
+#endif // SPA_PQL_FOLLOWS_EVALUATOR_H

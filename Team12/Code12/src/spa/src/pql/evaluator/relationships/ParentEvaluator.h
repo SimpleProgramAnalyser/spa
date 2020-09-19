@@ -2,8 +2,8 @@
  * Methods to evaluate such that clauses
  * with Parent relationships
  */
-#ifndef SPA_QUERY_PARENT_EVALUATOR_H
-#define SPA_QUERY_PARENT_EVALUATOR_H
+#ifndef SPA_PQL_PARENT_EVALUATOR_H
+#define SPA_PQL_PARENT_EVALUATOR_H
 
 #include "pql/evaluator/ResultsTable.h"
 
@@ -20,4 +20,4 @@
 Void evaluateParentClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
                           ResultsTable* resultsTable);
 
-#endif // SPA_QUERY_PARENT_EVALUATOR_H
+#endif // SPA_PQL_PARENT_EVALUATOR_H

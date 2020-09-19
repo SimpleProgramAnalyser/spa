@@ -5,8 +5,8 @@
  * to retrieve relationship information from the
  * Program Knowledge Base.
  */
-#ifndef SPA_QUERY_EVALUATOR_RELATIONSHIPS_UTIL_H
-#define SPA_QUERY_EVALUATOR_RELATIONSHIPS_UTIL_H
+#ifndef SPA_PQL_EVALUATOR_RELATIONSHIPS_UTIL_H
+#define SPA_PQL_EVALUATOR_RELATIONSHIPS_UTIL_H
 
 #include "pkb/PKB.h"
 #include "pql/evaluator/ResultsTable.h"
@@ -99,4 +99,4 @@ inline Boolean refHasConstraints(const Reference& ref, ResultsTable* resultsTabl
     return ref.getReferenceType() == SynonymRefType && resultsTable->checkIfSynonymHasConstraints(ref.getValue());
 }
 
-#endif // SPA_QUERY_EVALUATOR_RELATIONSHIPS_UTIL_H
+#endif // SPA_PQL_EVALUATOR_RELATIONSHIPS_UTIL_H

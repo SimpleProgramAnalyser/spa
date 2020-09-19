@@ -19,7 +19,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstLibrary.cpp
 
-    # error library ?
+    # error library
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
 
@@ -92,6 +92,9 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/SuchThatEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/SuchThatEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/RelationshipsGraph.cpp
+
+    # pql/evaluator/relationships
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.cpp
