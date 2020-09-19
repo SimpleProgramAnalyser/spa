@@ -9,7 +9,7 @@ ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType):
 {}
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
-    expressionSpecType{exprSpecType}, expression(expr), hasError{false}
+    expression(expr), hasError{false}, expressionSpecType{exprSpecType}
 {}
 
 Expression* ExpressionSpec::getExpression()

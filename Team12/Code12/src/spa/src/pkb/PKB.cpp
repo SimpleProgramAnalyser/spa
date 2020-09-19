@@ -53,6 +53,17 @@ Vector<String> getAllUsesProcedures()
 {
     return pkb.usesTable.getAllUsesProcedures();
 }
+Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType)
+{
+    return Vector<Pair<Integer, String>>{{9, "ro"},    {9, "rd"},     {9, "depth"}, {12, "depth"}, {13, "depth"},
+                                         {13, "dist"}, {14, "count"}, {15, "x"},    {15, "y"},     {15, "z"},
+                                         {16, "dist"}, {17, "depth"}, {20, "x"},    {21, "dist"},  {21, "x"},
+                                         {22, "x"},    {23, "x"},     {23, "y"}};
+}
+Vector<Pair<String, String>> getAllUsesProcedureTuple()
+{
+    return Vector<Pair<String, String>>();
+}
 
 // Follows
 Void addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after, StatementType afterStmtType)
@@ -104,6 +115,14 @@ Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, S
 {
     return pkb.followsTable.getAllAfterStatementsTypedStar(stmtTypeOfBefore, stmtTypeOfAfter);
 }
+Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
+{
+    return Vector<Pair<Integer, Integer>>();
+}
+Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
+{
+    return Vector<Pair<Integer, Integer>>();
+}
 
 // Modifies
 void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
@@ -153,6 +172,14 @@ Vector<String> getAllModifiesVariablesFromProgram()
 Vector<String> getAllModifiesProcedures()
 {
     return pkb.modifiesTable.getAllModifiesProcedures();
+}
+Vector<Pair<Integer, String>> getAllModifiesStatementTuple(StatementType stmtType)
+{
+    return Vector<Pair<Integer, String>>();
+}
+Vector<Pair<String, String>> getAllModifiesProcedureTuple()
+{
+    return Vector<Pair<String, String>>();
 }
 
 // Parent
@@ -204,6 +231,14 @@ Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, State
 Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
 {
     return pkb.parentTable.getAllChildStatementsTypedStar(stmtTypeOfParent, stmtTypeOfChild);
+}
+Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
+{
+    return Vector<Pair<Integer, Integer>>{{7, 9}, {7, 14}, {19, 20}, {19, 21}};
+}
+Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
+{
+    return Vector<Pair<Integer, Integer>>();
 }
 
 // Procedure

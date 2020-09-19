@@ -14,10 +14,12 @@ Synonym AbstractQuery::getSelectSynonym() const
 {
     return selectSynonym;
 }
+
 const ClauseVector& AbstractQuery::getClauses() const
 {
     return std::move(clauses);
 }
+
 DeclarationTable AbstractQuery::getDeclarationTable() const
 {
     return declarationTable;
