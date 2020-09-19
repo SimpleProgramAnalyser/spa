@@ -163,12 +163,13 @@ Boolean matchAssignStatement(AssignmentStatementNode* assign, PatternClause* pnC
     // check whether the variable that is being assigned to matches
     ReferenceType refType = pnClause->getEntRef().getReferenceType();
     if ((refType == LiteralRefType && assign->variable.varName == pnClause->getEntRef().getValue())
-        || refType == WildcardRefType) {
+        || refType == WildcardRefType
+        || (refType == SynonymRefType
+            && !resultsTable->checkIfSynonymHasConstraints(pnClause->getEntRef().getValue()))) {
         // check whether expression matches
         return doesExpressionSpecMatch(assign->expression, pnClause->getExprSpec());
-    } else if (refType == SynonymRefType
-               && resultsTable->checkIfSynonymHasConstraints(pnClause->getEntRef().getValue())) {
-        // check whether the assigned to variable is in in the constrained list
+    } else if (refType == SynonymRefType) {
+        // assigned to variable is not in in the constrained list
         Variable astVariable = assign->variable;
         std::vector<String> previousResults = resultsTable->get(pnClause->getEntRef().getValue());
         return isItemInVector<std::string>(previousResults, astVariable.toString())
