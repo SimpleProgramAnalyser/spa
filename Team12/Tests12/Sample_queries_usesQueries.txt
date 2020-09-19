@@ -141,7 +141,7 @@ y, count, cenX, x, cenY
 29 - Uses procedure with 1 unknown synonym, Select based on LHS (procedure)
 procedure p;
 Select p such that Uses (p, "s")
-None
+none
 5000 
 30 - Uses procedure with 1 unknown synonym, Select based on LHS (procedure)
 procedure p;
@@ -158,10 +158,10 @@ assign s;
 Select s such that Uses (s, _)
 4, 5, 6, 8, 10, 13, 18, 19, 25, 27, 29, 32, 35, 36, 39, 40
 5000
-33 - Uses statement with wildcard, Read, Return None
+33 - Uses statement with wildcard, Read, Return none
 read s;
 Select s such that Uses (s, _)
-None
+none
 5000
 34 - Uses statement with wildcard, Print, Return All print
 print s;
