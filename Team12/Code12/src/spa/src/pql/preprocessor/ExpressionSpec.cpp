@@ -1,18 +1,18 @@
 #include "AqTypes.h"
 
 ExpressionSpec::ExpressionSpec():
-    expressionSpecType(InvalidExpressionType), expression(std::unique_ptr<Expression>()), hasError{false}
+    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType(InvalidExpressionType)
 {}
 
 ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType):
-    expressionSpecType{exprSpecType}, expression(std::unique_ptr<Expression>()), hasError{false}
+    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType{exprSpecType}
 {}
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
     expression(expr), hasError{false}, expressionSpecType{exprSpecType}
 {}
 
-Expression* ExpressionSpec::getExpression()
+Expression* ExpressionSpec::getExpression() const
 {
     return expression.get();
 }

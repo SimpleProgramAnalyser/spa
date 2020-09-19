@@ -161,7 +161,7 @@ public:
     ExpressionSpec();
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
-    Expression* getExpression();
+    Expression* getExpression() const;
     Boolean isInvalid() const;
     static ExpressionSpec invalidExpressionSpec();
     Boolean operator==(const ExpressionSpec& expressionSpec);
@@ -178,10 +178,10 @@ private:
 
 public:
     PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
-    PatternStatementType getStatementType();
-    Reference getEntRef();
-    ExpressionSpec getExprSpec();
-    Synonym getPatternSynonym();
+    PatternStatementType getStatementType() const;
+    Reference getEntRef() const;
+    const ExpressionSpec& getExprSpec() const;
+    Synonym getPatternSynonym() const;
     Boolean operator==(const PatternClause& patternClause);
 };
 

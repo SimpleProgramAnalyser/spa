@@ -5,22 +5,22 @@ PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Refe
     expressionSpec(std::move(exprSpec))
 {}
 
-PatternStatementType PatternClause::getStatementType()
+PatternStatementType PatternClause::getStatementType() const
 {
     return patternStatementType;
 }
 
-Reference PatternClause::getEntRef()
+Reference PatternClause::getEntRef() const
 {
     return entityReference;
 }
 
-ExpressionSpec PatternClause::getExprSpec()
+const ExpressionSpec& PatternClause::getExprSpec() const
 {
-    return std::move(expressionSpec);
+    return expressionSpec;
 }
 
-Synonym PatternClause::getPatternSynonym()
+Synonym PatternClause::getPatternSynonym() const
 {
     return patternSynonym;
 }
