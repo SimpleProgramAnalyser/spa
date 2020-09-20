@@ -11,7 +11,7 @@
 /**
  * Holds API methods for the Program Knowledge Base (PKB).
  */
-
+// Uses
 void addUsesRelationships(Integer stmtNum, StatementType stmtType, const Vector<String>& varNames);
 void addUsesRelationships(const String& procName, const Vector<String>& varNames);
 Boolean checkIfProcedureUses(const String& procName, const String& varName);
@@ -24,8 +24,6 @@ Vector<Integer> getAllUsesStatements(StatementType stmtType);
 Vector<String> getAllUsesVariablesFromStatementType(StatementType stmtType);
 Vector<String> getAllUsesVariablesFromProgram();
 Vector<String> getAllUsesProcedures();
-// TODO: implement these
-// TODO: extend to other tables
 Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType);
 Vector<Pair<String, String>> getAllUsesProcedureTuple();
 
@@ -42,7 +40,6 @@ Vector<Integer> getAllModifiesStatements(StatementType stmtType);
 Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType);
 Vector<String> getAllModifiesVariablesFromProgram();
 Vector<String> getAllModifiesProcedures();
-// TODO: implement
 Vector<Pair<Integer, String>> getAllModifiesStatementTuple(StatementType stmtType);
 Vector<Pair<String, String>> getAllModifiesProcedureTuple();
 
@@ -60,7 +57,6 @@ Vector<Integer> getAllParentStatementsTyped(StatementType stmtTypeOfParent, Stat
 Vector<Integer> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
-// TODO: implement
 Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 
@@ -78,7 +74,6 @@ Vector<Integer> getAllBeforeStatementsTyped(StatementType stmtTypeOfBefore, Stat
 Vector<Integer> getAllBeforeStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
-// TODO: implement
 Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 
@@ -106,9 +101,12 @@ Vector<Integer> getAllConstants();
 void assignRootNode(ProgramNode* rootNodeToAssign);
 ProgramNode* getRootNode();
 
+// Others
+void resetPKB();
+
 class PKB {
 public:
-    ProgramNode* rootNode{};
+    ProgramNode* rootNode = nullptr;
     StatementTable statementTable;
     VariableTable variableTable;
     ProcedureTable procedureTable;
