@@ -158,7 +158,7 @@ assign s;
 Select s such that Uses (s, _)
 4, 5, 6, 8, 10, 13, 18, 19, 25, 27, 29, 32, 35, 36, 39, 40
 5000
-33 - Uses statement with wildcard, Read, Return none
+33 - Uses statement with wildcard, Read, Return None
 read s;
 Select s such that Uses (s, _)
 none
@@ -187,4 +187,49 @@ Select s such that Uses (s, _)
 procedure s;
 Select s such that Uses (s, _)
 mainPrint, readPoint, computeCentroid
+5000
+39 - Uses with 2 synonyms
+stmt s; variable v;
+Select s such that Uses(s,v)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 35, 36, 37, 39, 40
+5000
+40 - Uses with 2 synonyms case sensitive
+stmt s; variable S;
+Select s such that Uses(s,S)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 35, 36, 37, 39, 40
+5000
+41 - Uses with 2 synonyms (Procedure)
+procedure p; variable v;
+Select p such that Uses(p,v)
+mainPrint, readPoint, computeCentroid
+5000
+42 - Uses with 2 synonyms (Print)
+print p; variable v;
+Select p such that Uses(p,v)
+1, 2, 11, 12
+5000
+43 - Uses with 2 synonyms Read
+read r; variable v;
+Select r such that Uses(r,v)
+none
+5000
+44 - Uses with 2 synonyms (Call)
+procedure p; variable v;
+Select p such that Uses(p,v)
+computeCentroid, mainPrint, readPoint
+5000
+45 - Uses with 2 synonyms (if)
+if i; variable v;
+Select i such that Uses(i,v)
+3, 7, 26, 33, 37
+5000
+46 - Uses with 2 synonyms (while)
+while w; variable v;
+Select w such that Uses(w,v)
+9, 17, 24, 30
+5000
+47 - Uses with 2 synonyms (assign)
+assign a; variable v;
+Select a such that Uses(a,v)
+4, 5, 6, 8, 10, 13, 18, 19, 25, 27, 29, 32, 35, 36, 39, 40
 5000
