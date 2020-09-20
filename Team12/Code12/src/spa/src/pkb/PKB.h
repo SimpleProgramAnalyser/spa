@@ -11,7 +11,7 @@
 /**
  * Holds API methods for the Program Knowledge Base (PKB).
  */
-
+// Uses
 void addUsesRelationships(Integer stmtNum, StatementType stmtType, const Vector<String>& varNames);
 void addUsesRelationships(const String& procName, const Vector<String>& varNames);
 Boolean checkIfProcedureUses(const String& procName, const String& varName);
@@ -40,7 +40,6 @@ Vector<Integer> getAllModifiesStatements(StatementType stmtType);
 Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType);
 Vector<String> getAllModifiesVariablesFromProgram();
 Vector<String> getAllModifiesProcedures();
-// TODO: implement
 Vector<Pair<Integer, String>> getAllModifiesStatementTuple(StatementType stmtType);
 Vector<Pair<String, String>> getAllModifiesProcedureTuple();
 
@@ -102,9 +101,12 @@ Vector<Integer> getAllConstants();
 void assignRootNode(ProgramNode* rootNodeToAssign);
 ProgramNode* getRootNode();
 
+// Others
+void resetPKB();
+
 class PKB {
 public:
-    ProgramNode* rootNode{};
+    ProgramNode* rootNode = nullptr;
     StatementTable statementTable;
     VariableTable variableTable;
     ProcedureTable procedureTable;
