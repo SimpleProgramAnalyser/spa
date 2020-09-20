@@ -372,7 +372,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -563,7 +563,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     insertIntoStatementTable(7, ReadStatement);
     insertIntoStatementTable(8, WhileStatement);
 
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -730,7 +730,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 TEST_CASE("(vacuously true) query with such that Parent clause, left operand line number, right operand synonym")
 {
     // === Test set-up ===
-    String query = "stmt s, s1; Select s such that Follows(2,s1)";
+    String query = "stmt s, s1; Select s such that Parent(2,s1)";
 
     QueryResultFormatType format = AutotesterFormat;
 
@@ -743,7 +743,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     insertIntoStatementTable(7, ReadStatement);
     insertIntoStatementTable(8, WhileStatement);
 
-    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -765,7 +765,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
 TEST_CASE("(vacuously true) query with such that Parent clause, left operand line number, right operand wildcard")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(2,_)";
+    String query = "stmt s; Select s such that Parent(2,_)";
 
     QueryResultFormatType format = AutotesterFormat;
 
@@ -778,7 +778,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     insertIntoStatementTable(7, ReadStatement);
     insertIntoStatementTable(8, WhileStatement);
 
-    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -800,7 +800,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
 TEST_CASE("query with such that Parent clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
 {
     // === Test set-up ===
-    String query = "stmt s, s1; Select s such that Follows(2,s1)";
+    String query = "stmt s, s1; Select s such that Parent(2,s1)";
 
     QueryResultFormatType format = AutotesterFormat;
 
@@ -846,12 +846,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 TEST_CASE("query with such that Parent clause, left operand synonym, right operand line number")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(s,3)";
+    String query = "stmt s; Select s such that Parent(s,3)";
 
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    addParentRelationships(2, WhileStatement, 3, WhileStatement);
 
     PqlManager pqlManager;
 
@@ -872,7 +872,7 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
 TEST_CASE("(vacuously true) query with such that Parent clause, left operand wildcard, right operand line number")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(_,3)";
+    String query = "stmt s; Select s such that Parent(_,3)";
 
     QueryResultFormatType format = AutotesterFormat;
 
@@ -884,7 +884,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     insertIntoStatementTable(7, ReadStatement);
     insertIntoStatementTable(8, WhileStatement);
 
-    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -906,7 +906,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
 TEST_CASE("(vacuously true) query with such that Parent clause, left operand line number, right operand line number")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(2,3)";
+    String query = "stmt s; Select s such that Parent(2,3)";
 
     QueryResultFormatType format = AutotesterFormat;
 
@@ -918,7 +918,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     insertIntoStatementTable(7, ReadStatement);
     insertIntoStatementTable(8, WhileStatement);
 
-    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -940,7 +940,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
 TEST_CASE("query with such that Parent clause, left operand synonym, right operand synonym, but both synonyms are the same")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(s,s)";
+    String query = "stmt s; Select s such that Parent(s,s)";
 
     QueryResultFormatType format = AutotesterFormat;
 
@@ -952,7 +952,7 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
     insertIntoStatementTable(7, ReadStatement);
     insertIntoStatementTable(8, WhileStatement);
 
-    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -974,13 +974,13 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
 TEST_CASE("query with such that Parent clause, left operand synonym, right operand wildcard")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(s,_)";
+    String query = "stmt s; Select s such that Parent(s,_)";
 
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
-    addFollowsRelationships(3, AssignmentStatement, 4, AssignmentStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
+    addParentRelationships(3, WhileStatement, 4, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -1002,13 +1002,13 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
 TEST_CASE("query with such that Parent clause, left operand wildcard, right operand synonym")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(_,s)";
+    String query = "stmt s; Select s such that Parent(_,s)";
 
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
-    addFollowsRelationships(3, AssignmentStatement, 4, AssignmentStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
+    addParentRelationships(3, WhileStatement, 4, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -1030,7 +1030,7 @@ TEST_CASE("query with such that Parent clause, left operand wildcard, right oper
 TEST_CASE("(vacuously true) query with such that Parent clause, left operand wildcard, right operand wildcard")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(_,_)";
+    String query = "stmt s; Select s such that Parent(_,_)";
 
     QueryResultFormatType format = AutotesterFormat;
 
@@ -1042,7 +1042,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     insertIntoStatementTable(7, ReadStatement);
     insertIntoStatementTable(8, WhileStatement);
 
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
