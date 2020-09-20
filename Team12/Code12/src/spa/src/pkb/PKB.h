@@ -106,6 +106,9 @@ Vector<Integer> getAllConstants();
 void assignRootNode(ProgramNode* rootNodeToAssign);
 ProgramNode* getRootNode();
 
+// Reset the WHOLE PKB
+void resetPKB();
+
 class PKB {
 public:
     ProgramNode* rootNode{};

@@ -305,3 +305,8 @@ Vector<Integer> getAllConstants()
 {
     return pkb.constantTable.getAllConstants();
 }
+
+void resetPKB()
+{
+    pkb = PKB();
+}

@@ -19,7 +19,13 @@ TEST_CASE("syntatically invalid query")
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
 
     PqlManager pqlManager;
 
@@ -45,7 +51,13 @@ TEST_CASE("semantically invalid query")
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
 
     PqlManager pqlManager;
 
@@ -63,10 +75,6 @@ TEST_CASE("semantically invalid query")
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("vacuously true query no clauses")
 {
     // === Test set-up ===
@@ -75,7 +83,13 @@ TEST_CASE("vacuously true query no clauses")
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
 
     PqlManager pqlManager;
 
@@ -85,19 +99,15 @@ TEST_CASE("vacuously true query no clauses")
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
     // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("query with such that follows clause, left operand line number, right operand synonym")
 {
     // === Test set-up ===
@@ -105,31 +115,139 @@ TEST_CASE("query with such that follows clause, left operand line number, right 
 
     QueryResultFormatType format = AutotesterFormat;
 
-    // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    SECTION("AssignmentStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+        addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
-    PqlManager pqlManager;
-
-
-    // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
-
-    // === Expected test results ===
-    String expectedResultsStr;
-    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+        PqlManager pqlManager;
 
 
-    // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
-    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("CallStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+        addFollowsRelationships(2, AssignmentStatement, 3, CallStatement);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("IfStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+        addFollowsRelationships(2, AssignmentStatement, 3, IfStatement);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("PrintStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+        addFollowsRelationships(2, AssignmentStatement, 3, PrintStatement);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("ReadStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+        addFollowsRelationships(2, AssignmentStatement, 3, ReadStatement);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("WhileStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+        addFollowsRelationships(2, AssignmentStatement, 3, WhileStatement);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
 }
-*/
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("(vacuously true) query with such that follows clause, left operand line number, right operand synonym")
 {
     // === Test set-up ===
@@ -138,7 +256,15 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand li
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -148,20 +274,15 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand li
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
     // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("(vacuously true) query with such that follows clause, left operand line number, right operand wildcard")
 {
     // === Test set-up ===
@@ -170,7 +291,15 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand li
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -180,25 +309,30 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand li
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
     // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
 TEST_CASE("query with such that follows clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
 {
     // === Test set-up ===
-    String query = "stmt s; Select s such that Follows(1000,s)";
+    String query = "stmt s, s1; Select s such that Follows(2,s1)";
 
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
 
     PqlManager pqlManager;
 
@@ -226,9 +360,10 @@ TEST_CASE("query with such that follows clause, left operand line number, right 
  */
 
 /*
- * TODO: Get this test case to work, with PKB side
+ * Additionally, for this kind of test case, we would not be explicitly testing
+ * for all StatementType, but only test AssignmentStatement type.
  */
-/*
+
 TEST_CASE("query with such that follows clause, left operand synonym, right operand line number")
 {
     // === Test set-up ===
@@ -247,20 +382,14 @@ TEST_CASE("query with such that follows clause, left operand synonym, right oper
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
     // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("(vacuously true) query with such that follows clause, left operand wildcard, right operand line number")
 {
     // === Test set-up ===
@@ -269,7 +398,14 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand wi
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -279,20 +415,15 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand wi
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
     // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("(vacuously true) query with such that follows clause, left operand line number, right operand line number")
 {
     // === Test set-up ===
@@ -301,7 +432,14 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand li
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -311,15 +449,14 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand li
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
     // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
 TEST_CASE("query with such that follows clause, left operand synonym, right operand synonym, but both synonyms are the same")
 {
@@ -329,7 +466,14 @@ TEST_CASE("query with such that follows clause, left operand synonym, right oper
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -348,10 +492,6 @@ TEST_CASE("query with such that follows clause, left operand synonym, right oper
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("query with such that follows clause, left operand synonym, right operand wildcard")
 {
     // === Test set-up ===
@@ -360,7 +500,8 @@ TEST_CASE("query with such that follows clause, left operand synonym, right oper
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+    addFollowsRelationships(3, AssignmentStatement, 4, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -370,7 +511,7 @@ TEST_CASE("query with such that follows clause, left operand synonym, right oper
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
@@ -378,12 +519,7 @@ TEST_CASE("query with such that follows clause, left operand synonym, right oper
     REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
-/*
 TEST_CASE("query with such that follows clause, left operand wildcard, right operand synonym")
 {
     // === Test set-up ===
@@ -392,7 +528,8 @@ TEST_CASE("query with such that follows clause, left operand wildcard, right ope
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
-    addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+    addFollowsRelationships(3, AssignmentStatement, 4, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -402,7 +539,7 @@ TEST_CASE("query with such that follows clause, left operand wildcard, right ope
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "4, 3";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
@@ -410,11 +547,7 @@ TEST_CASE("query with such that follows clause, left operand wildcard, right ope
     REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
-/*
- * TODO: Get this test case to work, with PKB side
- */
 TEST_CASE("(vacuously true) query with such that follows clause, left operand wildcard, right operand wildcard")
 {
     // === Test set-up ===
@@ -423,6 +556,13 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand wi
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
     addFollowsRelationships(2, AnyStatement, 3, AnyStatement);
 
     PqlManager pqlManager;
@@ -433,7 +573,7 @@ TEST_CASE("(vacuously true) query with such that follows clause, left operand wi
 
 
     // === Expected test results ===
-    String expectedResultsStr;
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
