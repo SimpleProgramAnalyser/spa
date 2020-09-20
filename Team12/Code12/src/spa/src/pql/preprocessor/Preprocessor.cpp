@@ -97,7 +97,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
     String currentClauseConstraint;
     Boolean hasCurrentClause = false;
     Boolean isPreviousTokenSuch = false; // is the previous token "such"
-    ClauseType currentClauseType;
+    ClauseType currentClauseType = NonExistentClauseType;
     Integer numOfOpenedParentheses = 0;
     Boolean hasOpenParentheses = false;
 
@@ -121,9 +121,23 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
      */
     int numOfTokensWithoutOpenParentheses = 0;
 
+    /**
+     * 'and' is evaluated as a connector and will be
+     * discarded after being evaluated. Hence, we need to
+     * keep track if it is the last token to prevent a
+     * clause from ending with an 'and'.
+     */
+    Boolean isLastTokenKeywordAnd = false;
+
     StringList* splitStringList = splitByWhitespace(clausesString);
 
     for (auto& token : *splitStringList) {
+        if (*token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
+            hasCurrentClause = true;
+            isLastTokenKeywordAnd = true;
+            continue;
+        }
+
         if (!hasCurrentClause) {
             if (*token != "such" && *token != "pattern") {
                 return ClauseVector::invalidClauseVector();
@@ -187,6 +201,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
                         numOfTokensWithoutOpenParentheses = 0;
                         currentClauseConstraint.clear();
                         hasOpenParentheses = false;
+                        isLastTokenKeywordAnd = false;
                     }
                 }
                 // if numOfOpenedParentheses is positive, continue looping
@@ -194,7 +209,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
         }
     }
 
-    if (!currentClauseConstraint.empty()) {
+    if (!currentClauseConstraint.empty() || isLastTokenKeywordAnd) {
         return ClauseVector::invalidClauseVector();
     }
 
