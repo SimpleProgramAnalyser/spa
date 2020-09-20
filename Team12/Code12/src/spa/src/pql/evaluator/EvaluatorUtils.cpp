@@ -17,7 +17,8 @@ ClauseResult convertToClauseResult(const Vector<Integer>& intList)
     return strList;
 }
 
-template<> struct std::hash<DesignEntityType> {
+template <>
+struct std::hash<DesignEntityType> {
     std::size_t operator()(const DesignEntityType& pv) const
     {
         // NOLINTNEXTLINE
