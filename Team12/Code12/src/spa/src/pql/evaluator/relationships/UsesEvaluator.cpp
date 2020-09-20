@@ -4,6 +4,8 @@
  */
 #include "UsesEvaluator.h"
 
+#include <stdexcept>
+
 #include "RelationshipsUtil.h"
 
 class UsesEvaluator {
@@ -127,7 +129,7 @@ Void UsesEvaluator::evaluateBothAny() const
         // select procedure
         resultsTable->filterTable(leftRef, getAllUsesProcedures());
         // select variable with procedure
-        resultsTable->filterTable(rightRef, getUsesVariablesFromProcedure(leftRef.getValue()));
+        resultsTable->filterTable(rightRef, getAllUsesVariablesFromProgram());
         // select all tuples Uses(procedure, variable)
         resultsTable->associateRelationships(getAllUsesProcedureTuple(), leftRef, rightRef);
     } else {

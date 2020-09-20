@@ -1,7 +1,7 @@
-1 - Select All Statements, Return None
+1 - Select All Statements, Return none
 stmt s;
 Select s such that Parent (2,3)
-None
+none
 5000
 2 - Select All Statements, Return All
 stmt s;
@@ -151,22 +151,22 @@ Select s such that Parent(s, 33)
 30 - Select Based on LHS 
 assign s;
 Select s such that Parent(s, 33)
-None
+none
 5000
 31 - Select Based on LHS 
 read s;
 Select s such that Parent(s, 33)
-None
+none
 5000
 32 - Select Based on LHS 
 print s;
 Select s such that Parent(s, 33)
-None
+none
 5000
 33 - Select Based on LHS 
 call s;
 Select s such that Parent(s, 33)
-None
+none
 5000
 34 - Select Based on LHS 
 while s;
@@ -201,7 +201,7 @@ Select s such that Parent*(8,s)
 40 - Select Based on RHS
 call s;
 Select s such that Parent*(15,s)
-None
+none
 5000
 41 - Select Based on RHS
 while s;
@@ -221,22 +221,22 @@ Select s such that Parent*(s, 33)
 44 - Select Based on LHS 
 assign s;
 Select s such that Parent*(s, 33)
-None
+none
 5000
 45 - Select Based on LHS 
 read s;
 Select s such that Parent*(s, 33)
-None
+none
 5000
 46 - Select Based on LHS 
 print s;
 Select s such that Parent*(s, 33)
-None
+none
 5000
 47 - Select Based on LHS 
 call s;
 Select s such that Parent*(s, 33)
-None
+none
 5000
 48 - Select Based on LHS 
 while s;

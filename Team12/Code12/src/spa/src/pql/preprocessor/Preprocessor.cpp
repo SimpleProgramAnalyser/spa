@@ -335,6 +335,7 @@ Expression* Preprocessor::createExpression(String literal)
 {
     StringList* splitString = splitProgram(literal);
     Expression* expression = parseExpression(splitString);
+    delete splitString;
     return expression;
 }
 

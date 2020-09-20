@@ -81,7 +81,7 @@ Select s such that Modifies (s, "y")
 18 - Modifies statement with 1 unknown synonym, Select based on LHS
 print s;
 Select s such that Modifies (s, "z")
-None
+none
 5000
 19 - Modifies statement with 1 unknown synonym, Select based on LHS
 assign s;
@@ -93,15 +93,15 @@ call s;
 Select s such that Modifies (s, "y")
 23, 31
 5000
-21 - Modifies statement with 1 unknown synonym, Select based on LHS
+21 - Modifies statement with 1 unknown synonym, Select based on LHS (While contains call)
 while s;
-Select s such that Modifies (s, "y") (While contains call)
+Select s such that Modifies (s, "y")
 17, 24, 30
 5000
 22 - Modifies statement with 1 unknown synonym, Select based on LHS
 if s;
 Select s such that Modifies (s, "y")
-3
+3, 7
 5000
 23 - Modifies statement with 1 unknown synonym, Select based on RHS (assign)
 variable s;
@@ -111,7 +111,7 @@ normSq
 24 - Modifies statement with 1 unknown synonym, Select based on RHS (print)
 variable s;
 Select s such that Modifies (11, s)
-None
+none
 5000
 25 - Modifies statement with 1 unknown synonym, Select based on RHS (procedure)
 variable s;
@@ -136,7 +136,7 @@ count, cenX, cenY
 29 - Modifies procedure with 1 unknown synonym, Select based on LHS (procedure)
 procedure p;
 Select p such that Modifies (p, "s")
-None
+none
 5000 
 30 - Modifies procedure with 1 unknown synonym, Select based on LHS (procedure)
 procedure p;
@@ -153,7 +153,7 @@ assign s;
 Select s such that Modifies (s, _)
 4, 5, 6, 8, 10, 13, 18, 19, 20, 21, 22, 25, 27, 29, 32, 34, 35, 36, 38, 39, 40
 5000
-33 - Modifies statement with wildcard, Read, Return None
+33 - Modifies statement with wildcard, Read, Return none
 read s;
 Select s such that Modifies (s, _)
 14, 15, 28
@@ -161,7 +161,7 @@ Select s such that Modifies (s, _)
 34 - Modifies statement with wildcard, Print, Return All print
 print s;
 Select s such that Modifies (s, _)
-None
+none
 5000
 35 - Modifies statement with wildcard,Call,  Return All call
 call s;

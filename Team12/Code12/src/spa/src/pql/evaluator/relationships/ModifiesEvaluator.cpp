@@ -4,6 +4,8 @@
  */
 #include "ModifiesEvaluator.h"
 
+#include <stdexcept>
+
 #include "RelationshipsUtil.h"
 
 class ModifiesEvaluator {
@@ -127,7 +129,7 @@ Void ModifiesEvaluator::evaluateBothAny() const
         // select procedure
         resultsTable->filterTable(leftRef, getAllModifiesProcedures());
         // select variable with procedure
-        resultsTable->filterTable(rightRef, getModifiesVariablesFromProcedure(leftRef.getValue()));
+        resultsTable->filterTable(rightRef, getAllModifiesVariablesFromProgram());
         // select all tuples Modifies(procedure, variable)
         resultsTable->associateRelationships(getAllModifiesProcedureTuple(), leftRef, rightRef);
     } else {

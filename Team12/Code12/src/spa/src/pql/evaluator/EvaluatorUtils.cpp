@@ -3,6 +3,9 @@
  */
 #include "EvaluatorUtils.h"
 
+#include <iterator>
+#include <stdexcept>
+#include <unordered_map>
 #include <unordered_set>
 
 ClauseResult convertToClauseResult(const Vector<Integer>& intList)
@@ -14,29 +17,23 @@ ClauseResult convertToClauseResult(const Vector<Integer>& intList)
     return strList;
 }
 
+std::unordered_map<DesignEntityType, StatementType> getStatementTypesMap()
+{
+    std::unordered_map<DesignEntityType, StatementType> queryPkbTypesMap
+        = {{StmtType, AnyStatement},         {ReadType, ReadStatement},   {PrintType, PrintStatement},
+           {CallType, CallStatement},        {WhileType, WhileStatement}, {IfType, IfStatement},
+           {AssignType, AssignmentStatement}};
+    return queryPkbTypesMap;
+}
+
 StatementType mapToStatementType(DesignEntityType entType)
 {
-    StatementType mappedStmtType;
-    // TODO: Use a hash table instead
-    if (entType == StmtType) {
-        mappedStmtType = AnyStatement;
-    } else if (entType == ReadType) {
-        mappedStmtType = ReadStatement;
-    } else if (entType == PrintType) {
-        mappedStmtType = PrintStatement;
-    } else if (entType == CallType) {
-        mappedStmtType = CallStatement;
-    } else if (entType == WhileType) {
-        mappedStmtType = WhileStatement;
-    } else if (entType == IfType) {
-        mappedStmtType = IfStatement;
-    } else if (entType == AssignType) {
-        mappedStmtType = AssignmentStatement;
+    std::unordered_map<DesignEntityType, StatementType> queryPkbTypesMap = getStatementTypesMap();
+    if (queryPkbTypesMap.find(entType) != queryPkbTypesMap.end()) {
+        return queryPkbTypesMap[entType];
     } else {
         throw std::runtime_error("Wrong entity type in mapToStatementType");
     }
-
-    return mappedStmtType;
 }
 
 ClauseResult removeDuplicates(const ClauseResult& list)

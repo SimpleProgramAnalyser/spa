@@ -8,6 +8,8 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iterator>
+#include <stdexcept>
 #include <utility>
 
 #include "pkb/PKB.h"
