@@ -61,10 +61,10 @@ Select s1
 13 - Invalid Queries (Select statement wrong)
 stmt s; variable v;
 Selec s
-None
+none
 5000
 14 - Invalid Queries (no semicolon)
 stmt stmt
 Select stmt
-None
+none
 5000
