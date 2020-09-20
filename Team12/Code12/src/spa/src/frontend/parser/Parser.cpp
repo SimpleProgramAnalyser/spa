@@ -355,9 +355,10 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
 
 Expression* parseExpression(StringList* lexedExpression)
 {
-    return parseExpression(frontend::tokeniseSimple(lexedExpression), 0,
-                           lexedExpression->size() - 1 /* assuming token list has same length */, false)
-        .astNode.release();
+    frontend::TokenList* tokenised = frontend::tokeniseSimple(lexedExpression);
+    Expression* parsed = parseExpression(tokenised, 0, tokenised->size() - 1, false).astNode.release();
+    delete tokenised;
+    return parsed;
 }
 
 ParserReturnType<std::unique_ptr<RelationalExpression>>
