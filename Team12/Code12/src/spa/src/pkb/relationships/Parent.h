@@ -3,6 +3,8 @@
 
 #include <pkb/PkbTypes.h>
 
+typedef ArrayArrayTupleList<Integer, Integer> TupleTable;
+
 /**
  * Stores Parent, Parent* relationships.
  */
@@ -27,6 +29,8 @@ public:
     Vector<Integer> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
     Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
     Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+    Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+    Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 
 private:
     // to check if Parent(*)(x, y) holds
@@ -49,6 +53,8 @@ private:
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentStarType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildStarType;
+    TupleTable parentTuples;
+    TupleTable parentStarTuples;
 
     // hashsets to prevent duplication in lists above
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentTypeSet;

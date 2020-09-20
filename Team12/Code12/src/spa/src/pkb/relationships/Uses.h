@@ -20,9 +20,11 @@ public:
     Vector<String> getUsesVariablesFromStatement(Integer stmt);
     Vector<String> getUsesVariablesFromProcedure(const String& procName);
     Vector<Integer> getAllUsesStatements(StatementType stmtType);
-    Vector<String> getAllUsesVariables(StatementType stmtType);
-    Vector<String> getAllUsesVariables(const String& procName);
+    Vector<String> getAllUsesVariablesFromStatementType(StatementType stmtType);
+    Vector<String> getAllUsesVariablesFromProgram();
     Vector<String> getAllUsesProcedures();
+    Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType);
+    Vector<Pair<String, String>> getAllUsesProcedureTuple();
 
 private:
     // for checkIf*Uses
@@ -39,7 +41,12 @@ private:
 
     // for getAllVar
     Array<Vector<String>, STATEMENT_TYPE_COUNT> stmttypeVarlistMap;
-    HashSet<String> allVarUsedByProc;
+    HashSet<String> allVarUsedByProcSet;
+    Vector<String> allVarUsedByProcList;
+
+    // for tuples
+    Array<Vector<Pair<Integer, String>>, STATEMENT_TYPE_COUNT> statementTuples;
+    Vector<Pair<String, String>> procTuples;
 
     // for getAllStmt
     Array<Vector<Integer>, STATEMENT_TYPE_COUNT> stmttypeStmtlistMap;

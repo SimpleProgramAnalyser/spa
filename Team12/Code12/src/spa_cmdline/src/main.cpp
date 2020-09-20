@@ -75,7 +75,7 @@ int main(int argv, char** args)
     const String GreetMsg = "Welcome to our SIMPLE SPA!";
     const String SimpleProgramPromptMsg
         = "Please enter a SIMPLE source program (when done, enter a '\\' on a new line):";
-    const String DoneFeedbackMsg = "Done....";
+    const String DoneFeedbackMsg = "Done...";
     const String PqlQueryPromptMsg = "Please enter a PQL query (enter '\\' on a new line when done, or 'exit' to end):";
     const String ByeMsg = "Thank you for using our SIMPLE SPA!";
     const String SimpleProgramProcessingMsg = "Passing SIMPLE program to SPA frontend...";

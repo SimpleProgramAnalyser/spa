@@ -30,8 +30,7 @@ FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatTyp
      * Pass the parsed query (AbstractQueryType to the PQL
      * query evaluator
      */
-    Evaluator evaluator;
-    RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
+    RawQueryResult rawQueryResult = evaluateQuery(abstractQuery);
 
     // Once, we have the result, format it then return the formatted results
     Projector projector;

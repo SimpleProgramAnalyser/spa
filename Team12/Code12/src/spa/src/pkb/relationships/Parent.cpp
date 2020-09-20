@@ -39,6 +39,13 @@ void ParentTable::typedShenanigans(Integer parent, StatementType parentStmtType,
     tryAddChild(child, parentStmtType, AnyStatement, stmtChildType, stmtChildTypeSet);
     tryAddChild(child, AnyStatement, childStmtType, stmtChildType, stmtChildTypeSet);
     tryAddChild(child, AnyStatement, AnyStatement, stmtChildType, stmtChildTypeSet);
+
+    // for tuples
+    auto pair = std::make_pair(parent, child);
+    parentTuples[AnyStatement][AnyStatement].push_back(pair);
+    parentTuples[AnyStatement][childStmtType].push_back(pair);
+    parentTuples[parentStmtType][AnyStatement].push_back(pair);
+    parentTuples[parentStmtType][childStmtType].push_back(pair);
 }
 // important private helper function
 void ParentTable::typedShenanigansStar(Integer parent, StatementType parentStmtType, Integer child,
@@ -53,6 +60,13 @@ void ParentTable::typedShenanigansStar(Integer parent, StatementType parentStmtT
     tryAddChild(child, parentStmtType, AnyStatement, stmtChildStarType, stmtChildStarTypeSet);
     tryAddChild(child, AnyStatement, childStmtType, stmtChildStarType, stmtChildStarTypeSet);
     tryAddChild(child, AnyStatement, AnyStatement, stmtChildStarType, stmtChildStarTypeSet);
+
+    // for tuples
+    auto pair = std::make_pair(parent, child);
+    parentStarTuples[AnyStatement][AnyStatement].push_back(pair);
+    parentStarTuples[AnyStatement][childStmtType].push_back(pair);
+    parentStarTuples[parentStmtType][AnyStatement].push_back(pair);
+    parentStarTuples[parentStmtType][childStmtType].push_back(pair);
 }
 
 void ParentTable::addParentRelationships(Integer parent, StatementType parentStmtType, Integer child,
@@ -139,4 +153,14 @@ Vector<Integer> ParentTable::getAllChildStatementsTypedStar(StatementType stmtTy
                                                             StatementType stmtTypeOfChild)
 {
     return stmtChildStarType[stmtTypeOfParent].byType[stmtTypeOfChild];
+}
+Vector<Pair<Integer, Integer>> ParentTable::getAllParentTuple(StatementType stmtTypeOfParent,
+                                                              StatementType stmtTypeOfChild)
+{
+    return parentTuples[stmtTypeOfParent][stmtTypeOfChild];
+}
+Vector<Pair<Integer, Integer>> ParentTable::getAllParentTupleStar(StatementType stmtTypeOfParent,
+                                                                  StatementType stmtTypeOfChild)
+{
+    return parentStarTuples[stmtTypeOfParent][stmtTypeOfChild];
 }

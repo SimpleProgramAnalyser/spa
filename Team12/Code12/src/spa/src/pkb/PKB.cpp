@@ -4,6 +4,12 @@
 
 PKB pkb = PKB();
 
+void resetPKB()
+{
+    delete pkb.rootNode;
+    pkb = PKB();
+}
+
 // Uses
 void addUsesRelationships(Integer stmtNum, StatementType stmtType, const Vector<String>& varNames)
 {
@@ -41,17 +47,25 @@ Vector<Integer> getAllUsesStatements(StatementType stmtType)
 {
     return pkb.usesTable.getAllUsesStatements(stmtType);
 }
-Vector<String> getAllUsesVariables(StatementType stmtType)
+Vector<String> getAllUsesVariablesFromStatementType(StatementType stmtType)
 {
-    return pkb.usesTable.getAllUsesVariables(stmtType);
+    return pkb.usesTable.getAllUsesVariablesFromStatementType(stmtType);
 }
-Vector<String> getAllUsesVariables(const String& procName)
+Vector<String> getAllUsesVariablesFromProgram()
 {
-    return pkb.usesTable.getAllUsesVariables(procName);
+    return pkb.usesTable.getAllUsesVariablesFromProgram();
 }
 Vector<String> getAllUsesProcedures()
 {
     return pkb.usesTable.getAllUsesProcedures();
+}
+Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType)
+{
+    return pkb.usesTable.getAllUsesStatementTuple(stmtType);
+}
+Vector<Pair<String, String>> getAllUsesProcedureTuple()
+{
+    return pkb.usesTable.getAllUsesProcedureTuple();
 }
 
 // Follows
@@ -104,6 +118,14 @@ Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, S
 {
     return pkb.followsTable.getAllAfterStatementsTypedStar(stmtTypeOfBefore, stmtTypeOfAfter);
 }
+Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
+{
+    return pkb.followsTable.getAllFollowsTuple(stmtTypeOfBefore, stmtTypeOfAfter);
+}
+Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
+{
+    return pkb.followsTable.getAllFollowsTupleStar(stmtTypeOfBefore, stmtTypeOfAfter);
+}
 
 // Modifies
 void addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
@@ -142,17 +164,25 @@ Vector<Integer> getAllModifiesStatements(StatementType stmtType)
 {
     return pkb.modifiesTable.getAllModifiesStatements(stmtType);
 }
-Vector<String> getAllModifiesVariables(StatementType stmtType)
+Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType)
 {
-    return pkb.modifiesTable.getAllModifiesVariables(stmtType);
+    return pkb.modifiesTable.getAllModifiesVariablesFromStatementType(stmtType);
 }
-Vector<String> getAllModifiesVariables(const String& procName)
+Vector<String> getAllModifiesVariablesFromProgram()
 {
-    return pkb.modifiesTable.getAllModifiesVariables(procName);
+    return pkb.modifiesTable.getAllModifiesVariablesFromProgram();
 }
 Vector<String> getAllModifiesProcedures()
 {
     return pkb.modifiesTable.getAllModifiesProcedures();
+}
+Vector<Pair<Integer, String>> getAllModifiesStatementTuple(StatementType stmtType)
+{
+    return pkb.modifiesTable.getAllModifiesStatementTuple(stmtType);
+}
+Vector<Pair<String, String>> getAllModifiesProcedureTuple()
+{
+    return pkb.modifiesTable.getAllModifiesProcedureTuple();
 }
 
 // Parent
@@ -204,6 +234,14 @@ Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, State
 Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
 {
     return pkb.parentTable.getAllChildStatementsTypedStar(stmtTypeOfParent, stmtTypeOfChild);
+}
+Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
+{
+    return pkb.parentTable.getAllParentTuple(stmtTypeOfParent, stmtTypeOfChild);
+}
+Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
+{
+    return pkb.parentTable.getAllParentTupleStar(stmtTypeOfParent, stmtTypeOfChild);
 }
 
 // Procedure

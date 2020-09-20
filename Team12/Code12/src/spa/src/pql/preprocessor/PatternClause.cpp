@@ -2,25 +2,25 @@
 
 PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec):
     Clause(PatternClauseType), patternSynonym(s), patternStatementType(statementType), entityReference(entRef),
-    expressionSpec(exprSpec)
+    expressionSpec(std::move(exprSpec))
 {}
 
-PatternStatementType PatternClause::getStatementType()
+PatternStatementType PatternClause::getStatementType() const
 {
     return patternStatementType;
 }
 
-Reference PatternClause::getEntRef()
+Reference PatternClause::getEntRef() const
 {
     return entityReference;
 }
 
-ExpressionSpec PatternClause::getExprSpec()
+const ExpressionSpec& PatternClause::getExprSpec() const
 {
     return expressionSpec;
 }
 
-Synonym PatternClause::getPatternSynonym()
+Synonym PatternClause::getPatternSynonym() const
 {
     return patternSynonym;
 }

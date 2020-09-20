@@ -7,12 +7,12 @@
 class Preprocessor {
 private:
     DeclarationTable declarationTable;
-    DeclarationTable processDeclarations(String declarationString);
-    ClauseVector processClauses(String clausesString);
+    static DeclarationTable processDeclarations(const String& declarationString);
+    ClauseVector processClauses(const String& clausesString);
     Clause* processSuchThatClause(String clauseConstraint);
     Clause* processPatternClause(String clauseConstraint);
     Reference createReference(String ref);
-    ExpressionSpec createExpressionSpec(String ref);
+    ExpressionSpec createExpressionSpec(String exprSpecString);
     Expression* createExpression(String literal);
 
 public:

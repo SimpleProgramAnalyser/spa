@@ -1,25 +1,20 @@
 #include "AqTypes.h"
 
-ExpressionSpec::ExpressionSpec(): hasError{false}
-{
-    expressionSpecType = InvalidExpressionType;
-    Expression* expressionPtr = nullptr;
-    expression = expressionPtr;
-}
-
-ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): expressionSpecType{exprSpecType}, hasError{false}
-{
-    Expression* expressionPtr = nullptr;
-    expression = expressionPtr;
-}
-
-ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
-    expressionSpecType{exprSpecType}, expression(expr), hasError{false}
+ExpressionSpec::ExpressionSpec():
+    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType(InvalidExpressionType)
 {}
 
-Expression* ExpressionSpec::getExpression()
+ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType):
+    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType{exprSpecType}
+{}
+
+ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
+    expression(expr), hasError{false}, expressionSpecType{exprSpecType}
+{}
+
+Expression* ExpressionSpec::getExpression() const
 {
-    return expression;
+    return expression.get();
 }
 
 Boolean ExpressionSpec::isInvalid() const
@@ -29,16 +24,17 @@ Boolean ExpressionSpec::isInvalid() const
 
 ExpressionSpec ExpressionSpec::invalidExpressionSpec()
 {
-    auto* eS = new ExpressionSpec();
-    eS->hasError = true;
-    return *eS;
+    ExpressionSpec es;
+    es.hasError = true;
+    return es;
 }
 
 Boolean ExpressionSpec::operator==(const ExpressionSpec& expressionSpec)
 {
 
-    Boolean equalExpression = false;
+    Boolean equalExpression;
 
+    // Check if either expression is NULL
     if (!(this->expression) || !(expressionSpec.expression)) {
         if (this->expression || expressionSpec.expression) {
             return false;

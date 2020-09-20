@@ -18,7 +18,7 @@
 typedef std::pair<String, String> StringPair;
 typedef String Synonym;
 
-enum DesignEntityType : uint8_t {
+enum DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
     StmtType = 1,    // 0000 0001
     ReadType = 5,    // 0000 0101
@@ -87,14 +87,14 @@ protected:
 public:
     Reference(ReferenceType refType, ReferenceValue refValue);
     Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt);
-    ReferenceType getReferenceType();
+    ReferenceType getReferenceType() const;
     DesignEntity getDesignEntity();
-    ReferenceValue getValue();
+    ReferenceValue getValue() const;
     Boolean isValidEntityRef();
     Boolean isValidStatementRef();
     Boolean isInvalid();
     Boolean isProcedure();
-    Boolean isWildCard();
+    Boolean isWildCard() const;
     Boolean isNonStatementSynonym();
     static Reference invalidReference();
     Boolean operator==(const Reference& reference);
@@ -138,7 +138,7 @@ private:
     Relationship relationship;
 
 public:
-    SuchThatClause(Relationship& r);
+    explicit SuchThatClause(Relationship& r);
     Relationship getRelationship();
     Boolean operator==(const SuchThatClause& suchThatClause);
 };
@@ -152,15 +152,16 @@ enum ExpressionSpecType : char {
 
 class ExpressionSpec {
 private:
-    ExpressionSpecType expressionSpecType;
-    Expression* expression;
+    std::unique_ptr<Expression> expression;
     bool hasError;
 
 public:
+    ExpressionSpecType expressionSpecType;
+
     ExpressionSpec();
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
-    Expression* getExpression();
+    Expression* getExpression() const;
     Boolean isInvalid() const;
     static ExpressionSpec invalidExpressionSpec();
     Boolean operator==(const ExpressionSpec& expressionSpec);
@@ -177,10 +178,10 @@ private:
 
 public:
     PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
-    PatternStatementType getStatementType();
-    Reference getEntRef();
-    ExpressionSpec getExprSpec();
-    Synonym getPatternSynonym();
+    PatternStatementType getStatementType() const;
+    Reference getEntRef() const;
+    const ExpressionSpec& getExprSpec() const;
+    Synonym getPatternSynonym() const;
     Boolean operator==(const PatternClause& patternClause);
 };
 
@@ -200,16 +201,22 @@ public:
 
 class ClauseVector {
 private:
-    std::vector<Clause*> clauses;
+    List<Clause> clauses;
     Boolean hasError;
+    explicit ClauseVector(Boolean hasError) noexcept;
 
 public:
     ClauseVector() noexcept;
+    ~ClauseVector() = default;
+    ClauseVector(const ClauseVector&) = delete;
+    ClauseVector operator=(const ClauseVector&) = delete;
+    ClauseVector(ClauseVector&&) = default;
+    ClauseVector& operator=(ClauseVector&&) = default;
+
     static ClauseVector invalidClauseVector();
     Void add(Clause* clause);
-    Clause* get(Integer index);
-    Integer count();
-    Integer totalNumClauses();
+    Clause* get(Integer index) const;
+    Integer count() const;
     Boolean isInvalid() const;
     Boolean operator==(const ClauseVector& clauseVector);
 };
@@ -220,13 +227,15 @@ private:
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
+    AbstractQuery(Boolean hasError);
 
 public:
+    AbstractQuery(Synonym synonym, DeclarationTable& declarations);
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
-    Synonym getSelectSynonym();
-    ClauseVector getClauses();
-    DeclarationTable getDeclarationTable();
+    Synonym getSelectSynonym() const;
+    const ClauseVector& getClauses() const;
+    DeclarationTable getDeclarationTable() const;
     Boolean isInvalid() const;
     Boolean operator==(const AbstractQuery& abstractQuery);
     AbstractQuery();
