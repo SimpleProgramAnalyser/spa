@@ -93,3 +93,26 @@ TEST_CASE("trimWhitespace does not truncate whitespace between words")
     REQUIRE(trimWhitespace("     \n  hola   \t   que\v\v\v\r\r\f\ftal           \f\f\f")
             == "hola   \t   que\v\v\v\r\r\f\ftal");
 }
+
+TEST_CASE("splitByWhitespace works on different whitespaces")
+{
+    StringList* program = splitProgram("test test   \ronetwo\n\fthree four  five\tsix");
+    auto* str0 = new String{"test"};
+    auto* str1 = new String{"test"};
+    auto* str2 = new String{"onetwo"};
+    auto* str3 = new String{"three"};
+    auto* str4 = new String{"four"};
+    auto* str5 = new String{"five"};
+    auto* str6 = new String{"six"};
+    auto* expected = new StringList();
+    expected->reserve(7);
+    expected->push_back(std::unique_ptr<String>(str0));
+    expected->push_back(std::unique_ptr<String>(str1));
+    expected->push_back(std::unique_ptr<String>(str2));
+    expected->push_back(std::unique_ptr<String>(str3));
+    expected->push_back(std::unique_ptr<String>(str4));
+    expected->push_back(std::unique_ptr<String>(str5));
+    expected->push_back(std::unique_ptr<String>(str6));
+    REQUIRE(util::checkListValuesEqual(*program, *expected));
+    delete expected;
+}

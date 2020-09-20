@@ -18,7 +18,7 @@
 typedef std::pair<String, String> StringPair;
 typedef String Synonym;
 
-enum DesignEntityType : uint8_t {
+enum DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
     StmtType = 1,    // 0000 0001
     ReadType = 5,    // 0000 0101
