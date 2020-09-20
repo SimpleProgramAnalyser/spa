@@ -5,6 +5,8 @@
  */
 #include "SuchThatEvaluator.h"
 
+#include <stdexcept>
+
 #include "relationships/FollowsEvaluator.h"
 #include "relationships/ModifiesEvaluator.h"
 #include "relationships/ParentEvaluator.h"

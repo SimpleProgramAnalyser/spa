@@ -4,6 +4,7 @@
  */
 #include "FollowsEvaluator.h"
 
+#include <stdexcept>
 #include <utility>
 
 #include "RelationshipsUtil.h"

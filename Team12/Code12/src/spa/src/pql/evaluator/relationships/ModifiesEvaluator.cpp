@@ -4,6 +4,8 @@
  */
 #include "ModifiesEvaluator.h"
 
+#include <stdexcept>
+
 #include "RelationshipsUtil.h"
 
 class ModifiesEvaluator {

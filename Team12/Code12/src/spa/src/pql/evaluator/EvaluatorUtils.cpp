@@ -3,6 +3,8 @@
  */
 #include "EvaluatorUtils.h"
 
+#include <iterator>
+#include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
 

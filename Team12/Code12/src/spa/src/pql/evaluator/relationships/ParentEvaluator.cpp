@@ -4,6 +4,7 @@
  */
 #include "ParentEvaluator.h"
 
+#include <stdexcept>
 #include <utility>
 
 #include "RelationshipsUtil.h"
