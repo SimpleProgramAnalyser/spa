@@ -17,6 +17,14 @@ ClauseResult convertToClauseResult(const Vector<Integer>& intList)
     return strList;
 }
 
+template<> struct std::hash<DesignEntityType> {
+    std::size_t operator()(const DesignEntityType& pv) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(pv));
+    }
+};
+
 std::unordered_map<DesignEntityType, StatementType> getStatementTypesMap()
 {
     std::unordered_map<DesignEntityType, StatementType> queryPkbTypesMap

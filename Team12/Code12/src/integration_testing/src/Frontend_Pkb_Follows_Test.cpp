@@ -27,6 +27,8 @@ TEST_CASE("Follows relationships stored correctly for test program - getAllBefor
 
 TEST_CASE("Follows relationships stored correctly for test program - getAllAfterStatementsTyped")
 {
+    parseSimple(getProgram20String_multipleProceduresSpheresdf());
+
     // Before - AnyStatement type, After - AnyStatement type
     std::vector<Integer> actualAfterTyped = getAllAfterStatementsTyped(AnyStatement, AnyStatement);
     std::unordered_set<Integer> actualAfterTypedSet(actualAfterTyped.begin(), actualAfterTyped.end());
