@@ -164,7 +164,7 @@ TEST_CASE("Such That Follows* Read")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("re")
               .addDeclaration("re", "read")
-              .addSuchThatClause("Follows*", SynonymRefType, "re", ReadType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "re", ReadType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -180,7 +180,7 @@ TEST_CASE("Such That Follows* Print")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("pn")
               .addDeclaration("pn", "print")
-              .addSuchThatClause("Follows*", SynonymRefType, "pn", PrintType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "pn", PrintType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -196,7 +196,7 @@ TEST_CASE("Such That Follows* Call")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("cl")
               .addDeclaration("cl", "call")
-              .addSuchThatClause("Follows*", SynonymRefType, "cl", CallType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "cl", CallType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -212,7 +212,7 @@ TEST_CASE("Such That Follows* While")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("w")
               .addDeclaration("w", "while")
-              .addSuchThatClause("Follows*", SynonymRefType, "w", WhileType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "w", WhileType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -228,7 +228,7 @@ TEST_CASE("Such That Follows* If")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("ifs")
               .addDeclaration("ifs", "if")
-              .addSuchThatClause("Follows*", SynonymRefType, "ifs", IfType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "ifs", IfType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -244,7 +244,7 @@ TEST_CASE("Such That Follows* Assign")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addSuchThatClause("Follows*", SynonymRefType, "a", AssignType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "a", AssignType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -314,6 +314,34 @@ TEST_CASE("Such That Modifies Wildcard Returns Error")
 TEST_CASE("Such That Uses Wildcard Returns Error")
 {
     AbstractQuery abstractQuery = processQuery("variable v; Select v such that Uses (_, v)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Uses left reference is a constant")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; constant c; Select s such that Uses(c, \"x\")");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Uses left reference is a variable")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; variable v; Select s such that Uses(v, \"x\")");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Modifies left reference is a constant")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; constant c; Select s such that Modifies (c, \"x\")");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Modifies left reference is a variable")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; variable v; Select s such that Modifies (v, \"x\")");
 
     REQUIRE(abstractQuery.isInvalid());
 }
@@ -515,6 +543,20 @@ TEST_CASE("Pattern Clause with Parentheses in Expression")
     REQUIRE(equals);
 }
 
+TEST_CASE("Pattern Left Reference is a Non Variable Synonym Type")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; assign a; Select s pattern a (s, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Pattern Left Reference is a ExtendableLiteralExpressionType")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; assign a; Select s pattern a (_\"x\"_, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
 /************************************************************************************/
 /*  Two Clause | Such That + Pattern                                                */
 /************************************************************************************/
@@ -622,7 +664,7 @@ TEST_CASE("Vacuously True")
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, IntegerRefType, "5", NonExistentType)
+              .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -722,6 +764,20 @@ TEST_CASE("ReadType as left reference of Uses")
 TEST_CASE("PrintType as left reference of Modifies")
 {
     AbstractQuery abstractQuery = processQuery("print pn; Select pn such that Modifies(pn, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Incomplete Such That")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Incomplete Clause")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that");
 
     REQUIRE(abstractQuery.isInvalid());
 }
