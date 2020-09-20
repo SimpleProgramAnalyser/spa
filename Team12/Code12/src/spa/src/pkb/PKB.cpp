@@ -305,3 +305,35 @@ Vector<Integer> getAllConstants()
 {
     return pkb.constantTable.getAllConstants();
 }
+Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType)
+{
+    return pkb.usesTable.getAllUsesStatementTuple(stmtType);
+}
+Vector<Pair<String, String>> getAllUsesProcedureTuple()
+{
+    return pkb.usesTable.getAllUsesProcedureTuple();
+}
+Vector<Pair<Integer, String>> getAllModifiesStatementTuple(StatementType stmtType)
+{
+    return pkb.modifiesTable.getAllModifiesStatementTuple(stmtType);
+}
+Vector<Pair<String, String>> getAllModifiesProcedureTuple()
+{
+    return pkb.modifiesTable.getAllModifiesProcedureTuple();
+}
+Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
+{
+    return pkb.parentTable.getAllParentTuple(stmtTypeOfParent, stmtTypeOfChild);
+}
+Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild)
+{
+    return pkb.parentTable.getAllParentTupleStar(stmtTypeOfParent, stmtTypeOfChild);
+}
+Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
+{
+    return pkb.followsTable.getAllFollowsTuple(stmtTypeOfBefore, stmtTypeOfAfter);
+}
+Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
+{
+    return pkb.followsTable.getAllFollowsTupleStar(stmtTypeOfBefore, stmtTypeOfAfter);
+}

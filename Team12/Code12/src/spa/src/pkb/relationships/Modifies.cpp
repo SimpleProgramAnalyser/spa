@@ -25,6 +25,11 @@ void ModifiesTable::addModifiesRelationships(const String& procName, Vector<Stri
 
     // add to allModifiesProc
     allModifiesProc.push_back(procName);
+
+    // add tuple
+    for (const auto& varName : varNames) {
+        procTuples.push_back(std::make_pair(procName, varName));
+    }
 }
 
 void ModifiesTable::addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
@@ -51,6 +56,12 @@ void ModifiesTable::addModifiesRelationships(Integer stmtNum, StatementType stmt
     // add to stmttypeStmtlistMap
     stmttypeStmtlistMap[stmtType].push_back(stmtNum);
     stmttypeStmtlistMap[StatementType::AnyStatement].push_back(stmtNum);
+
+    // add tuple
+    for (const auto& varName : varNames) {
+        statementTuples[AnyStatement].push_back(std::make_pair(stmtNum, varName));
+        statementTuples[stmtType].push_back(std::make_pair(stmtNum, varName));
+    }
 }
 
 Boolean ModifiesTable::checkIfProcedureModifies(const String& procName, const String& varName)
@@ -95,4 +106,12 @@ Vector<String> ModifiesTable::getAllModifiesVariablesFromProgram()
 Vector<String> ModifiesTable::getAllModifiesProcedures()
 {
     return allModifiesProc;
+}
+Vector<Pair<Integer, String>> ModifiesTable::getAllModifiesStatementTuple(StatementType stmtType)
+{
+    return statementTuples[stmtType];
+}
+Vector<Pair<String, String>> ModifiesTable::getAllModifiesProcedureTuple()
+{
+    return procTuples;
 }

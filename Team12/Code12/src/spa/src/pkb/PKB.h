@@ -24,8 +24,6 @@ Vector<Integer> getAllUsesStatements(StatementType stmtType);
 Vector<String> getAllUsesVariablesFromStatementType(StatementType stmtType);
 Vector<String> getAllUsesVariablesFromProgram();
 Vector<String> getAllUsesProcedures();
-// TODO: implement these
-// TODO: extend to other tables
 Vector<Pair<Integer, String>> getAllUsesStatementTuple(StatementType stmtType);
 Vector<Pair<String, String>> getAllUsesProcedureTuple();
 
@@ -60,7 +58,6 @@ Vector<Integer> getAllParentStatementsTyped(StatementType stmtTypeOfParent, Stat
 Vector<Integer> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
-// TODO: implement
 Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 
@@ -78,7 +75,6 @@ Vector<Integer> getAllBeforeStatementsTyped(StatementType stmtTypeOfBefore, Stat
 Vector<Integer> getAllBeforeStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
-// TODO: implement
 Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 
