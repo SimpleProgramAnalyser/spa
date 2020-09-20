@@ -1850,27 +1850,28 @@ ProgramNode* getProgram20Tree_multipleProceduresSpheresdf()
     List<StatementNode> raymarchIfStatements;
     List<StatementNode> raymarchElseStatements;
     List<StatementNode> raymarchWhileStatements;
-    raymarchIfStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(12, Variable("done"), createRefExpr("depth"))));
+    raymarchIfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(12, Variable("done"), createRefExpr("depth"))));
     raymarchElseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
         createAssignNode(13, Variable("depth"), createPlusExpr(createRefExpr("depth"), createRefExpr("dist")))));
 
     raymarchWhileStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("depth"))));
-    raymarchWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(9, Variable("po"), 
+    raymarchWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        9, Variable("po"),
         createPlusExpr(createRefExpr("ro"), createTimesExpr(createRefExpr("rd"), createRefExpr("depth"))))));
     raymarchWhileStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(10, "spheresdf")));
     raymarchWhileStatements.push_back(std::unique_ptr<IfStatementNode>(
         createIfNode(11, createLtExpr(createRefExpr("dist"), createRefExpr("epsilon")),
                      createStmtlstNode(raymarchIfStatements), createStmtlstNode(raymarchElseStatements))));
     raymarchWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(14, Variable("count"), createPlusExpr(createRefExpr("steps"), createRefExpr(1)))));
+        createAssignNode(14, Variable("count"), createPlusExpr(createRefExpr("count"), createRefExpr(1)))));
 
     // procedure raymarch
-    raymarchStmts.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(4, Variable("ro"), createRefExpr(13))));
+    raymarchStmts.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(4, Variable("ro"), createRefExpr(13))));
     raymarchStmts.push_back(
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("rd"), createRefExpr(19))));
-    raymarchStmts.push_back(
-        std::unique_ptr<ReadStatementNode>(createReadNode(6, Variable("depth"))));
+    raymarchStmts.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(6, Variable("depth"))));
     raymarchStmts.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
         7, createLtExpr(createRefExpr("count"), createRefExpr("steps")), createStmtlstNode(raymarchWhileStatements))));
 
@@ -1880,22 +1881,34 @@ ProgramNode* getProgram20Tree_multipleProceduresSpheresdf()
 
     // procedure spheresdf while
     List<StatementNode> spheresdfWhileStatements;
-    spheresdfWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(20, Variable("p"), createRefExpr("x"))));
     spheresdfWhileStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(21, Variable("x"), createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")), createRefExpr(2)))));
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(20, Variable("p"), createRefExpr("x"))));
+    spheresdfWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        21, Variable("x"),
+        createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")),
+                      createRefExpr(2)))));
 
     // procedure spheresdf
-    spheresdfStmts.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(15, Variable("dist"), createPlusExpr(createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")), createTimesExpr(createRefExpr("y"), createRefExpr("y"))), createTimesExpr(createRefExpr("z"), createRefExpr("z"))))));
+    spheresdfStmts.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(15, Variable("dist"),
+                         createPlusExpr(createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                                                       createTimesExpr(createRefExpr("y"), createRefExpr("y"))),
+                                        createTimesExpr(createRefExpr("z"), createRefExpr("z"))))));
     spheresdfStmts.push_back(
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(16, Variable("x"), createRefExpr("dist"))));
     spheresdfStmts.push_back(
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(17, Variable("depth"), createRefExpr("depth"))));
-    spheresdfStmts.push_back(
-        std::unique_ptr<ReadStatementNode>(createReadNode(18, Variable("p"))));
+    spheresdfStmts.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(18, Variable("p"))));
     spheresdfStmts.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
         19, createNeqExpr(createRefExpr("x"), createRefExpr("p")), createStmtlstNode(spheresdfWhileStatements))));
+
+    spheresdfStmts.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(22, Variable("dist"), createMinusExpr(createRefExpr("x"), createRefExpr(1)))));
+    spheresdfStmts.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        23, Variable("x"),
+        createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                       createDivExpr(createTimesExpr(createRefExpr("y"), createRefExpr("y")), createRefExpr(2))))));
+
     StmtlstNode* spheresdfStmtLstNode = createStmtlstNode(spheresdfStmts);
     ProcedureNode* spheresdfProc = createProcedureNode("spheresdf", spheresdfStmtLstNode);
     procedureList.push_back(std::unique_ptr<ProcedureNode>(spheresdfProc));
