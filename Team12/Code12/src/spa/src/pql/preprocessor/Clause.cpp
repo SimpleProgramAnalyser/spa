@@ -18,7 +18,7 @@ Boolean Clause::isInvalid()
 Clause* Clause::invalidClause(ClauseType clauseType)
 {
     auto* c = new Clause(clauseType);
-    (*c).hasError = true;
+    c->hasError = true;
     return c;
 }
 

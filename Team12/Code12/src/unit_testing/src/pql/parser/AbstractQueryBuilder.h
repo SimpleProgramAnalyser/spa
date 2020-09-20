@@ -5,24 +5,24 @@
 
 class AbstractQueryBuilder {
 private:
-    AbstractQuery abstractQuery;
     DeclarationTable declarationTable;
     ClauseVector clauseVector;
     Synonym selectSynonym;
 
-    static Expression* createExpression(String literal);
-    AbstractQueryBuilder();
+    static Expression* createExpression(const String& literal);
 
 public:
     static AbstractQueryBuilder create();
-    AbstractQueryBuilder addSelectSynonym(Synonym synonym);
-    AbstractQueryBuilder addDeclaration(Synonym synonym, String designEntityType);
-    AbstractQueryBuilder addSuchThatClause(String relRefType, ReferenceType leftRefType, ReferenceValue leftRefValue,
-                                           DesignEntityType leftDesignEntityType, ReferenceType rightRefType,
-                                           ReferenceValue rightRefValue, DesignEntityType rightDesignEntityType);
-    AbstractQueryBuilder addPatternClause(Synonym s, PatternStatementType patternStatementType, ReferenceType refType,
-                                          ReferenceValue refValue, DesignEntityType designEntityType, String exprString,
-                                          ExpressionSpecType exprSpecType);
+    AbstractQueryBuilder& addSelectSynonym(Synonym synonym);
+    AbstractQueryBuilder& addDeclaration(Synonym synonym, const String& designEntityType);
+    AbstractQueryBuilder& addSuchThatClause(String relRefType, ReferenceType leftRefType,
+                                                  ReferenceValue leftRefValue, DesignEntityType leftDesignEntityType,
+                                                  ReferenceType rightRefType, ReferenceValue rightRefValue,
+                                                  DesignEntityType rightDesignEntityType);
+    AbstractQueryBuilder& addPatternClause(Synonym s, PatternStatementType patternStatementType,
+                                                 ReferenceType refType, ReferenceValue refValue,
+                                                 DesignEntityType designEntityType, const String& exprString,
+                                                 ExpressionSpecType exprSpecType);
     AbstractQuery build();
 };
 

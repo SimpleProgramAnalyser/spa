@@ -1,50 +1,39 @@
 #include "AbstractQueryBuilder.h"
 
+#include <utility>
+
 #include "frontend/parser/Parser.h"
 #include "lexer/Lexer.h"
 
-AbstractQueryBuilder::AbstractQueryBuilder()
-{
-    Synonym s = "";
-    DeclarationTable dT;
-    ClauseVector cV;
-
-    declarationTable = dT;
-    clauseVector = cV;
-    selectSynonym = s;
-}
-
 AbstractQueryBuilder AbstractQueryBuilder::create()
 {
-    return *(new AbstractQueryBuilder());
+    return AbstractQueryBuilder();
 }
 
-AbstractQueryBuilder AbstractQueryBuilder::addSelectSynonym(Synonym synonym)
+AbstractQueryBuilder& AbstractQueryBuilder::addSelectSynonym(Synonym synonym)
 {
-    selectSynonym = synonym;
-
+    selectSynonym = std::move(synonym);
     return *this;
 }
 
-AbstractQueryBuilder AbstractQueryBuilder::addDeclaration(Synonym synonym, String designEntityType)
+AbstractQueryBuilder& AbstractQueryBuilder::addDeclaration(Synonym synonym, const String& designEntityType)
 {
     DesignEntity designEntity{designEntityType};
-    declarationTable.addDeclaration(synonym, designEntity);
-
+    declarationTable.addDeclaration(std::move(synonym), designEntity);
     return *this;
 }
 
-AbstractQueryBuilder AbstractQueryBuilder::addSuchThatClause(String relRefType, ReferenceType leftRefType,
-                                                             ReferenceValue leftRefValue,
-                                                             DesignEntityType leftDesignEntityType,
-                                                             ReferenceType rightRefType, ReferenceValue rightRefValue,
-                                                             DesignEntityType rightDesignEntityType)
+AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(String relRefType, ReferenceType leftRefType,
+                                                              ReferenceValue leftRefValue,
+                                                              DesignEntityType leftDesignEntityType,
+                                                              ReferenceType rightRefType, ReferenceValue rightRefValue,
+                                                              DesignEntityType rightDesignEntityType)
 {
     DesignEntity leftDesignEntity{leftDesignEntityType};
-    Reference leftReference{leftRefType, leftRefValue, leftDesignEntity};
+    Reference leftReference{leftRefType, std::move(leftRefValue), leftDesignEntity};
     DesignEntity rightDesignEntity{rightDesignEntityType};
-    Reference rightReference{rightRefType, rightRefValue, rightDesignEntity};
-    Relationship relationship{relRefType, leftReference, rightReference};
+    Reference rightReference{rightRefType, std::move(rightRefValue), rightDesignEntity};
+    Relationship relationship{std::move(relRefType), leftReference, rightReference};
 
     Clause* suchThatClause = new SuchThatClause(relationship);
     clauseVector.add(suchThatClause);
@@ -52,23 +41,23 @@ AbstractQueryBuilder AbstractQueryBuilder::addSuchThatClause(String relRefType, 
     return *this;
 }
 
-AbstractQueryBuilder AbstractQueryBuilder::addPatternClause(Synonym s, PatternStatementType patternStatementType,
-                                                            ReferenceType refType, ReferenceValue refValue,
-                                                            DesignEntityType designEntityType, String exprString,
-                                                            ExpressionSpecType exprSpecType)
+AbstractQueryBuilder& AbstractQueryBuilder::addPatternClause(Synonym s, PatternStatementType patternStatementType,
+                                                             ReferenceType refType, ReferenceValue refValue,
+                                                             DesignEntityType designEntityType,
+                                                             const String& exprString, ExpressionSpecType exprSpecType)
 {
     Expression* expression = createExpression(exprString);
     ExpressionSpec expressionSpec{expression, exprSpecType};
     DesignEntity designEntity{designEntityType};
-    Reference reference{refType, refValue, designEntity};
+    Reference reference{refType, std::move(refValue), designEntity};
 
-    Clause* patternClause = new PatternClause(s, patternStatementType, reference, expressionSpec);
+    Clause* patternClause = new PatternClause(std::move(s), patternStatementType, reference, std::move(expressionSpec));
     clauseVector.add(patternClause);
 
     return *this;
 }
 
-Expression* AbstractQueryBuilder::createExpression(String expressionString)
+Expression* AbstractQueryBuilder::createExpression(const String& expressionString)
 {
     StringList* splitString = splitProgram(expressionString);
     Expression* expression = parseExpression(splitString);
@@ -77,6 +66,5 @@ Expression* AbstractQueryBuilder::createExpression(String expressionString)
 
 AbstractQuery AbstractQueryBuilder::build()
 {
-    AbstractQuery abstractQuery(selectSynonym, declarationTable, clauseVector);
-    return abstractQuery;
+    return AbstractQuery(selectSynonym, declarationTable, clauseVector);
 }

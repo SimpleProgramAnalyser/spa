@@ -1,25 +1,20 @@
 #include "AqTypes.h"
 
-ExpressionSpec::ExpressionSpec(): hasError{false}
-{
-    expressionSpecType = InvalidExpressionType;
-    Expression* expressionPtr = nullptr;
-    expression = expressionPtr;
-}
+ExpressionSpec::ExpressionSpec():
+    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType(InvalidExpressionType)
+{}
 
-ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType): hasError{false}, expressionSpecType{exprSpecType}
-{
-    Expression* expressionPtr = nullptr;
-    expression = expressionPtr;
-}
+ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType):
+    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType{exprSpecType}
+{}
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
     expression(expr), hasError{false}, expressionSpecType{exprSpecType}
 {}
 
-Expression* ExpressionSpec::getExpression()
+Expression* ExpressionSpec::getExpression() const
 {
-    return expression;
+    return expression.get();
 }
 
 Boolean ExpressionSpec::isInvalid() const
@@ -29,9 +24,9 @@ Boolean ExpressionSpec::isInvalid() const
 
 ExpressionSpec ExpressionSpec::invalidExpressionSpec()
 {
-    auto* eS = new ExpressionSpec();
-    eS->hasError = true;
-    return *eS;
+    ExpressionSpec es;
+    es.hasError = true;
+    return es;
 }
 
 Boolean ExpressionSpec::operator==(const ExpressionSpec& expressionSpec)

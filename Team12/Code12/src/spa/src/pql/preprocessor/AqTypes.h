@@ -138,7 +138,7 @@ private:
     Relationship relationship;
 
 public:
-    SuchThatClause(Relationship& r);
+    explicit SuchThatClause(Relationship& r);
     Relationship getRelationship();
     Boolean operator==(const SuchThatClause& suchThatClause);
 };
@@ -152,7 +152,7 @@ enum ExpressionSpecType : char {
 
 class ExpressionSpec {
 private:
-    Expression* expression;
+    std::unique_ptr<Expression> expression;
     bool hasError;
 
 public:
@@ -161,7 +161,7 @@ public:
     ExpressionSpec();
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
-    Expression* getExpression();
+    Expression* getExpression() const;
     Boolean isInvalid() const;
     static ExpressionSpec invalidExpressionSpec();
     Boolean operator==(const ExpressionSpec& expressionSpec);
@@ -178,10 +178,10 @@ private:
 
 public:
     PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
-    PatternStatementType getStatementType();
-    Reference getEntRef();
-    ExpressionSpec getExprSpec();
-    Synonym getPatternSynonym();
+    PatternStatementType getStatementType() const;
+    Reference getEntRef() const;
+    const ExpressionSpec& getExprSpec() const;
+    Synonym getPatternSynonym() const;
     Boolean operator==(const PatternClause& patternClause);
 };
 
@@ -201,16 +201,22 @@ public:
 
 class ClauseVector {
 private:
-    std::vector<Clause*> clauses;
+    List<Clause> clauses;
     Boolean hasError;
+    explicit ClauseVector(Boolean hasError) noexcept;
 
 public:
     ClauseVector() noexcept;
+    ~ClauseVector() = default;
+    ClauseVector(const ClauseVector&) = delete;
+    ClauseVector operator=(const ClauseVector&) = delete;
+    ClauseVector(ClauseVector&&) = default;
+    ClauseVector& operator=(ClauseVector&&) = default;
+
     static ClauseVector invalidClauseVector();
     Void add(Clause* clause);
-    Clause* get(Integer index);
-    Integer count();
-    Integer totalNumClauses();
+    Clause* get(Integer index) const;
+    Integer count() const;
     Boolean isInvalid() const;
     Boolean operator==(const ClauseVector& clauseVector);
 };
@@ -221,12 +227,14 @@ private:
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
+    AbstractQuery(Boolean hasError);
 
 public:
+    AbstractQuery(Synonym synonym, DeclarationTable& declarations);
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
     Synonym getSelectSynonym() const;
-    ClauseVector getClauses() const;
+    const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;
     Boolean isInvalid() const;
     Boolean operator==(const AbstractQuery& abstractQuery);

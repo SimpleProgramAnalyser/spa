@@ -42,7 +42,7 @@ RawQueryResult Evaluator::evaluateQuery()
  */
 RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 {
-    ClauseVector clauses = query.getClauses();
+    const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);
         evaluateClause(clause);

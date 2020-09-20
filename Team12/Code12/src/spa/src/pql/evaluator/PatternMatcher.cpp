@@ -184,24 +184,6 @@ ConstraintChecker determineConstraintAndPopulateTables(PatternClause* pnClause, 
 }
 
 /**
- * Checks whether an item is equal to some item
- * in a vector, making use of operator==().
- *
- * @tparam T Type of the item.
- * @param vector The vector to search.
- * @param item The item to match against.
- *
- * @return Returns true if item was found in vector.
- *         Otherwise, if item != any element of vector,
- *         return false.
- */
-template <typename T>
-Boolean isItemInVector(std::vector<T> vector, T item)
-{
-    return std::find(vector.begin(), vector.end(), item) != vector.end();
-}
-
-/**
  * Checks whether the clauseExpression can be found
  * within the programExpression. If it is not found,
  * check the subtrees of the programExpression
@@ -242,7 +224,7 @@ Boolean doExpressionsMatchRecursive(const Expression* const programExpression, E
  * @return True, if the expression spec matches the
  *         programExpression. Otherwise, false.
  */
-Boolean doesExpressionSpecMatch(const Expression* programExpression, ExpressionSpec expSpec)
+Boolean doesExpressionSpecMatch(const Expression* programExpression, const ExpressionSpec& expSpec)
 {
     ExpressionSpecType type = expSpec.expressionSpecType;
     switch (type) {
