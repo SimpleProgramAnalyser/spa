@@ -1353,3 +1353,294 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
+
+TEST_CASE("query with such that Modifies clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "variable v; Select v such that Modifies(2,v)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+
+    Vector<String> varNames;
+
+    String varName1 = "a";
+    String varName2 = "b";
+
+    varNames.push_back(varName1);
+    varNames.push_back(varName2);
+
+    addModifiesRelationships(2, AssignmentStatement, varNames);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = varName2 + ", " + varName1;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Modifies clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "variable v, v1; Select v such that Modifies(2,v1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    String varName1 = "a";
+    String varName2 = "b";
+
+    insertIntoVariableTable(varName1);
+    insertIntoVariableTable(varName2);
+
+    Vector<String> varNames;
+
+    String varName3 = "x";
+    String varName4 = "y";
+
+    varNames.push_back(varName3);
+    varNames.push_back(varName4);
+
+    addModifiesRelationships(2, AssignmentStatement, varNames);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = varName1 + ", " + varName2;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Modifies clause, left operand line number, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "variable v; Select v such that Modifies(2,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    String varName1 = "a";
+    String varName2 = "b";
+
+    insertIntoVariableTable(varName1);
+    insertIntoVariableTable(varName2);
+
+    Vector<String> varNames;
+
+    String varName3 = "x";
+    String varName4 = "y";
+
+    varNames.push_back(varName3);
+    varNames.push_back(varName4);
+
+    addModifiesRelationships(2, AssignmentStatement, varNames);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = varName1 + ", " + varName2;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Modifies clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+{
+    // === Test set-up ===
+    String query = "variable v, v1; Select v such that Modifies(2,v1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    String varName1 = "a";
+    String varName2 = "b";
+
+    insertIntoVariableTable(varName1);
+    insertIntoVariableTable(varName2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+/*
+ * From this test onward, we will not be (intentionally) testing for vacuously
+ * true queries, and queries in which at least one clause is not related to
+ * the synonym, as there are too many combinations (we give the benefit of
+ * doubt that our autotester system tests will cover
+ * all of these cases).
+ */
+
+/*
+ * Additionally, for this kind of test case, we would not be explicitly testing
+ * for all StatementType, but only test AssignmentStatement type.
+ */
+
+TEST_CASE("query with such that Modifies clause, left operand synonym, right operand variable name")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Modifies(s,\"a\")";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    String varName1 = "a";
+    String varName2 = "b";
+
+    insertIntoVariableTable(varName1);
+    insertIntoVariableTable(varName2);
+
+    Vector<String> varNames;
+
+    varNames.push_back(varName1);
+    varNames.push_back(varName2);
+
+    addModifiesRelationships(2, AssignmentStatement, varNames);
+    addModifiesRelationships(3, AssignmentStatement, varNames);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 2";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Modifies clause, left operand procedure name, right operand variable name")
+{
+    // === Test set-up ===
+    String query = "procedure p; Select p such that Modifies(\"proc3\",\"x\")";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    String varName1 = "a";
+    String varName2 = "b";
+
+    insertIntoVariableTable(varName1);
+    insertIntoVariableTable(varName2);
+
+    String procName1 = "proc1";
+    String procName2 = "proc2";
+
+    insertIntoProcedureTable(procName1);
+    insertIntoProcedureTable(procName2);
+
+    Vector<String> varNames;
+
+    String varName3 = "x";
+    String varName4 = "y";
+
+    varNames.push_back(varName3);
+    varNames.push_back(varName4);
+
+    String procName3 = "proc3";
+
+    addModifiesRelationships(procName3, varNames);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = procName1 + ", " + procName2;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Modifies clause, left operand synonym, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Modifies(s,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    Vector<String> varNames;
+
+    String varName1 = "a";
+    String varName2 = "b";
+
+    varNames.push_back(varName1);
+    varNames.push_back(varName2);
+
+    addModifiesRelationships(2, AssignmentStatement, varNames);
+    addModifiesRelationships(3, AssignmentStatement, varNames);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 2";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
