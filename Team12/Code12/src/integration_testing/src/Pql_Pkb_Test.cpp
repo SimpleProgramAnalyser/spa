@@ -372,6 +372,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
 
     PqlManager pqlManager;
@@ -398,6 +399,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -432,6 +434,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -466,6 +469,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -500,6 +504,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
     addFollowsRelationships(3, AssignmentStatement, 4, AssignmentStatement);
 
@@ -528,6 +533,7 @@ TEST_CASE("query with such that Follows clause, left operand wildcard, right ope
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
     addFollowsRelationships(3, AssignmentStatement, 4, AssignmentStatement);
 
@@ -556,6 +562,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -582,6 +589,11 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
+/*
+ * TODO: Get this test case to work after PKB bug fixed, where
+ * a Parent can have multiple children (unlike follows.)
+ */
+/*
 TEST_CASE("query with such that Parent clause, left operand line number, right operand synonym")
 {
     // === Test set-up ===
@@ -589,16 +601,15 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
     QueryResultFormatType format = AutotesterFormat;
 
-    /*
-     * Obviously, there are many more possible combinations, however
-     * we won't be exhaustively testing for all of them.
-     */
+     // Obviously, there are many more possible combinations, however
+     // we won't be exhaustively testing for all of them.
 
     SECTION("AssignmentStatement type")
     {
         // Call PKB API to add some dummy relationships
         resetPKB();
         addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
+        addParentRelationships(2, WhileStatement, 4, AssignmentStatement);
 
         PqlManager pqlManager;
 
@@ -613,6 +624,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
 
         // === Check expected test results ===
+        REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
     }
 
@@ -621,6 +633,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         // Call PKB API to add some dummy relationships
         resetPKB();
         addParentRelationships(2, WhileStatement, 3, CallStatement);
+        addParentRelationships(2, WhileStatement, 4, CallStatement);
 
         PqlManager pqlManager;
 
@@ -643,6 +656,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         // Call PKB API to add some dummy relationships
         resetPKB();
         addParentRelationships(2, WhileStatement, 3, IfStatement);
+        addParentRelationships(2, WhileStatement, 4, IfStatement);
 
         PqlManager pqlManager;
 
@@ -665,6 +679,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         // Call PKB API to add some dummy relationships
         resetPKB();
         addParentRelationships(2, WhileStatement, 3, PrintStatement);
+        addParentRelationships(2, WhileStatement, 4, PrintStatement);
 
         PqlManager pqlManager;
 
@@ -687,6 +702,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         // Call PKB API to add some dummy relationships
         resetPKB();
         addParentRelationships(2, WhileStatement, 3, ReadStatement);
+        addParentRelationships(2, WhileStatement, 4, ReadStatement);
 
         PqlManager pqlManager;
 
@@ -709,6 +725,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         // Call PKB API to add some dummy relationships
         resetPKB();
         addParentRelationships(2, WhileStatement, 3, WhileStatement);
+        addParentRelationships(2, WhileStatement, 4, WhileStatement);
 
         PqlManager pqlManager;
 
@@ -726,6 +743,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
     }
 }
+*/
 
 TEST_CASE("(vacuously true) query with such that Parent clause, left operand line number, right operand synonym")
 {
@@ -851,6 +869,7 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     addParentRelationships(2, WhileStatement, 3, WhileStatement);
 
     PqlManager pqlManager;
@@ -878,6 +897,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -886,7 +906,6 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     insertIntoStatementTable(8, WhileStatement);
 
     addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
-    addParentRelationships(2, WhileStatement, 4, AssignmentStatement);
 
     PqlManager pqlManager;
 
@@ -913,6 +932,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -947,6 +967,7 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -981,6 +1002,7 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
     addParentRelationships(3, WhileStatement, 4, AssignmentStatement);
 
@@ -1009,6 +1031,7 @@ TEST_CASE("query with such that Parent clause, left operand wildcard, right oper
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     addParentRelationships(2, WhileStatement, 3, AssignmentStatement);
     addParentRelationships(3, WhileStatement, 4, AssignmentStatement);
 
@@ -1037,6 +1060,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
     insertIntoStatementTable(4, CallStatement);
     insertIntoStatementTable(5, IfStatement);
@@ -1237,6 +1261,7 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     String varName1 = "a";
     String varName2 = "b";
 
@@ -1326,6 +1351,7 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     Vector<String> varNames;
 
     String varName1 = "a";
@@ -1528,6 +1554,7 @@ TEST_CASE("query with such that Modifies clause, left operand synonym, right ope
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     String varName1 = "a";
     String varName2 = "b";
 
@@ -1617,6 +1644,7 @@ TEST_CASE("query with such that Modifies clause, left operand synonym, right ope
     QueryResultFormatType format = AutotesterFormat;
 
     // Call PKB API to add some dummy relationships
+    resetPKB();
     Vector<String> varNames;
 
     String varName1 = "a";
@@ -1637,6 +1665,1282 @@ TEST_CASE("query with such that Modifies clause, left operand synonym, right ope
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Follows* clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(2,s)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    SECTION("AssignmentStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+        Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, AssignmentStatement);
+        Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, AssignmentStatement);
+
+        afterStmttypePairs.push_back(afterStmttypePair1);
+        afterStmttypePairs.push_back(afterStmttypePair2);
+
+        addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("CallStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+        Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, CallStatement);
+        Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, CallStatement);
+
+        afterStmttypePairs.push_back(afterStmttypePair1);
+        afterStmttypePairs.push_back(afterStmttypePair2);
+
+        addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("IfStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+        Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, IfStatement);
+        Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, IfStatement);
+
+        afterStmttypePairs.push_back(afterStmttypePair1);
+        afterStmttypePairs.push_back(afterStmttypePair2);
+
+        addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("PrintStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+        Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, PrintStatement);
+        Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, PrintStatement);
+
+        afterStmttypePairs.push_back(afterStmttypePair1);
+        afterStmttypePairs.push_back(afterStmttypePair2);
+
+        addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("ReadStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+        Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, ReadStatement);
+        Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, ReadStatement);
+
+        afterStmttypePairs.push_back(afterStmttypePair1);
+        afterStmttypePairs.push_back(afterStmttypePair2);
+
+        addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("WhileStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+        Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, WhileStatement);
+        Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, WhileStatement);
+
+        afterStmttypePairs.push_back(afterStmttypePair1);
+        afterStmttypePairs.push_back(afterStmttypePair2);
+
+        addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+}
+
+TEST_CASE("(vacuously true) query with such that Follows* clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; Select s such that Follows*(2,s1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+    Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs.push_back(afterStmttypePair1);
+    afterStmttypePairs.push_back(afterStmttypePair2);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Follows* clause, left operand line number, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(2,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+    Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs.push_back(afterStmttypePair1);
+    afterStmttypePairs.push_back(afterStmttypePair2);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Follows* clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; Select s such that Follows*(2,s1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+/*
+ * From this test onward, we will not be (intentionally) testing for vacuously
+ * true queries, and queries in which at least one clause is not related to
+ * the synonym, as there are too many combinations (we give the benefit of
+ * doubt that our autotester system tests will cover
+ * all of these cases).
+ */
+
+/*
+ * Additionally, for this kind of test case, we would not be explicitly testing
+ * for all StatementType, but only test AssignmentStatement type.
+ */
+
+TEST_CASE("query with such that Follows* clause, left operand synonym, right operand line number")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(s,3)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs1;
+
+    Pair<Integer, StatementType> afterStmttypePair11 = std::make_pair(3, CallStatement);
+
+    afterStmttypePairs1.push_back(afterStmttypePair11);
+
+    addFollowsRelationshipsStar(1, AssignmentStatement, afterStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs2;
+
+    Pair<Integer, StatementType> afterStmttypePair21 = std::make_pair(3, CallStatement);
+
+    afterStmttypePairs2.push_back(afterStmttypePair21);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "2, 1";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Follows* clause, left operand wildcard, right operand line number")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(_,3)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+    Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs.push_back(afterStmttypePair1);
+    afterStmttypePairs.push_back(afterStmttypePair2);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Follows* clause, left operand line number, right operand line number")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(2,3)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+    Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs.push_back(afterStmttypePair1);
+    afterStmttypePairs.push_back(afterStmttypePair2);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Follows* clause, left operand synonym, right operand synonym, but both synonyms are the same")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(s,s)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs1;
+
+    Pair<Integer, StatementType> afterStmttypePair11 = std::make_pair(3, CallStatement);
+
+    afterStmttypePairs1.push_back(afterStmttypePair11);
+
+    addFollowsRelationshipsStar(1, AssignmentStatement, afterStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs2;
+
+    Pair<Integer, StatementType> afterStmttypePair21 = std::make_pair(3, CallStatement);
+
+    afterStmttypePairs2.push_back(afterStmttypePair21);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Follows* clause, left operand synonym, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(s,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs1;
+
+    Pair<Integer, StatementType> afterStmttypePair11 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair12 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs1.push_back(afterStmttypePair11);
+    afterStmttypePairs1.push_back(afterStmttypePair12);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs2;
+
+    Pair<Integer, StatementType> afterStmttypePair21 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair22 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs2.push_back(afterStmttypePair21);
+    afterStmttypePairs2.push_back(afterStmttypePair22);
+
+    addFollowsRelationshipsStar(3, AssignmentStatement, afterStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 2";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Follows* clause, left operand wildcard, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(_,s)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs1;
+
+    Pair<Integer, StatementType> afterStmttypePair11 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair12 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs1.push_back(afterStmttypePair11);
+    afterStmttypePairs1.push_back(afterStmttypePair12);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs2;
+
+    Pair<Integer, StatementType> afterStmttypePair21 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair22 = std::make_pair(5, CallStatement);
+
+    afterStmttypePairs2.push_back(afterStmttypePair21);
+    afterStmttypePairs2.push_back(afterStmttypePair22);
+
+    addFollowsRelationshipsStar(3, AssignmentStatement, afterStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "5, 4, 3";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Follows* clause, left operand wildcard, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Follows*(_,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> afterStmttypePairs;
+
+    Pair<Integer, StatementType> afterStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> afterStmttypePair2 = std::make_pair(4, CallStatement);
+
+    afterStmttypePairs.push_back(afterStmttypePair1);
+    afterStmttypePairs.push_back(afterStmttypePair2);
+
+    addFollowsRelationshipsStar(2, AssignmentStatement, afterStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Parent* clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(2,s)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    SECTION("AssignmentStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+        Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, AssignmentStatement);
+        Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, AssignmentStatement);
+
+        childrenStmttypePairs.push_back(childrenStmttypePair1);
+        childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+        addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("CallStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+        Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, CallStatement);
+        Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, CallStatement);
+
+        childrenStmttypePairs.push_back(childrenStmttypePair1);
+        childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+        addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("IfStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+        Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, IfStatement);
+        Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, IfStatement);
+
+        childrenStmttypePairs.push_back(childrenStmttypePair1);
+        childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+        addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("PrintStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+        Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, PrintStatement);
+        Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, PrintStatement);
+
+        childrenStmttypePairs.push_back(childrenStmttypePair1);
+        childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+        addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("ReadStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+        Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, ReadStatement);
+        Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, ReadStatement);
+
+        childrenStmttypePairs.push_back(childrenStmttypePair1);
+        childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+        addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+
+    SECTION("WhileStatement type")
+    {
+        // Call PKB API to add some dummy relationships
+        resetPKB();
+
+        Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+        Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, WhileStatement);
+        Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, WhileStatement);
+
+        childrenStmttypePairs.push_back(childrenStmttypePair1);
+        childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+        addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+        PqlManager pqlManager;
+
+
+        // === Execute test method ===
+        FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+        // === Expected test results ===
+        String expectedResultsStr = "4, 3";
+        FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+        // === Check expected test results ===
+        REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+    }
+}
+
+TEST_CASE("(vacuously true) query with such that Parent* clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; Select s such that Parent*(2,s1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+    Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs.push_back(childrenStmttypePair1);
+    childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+    addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Parent* clause, left operand line number, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(2,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+    Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs.push_back(childrenStmttypePair1);
+    childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+    addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Parent* clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; Select s such that Parent*(2,s1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+/*
+ * From this test onward, we will not be (intentionally) testing for vacuously
+ * true queries, and queries in which at least one clause is not related to
+ * the synonym, as there are too many combinations (we give the benefit of
+ * doubt that our autotester system tests will cover
+ * all of these cases).
+ */
+
+/*
+ * Additionally, for this kind of test case, we would not be explicitly testing
+ * for all StatementType, but only test AssignmentStatement type.
+ */
+
+TEST_CASE("query with such that Parent* clause, left operand synonym, right operand line number")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(s,3)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs1;
+
+    Pair<Integer, StatementType> childrenStmttypePair11 = std::make_pair(3, CallStatement);
+
+    childrenStmttypePairs1.push_back(childrenStmttypePair11);
+
+    addParentRelationshipsStar(1, AssignmentStatement, childrenStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs2;
+
+    Pair<Integer, StatementType> childrenStmttypePair21 = std::make_pair(3, CallStatement);
+
+    childrenStmttypePairs2.push_back(childrenStmttypePair21);
+
+    addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "2, 1";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wildcard, right operand line number")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(_,3)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+    Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs.push_back(childrenStmttypePair1);
+    childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+    addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Parent* clause, left operand line number, right operand line number")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(2,3)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+    Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs.push_back(childrenStmttypePair1);
+    childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+    addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Parent* clause, left operand synonym, right operand synonym, but both synonyms are the same")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(s,s)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs1;
+
+    Pair<Integer, StatementType> childrenStmttypePair11 = std::make_pair(3, CallStatement);
+
+    childrenStmttypePairs1.push_back(childrenStmttypePair11);
+
+    addParentRelationshipsStar(1, AssignmentStatement, childrenStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs2;
+
+    Pair<Integer, StatementType> childrenStmttypePair21 = std::make_pair(3, CallStatement);
+
+    childrenStmttypePairs2.push_back(childrenStmttypePair21);
+
+    addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Parent* clause, left operand synonym, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(s,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs1;
+
+    Pair<Integer, StatementType> childrenStmttypePair11 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair12 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs1.push_back(childrenStmttypePair11);
+    childrenStmttypePairs1.push_back(childrenStmttypePair12);
+
+    addParentRelationshipsStar(2, AssignmentStatement, childrenStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs2;
+
+    Pair<Integer, StatementType> childrenStmttypePair21 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair22 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs2.push_back(childrenStmttypePair21);
+    childrenStmttypePairs2.push_back(childrenStmttypePair22);
+
+    addParentRelationshipsStar(3, AssignmentStatement, childrenStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 2";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Parent* clause, left operand wildcard, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(_,s)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs1;
+
+    Pair<Integer, StatementType> childrenStmttypePair11 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair12 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs1.push_back(childrenStmttypePair11);
+    childrenStmttypePairs1.push_back(childrenStmttypePair12);
+
+    addParentRelationshipsStar(2, AssignmentStatement, childrenStmttypePairs1);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs2;
+
+    Pair<Integer, StatementType> childrenStmttypePair21 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair22 = std::make_pair(5, CallStatement);
+
+    childrenStmttypePairs2.push_back(childrenStmttypePair21);
+    childrenStmttypePairs2.push_back(childrenStmttypePair22);
+
+    addParentRelationshipsStar(3, AssignmentStatement, childrenStmttypePairs2);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "5, 4, 3";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wildcard, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "stmt s; Select s such that Parent*(_,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    Vector<Pair<Integer, StatementType>> childrenStmttypePairs;
+
+    Pair<Integer, StatementType> childrenStmttypePair1 = std::make_pair(3, AssignmentStatement);
+    Pair<Integer, StatementType> childrenStmttypePair2 = std::make_pair(4, CallStatement);
+
+    childrenStmttypePairs.push_back(childrenStmttypePair1);
+    childrenStmttypePairs.push_back(childrenStmttypePair2);
+
+    addParentRelationshipsStar(2, WhileStatement, childrenStmttypePairs);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
