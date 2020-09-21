@@ -108,9 +108,11 @@ Boolean Relationship::validateUsesAndModifiesSemantics(RelationshipReferenceType
 
     DesignEntityType leftRefDesignEntityType = leftRef.getDesignEntity().getType();
     DesignEntityType rightRefDesignEntityType = rightRef.getDesignEntity().getType();
+    ReferenceType leftReferenceType = leftRef.getReferenceType();
     ReferenceType rightReferenceType = rightRef.getReferenceType();
-    Boolean isLeftRefStatementOrProcedureType
-        = isStatementDesignEntity(leftRefDesignEntityType) || leftRefDesignEntityType == ProcedureType;
+    Boolean isLeftRefStatementOrProcedureType = isStatementDesignEntity(leftRefDesignEntityType)
+                                                || leftRefDesignEntityType == ProcedureType
+                                                || leftReferenceType == LiteralRefType;
     Boolean isLeftRefTypeInvalid
         = relRefType == UsesType ? leftRefDesignEntityType == ReadType : leftRefDesignEntityType == PrintType;
     Boolean isRightRefVariableType = rightRefDesignEntityType == VariableType || rightReferenceType == LiteralRefType

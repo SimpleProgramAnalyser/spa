@@ -451,6 +451,22 @@ TEST_CASE("Such That Uses If and Literal Ident")
     REQUIRE(equals);
 }
 
+TEST_CASE("Such That Uses Literal Ident and Literal Ident")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that Uses (\"main\", \"x\")");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("s")
+              .addDeclaration("s", "stmt")
+              .addSuchThatClause("Uses", LiteralRefType, "main", NonExistentType, LiteralRefType, "x", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
 TEST_CASE("Such That Modifies NonVariable Returns Error")
 {
     AbstractQuery abstractQuery = processQuery("assign a; stmt s; Select a such that Modifies (a, s)");
