@@ -6,6 +6,7 @@
  * Autotester format (instead of the UI format).)
  */
 
+#include "../../unit_testing/src/ast_utils/AstUtils.h"
 #include "catch.hpp"
 #include "pql/PqlManager.h"
 #include "pkb/PKB.h"
@@ -2941,6 +2942,290 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wi
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+/*
+ * Up to this point, we have tested all the such that clauses, now we turn our
+ * attention to pattern clause.
+ */
+
+TEST_CASE("(vacuously true) query with Pattern clause, left operand variable name, right operand full expression")
+{
+    // === Test set-up ===
+    String query = "assign a; stmt s; Select s pattern a(\"sum\",\"(num1 + num2) * num3\")";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with Pattern clause, left operand variable name, right operand wildcard partial expression")
+{
+    // === Test set-up ===
+    String query = "assign a; stmt s; Select s pattern a(\"sum\",_\"(num1 + num 2)\"_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with Pattern clause, left operand variable name, right operand wildcard expression")
+{
+    // === Test set-up ===
+    String query = "assign a; stmt s; Select s pattern a(\"sum\",_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with Pattern clause, left operand variable name, right operand full expression, but clause unrelated to synonym and is false")
+{
+    // === Test set-up ===
+    String query = "assign a; stmt s; Select s pattern a(\"sum\",\"(num1 + num2) + num3\")";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+/*
+ * From this test onward, we will not be (intentionally) testing for vacuously
+ * true queries, and queries in which at least one clause is not related to
+ * the synonym, as there are too many combinations (we give the benefit of
+ * doubt that our autotester system tests will cover
+ * all of these cases).
+ */
+
+
+TEST_CASE("query with Pattern clause, left operand synonym, right operand full expression")
+{
+    // === Test set-up ===
+    String query = "assign a; variable v; Select v pattern a(v,\"(num1 + num2) * num3\")";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "sum";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with Pattern clause, left operand synonym, right operand wildcard partial expression")
+{
+    // === Test set-up ===
+    String query = "assign a; variable v; Select v pattern a(v,_\"(num1 + num 2)\"_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "sum";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with Pattern clause, left operand synonym, right operand wildcard expression")
+{
+    // === Test set-up ===
+    String query = "assign a; variable v; Select v pattern a(v,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "ave, sum";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with Pattern clause, left operand variable synonym, right operand full expression, but clause unrelated to synonym and is false")
+{
+    // === Test set-up ===
+    String query = "assign a; stmt s; variable v; Select s pattern a(v,\"(num1 + num2) + num3\")";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
