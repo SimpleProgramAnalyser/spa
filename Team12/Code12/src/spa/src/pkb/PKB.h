@@ -49,7 +49,7 @@ void addParentRelationshipsStar(Integer parent, StatementType parentType,
                                 const Vector<Pair<Integer, StatementType>>& childrenStmttypePairs);
 Boolean checkIfParentHolds(Integer parent, Integer child);
 Boolean checkIfParentHoldsStar(Integer parent, Integer child);
-Vector<StatementNumWithType> getChildStatement(Integer parent);
+Vector<Integer> getAllChildStatements(Integer parent, StatementType childType);
 Vector<StatementNumWithType> getParentStatement(Integer child);
 Vector<Integer> getAllChildStatementsStar(Integer parent, StatementType stmtType);
 Vector<Integer> getAllParentStatementsStar(Integer child, StatementType stmtType);

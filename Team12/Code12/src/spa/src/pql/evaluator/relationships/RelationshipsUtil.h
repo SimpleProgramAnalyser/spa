@@ -42,12 +42,6 @@ inline Vector<Integer> getAllParentStatements(Integer child, StatementType stmtT
     return verifyStatementType(stmtType, result);
 }
 
-inline Vector<Integer> getAllChildStatements(Integer parent, StatementType stmtType)
-{
-    Vector<StatementNumWithType> result = getChildStatement(parent);
-    return verifyStatementType(stmtType, result);
-}
-
 //================ HELPER METHODS FOR DESIGN ENTITY TYPE ================
 
 /**
