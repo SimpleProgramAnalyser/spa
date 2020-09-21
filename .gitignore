@@ -49,3 +49,6 @@ build_win/
 
 # .DS_Store
 **/.DS_Store
+
+# Test output
+Team12/Code12/tests/output
