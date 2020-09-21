@@ -100,6 +100,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
     ClauseType currentClauseType = NonExistentClauseType;
     Integer numOfOpenedParentheses = 0;
     Boolean hasOpenParentheses = false;
+    Boolean isInProcessOfCreatingClause = false;
 
     /**
      * Syntactically incorrect if number of tokens after
@@ -121,20 +122,12 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
      */
     int numOfTokensWithoutOpenParentheses = 0;
 
-    /**
-     * 'and' is evaluated as a connector and will be
-     * discarded after being evaluated. Hence, we need to
-     * keep track if it is the last token to prevent a
-     * clause from ending with an 'and'.
-     */
-    Boolean isLastTokenKeywordAnd = false;
-
     StringList* splitStringList = splitByWhitespace(clausesString);
 
     for (auto& token : *splitStringList) {
         if (*token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
             hasCurrentClause = true;
-            isLastTokenKeywordAnd = true;
+            isInProcessOfCreatingClause = true;
             continue;
         }
 
@@ -149,6 +142,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
                 currentClauseType = PatternClauseType;
             }
 
+            isInProcessOfCreatingClause = true;
             hasCurrentClause = true;
         } else {
             if (isPreviousTokenSuch) {
@@ -201,7 +195,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
                         numOfTokensWithoutOpenParentheses = 0;
                         currentClauseConstraint.clear();
                         hasOpenParentheses = false;
-                        isLastTokenKeywordAnd = false;
+                        isInProcessOfCreatingClause = false;
                     }
                 }
                 // if numOfOpenedParentheses is positive, continue looping
@@ -209,7 +203,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
         }
     }
 
-    if (!currentClauseConstraint.empty() || isLastTokenKeywordAnd) {
+    if (!currentClauseConstraint.empty() || isInProcessOfCreatingClause) {
         return ClauseVector::invalidClauseVector();
     }
 
@@ -285,7 +279,10 @@ Clause* Preprocessor::processPatternClause(String clauseConstraint)
     String rightConstraintString = constraintVariablesPair.second;
 
     Reference leftReference = createReference(leftConstraintString);
-    if (!leftReference.isValidEntityRef()) { // TODO: Find out other restrictions of the left reference in a pattern
+    Boolean isLeftRefInvalid = !leftReference.isValidEntityRef()
+                               || (leftReference.getReferenceType() == SynonymRefType
+                                   && leftReference.getDesignEntity().getType() != VariableType);
+    if (leftReference.isInvalid() || isLeftRefInvalid) {
         return Clause::invalidClause(PatternClauseType);
     }
 
@@ -374,7 +371,8 @@ Reference Preprocessor::createReference(String ref)
     }
 
     if (util::isPossibleConstant(ref)) {
-        Reference reference(IntegerRefType, ref);
+        // An Integer as a reference will always be of StmtType
+        Reference reference(IntegerRefType, ref, DesignEntity(StmtType));
         return reference;
     }
 

@@ -203,9 +203,9 @@ Boolean checkIfParentHoldsStar(Integer parent, Integer child)
 {
     return pkb.parentTable.checkIfParentHoldsStar(parent, child);
 }
-Vector<StatementNumWithType> getChildStatement(Integer parent)
+Vector<Integer> getAllChildStatements(Integer parent, StatementType childType)
 {
-    return pkb.parentTable.getChildStatement(parent);
+    return pkb.parentTable.getAllChildStatements(parent, childType);
 }
 Vector<StatementNumWithType> getParentStatement(Integer child)
 {

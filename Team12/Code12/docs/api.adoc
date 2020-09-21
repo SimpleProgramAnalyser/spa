@@ -633,7 +633,7 @@ Description: Returns a *VARIABLE_LIST* of all variables that are modified in the
 * <<addParentRelationshipsStar>>
 * <<checkIfParentHolds>>
 * <<checkIfParentStarHolds>>
-* <<getChildStatement>>
+* <<getAllChildStatements>>
 * <<getAllChildStatementsStar>>
 * <<getAllChildStatementsTyped>>
 * <<getAllChildStatementsTypedStar>>
@@ -678,11 +678,11 @@ with `childType` into the Parent Table.
 
 '''
 
-[#getChildStatement]
-`*STATEMENT_LIST* getChildStatement(*INTEGER* parent);`
+[#getAllChildStatements]
+`*STATEMENT_LIST* getAllChildStatements(*INTEGER* parent, *STATEMENT_TYPE* childType);`
 
-*Description*: Returns a *STATEMENT_LIST* containing the child *STATEMENT* of `parent`.
-*STATEMENT_LIST* returned is empty if there is no such relationship for `parent`.
+*Description*: Returns a *STATEMENT_LIST* containing the child *STATEMENT* of `parent`, all of which are of `childType`.
+*STATEMENT_LIST* returned is empty if there is no such statements exist for `parent`.
 
 '''
 

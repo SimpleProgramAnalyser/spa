@@ -121,6 +121,12 @@ private:
     Reference rightReference;
     Boolean hasError;
 
+    static Boolean validateRelationshipSemantics(RelationshipReferenceType relationshipReferenceType, Reference leftRef,
+                                                 Reference rightRef);
+    static Boolean validateUsesAndModifiesSemantics(RelationshipReferenceType relRefType, Reference leftRef,
+                                                    Reference rightRef);
+    static Boolean validateStmtAndStmtRelationshipSemantics(Reference leftRef, Reference rightRef);
+
 public:
     Relationship(String relationshipRef, Reference leftRef, Reference rightRef);
     RelationshipReferenceType getRelationship();
@@ -128,8 +134,6 @@ public:
     Reference getRightRef();
     Boolean isInvalid();
     static RelationshipReferenceType getRelRefType(String relRef);
-    static Boolean validateRelationshipSemantics(RelationshipReferenceType relationshipReferenceType, Reference leftRef,
-                                                 Reference rightRef);
     Boolean operator==(const Relationship& relationship);
 };
 

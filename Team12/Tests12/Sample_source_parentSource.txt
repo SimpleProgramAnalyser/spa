@@ -57,7 +57,7 @@ procedure sphere {
     while (raymarch != main) {
         while (x > main) {
             while (x < main) {
-                call sphere;
+                read y;
             }
         }
     }

@@ -93,10 +93,10 @@ call s;
 Select s such that Modifies (s, "y")
 23, 31
 5000
-21 - Modifies statement with 1 unknown synonym, Select based on LHS (While contains call)
+21 - Modifies statement with 1 unknown synonym, Select based on LHS
 while s;
-Select s such that Modifies (s, "y")
-17, 24, 30
+Select s such that Modifies (s, "y") (While contains call)
+none
 5000
 22 - Modifies statement with 1 unknown synonym, Select based on LHS
 if s;
@@ -153,7 +153,7 @@ assign s;
 Select s such that Modifies (s, _)
 4, 5, 6, 8, 10, 13, 18, 19, 20, 21, 22, 25, 27, 29, 32, 34, 35, 36, 38, 39, 40
 5000
-33 - Modifies statement with wildcard, Read, Return none
+33 - Modifies statement with wildcard, Read, Return None
 read s;
 Select s such that Modifies (s, _)
 14, 15, 28
@@ -182,4 +182,49 @@ Select s such that Modifies (s, _)
 procedure s;
 Select s such that Modifies (s, _)
 readPoint, computeCentroid
+5000
+39 - Modifies with 2 synonyms
+stmt s; variable v;
+Select s such that Modifies(s,v)
+3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+5000
+40 - Modifies with 2 synonyms case sensitive
+stmt s; variable S;
+Select s such that Modifies(s,S)
+3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+5000
+41 - Modifies with 2 synonyms (Procedure)
+procedure p; variable v;
+Select p such that Modifies(p,v)
+readPoint, computeCentroid
+5000
+42 - Modifies with 2 synonyms (Print)
+print p; variable v;
+Select p such that Modifies(p,v)
+none
+5000
+43 - Modifies with 2 synonyms Read
+read r; variable v;
+Select r such that Modifies(r,v)
+14, 15, 28
+5000
+44 - Modifies with 2 synonyms (Call)
+procedure p; variable v;
+Select p such that Modifies(p,v)
+computeCentroid, readPoint
+5000
+45 - Modifies with 2 synonyms (if)
+if i; variable v;
+Select i such that Modifies(i,v)
+3, 7, 26, 33, 37
+5000
+46 - Modifies with 2 synonyms (while)
+while w; variable v;
+Select w such that Modifies(w,v)
+9, 17, 24, 30
+5000
+47 - Modifies with 2 synonyms (assign)
+assign a; variable v;
+Select a such that Modifies(a,v)
+4, 5, 6, 8, 10, 13, 18, 19, 20, 21, 22, 25, 27, 29, 32, 34, 35, 36, 38, 39, 40
 5000

@@ -75,7 +75,11 @@ void ParentTable::addParentRelationships(Integer parent, StatementType parentStm
     // store statements parent it
     stmtParentMap[child] = std::make_pair(parent, parentStmtType);
     // store statements child it
-    stmtChildMap[parent] = std::make_pair(child, childStmtType);
+    if (stmtChildsetMap[parent].find(child) == stmtChildsetMap[parent].end()) {
+        stmtChildsetMap[parent].insert(child);
+        stmtChildlistMap[parent].byType[childStmtType].push_back(child);
+        stmtChildlistMap[parent].byType[AnyStatement].push_back(child);
+    }
 
     typedShenanigans(parent, parentStmtType, child, childStmtType);
 }
@@ -102,7 +106,7 @@ void ParentTable::addParentRelationshipsStar(Integer parent, StatementType paren
 // reading
 Boolean ParentTable::checkIfParentHolds(Integer parent, Integer child)
 {
-    return stmtChildMap[parent].first == child;
+    return stmtChildsetMap[parent].find(child) != stmtChildsetMap[parent].end();
 }
 
 Boolean ParentTable::checkIfParentHoldsStar(Integer parent, Integer child)
@@ -111,13 +115,9 @@ Boolean ParentTable::checkIfParentHoldsStar(Integer parent, Integer child)
     return stmtSet.find(child) != stmtSet.end();
 }
 
-Vector<StatementNumWithType> ParentTable::getChildStatement(Integer parent)
+Vector<Integer> ParentTable::getAllChildStatements(Integer parent, StatementType childType)
 {
-    Vector<StatementNumWithType> toReturn;
-    if (stmtChildMap[parent].first != 0) {
-        toReturn.push_back(stmtChildMap[parent]);
-    }
-    return toReturn;
+    return stmtChildlistMap[parent].byType[childType];
 }
 Vector<StatementNumWithType> ParentTable::getParentStatement(Integer child)
 {
