@@ -498,3 +498,15 @@ if s; assign a; variable v1;
 Select s such that Modifies(s, "y") pattern a(_, _"y"_)
 3, 30
 5000
+100 - 2 common synonyms, assignment Uses and modifies at same time
+assign a; variable v;
+Select a such that Uses(a, v) pattern a (v, _)
+7, 20, 35
+101 - 2 common synonyms, assignment Statements basically
+assign a; variable v;
+Select a such that Modifies(a, v) pattern a (v, _)
+1, 2, 4, 5, 7, 9, 15, 16, 20, 23, 24, 26, 27, 31, 32, 35, 36, 39, 40, 43, 45, 48, 51, 53, 54
+102 - Pattern query with constant pattern
+assign a; 
+Select a such that Modifies(a, "count") pattern a (_, "0")
+36
