@@ -52,7 +52,7 @@ TokenListIndex getBracketStart(frontend::TokenList* programTokens, TokenListInde
     TokenListIndex numberOfTokens = programTokens->size();
     // boundary checks
     if (indexOfClosedBracket < 0 || indexOfClosedBracket >= numberOfTokens
-        || programTokens->at(indexOfClosedBracket)->tokenTag != frontend::BracketClosedTag) {
+        || programTokens->at(indexOfClosedBracket).tokenTag != frontend::BracketClosedTag) {
         // indexOfFirstBracket out of bounds, or not an opening bracket
         return -2;
     }
@@ -60,7 +60,7 @@ TokenListIndex getBracketStart(frontend::TokenList* programTokens, TokenListInde
     BracketsDepth bracketsSeen = 1;
     TokenListIndex startBracket = indexOfClosedBracket - 1;
     while (startBracket >= 0 && bracketsSeen > 0) {
-        frontend::Tag currentToken = programTokens->at(startBracket)->tokenTag;
+        frontend::Tag currentToken = programTokens->at(startBracket).tokenTag;
         if (currentToken == frontend::BracketClosedTag) {
             bracketsSeen++;
         } else if (currentToken == frontend::BracketOpenTag) {
@@ -95,7 +95,7 @@ TokenListIndex getBracketEnd(frontend::TokenList* programTokens, TokenListIndex 
     TokenListIndex numberOfTokens = programTokens->size();
     // boundary checks
     if (indexOfFirstBracket < 0 || indexOfFirstBracket >= numberOfTokens
-        || programTokens->at(indexOfFirstBracket)->tokenTag != frontend::BracketOpenTag) {
+        || programTokens->at(indexOfFirstBracket).tokenTag != frontend::BracketOpenTag) {
         // indexOfFirstBracket out of bounds, or not an opening bracket
         return -2;
     }
@@ -103,7 +103,7 @@ TokenListIndex getBracketEnd(frontend::TokenList* programTokens, TokenListIndex 
     BracketsDepth bracketsSeen = 1;
     TokenListIndex endBracket = indexOfFirstBracket + 1;
     while (endBracket < numberOfTokens && bracketsSeen > 0) {
-        frontend::Tag currentToken = programTokens->at(endBracket)->tokenTag;
+        frontend::Tag currentToken = programTokens->at(endBracket).tokenTag;
         if (currentToken == frontend::BracketOpenTag) {
             bracketsSeen++;
         } else if (currentToken == frontend::BracketClosedTag) {
@@ -142,9 +142,9 @@ parseReferenceExpression(frontend::TokenList* programTokens, TokenListIndex inde
         // bounds error in index
         return getSyntaxError<ReferenceExpression>();
     }
-    frontend::Tag tokenTag = programTokens->at(index)->tokenTag;
+    frontend::Tag tokenTag = programTokens->at(index).tokenTag;
     if (frontend::isIdentifierTag(tokenTag)) {
-        String variable = programTokens->at(index)->rawString;
+        String variable = programTokens->at(index).rawString;
         if (isUpdatingPkb) {
             insertIntoVariableTable(variable);
         }
@@ -152,7 +152,7 @@ parseReferenceExpression(frontend::TokenList* programTokens, TokenListIndex inde
             std::unique_ptr<ReferenceExpression>(createRefExpr(variable)), index + 1);
     } else if (tokenTag == frontend::ConstantTag) {
         // stoi should succeed unless there is a bug in the tokeniser
-        Integer constant = std::stoi(programTokens->at(index)->rawString);
+        Integer constant = std::stoi(programTokens->at(index).rawString);
         if (isUpdatingPkb) {
             insertIntoConstantTable(constant);
         }
@@ -237,7 +237,7 @@ ParserReturnType<std::unique_ptr<ArithmeticExpression>> parseArithmeticExpressio
     Boolean hasPlusOrMinus = false;
     TokenListIndex operatorIndex = endIndex;
     while (operatorIndex >= startIndex) {
-        frontend::Tag currentTag = programTokens->at(operatorIndex)->tokenTag;
+        frontend::Tag currentTag = programTokens->at(operatorIndex).tokenTag;
         if (currentTag == frontend::PlusTag || currentTag == frontend::MinusTag) {
             hasPlusOrMinus = true;
             break;
@@ -249,7 +249,7 @@ ParserReturnType<std::unique_ptr<ArithmeticExpression>> parseArithmeticExpressio
     }
     // currentIndex should now point to + or -
     if (hasPlusOrMinus) {
-        frontend::Tag currentOperator = programTokens->at(operatorIndex)->tokenTag;
+        frontend::Tag currentOperator = programTokens->at(operatorIndex).tokenTag;
         if (currentOperator == frontend::PlusTag) {
             createExpressionFunction = &createPlusExpr;
         } else if (currentOperator == frontend::MinusTag) {
@@ -261,7 +261,7 @@ ParserReturnType<std::unique_ptr<ArithmeticExpression>> parseArithmeticExpressio
         // find last * or / or % from right
         operatorIndex = endIndex;
         while (operatorIndex >= startIndex) {
-            frontend::Tag currentTag = programTokens->at(operatorIndex)->tokenTag;
+            frontend::Tag currentTag = programTokens->at(operatorIndex).tokenTag;
             if (currentTag == frontend::TimesTag || currentTag == frontend::DivideTag
                 || currentTag == frontend::ModuloTag) {
 
@@ -277,7 +277,7 @@ ParserReturnType<std::unique_ptr<ArithmeticExpression>> parseArithmeticExpressio
             // syntax error, no operator in arithmetic expression
             return getSyntaxError<ArithmeticExpression>();
         }
-        frontend::Tag currentOperator = programTokens->at(operatorIndex)->tokenTag;
+        frontend::Tag currentOperator = programTokens->at(operatorIndex).tokenTag;
         if (currentOperator == frontend::TimesTag) {
             createExpressionFunction = &createTimesExpr;
         } else if (currentOperator == frontend::DivideTag) {
@@ -329,8 +329,8 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
     }
 
     if (startIndex == endIndex
-        && (frontend::isIdentifierTag(programTokens->at(startIndex)->tokenTag)
-            || programTokens->at(startIndex)->tokenTag == frontend::ConstantTag)) {
+        && (frontend::isIdentifierTag(programTokens->at(startIndex).tokenTag)
+            || programTokens->at(startIndex).tokenTag == frontend::ConstantTag)) {
         ParserReturnType<std::unique_ptr<ReferenceExpression>> refExp
             = parseReferenceExpression(programTokens, startIndex, isUpdatingPkb);
         // upcast to Expression
@@ -341,7 +341,7 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
     }
 
     // unwrap brackets and call expression again, if possible
-    if (programTokens->at(startIndex)->tokenTag == frontend::BracketOpenTag
+    if (programTokens->at(startIndex).tokenTag == frontend::BracketOpenTag
         && getBracketEnd(programTokens, startIndex) == endIndex) {
 
         return parseExpression(programTokens, startIndex + 1, endIndex - 1, isUpdatingPkb);
@@ -353,11 +353,10 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
     return ParserReturnType<std::unique_ptr<Expression>>(std::move(arithExp.astNode), arithExp.nextUnparsedToken);
 }
 
-Expression* parseExpression(StringList* lexedExpression)
+Expression* parseExpression(const StringVector& lexedExpression)
 {
-    frontend::TokenList* tokenised = frontend::tokeniseSimple(lexedExpression);
-    Expression* parsed = parseExpression(tokenised, 0, tokenised->size() - 1, false).astNode.release();
-    delete tokenised;
+    frontend::TokenList tokenised = frontend::tokeniseSimple(std::move(lexedExpression));
+    Expression* parsed = parseExpression(&tokenised, 0, tokenised.size() - 1, false).astNode.release();
     return parsed;
 }
 
@@ -372,10 +371,10 @@ parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex sta
     }
     // find the relational operator
     TokenListIndex relationalOperator = startIndex;
-    frontend::Tag currentToken = programTokens->at(relationalOperator)->tokenTag;
+    frontend::Tag currentToken = programTokens->at(relationalOperator).tokenTag;
     while (relationalOperator <= endIndex && !frontend::isRelationalOperatorTag(currentToken)) {
         relationalOperator++;
-        currentToken = programTokens->at(relationalOperator)->tokenTag;
+        currentToken = programTokens->at(relationalOperator).tokenTag;
     }
     // check if found
     if (relationalOperator >= numberOfTokens) {
@@ -398,7 +397,7 @@ parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex sta
     }
     RelationalExpression* (*createExpressionFunction)(Expression*, Expression*);
     // find out which function to use
-    switch (programTokens->at(firstExpr.nextUnparsedToken)->tokenTag) {
+    switch (programTokens->at(firstExpr.nextUnparsedToken).tokenTag) {
     case frontend::GtTag:
         createExpressionFunction = &createGtExpr;
         break;
@@ -441,7 +440,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
     Boolean isNegated = false;
     // cache result of bracket matching if possible
     TokenListIndex possibleEndBracketForExpression = -1;
-    frontend::Tag firstToken = programTokens->at(startIndex)->tokenTag;
+    frontend::Tag firstToken = programTokens->at(startIndex).tokenTag;
     if (firstToken == frontend::NotConditionalTag) {
         // conditional expression is of form "!" "(" "cond_expression" ")"
         isNegated = true;
@@ -469,7 +468,7 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
                 return innerCondition;
             }
         }
-        frontend::Tag operatorToken = programTokens->at(endBracket + 1)->tokenTag;
+        frontend::Tag operatorToken = programTokens->at(endBracket + 1).tokenTag;
         switch (operatorToken) {
         case frontend::AndConditionalTag:
         case frontend::OrConditionalTag:
@@ -537,9 +536,9 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
         }
         assert(programTokens // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                        ->at(firstCondition.nextUnparsedToken + 1)
-                       ->tokenTag
+                       .tokenTag
                    == frontend::AndConditionalTag
-               || programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::OrConditionalTag);
+               || programTokens->at(firstCondition.nextUnparsedToken + 1).tokenTag == frontend::OrConditionalTag);
         // match brackets for second condition
         TokenListIndex secondEndBracket = getBracketEnd(programTokens, firstCondition.nextUnparsedToken + 2);
         if (secondEndBracket < 0) {
@@ -556,13 +555,13 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
         assert(secondCondition.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                == endIndex);
         // finally, create the conditional expression
-        if (programTokens->at(firstCondition.nextUnparsedToken + 1)->tokenTag == frontend::AndConditionalTag) {
+        if (programTokens->at(firstCondition.nextUnparsedToken + 1).tokenTag == frontend::AndConditionalTag) {
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
                 std::unique_ptr<ConditionalExpression>(
                     createAndExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
                 secondCondition.nextUnparsedToken + 1);
         } else {
-            // programTokens->at(firstCondition.nextUnparsedToken)->tokenTag == frontend::OrConditionalTag
+            // programTokens->at(firstCondition.nextUnparsedToken).tokenTag == frontend::OrConditionalTag
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
                 std::unique_ptr<ConditionalExpression>(
                     createOrExpr(firstCondition.astNode.release(), secondCondition.astNode.release())),
@@ -581,14 +580,14 @@ ParserReturnType<std::unique_ptr<CallStatementNode>> parseCallStmt(frontend::Tok
     // boundary check
     TokenListIndex numberOfTokens = programTokens->size();
 
-    if ((numberOfTokens - startIndex > 2) && programTokens->at(startIndex)->tokenTag == frontend::CallKeywordTag
-        && frontend::isIdentifierTag(programTokens->at(startIndex + 1)->tokenTag)
-        && programTokens->at(startIndex + 2)->tokenTag == frontend::SemicolonTag) {
+    if ((numberOfTokens - startIndex > 2) && programTokens->at(startIndex).tokenTag == frontend::CallKeywordTag
+        && frontend::isIdentifierTag(programTokens->at(startIndex + 1).tokenTag)
+        && programTokens->at(startIndex + 2).tokenTag == frontend::SemicolonTag) {
 
         statementsSeen++;
         return ParserReturnType<std::unique_ptr<CallStatementNode>>(
             std::unique_ptr<CallStatementNode>(
-                createCallNode(statementsSeen, programTokens->at(startIndex + 1)->rawString)),
+                createCallNode(statementsSeen, programTokens->at(startIndex + 1).rawString)),
             startIndex + 3);
     } else {
         // syntax error in call statement
@@ -602,11 +601,11 @@ ParserReturnType<std::unique_ptr<PrintStatementNode>> parsePrintStmt(frontend::T
     // boundary check
     TokenListIndex numberOfTokens = programTokens->size();
 
-    if ((numberOfTokens - startIndex > 2) && programTokens->at(startIndex)->tokenTag == frontend::PrintKeywordTag
-        && frontend::isIdentifierTag(programTokens->at(startIndex + 1)->tokenTag)
-        && programTokens->at(startIndex + 2)->tokenTag == frontend::SemicolonTag) {
+    if ((numberOfTokens - startIndex > 2) && programTokens->at(startIndex).tokenTag == frontend::PrintKeywordTag
+        && frontend::isIdentifierTag(programTokens->at(startIndex + 1).tokenTag)
+        && programTokens->at(startIndex + 2).tokenTag == frontend::SemicolonTag) {
 
-        String rawString = programTokens->at(startIndex + 1)->rawString;
+        String rawString = programTokens->at(startIndex + 1).rawString;
         statementsSeen++;
         insertIntoVariableTable(rawString);
         return ParserReturnType<std::unique_ptr<PrintStatementNode>>(
@@ -623,11 +622,11 @@ ParserReturnType<std::unique_ptr<ReadStatementNode>> parseReadStmt(frontend::Tok
     // boundary check
     TokenListIndex numberOfTokens = programTokens->size();
 
-    if ((numberOfTokens - startIndex > 2) && programTokens->at(startIndex)->tokenTag == frontend::ReadKeywordTag
-        && frontend::isIdentifierTag(programTokens->at(startIndex + 1)->tokenTag)
-        && programTokens->at(startIndex + 2)->tokenTag == frontend::SemicolonTag) {
+    if ((numberOfTokens - startIndex > 2) && programTokens->at(startIndex).tokenTag == frontend::ReadKeywordTag
+        && frontend::isIdentifierTag(programTokens->at(startIndex + 1).tokenTag)
+        && programTokens->at(startIndex + 2).tokenTag == frontend::SemicolonTag) {
 
-        String rawString = programTokens->at(startIndex + 1)->rawString;
+        String rawString = programTokens->at(startIndex + 1).rawString;
         statementsSeen++;
         insertIntoVariableTable(rawString);
         return ParserReturnType<std::unique_ptr<ReadStatementNode>>(
@@ -652,8 +651,8 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
     ParserReturnType<std::unique_ptr<StmtlstNode>> elseStatements(nullptr);
 
     // check if "if" syntax is valid
-    if ((numberOfTokens - startIndex > 1) && (programTokens->at(startIndex)->tokenTag == frontend::IfKeywordTag)
-        && programTokens->at(startIndex + 1)->tokenTag == frontend::BracketOpenTag) {
+    if ((numberOfTokens - startIndex > 1) && (programTokens->at(startIndex).tokenTag == frontend::IfKeywordTag)
+        && programTokens->at(startIndex + 1).tokenTag == frontend::BracketOpenTag) {
 
         // find conditional expression and parse
         TokenListIndex tokenPointer = getBracketEnd(programTokens, startIndex + 1) + 1;
@@ -662,8 +661,8 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
         //
         // we expect the keyword "then":
         // "if" "(" ... ")" "then" ...
-        if (programTokens->at(tokenPointer - 1)->tokenTag == frontend::BracketClosedTag
-            && programTokens->at(tokenPointer)->tokenTag == frontend::ThenKeywordTag
+        if (programTokens->at(tokenPointer - 1).tokenTag == frontend::BracketClosedTag
+            && programTokens->at(tokenPointer).tokenTag == frontend::ThenKeywordTag
             && tokenPointer - 2 > startIndex + 2) {
 
             ifCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 2);
@@ -679,7 +678,7 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
         statementsSeen++;
         StatementNumber ifStmtNum = statementsSeen;
         // now, parse the "if" statements
-        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer + 1)->tokenTag == frontend::BracesOpenTag) {
+        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer + 1).tokenTag == frontend::BracesOpenTag) {
             ifStatements = parseStatementList(programTokens, tokenPointer + 1 /* skip "then"*/);
         } else {
             // syntax error in if statement brackets
@@ -691,7 +690,7 @@ ParserReturnType<std::unique_ptr<IfStatementNode>> parseIfStmt(frontend::TokenLi
             return getSyntaxError<IfStatementNode>();
         }
         // now, parse the "else" statements
-        if (programTokens->at(ifStatements.nextUnparsedToken)->tokenTag == frontend::ElseKeywordTag) {
+        if (programTokens->at(ifStatements.nextUnparsedToken).tokenTag == frontend::ElseKeywordTag) {
             elseStatements = parseStatementList(programTokens, ifStatements.nextUnparsedToken + 1 /* skip "else" */);
         } else {
             // no "else" keyword, wrong if/else syntax
@@ -720,14 +719,14 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
     ParserReturnType<std::unique_ptr<StmtlstNode>> statements(nullptr);
 
     // check if while syntax is valid
-    if ((numberOfTokens - startIndex > 1) && (programTokens->at(startIndex)->tokenTag == frontend::WhileKeywordTag)
-        && programTokens->at(startIndex + 1)->tokenTag == frontend::BracketOpenTag) {
+    if ((numberOfTokens - startIndex > 1) && (programTokens->at(startIndex).tokenTag == frontend::WhileKeywordTag)
+        && programTokens->at(startIndex + 1).tokenTag == frontend::BracketOpenTag) {
 
         // find conditional expression and parse
         TokenListIndex tokenPointer = getBracketEnd(programTokens, startIndex + 1);
 
         if (tokenPointer >= 0 && tokenPointer < numberOfTokens
-            && programTokens->at(tokenPointer)->tokenTag == frontend::BracketClosedTag
+            && programTokens->at(tokenPointer).tokenTag == frontend::BracketClosedTag
             && tokenPointer - 1 > startIndex + 2) {
 
             loopControlCondition = parseConditionalExpression(programTokens, startIndex + 2, tokenPointer - 1);
@@ -749,7 +748,7 @@ ParserReturnType<std::unique_ptr<WhileStatementNode>> parseWhileStmt(frontend::T
         //
         // we expect a open braces for statement list:
         // "while" "(" ... ")" "{" ...
-        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer)->tokenTag == frontend::BracesOpenTag) {
+        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer).tokenTag == frontend::BracesOpenTag) {
             statements = parseStatementList(programTokens, tokenPointer);
         }
         // check if statements parsed correctly
@@ -773,21 +772,21 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
     TokenListIndex numberOfTokens = programTokens->size();
     ParserReturnType<std::unique_ptr<Expression>> expression(nullptr);
     // verify assign syntax
-    if ((numberOfTokens - startIndex) > 3 && frontend::isIdentifierTag(programTokens->at(startIndex)->tokenTag)
-        && programTokens->at(startIndex + 1)->tokenTag == frontend::AssignmentTag) {
+    if ((numberOfTokens - startIndex) > 3 && frontend::isIdentifierTag(programTokens->at(startIndex).tokenTag)
+        && programTokens->at(startIndex + 1).tokenTag == frontend::AssignmentTag) {
 
-        String rawString = programTokens->at(startIndex)->rawString;
+        String rawString = programTokens->at(startIndex).rawString;
         insertIntoVariableTable(rawString);
         Variable assignedVariable = Variable(rawString);
         // find end of assign expression (semicolon)
         TokenListIndex tokenPointer = startIndex + 2;
-        frontend::Tag currentToken = programTokens->at(tokenPointer)->tokenTag;
+        frontend::Tag currentToken = programTokens->at(tokenPointer).tokenTag;
         while (tokenPointer < numberOfTokens && currentToken != frontend::SemicolonTag) {
             tokenPointer++;
-            currentToken = programTokens->at(tokenPointer)->tokenTag;
+            currentToken = programTokens->at(tokenPointer).tokenTag;
         }
         // check if semicolon was found
-        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer)->tokenTag == frontend::SemicolonTag
+        if (tokenPointer < numberOfTokens && programTokens->at(tokenPointer).tokenTag == frontend::SemicolonTag
             && tokenPointer - 1 >= startIndex + 2) {
 
             expression = parseExpression(programTokens, startIndex + 2, tokenPointer - 1, true);
@@ -826,8 +825,8 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
 
     if (numberOfTokens - startIndex > 1) {
         // determine statement type
-        frontend::Tag statementType = programTokens->at(startIndex)->tokenTag;
-        if (programTokens->at(startIndex + 1)->tokenTag == frontend::AssignmentTag) {
+        frontend::Tag statementType = programTokens->at(startIndex).tokenTag;
+        if (programTokens->at(startIndex + 1).tokenTag == frontend::AssignmentTag) {
             // assignment statement
             ParserReturnType<std::unique_ptr<AssignmentStatementNode>> resultAssign
                 = parseAssignStmt(programTokens, startIndex);
@@ -897,17 +896,17 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
     TokenListIndex nextUnparsed = startIndex + 1; // ignore "{"
     Boolean isSyntaxError = false;                // flag for syntax error
 
-    if (numberOfTokens - startIndex > 1 && programTokens->at(startIndex)->tokenTag == frontend::BracesOpenTag) {
+    if (numberOfTokens - startIndex > 1 && programTokens->at(startIndex).tokenTag == frontend::BracesOpenTag) {
         // iterate through the tokens
         while (nextUnparsed < numberOfTokens && nextUnparsed > 0
-               && programTokens->at(nextUnparsed)->tokenTag != frontend::BracesClosedTag) {
+               && programTokens->at(nextUnparsed).tokenTag != frontend::BracesClosedTag) {
 
             ParserReturnType<std::unique_ptr<StatementNode>> result = parseStatement(programTokens, nextUnparsed);
             statements.push_back(std::move(result.astNode));
             nextUnparsed = result.nextUnparsedToken;
         }
 
-        if (nextUnparsed < 0 || programTokens->at(nextUnparsed)->tokenTag != frontend::BracesClosedTag) {
+        if (nextUnparsed < 0 || programTokens->at(nextUnparsed).tokenTag != frontend::BracesClosedTag) {
             // syntax error in statements, or syntax error due to unmatched brackets in statement list
             isSyntaxError = true;
         } else {
@@ -937,10 +936,10 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
     Boolean isSyntaxError = false; // flag for syntax error
 
     // check if procedure is valid
-    if ((numberOfTokens - startIndex > 2) && (programTokens->at(startIndex)->tokenTag == frontend::ProcedureKeywordTag)
-        && frontend::isIdentifierTag(programTokens->at(startIndex + 1)->tokenTag)) {
+    if ((numberOfTokens - startIndex > 2) && (programTokens->at(startIndex).tokenTag == frontend::ProcedureKeywordTag)
+        && frontend::isIdentifierTag(programTokens->at(startIndex + 1).tokenTag)) {
 
-        procedureName = programTokens->at(startIndex + 1)->rawString;
+        procedureName = programTokens->at(startIndex + 1).rawString;
         ParserReturnType<std::unique_ptr<StmtlstNode>> result = parseStatementList(programTokens, startIndex + 2);
         if (result.nextUnparsedToken < 0) {
             // syntax error in statement list
@@ -973,19 +972,18 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
  */
 ProgramNode* parseSimpleReturnNode(const String& rawProgram)
 {
-    StringList* programFragments = splitProgram(rawProgram);
-    frontend::TokenList* tokenisedProgram = frontend::tokeniseSimple(programFragments);
-    delete programFragments;
+    StringVector programFragments = splitProgram(rawProgram);
+    frontend::TokenList tokenisedProgram = frontend::tokeniseSimple(std::move(programFragments));
     // start at index 0
     TokenListIndex currentIndex = 0;
-    int numberOfTokens = tokenisedProgram->size();
+    int numberOfTokens = tokenisedProgram.size();
     List<ProcedureNode> procedures;
     // reset statement numbers to 0
     statementsSeen = 0;
     bool syntaxError = false;
     while (currentIndex >= 0 && currentIndex < numberOfTokens) {
-        if (tokenisedProgram->at(currentIndex)->tokenTag == frontend::ProcedureKeywordTag) {
-            ParserReturnType<std::unique_ptr<ProcedureNode>> p = parseProcedure(tokenisedProgram, currentIndex);
+        if (tokenisedProgram.at(currentIndex).tokenTag == frontend::ProcedureKeywordTag) {
+            ParserReturnType<std::unique_ptr<ProcedureNode>> p = parseProcedure(&tokenisedProgram, currentIndex);
             procedures.push_back(std::move(p.astNode));
             currentIndex = p.nextUnparsedToken;
         } else {
@@ -994,9 +992,6 @@ ProgramNode* parseSimpleReturnNode(const String& rawProgram)
             break;
         }
     }
-
-    // delete tokens once tree has been created
-    delete tokenisedProgram;
 
     if (currentIndex < 0 || syntaxError) {
         return nullptr;

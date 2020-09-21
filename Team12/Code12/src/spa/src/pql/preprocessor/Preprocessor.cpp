@@ -341,11 +341,10 @@ ExpressionSpec Preprocessor::createExpressionSpec(String exprSpecString)
     return expressionSpec;
 }
 
-Expression* Preprocessor::createExpression(String literal)
+Expression* Preprocessor::createExpression(const String& literal)
 {
-    StringList* splitString = splitProgram(literal);
+    StringVector splitString = splitProgram(literal);
     Expression* expression = parseExpression(splitString);
-    delete splitString;
     return expression;
 }
 
@@ -407,21 +406,21 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 {
     DeclarationTable newDeclarations;
 
-    StringList* tokenizedStringList = splitProgram(declarationsString);
+    StringVector tokenizedStringList = splitProgram(declarationsString);
     DesignEntity currentDesignEntity;
     bool hasCurrentDesignEntity = false;
     bool isPreviousTokenASynonym = false;
 
-    for (std::unique_ptr<std::string>& token : *tokenizedStringList) {
+    for (std::string& token : tokenizedStringList) {
         if (!hasCurrentDesignEntity) {
-            currentDesignEntity = DesignEntity(*token);
+            currentDesignEntity = DesignEntity(token);
             if (currentDesignEntity.getType() == NonExistentType) {
                 return DeclarationTable::invalidDeclarationTable();
             }
 
             hasCurrentDesignEntity = true;
         } else {
-            if (*token == ";") {
+            if (token == ";") {
                 if (!isPreviousTokenASynonym) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
@@ -429,7 +428,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 hasCurrentDesignEntity = false;
                 isPreviousTokenASynonym = false;
                 continue;
-            } else if (*token == ",") {
+            } else if (token == ",") {
                 if (!isPreviousTokenASynonym) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
@@ -440,16 +439,15 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 // Syntax error e.g. while w w1;
                 return DeclarationTable::invalidDeclarationTable();
             } else {
-                if (!isValidSynonym(*token) || newDeclarations.hasSynonym(*token)) {
+                if (!isValidSynonym(token) || newDeclarations.hasSynonym(token)) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
 
-                newDeclarations.addDeclaration(*token, currentDesignEntity);
+                newDeclarations.addDeclaration(token, currentDesignEntity);
                 isPreviousTokenASynonym = true;
             }
         }
     }
-    delete tokenizedStringList;
     return newDeclarations;
 }
 

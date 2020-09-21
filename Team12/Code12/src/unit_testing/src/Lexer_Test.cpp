@@ -10,62 +10,60 @@
 
 TEST_CASE("splitProgram works for complicated conditional")
 {
-    StringList* program = splitProgram(getProgram15String_complicatedConditional());
-    REQUIRE(util::checkListValuesEqual(*program, *(getProgram15StringList_complicatedConditional())));
+    StringVector program = splitProgram(getProgram15String_complicatedConditional());
+    REQUIRE(program == getProgram15StringList_complicatedConditional());
 }
 
 TEST_CASE("splitProgram works for double length symbols")
 {
-    StringList* program = splitProgram("abc>=0!=3==bcd<=cde");
-    auto* str0 = new String{"abc"};
-    auto* str1 = new String{">="};
-    auto* str2 = new String{"0"};
-    auto* str3 = new String{"!="};
-    auto* str4 = new String{"3"};
-    auto* str5 = new String{"=="};
-    auto* str6 = new String{"bcd"};
-    auto* str7 = new String{"<="};
-    auto* str8 = new String{"cde"};
-    auto* expected = new StringList();
-    expected->reserve(9);
-    expected->push_back(std::unique_ptr<String>(str0));
-    expected->push_back(std::unique_ptr<String>(str1));
-    expected->push_back(std::unique_ptr<String>(str2));
-    expected->push_back(std::unique_ptr<String>(str3));
-    expected->push_back(std::unique_ptr<String>(str4));
-    expected->push_back(std::unique_ptr<String>(str5));
-    expected->push_back(std::unique_ptr<String>(str6));
-    expected->push_back(std::unique_ptr<String>(str7));
-    expected->push_back(std::unique_ptr<String>(str8));
-    REQUIRE(util::checkListValuesEqual(*program, *expected));
-    delete expected;
+    StringVector program = splitProgram("abc>=0!=3==bcd<=cde");
+    String str0{"abc"};
+    String str1{">="};
+    String str2{"0"};
+    String str3{"!="};
+    String str4{"3"};
+    String str5{"=="};
+    String str6{"bcd"};
+    String str7{"<="};
+    String str8{"cde"};
+    StringVector expected;
+    expected.reserve(9);
+    expected.push_back(std::move(str0));
+    expected.push_back(std::move(str1));
+    expected.push_back(std::move(str2));
+    expected.push_back(std::move(str3));
+    expected.push_back(std::move(str4));
+    expected.push_back(std::move(str5));
+    expected.push_back(std::move(str6));
+    expected.push_back(std::move(str7));
+    expected.push_back(std::move(str8));
+    REQUIRE(program == expected);
 }
 
 TEST_CASE("splitProgram works for operators followed by character without whitespace")
 {
-    StringList* program = splitProgram("abc>0!3=bcd<cde");
-    auto* str0 = new String{"abc"};
-    auto* str1 = new String{">"};
-    auto* str2 = new String{"0"};
-    auto* str3 = new String{"!"};
-    auto* str4 = new String{"3"};
-    auto* str5 = new String{"="};
-    auto* str6 = new String{"bcd"};
-    auto* str7 = new String{"<"};
-    auto* str8 = new String{"cde"};
-    auto* expected = new StringList();
-    expected->reserve(9);
-    expected->push_back(std::unique_ptr<String>(str0));
-    expected->push_back(std::unique_ptr<String>(str1));
-    expected->push_back(std::unique_ptr<String>(str2));
-    expected->push_back(std::unique_ptr<String>(str3));
-    expected->push_back(std::unique_ptr<String>(str4));
-    expected->push_back(std::unique_ptr<String>(str5));
-    expected->push_back(std::unique_ptr<String>(str6));
-    expected->push_back(std::unique_ptr<String>(str7));
-    expected->push_back(std::unique_ptr<String>(str8));
-    REQUIRE(util::checkListValuesEqual(*program, *expected));
-    delete expected;
+    StringVector program = splitProgram("abc>0!3=bcd<cde");
+    String str0{"abc"};
+    String str1{">"};
+    String str2{"0"};
+    String str3{"!"};
+    String str4{"3"};
+    String str5{"="};
+    String str6{"bcd"};
+    String str7{"<"};
+    String str8{"cde"};
+    StringVector expected;
+    expected.reserve(9);
+    expected.push_back(std::move(str0));
+    expected.push_back(std::move(str1));
+    expected.push_back(std::move(str2));
+    expected.push_back(std::move(str3));
+    expected.push_back(std::move(str4));
+    expected.push_back(std::move(str5));
+    expected.push_back(std::move(str6));
+    expected.push_back(std::move(str7));
+    expected.push_back(std::move(str8));
+    REQUIRE(program == expected);
 }
 
 TEST_CASE("trimWhitespace works on empty string")
@@ -96,23 +94,22 @@ TEST_CASE("trimWhitespace does not truncate whitespace between words")
 
 TEST_CASE("splitProgram works on different whitespaces")
 {
-    StringList* program = splitProgram("test test   \ronetwo\n\fthree four  five\tsix");
-    auto* str0 = new String{"test"};
-    auto* str1 = new String{"test"};
-    auto* str2 = new String{"onetwo"};
-    auto* str3 = new String{"three"};
-    auto* str4 = new String{"four"};
-    auto* str5 = new String{"five"};
-    auto* str6 = new String{"six"};
-    auto* expected = new StringList();
-    expected->reserve(7);
-    expected->push_back(std::unique_ptr<String>(str0));
-    expected->push_back(std::unique_ptr<String>(str1));
-    expected->push_back(std::unique_ptr<String>(str2));
-    expected->push_back(std::unique_ptr<String>(str3));
-    expected->push_back(std::unique_ptr<String>(str4));
-    expected->push_back(std::unique_ptr<String>(str5));
-    expected->push_back(std::unique_ptr<String>(str6));
-    REQUIRE(util::checkListValuesEqual(*program, *expected));
-    delete expected;
+    StringVector program = splitProgram("test test   \ronetwo\n\fthree four  five\tsix");
+    String str0{"test"};
+    String str1{"test"};
+    String str2{"onetwo"};
+    String str3{"three"};
+    String str4{"four"};
+    String str5{"five"};
+    String str6{"six"};
+    StringVector expected;
+    expected.reserve(7);
+    expected.push_back(std::move(str0));
+    expected.push_back(std::move(str1));
+    expected.push_back(std::move(str2));
+    expected.push_back(std::move(str3));
+    expected.push_back(std::move(str4));
+    expected.push_back(std::move(str5));
+    expected.push_back(std::move(str6));
+    REQUIRE(program == expected);
 }

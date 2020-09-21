@@ -101,7 +101,7 @@ StringVector splitByDelimiter(const String& str, const String& delimiter)
         } else if (isMatchingDelimiter) {
             // failed to match the entire delimiter
             isMatchingDelimiter = false;
-            currentString.append(std::move(bufferString));
+            currentString.append(bufferString);
             currentString.push_back(*strChar);
             // clear buffer
             bufferString.clear();
@@ -127,11 +127,11 @@ StringVector splitByDelimiter(const String& str, const String& delimiter)
 
 enum LexerState : char { DefaultLexerState = '\0', AlphanumericLexerState = 'a', SymbolicLexerState = '=' };
 
-StringList* splitProgram(const String& program) noexcept
+StringVector splitProgram(const String& program) noexcept
 {
-    auto* splitStrings = new StringList();
+    std::vector<std::string> splitStrings;
     const char* currentChar = program.c_str();
-    std::unique_ptr<String> currentString(new String());
+    std::string currentString;
     // keep track of what the lexer is expecting next
     LexerState state = DefaultLexerState;
     char expectedNextChar = '\0';
@@ -139,33 +139,33 @@ StringList* splitProgram(const String& program) noexcept
     while (*currentChar != '\0') {
         if (isWhitespace(currentChar) && state != DefaultLexerState) {
             // whitespace always separates two entities
-            splitStrings->push_back(std::move(currentString));
-            currentString.reset(new String());
+            splitStrings.push_back(std::move(currentString));
+            currentString.clear();
             state = DefaultLexerState;
         } else if (isWhitespace(currentChar)) {
             // ignore the whitespace
         } else if (state == SymbolicLexerState && expectedNextChar == *currentChar) {
             // we managed to find a two character symbol
-            currentString->push_back(*currentChar);
-            splitStrings->push_back(std::move(currentString));
-            currentString.reset(new String());
+            currentString.push_back(*currentChar);
+            splitStrings.push_back(std::move(currentString));
+            currentString.clear();
             state = DefaultLexerState;
         } else if (state == SymbolicLexerState) {
             // symbol was only one char long
-            splitStrings->push_back(std::move(currentString));
-            currentString.reset(new String());
+            splitStrings.push_back(std::move(currentString));
+            currentString.clear();
             // go through the loop again for current character
             state = DefaultLexerState;
             currentChar--;
         } else if (isalnum(*currentChar)) {
-            currentString->push_back(*currentChar);
+            currentString.push_back(*currentChar);
             state = AlphanumericLexerState;
         } else {
             if (state == AlphanumericLexerState) {
                 // change state from alphanumeric to symbolic
                 // we push the lexed token into the list
-                splitStrings->push_back(std::move(currentString));
-                currentString.reset(new String());
+                splitStrings.push_back(std::move(currentString));
+                currentString.clear();
             }
             // check for symbols with more than one characters
             switch (*currentChar) {
@@ -174,32 +174,32 @@ StringList* splitProgram(const String& program) noexcept
             case '=':
             case '!':
                 expectedNextChar = '=';
-                currentString->push_back(*currentChar);
+                currentString.push_back(*currentChar);
                 state = SymbolicLexerState;
                 break;
             case '&':
                 expectedNextChar = '&';
-                currentString->push_back(*currentChar);
+                currentString.push_back(*currentChar);
                 state = SymbolicLexerState;
                 break;
             case '|':
                 expectedNextChar = '|';
-                currentString->push_back(*currentChar);
+                currentString.push_back(*currentChar);
                 state = SymbolicLexerState;
                 break;
             default:
                 // symbol is only one character long
-                currentString->push_back(*currentChar);
-                splitStrings->push_back(std::move(currentString));
-                currentString.reset(new String());
+                currentString.push_back(*currentChar);
+                splitStrings.push_back(std::move(currentString));
+                currentString.clear();
                 state = DefaultLexerState;
             }
         }
         currentChar++;
     }
     // insert last word if any
-    if (!currentString->empty()) {
-        splitStrings->push_back(std::move(currentString));
+    if (!currentString.empty()) {
+        splitStrings.push_back(std::move(currentString));
     }
     return splitStrings;
 }

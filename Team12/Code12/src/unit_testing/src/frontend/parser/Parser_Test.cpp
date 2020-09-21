@@ -4,18 +4,18 @@
 
 TEST_CASE("getBracketStart returns correct brackets for 5 nesting levels")
 {
-    StringList* program = getProgram15StringList_complicatedConditional();
-    frontend::TokenList* programTokens = frontend::tokeniseSimple(program);
-    REQUIRE(getBracketStart(programTokens, 35) == 6);
-    REQUIRE(getBracketStart(programTokens, 34) == 17);
+    StringVector program = getProgram15StringList_complicatedConditional();
+    frontend::TokenList programTokens = frontend::tokeniseSimple(std::move(program));
+    REQUIRE(getBracketStart(&programTokens, 35) == 6);
+    REQUIRE(getBracketStart(&programTokens, 34) == 17);
 }
 
 TEST_CASE("getBracketEnd returns correct brackets for 5 nesting levels")
 {
-    StringList* program = getProgram15StringList_complicatedConditional();
-    frontend::TokenList* programTokens = frontend::tokeniseSimple(program);
-    REQUIRE(getBracketEnd(programTokens, 6) == 35);
-    REQUIRE(getBracketEnd(programTokens, 7) == 15);
+    StringVector program = getProgram15StringList_complicatedConditional();
+    frontend::TokenList programTokens = frontend::tokeniseSimple(std::move(program));
+    REQUIRE(getBracketEnd(&programTokens, 6) == 35);
+    REQUIRE(getBracketEnd(&programTokens, 7) == 15);
 }
 
 TEST_CASE("Parser can parse an example program correctly")
@@ -70,16 +70,18 @@ TEST_CASE("Parser parses variables with same name as procedure")
 
 TEST_CASE("parseExpression works for plus expression")
 {
-    auto* arithmeticExpression = new StringList(3);
+    StringVector arithmeticExpression(3);
     String x = "x";
     String plus = "+";
     String y = "y";
-    arithmeticExpression->at(0) = std::unique_ptr<std::string>(&x);
-    arithmeticExpression->at(1) = std::unique_ptr<std::string>(&plus);
-    arithmeticExpression->at(2) = std::unique_ptr<std::string>(&y);
+    arithmeticExpression.at(0) = std::move(x);
+    arithmeticExpression.at(1) = std::move(plus);
+    arithmeticExpression.at(2) = std::move(y);
     Expression* parsed = parseExpression(arithmeticExpression);
     Expression* expected = createPlusExpr(createRefExpr("x"), createRefExpr("y"));
     REQUIRE(*(parsed) == *(expected));
+    delete parsed;
+    delete expected;
 }
 
 TEST_CASE("parseExpression obeys operator precedence and brackets")
@@ -113,30 +115,30 @@ TEST_CASE("parseExpression obeys operator precedence and brackets")
     String str20 = "+";
     String str21 = "g";
     String str22 = ")";
-    auto* arithmeticExpression = new StringList(23);
-    arithmeticExpression->at(0) = std::unique_ptr<std::string>(&str0);
-    arithmeticExpression->at(1) = std::unique_ptr<std::string>(&str1);
-    arithmeticExpression->at(2) = std::unique_ptr<std::string>(&str2);
-    arithmeticExpression->at(3) = std::unique_ptr<std::string>(&str3);
-    arithmeticExpression->at(4) = std::unique_ptr<std::string>(&str4);
-    arithmeticExpression->at(5) = std::unique_ptr<std::string>(&str5);
-    arithmeticExpression->at(6) = std::unique_ptr<std::string>(&str6);
-    arithmeticExpression->at(7) = std::unique_ptr<std::string>(&str7);
-    arithmeticExpression->at(8) = std::unique_ptr<std::string>(&str8);
-    arithmeticExpression->at(9) = std::unique_ptr<std::string>(&str9);
-    arithmeticExpression->at(10) = std::unique_ptr<std::string>(&str10);
-    arithmeticExpression->at(11) = std::unique_ptr<std::string>(&str11);
-    arithmeticExpression->at(12) = std::unique_ptr<std::string>(&str12);
-    arithmeticExpression->at(13) = std::unique_ptr<std::string>(&str13);
-    arithmeticExpression->at(14) = std::unique_ptr<std::string>(&str14);
-    arithmeticExpression->at(15) = std::unique_ptr<std::string>(&str15);
-    arithmeticExpression->at(16) = std::unique_ptr<std::string>(&str16);
-    arithmeticExpression->at(17) = std::unique_ptr<std::string>(&str17);
-    arithmeticExpression->at(18) = std::unique_ptr<std::string>(&str18);
-    arithmeticExpression->at(19) = std::unique_ptr<std::string>(&str19);
-    arithmeticExpression->at(20) = std::unique_ptr<std::string>(&str20);
-    arithmeticExpression->at(21) = std::unique_ptr<std::string>(&str21);
-    arithmeticExpression->at(22) = std::unique_ptr<std::string>(&str22);
+    StringVector arithmeticExpression(23);
+    arithmeticExpression.at(0) = std::move(str0);
+    arithmeticExpression.at(1) = std::move(str1);
+    arithmeticExpression.at(2) = std::move(str2);
+    arithmeticExpression.at(3) = std::move(str3);
+    arithmeticExpression.at(4) = std::move(str4);
+    arithmeticExpression.at(5) = std::move(str5);
+    arithmeticExpression.at(6) = std::move(str6);
+    arithmeticExpression.at(7) = std::move(str7);
+    arithmeticExpression.at(8) = std::move(str8);
+    arithmeticExpression.at(9) = std::move(str9);
+    arithmeticExpression.at(10) = std::move(str10);
+    arithmeticExpression.at(11) = std::move(str11);
+    arithmeticExpression.at(12) = std::move(str12);
+    arithmeticExpression.at(13) = std::move(str13);
+    arithmeticExpression.at(14) = std::move(str14);
+    arithmeticExpression.at(15) = std::move(str15);
+    arithmeticExpression.at(16) = std::move(str16);
+    arithmeticExpression.at(17) = std::move(str17);
+    arithmeticExpression.at(18) = std::move(str18);
+    arithmeticExpression.at(19) = std::move(str19);
+    arithmeticExpression.at(20) = std::move(str20);
+    arithmeticExpression.at(21) = std::move(str21);
+    arithmeticExpression.at(22) = std::move(str22);
     Expression* parsed = parseExpression(arithmeticExpression);
     Expression* bracket1 = createDivExpr(createRefExpr("z"), createRefExpr("a"));
     Expression* timesExpression1 = createTimesExpr(createRefExpr("y"), bracket1);
@@ -165,21 +167,21 @@ TEST_CASE("parseExpression does not work for while statement")
     String str11 = "1";
     String str12 = ";";
     String str13 = "}";
-    auto* arithmeticExpression = new StringList(14);
-    arithmeticExpression->at(0) = std::unique_ptr<std::string>(&str0);
-    arithmeticExpression->at(1) = std::unique_ptr<std::string>(&str1);
-    arithmeticExpression->at(2) = std::unique_ptr<std::string>(&str2);
-    arithmeticExpression->at(3) = std::unique_ptr<std::string>(&str3);
-    arithmeticExpression->at(4) = std::unique_ptr<std::string>(&str4);
-    arithmeticExpression->at(5) = std::unique_ptr<std::string>(&str5);
-    arithmeticExpression->at(6) = std::unique_ptr<std::string>(&str6);
-    arithmeticExpression->at(7) = std::unique_ptr<std::string>(&str7);
-    arithmeticExpression->at(8) = std::unique_ptr<std::string>(&str8);
-    arithmeticExpression->at(9) = std::unique_ptr<std::string>(&str9);
-    arithmeticExpression->at(10) = std::unique_ptr<std::string>(&str10);
-    arithmeticExpression->at(11) = std::unique_ptr<std::string>(&str11);
-    arithmeticExpression->at(12) = std::unique_ptr<std::string>(&str12);
-    arithmeticExpression->at(13) = std::unique_ptr<std::string>(&str13);
+    StringVector arithmeticExpression(14);
+    arithmeticExpression.at(0) = std::move(str0);
+    arithmeticExpression.at(1) = std::move(str1);
+    arithmeticExpression.at(2) = std::move(str2);
+    arithmeticExpression.at(3) = std::move(str3);
+    arithmeticExpression.at(4) = std::move(str4);
+    arithmeticExpression.at(5) = std::move(str5);
+    arithmeticExpression.at(6) = std::move(str6);
+    arithmeticExpression.at(7) = std::move(str7);
+    arithmeticExpression.at(8) = std::move(str8);
+    arithmeticExpression.at(9) = std::move(str9);
+    arithmeticExpression.at(10) = std::move(str10);
+    arithmeticExpression.at(11) = std::move(str11);
+    arithmeticExpression.at(12) = std::move(str12);
+    arithmeticExpression.at(13) = std::move(str13);
     Expression* parsed = parseExpression(arithmeticExpression);
     REQUIRE(parsed == nullptr);
 }

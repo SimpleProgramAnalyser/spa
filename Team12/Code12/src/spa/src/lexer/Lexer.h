@@ -10,7 +10,7 @@
 Boolean isWhitespace(const char* c) noexcept;
 StringVector splitByWhitespace(const String& str) noexcept;
 StringVector splitByDelimiter(const String& str, const String& delimiter);
-StringList* splitProgram(const String& program) noexcept;
+StringVector splitProgram(const String& program) noexcept;
 String trimWhitespace(const String& str);
 
 #endif // SPA_LEXER_H
