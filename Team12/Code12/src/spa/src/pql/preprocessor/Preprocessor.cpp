@@ -97,7 +97,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
     String currentClauseConstraint;
     Boolean hasCurrentClause = false;
     Boolean isPreviousTokenSuch = false; // is the previous token "such"
-    ClauseType currentClauseType;
+    ClauseType currentClauseType = NonExistentClauseType;
     Integer numOfOpenedParentheses = 0;
     Boolean hasOpenParentheses = false;
     Boolean isInProcessOfCreatingClause = false;
@@ -125,6 +125,12 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
     StringList* splitStringList = splitByWhitespace(clausesString);
 
     for (auto& token : *splitStringList) {
+        if (*token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
+            hasCurrentClause = true;
+            isInProcessOfCreatingClause = true;
+            continue;
+        }
+
         if (!hasCurrentClause) {
             if (*token != "such" && *token != "pattern") {
                 return ClauseVector::invalidClauseVector();
