@@ -1,54 +1,43 @@
 /*
  * Integration tests for the public methods in Evaluator.cpp
- * (under pql/evaluator). Due to the OOP encapsulation, we
- * cannot test/retrieve some members of the class, and will
- * only focus on testing the evaluateQuery(..) public method
- * (which is the only public method of the class).
- *
- * Additionally, as our evaluateQuery(..) method (indirectly)
- * calls PKB, and mocking stubs/dependencies is generally
- * hard in C++, we would be inserting actual records
- * (e.g, fake Follows relationships) in PKB and then
- * testing our evaluatQuery(..) method from there.
- *
- * Thus, the tests here in this class, are actually
- * PQL-PKB integration tests.
+ * (under pql/evaluator). Because Evaluator relies on the
+ * Program Knowledge Base heavily, unit testing is difficult
+ * to perform. Most testing of the Evaluator is done by
+ * the integration tests between Evaluator and PKB.
  */
 
 #include "catch.hpp"
 #include "pql/evaluator/Evaluator.h"
-#include "pql/preprocessor/AqTypes.h"
-#include "pql/projector/RawQueryResult.h"
-/*
+
+std::string getErrorMessage()
+{
+    return "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.";
+}
+
 TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntatically) PQL query")
 {
     // === Test set-up ===
-    Evaluator evaluator;
-
     AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
 
     // === Execute test method ===
-    RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
+    RawQueryResult rawQueryResult = evaluateQuery(abstractQuery);
 
     // === Expected test results ===
-    RawQueryResult expectedRawQueryResult = RawQueryResult::emptyRawQueryResult();
+    RawQueryResult expectedRawQueryResult = RawQueryResult::getSyntaxError(getErrorMessage());
 
     REQUIRE(rawQueryResult == expectedRawQueryResult);
 }
 
-TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> vacuously true PQL query")
-{
-    // === Test set-up ===
-    Evaluator evaluator;
-
-    AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
-
-    // === Execute test method ===
-    RawQueryResult rawQueryResult = evaluator.evaluateQuery(abstractQuery);
-
-    // === Expected test results ===
-    RawQueryResult expectedRawQueryResult = RawQueryResult::emptyRawQueryResult();
-
-    REQUIRE(rawQueryResult == expectedRawQueryResult);
-}
-*/
+//TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> vacuously true PQL query")
+//{
+//    // === Test set-up ===
+//    AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
+//
+//    // === Execute test method ===
+//    RawQueryResult rawQueryResult = evaluateQuery(abstractQuery);
+//
+//    // === Expected test results ===
+//    RawQueryResult expectedRawQueryResult{std::vector<String>()};
+//
+//    REQUIRE(rawQueryResult == expectedRawQueryResult);
+//}
