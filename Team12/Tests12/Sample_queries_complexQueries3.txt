@@ -9,7 +9,7 @@ Select r such that Parent*(10,15)
 7, 14, 23, 26, 28, 39, 40, 46, 48
 5000
 3 - Select All Call Parent, Parent Query 1 synonym
-call c
+call c;
 Select c such that Parent(25,c)
 26, 28
 5000
@@ -41,7 +41,7 @@ Select w such that Parent*(w, p)
 9 - Select All Statement Parent*, Parent Query 2 synonym WildCard
 call p;
 Select p such that Parent*(_, p)
-14, 26, 39, 40, 46
+14, 26, 28, 39, 40
 5000
 10 - Select All Statement Parent*, Parent Query 2 synonym WildCard
 stmt s;
@@ -115,12 +115,12 @@ none
 5000
 25 - Select All Assign Follows, Follows Query 1 synonym
 stmt ss;
-Select w such that Follows(2,ss)
+Select ss such that Follows(2,ss)
 6
 5000
 26 - Select All Assign Follows*, Follows Query 1 synonym
-While w;
-Select c such that Follows*(9,w)
+while w;
+Select w such that Follows*(9,w)
 20
 5000
 27 - Select All Statement Follows, Follows Query 1 synonym
@@ -161,7 +161,7 @@ Select a1 such that Follows(a1 ,a) pattern a (_, _)
 34 - Select All Statement Follows*, Follows Query 2 synonym with pattern 1 wildcards and const
 call c; assign a;
 Select a such that Follows*(c,a) pattern a (_, _"100"_)
-8, 23
+8
 5000
 35 - Select All stmt Follows,  Follows Query 2 synonym with pattern 1 wildcards and variable
 if i; assign a;
