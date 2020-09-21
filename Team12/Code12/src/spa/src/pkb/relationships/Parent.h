@@ -3,6 +3,8 @@
 
 #include <pkb/PkbTypes.h>
 
+typedef ArrayArrayTupleList<Integer, Integer> TupleTable;
+
 /**
  * Stores Parent, Parent* relationships.
  */
@@ -18,7 +20,7 @@ public:
     Boolean checkIfParentHolds(Integer parent, Integer child);
     Boolean checkIfParentHoldsStar(Integer parent, Integer child);
 
-    Vector<StatementNumWithType> getChildStatement(Integer parent);
+    Vector<Integer> getAllChildStatements(Integer parent, StatementType childType);
     Vector<StatementNumWithType> getParentStatement(Integer child);
     Vector<Integer> getAllChildStatementsStar(Integer parent, StatementType stmtType);
     Vector<Integer> getAllParentStatementsStar(Integer child, StatementType stmtType);
@@ -27,11 +29,14 @@ public:
     Vector<Integer> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
     Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
     Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+    Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+    Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
 
 private:
     // to check if Parent(*)(x, y) holds
     HashMap<Integer, StatementNumWithType> stmtParentMap;
-    HashMap<Integer, StatementNumWithType> stmtChildMap;
+    HashMap<Integer, StatementNumVectorsByType> stmtChildlistMap;
+    HashMap<Integer, HashSet<Integer>> stmtChildsetMap;
     HashMap<Integer, HashSet<Integer>> stmtParentstarsetMap;
     HashMap<Integer, HashSet<Integer>> stmtChildstarsetMap;
 
@@ -49,6 +54,8 @@ private:
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentStarType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildStarType;
+    TupleTable parentTuples;
+    TupleTable parentStarTuples;
 
     // hashsets to prevent duplication in lists above
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentTypeSet;

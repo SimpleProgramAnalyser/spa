@@ -2,6 +2,9 @@
 #define SPA_BEFORE_H
 
 #include <pkb/PkbTypes.h>
+
+typedef ArrayArrayTupleList<Integer, Integer> TupleTable;
+
 /**
  * Stores Follows, Follows* relationships.
  */
@@ -26,6 +29,9 @@ public:
     Vector<Integer> getAllBeforeStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
     Vector<Integer> getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
     Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
+    Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
+    Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore,
+                                                          StatementType stmtTypeOfAfter);
 
 private:
     // to check if Follows(*)(x, y) holds
@@ -48,6 +54,8 @@ private:
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtBeforeStarType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtAfterType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtAfterStarType;
+    TupleTable followsTuples;
+    TupleTable followsStarTuples;
 
     // hashsets to prevent duplication in lists above
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtBeforeTypeSet;

@@ -39,6 +39,13 @@ void FollowsTable::typedShenanigans(Integer before, StatementType beforeStmtType
     tryAddAfter(after, beforeStmtType, AnyStatement, stmtAfterType, stmtAfterTypeSet);
     tryAddAfter(after, AnyStatement, afterStmtType, stmtAfterType, stmtAfterTypeSet);
     tryAddAfter(after, AnyStatement, AnyStatement, stmtAfterType, stmtAfterTypeSet);
+
+    // for tuples
+    auto pair = std::make_pair(before, after);
+    followsTuples[AnyStatement][AnyStatement].push_back(pair);
+    followsTuples[AnyStatement][afterStmtType].push_back(pair);
+    followsTuples[beforeStmtType][AnyStatement].push_back(pair);
+    followsTuples[beforeStmtType][afterStmtType].push_back(pair);
 }
 // important private helper function
 void FollowsTable::typedShenanigansStar(Integer before, StatementType beforeStmtType, Integer after,
@@ -53,6 +60,13 @@ void FollowsTable::typedShenanigansStar(Integer before, StatementType beforeStmt
     tryAddAfter(after, beforeStmtType, AnyStatement, stmtAfterStarType, stmtAfterStarTypeSet);
     tryAddAfter(after, AnyStatement, afterStmtType, stmtAfterStarType, stmtAfterStarTypeSet);
     tryAddAfter(after, AnyStatement, AnyStatement, stmtAfterStarType, stmtAfterStarTypeSet);
+
+    // for tuples
+    auto pair = std::make_pair(before, after);
+    followsStarTuples[AnyStatement][AnyStatement].push_back(pair);
+    followsStarTuples[AnyStatement][afterStmtType].push_back(pair);
+    followsStarTuples[beforeStmtType][AnyStatement].push_back(pair);
+    followsStarTuples[beforeStmtType][afterStmtType].push_back(pair);
 }
 
 void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after,
@@ -139,4 +153,14 @@ Vector<Integer> FollowsTable::getAllAfterStatementsTypedStar(StatementType stmtT
                                                              StatementType stmtTypeOfAfter)
 {
     return stmtAfterStarType[stmtTypeOfBefore].byType[stmtTypeOfAfter];
+}
+Vector<Pair<Integer, Integer>> FollowsTable::getAllFollowsTuple(StatementType stmtTypeOfBefore,
+                                                                StatementType stmtTypeOfAfter)
+{
+    return followsTuples[stmtTypeOfBefore][stmtTypeOfAfter];
+}
+Vector<Pair<Integer, Integer>> FollowsTable::getAllFollowsTupleStar(StatementType stmtTypeOfBefore,
+                                                                    StatementType stmtTypeOfAfter)
+{
+    return followsStarTuples[stmtTypeOfBefore][stmtTypeOfAfter];
 }

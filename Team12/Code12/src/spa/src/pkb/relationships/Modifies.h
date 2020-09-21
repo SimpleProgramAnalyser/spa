@@ -23,6 +23,8 @@ public:
     Vector<String> getAllModifiesVariablesFromStatementType(StatementType stmtType);
     Vector<String> getAllModifiesVariablesFromProgram();
     Vector<String> getAllModifiesProcedures();
+    Vector<Pair<Integer, String>> getAllModifiesStatementTuple(StatementType stmtType);
+    Vector<Pair<String, String>> getAllModifiesProcedureTuple();
 
 private:
     // for checkIf*Modifies
@@ -41,6 +43,10 @@ private:
     Array<Vector<String>, STATEMENT_TYPE_COUNT> stmttypeVarlistMap;
     HashSet<String> allVarUsedByProcSet;
     Vector<String> allVarUsedByProcList;
+
+    // for tuples
+    Array<Vector<Pair<Integer, String>>, STATEMENT_TYPE_COUNT> statementTuples;
+    Vector<Pair<String, String>> procTuples;
 
     // for getAllStmt
     Array<Vector<Integer>, STATEMENT_TYPE_COUNT> stmttypeStmtlistMap;

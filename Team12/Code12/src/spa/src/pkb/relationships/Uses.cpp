@@ -24,6 +24,11 @@ void UsesTable::addUsesRelationships(const String& procName, Vector<String> varN
 
     // add to allUsesProc
     allUsesProc.push_back(procName);
+
+    // add tuple
+    for (const auto& varName : varNames) {
+        procTuples.push_back(std::make_pair(procName, varName));
+    }
 }
 
 void UsesTable::addUsesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
@@ -50,6 +55,12 @@ void UsesTable::addUsesRelationships(Integer stmtNum, StatementType stmtType, Ve
     // add to stmttypeStmtlistMap
     stmttypeStmtlistMap[stmtType].push_back(stmtNum);
     stmttypeStmtlistMap[StatementType::AnyStatement].push_back(stmtNum);
+
+    // add tuple
+    for (const auto& varName : varNames) {
+        statementTuples[AnyStatement].push_back(std::make_pair(stmtNum, varName));
+        statementTuples[stmtType].push_back(std::make_pair(stmtNum, varName));
+    }
 }
 
 Boolean UsesTable::checkIfProcedureUses(const String& procName, const String& varName)
@@ -94,4 +105,12 @@ Vector<String> UsesTable::getAllUsesVariablesFromProgram()
 Vector<String> UsesTable::getAllUsesProcedures()
 {
     return allUsesProc;
+}
+Vector<Pair<Integer, String>> UsesTable::getAllUsesStatementTuple(StatementType stmtType)
+{
+    return statementTuples[stmtType];
+}
+Vector<Pair<String, String>> UsesTable::getAllUsesProcedureTuple()
+{
+    return procTuples;
 }
