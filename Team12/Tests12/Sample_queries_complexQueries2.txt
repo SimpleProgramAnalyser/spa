@@ -256,7 +256,7 @@ Select s such that Modifies(s, _)
 53 - Select All Statement ModifiesP ModifiesP Query 2 synonym WildCard
 procedure p;
 Select p such that Modifies(p, _)
-mainPrint
+doNothing, mainPrint
 5000
 54 - Select All Statement Modifiess ModifiesS Query 2 synonym with pattern 2 wildcards
 variable v; assign a;
@@ -420,8 +420,8 @@ mainPrint
 5000
 84 - Select All Statement Usess Usess Query 2 synonym with pattern 2 variable
 assign a;
-Select a such that Uses(a, "doNothing") pattern a ("doNothing", _"TryingToMakeLongVariableNamesToTestLimits"_)
-2, 5, 7, 17, 18, 19, 31, 32, 36, 38, 39, 40
+Select a such that Uses(a, "TryingToMakeLongVariableNamesToTestLimits") pattern a ("doNothing", _"TryingToMakeLongVariableNamesToTestLimits"_)
+38, 40
 5000
 85 - Select All Statement Usesp Usesp Query 2 synonym with pattern 2 variable
 procedure p;  assign a;

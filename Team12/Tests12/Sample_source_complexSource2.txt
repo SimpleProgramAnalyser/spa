@@ -4,7 +4,7 @@ procedure mainPrint {
         print b;
         a = 10 + x;
         if (a < 10) then {
-            a = 20 + y + 10 + x;
+            a = 20 + y + (10 + x);
             while (x > 10) {
                 read y;
                 call doNothing; 

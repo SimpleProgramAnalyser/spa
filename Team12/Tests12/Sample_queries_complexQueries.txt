@@ -356,7 +356,7 @@ Select i such that Parent*(i,a) pattern a(_, _"x"_)
 72 - 1 common synonym between such that and pattern, if, Parent*
 if i; assign a; variable v1;
 Select i such that Parent*(i,a) pattern a(_, "x")
-3, 30 
+none
 5000
 73 - 1 common synonym between such that and pattern, while, Parent
 while w; assign a; variable v1;
@@ -502,11 +502,14 @@ Select s such that Modifies(s, "y") pattern a(_, _"y"_)
 assign a; variable v;
 Select a such that Uses(a, v) pattern a (v, _)
 7, 20, 35
+5000
 101 - 2 common synonyms, assignment Statements basically
 assign a; variable v;
 Select a such that Modifies(a, v) pattern a (v, _)
 1, 2, 4, 5, 7, 9, 15, 16, 20, 23, 24, 26, 27, 31, 32, 35, 36, 39, 40, 43, 45, 48, 51, 53, 54
+5000
 102 - Pattern query with constant pattern
 assign a; 
 Select a such that Modifies(a, "count") pattern a (_, "0")
 36
+5000

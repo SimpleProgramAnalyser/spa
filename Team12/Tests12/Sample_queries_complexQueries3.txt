@@ -15,8 +15,8 @@ Select c such that Parent(25,c)
 5000
 4 - Select All If Parent*, Parent Query 1 synonym
 if i
-Select a such that Parent*(5,i)
-29
+Select i such that Parent*(5,i)
+none
 5000
 5 - Select All Statement Parent, Parent Query 1 synonym
 stmt s;
@@ -41,7 +41,7 @@ Select w such that Parent*(w, p)
 9 - Select All Statement Parent*, Parent Query 2 synonym WildCard
 call p;
 Select p such that Parent*(_, p)
-10, 12, 25, 36
+14, 26, 39, 40, 46
 5000
 10 - Select All Statement Parent*, Parent Query 2 synonym WildCard
 stmt s;
@@ -76,7 +76,7 @@ Select a such that Parent*(s,a) pattern a (_, _"y + 10"_)
 17 - Select All if Parent,  Parent Query 2 synonym with pattern 1 wildcards and variable
 if i; assign a;
 Select i such that Parent*(i,a) pattern a (_, _"TryingToMakeLongVariableNamesToTestLimits"_)
-10, 25, 29
+25
 5000
 18 - Select All Assign Parent*, Parent Query 2 synonym with pattern 1 wildcards and variable
 if i; assign a;
@@ -160,7 +160,7 @@ Select a1 such that Follows(a1 ,a) pattern a (_, _)
 5000
 34 - Select All Statement Follows*, Follows Query 2 synonym with pattern 1 wildcards and const
 call c; assign a;
-Select s such that Follows*(c,a) pattern a (_, _"100"_)
+Select a such that Follows*(c,a) pattern a (_, _"100"_)
 8, 23
 5000
 35 - Select All stmt Follows,  Follows Query 2 synonym with pattern 1 wildcards and variable
@@ -279,9 +279,9 @@ Select p such that Modifies(p , "a") pattern a (_, _"10"_)
 doNothing, doNothing4, mainPrint
 5000
 58 - Select All stmt Modifiess Modifiess Query 1 synonym with pattern 1 wildcards and variable
-assign a;
-a
-27
+stmt s; assign a;
+Select s such that Modifies(s , "TryingToMakeLongVariableNamesToTestLimits") pattern a (_, _"TryingToMakeLongVariableNamesToTestLimits"_)
+7, 10, 12, 14, 15, 25, 27
 5000
 59 - Select All stmt Modifiesp Modifiesp Query 1 synonym with pattern 1 wildcards and variable
 procedure p; assign a;
@@ -366,7 +366,7 @@ Select s such that Uses(s, v)
 73 - Select All Statement UsesP UsesP Query 2 synonym
 procedure p; variable v;
 Select v such that Uses(p, v)
-TryingToMakeLongVariableNamesToTestLimits, a, a1w3e1dN9m3s, b, c, doNothing, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, doNothing, x, y, z, procedure
 5000
 74 - Select All Statement Usess UsesS Query 2 synonym WildCard
 stmt s;
@@ -415,7 +415,8 @@ Select a such that Uses(a, "y") pattern a (_, _"x + y"_)
 5000
 83 - Select All Assign Usesp Usesp Query 1 synonym with pattern 1 wildcards and variable
 procedure p;  assign a;
-doNothing, doNothing2, doNothing3, doNothing4, mainPrint, procedure
+Select a such that Uses(a, "TryingToMakeLongVariableNamesToTestLimits") pattern a(_, _"TryingToMakeLongVariableNamesToTestLimits"_)
+27
 5000
 84 - Select All Statement Usess Usess Query 2 synonym with pattern 2 variable
 assign a;
