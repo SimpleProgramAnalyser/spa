@@ -61,11 +61,11 @@ then
   fi
 elif [ $# -eq 2 ]
 then
-  if [ \($1 == "build"\) -a \($2 == "skip-tests"\) ];
+  if [ $1 == "build" -a $2 == "skip-tests" ];
   then
     build_autotester
     echo "Skipping tests..."
-  elif [ \($1 == "no-build"\) -a \($2 == "skip-tests"\) ];
+  elif [ $1 == "no-build" -a $2 == "skip-tests" ];
   then
     echo "Skipping CMake build..."
     echo "Skipping tests..."
