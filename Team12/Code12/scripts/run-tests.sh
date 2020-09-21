@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# usage: run with number of processors, or argument no-build to skip building
+# usage: run with argument no-build to skip building, skip-tests to skip tests
 
 rootdir=$(git rev-parse --show-toplevel)
 builddir="${rootdir}/Team12/Code12/build"
