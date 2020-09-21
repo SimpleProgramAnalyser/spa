@@ -20,7 +20,7 @@ public:
     Boolean checkIfParentHolds(Integer parent, Integer child);
     Boolean checkIfParentHoldsStar(Integer parent, Integer child);
 
-    Vector<StatementNumWithType> getChildStatement(Integer parent);
+    Vector<Integer> getAllChildStatements(Integer parent, StatementType childType);
     Vector<StatementNumWithType> getParentStatement(Integer child);
     Vector<Integer> getAllChildStatementsStar(Integer parent, StatementType stmtType);
     Vector<Integer> getAllParentStatementsStar(Integer child, StatementType stmtType);
@@ -35,7 +35,8 @@ public:
 private:
     // to check if Parent(*)(x, y) holds
     HashMap<Integer, StatementNumWithType> stmtParentMap;
-    HashMap<Integer, StatementNumWithType> stmtChildMap;
+    HashMap<Integer, StatementNumVectorsByType> stmtChildlistMap;
+    HashMap<Integer, HashSet<Integer>> stmtChildsetMap;
     HashMap<Integer, HashSet<Integer>> stmtParentstarsetMap;
     HashMap<Integer, HashSet<Integer>> stmtChildstarsetMap;
 
