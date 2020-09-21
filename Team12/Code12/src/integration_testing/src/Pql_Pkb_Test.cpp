@@ -3233,3 +3233,275 @@ TEST_CASE("query with Pattern clause, left operand variable synonym, right opera
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
+
+TEST_CASE("(vacuously true) query with Pattern clause, left operand wildcard, right operand wildcard")
+{
+    // === Test set-up ===
+    String query = "assign a; stmt s; Select s pattern a(_,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+/*
+ * Up to this point, we have been testing with a single clause, now we turn our
+ * attention to possible combinations of 2 clauses (a pattern clause, and some
+ * other clause that is not pattern).
+ */
+TEST_CASE("(vacuously true) query with such that Follows clause, left operand synonym, right operand wildcard, Pattern clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, all operands in clauses unrelated")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; assign a; Select s such that Follows(s1,_) pattern a(_,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addFollowsRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Follows clause, left operand synonym, right operand wildcard, Pattern clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, at least one operand in clauses is related")
+{
+    // === Test set-up ===
+    String query = "stmt s; assign a; Select s such that Follows(a,_) pattern a(_,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addFollowsRelationships(4, AssignmentStatement, 5, AssignmentStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("query with such that Follows clause, left operand synonym, right operand wildcard, Pattern clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, all clauses in operands unrelated, and at least one clause is false")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; assign a; Select s such that Follows(s1,_) pattern a(_,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr;
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+/*
+ * TODO: Get this test to work after merging from new master
+ */
+/*
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, at least one operand in clauses is related")
+{
+    // === Test set-up ===
+    String query = "stmt s; variable v; assign a; Select s such that Uses(s,v) pattern a(v,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<String> varNames1;
+
+    String varName1 = "num1";
+    String varName2 = "num2";
+    String varName3 = "num3";
+
+    varNames1.push_back(varName1);
+    varNames1.push_back(varName2);
+    varNames1.push_back(varName3);
+
+    addUsesRelationships(4, AssignmentStatement, varNames1);
+
+    Vector<String> varNames2;
+
+    String varName4 = "sum";
+
+    varNames2.push_back(varName4);
+
+    addUsesRelationships(5, AssignmentStatement, varNames2);
+
+    Vector<String> varNames3;
+
+    String varName5 = "ave";
+
+    varNames3.push_back(varName5);
+
+    addUsesRelationships(6, AssignmentStatement, varNames3);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "6, 5";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+*/
+
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, all operands in clauses unrelated")
+{
+    // === Test set-up ===
+    String query = "stmt s; variable v, v1; assign a; Select s such that Uses(s,v1) pattern a(v,_)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    Vector<String> varNames1;
+
+    String varName1 = "num1";
+    String varName2 = "num2";
+    String varName3 = "num3";
+
+    varNames1.push_back(varName1);
+    varNames1.push_back(varName2);
+    varNames1.push_back(varName3);
+
+    addUsesRelationships(4, AssignmentStatement, varNames1);
+
+    Vector<String> varNames2;
+
+    String varName4 = "sum";
+
+    varNames2.push_back(varName4);
+
+    addUsesRelationships(5, AssignmentStatement, varNames2);
+
+    Vector<String> varNames3;
+
+    String varName5 = "ave";
+
+    varNames3.push_back(varName5);
+
+    addUsesRelationships(6, AssignmentStatement, varNames3);
+
+    ProgramNode* rootNodeToAssign = getProgram1Tree_compute();
+    assignRootNode(rootNodeToAssign);
+
+    PqlManager pqlManager;
+
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
+
+
+    // === Expected test results ===
+    String expectedResultsStr = "6, 5, 4";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
