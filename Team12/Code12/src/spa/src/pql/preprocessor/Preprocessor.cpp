@@ -122,23 +122,23 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
      */
     int numOfTokensWithoutOpenParentheses = 0;
 
-    StringList* splitStringList = splitByWhitespace(clausesString);
+    StringVector splitStringList = splitByWhitespace(clausesString);
 
-    for (auto& token : *splitStringList) {
-        if (*token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
+    for (auto& token : splitStringList) {
+        if (token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
             hasCurrentClause = true;
             isInProcessOfCreatingClause = true;
             continue;
         }
 
         if (!hasCurrentClause) {
-            if (*token != "such" && *token != "pattern") {
+            if (token != "such" && token != "pattern") {
                 return ClauseVector::invalidClauseVector();
             }
 
-            if (*token == "such") {
+            if (token == "such") {
                 isPreviousTokenSuch = true;
-            } else if (*token == "pattern") {
+            } else if (token == "pattern") {
                 currentClauseType = PatternClauseType;
             }
 
@@ -146,16 +146,16 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
             hasCurrentClause = true;
         } else {
             if (isPreviousTokenSuch) {
-                if (*token != "that") {
+                if (token != "that") {
                     return ClauseVector::invalidClauseVector();
                 }
 
                 isPreviousTokenSuch = false;
                 currentClauseType = SuchThatClauseType;
             } else {
-                currentClauseConstraint.append(*token);
+                currentClauseConstraint.append(token);
 
-                std::pair<Boolean, Integer> result = countNumOfOpenParentheses(*token, numOfOpenedParentheses);
+                std::pair<Boolean, Integer> result = countNumOfOpenParentheses(token, numOfOpenedParentheses);
                 if (!result.first) {
                     return ClauseVector::invalidClauseVector();
                 }
@@ -163,7 +163,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
                 numOfOpenedParentheses = result.second;
 
                 if (!hasOpenParentheses) {
-                    hasOpenParentheses = containsOpenParentheses(*token);
+                    hasOpenParentheses = containsOpenParentheses(token);
                 }
 
                 if (numOfOpenedParentheses < 0) {
@@ -206,8 +206,6 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
     if (!currentClauseConstraint.empty() || isInProcessOfCreatingClause) {
         return ClauseVector::invalidClauseVector();
     }
-
-    delete splitStringList;
 
     return clauseVector;
 }

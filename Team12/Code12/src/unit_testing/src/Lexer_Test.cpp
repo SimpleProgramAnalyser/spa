@@ -94,7 +94,7 @@ TEST_CASE("trimWhitespace does not truncate whitespace between words")
             == "hola   \t   que\v\v\v\r\r\f\ftal");
 }
 
-TEST_CASE("splitByWhitespace works on different whitespaces")
+TEST_CASE("splitProgram works on different whitespaces")
 {
     StringList* program = splitProgram("test test   \ronetwo\n\fthree four  five\tsix");
     auto* str0 = new String{"test"};

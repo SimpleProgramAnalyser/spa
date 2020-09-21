@@ -36,90 +36,90 @@ bool isWhitespace(const char* c) noexcept
  *
  * @return List of the split strings.
  */
-static StringList* splitWithPredicate(const String& str, const std::function<bool(const char*)>& predicate)
+static StringVector splitWithPredicate(const String& str, const std::function<bool(const char*)>& predicate)
 {
-    auto* splitStrings = new StringList();
+    std::vector<std::string> splitStrings;
     const char* currentChar = str.c_str();
-    std::unique_ptr<String> currentString(new String());
+    std::string currentString;
 
     while (*currentChar != '\0') {
-        if (!currentString->empty() && predicate(currentChar)) {
-            splitStrings->push_back(std::move(currentString));
-            currentString.reset(new String());
+        if (!currentString.empty() && predicate(currentChar)) {
+            splitStrings.push_back(std::move(currentString));
+            currentString.clear();
         } else if (!predicate(currentChar)) {
-            currentString->push_back(*currentChar);
+            currentString.push_back(*currentChar);
         }
 
         currentChar++;
     }
 
     // insert last word if any
-    if (!currentString->empty()) {
-        splitStrings->push_back(std::move(currentString));
+    if (!currentString.empty()) {
+        splitStrings.push_back(std::move(currentString));
     }
 
     return splitStrings;
 }
 
-StringList* splitByWhitespace(const String& str) noexcept
+StringVector splitByWhitespace(const String& str) noexcept
 {
     return splitWithPredicate(str, isWhitespace);
 }
 
-StringList* splitByDelimiter(const String& str, const String& delimiter)
+StringVector splitByDelimiter(const String& str, const String& delimiter)
 {
     if (delimiter.size() == 1) {
         return splitWithPredicate(str, [delimiter](const char* c) -> bool { return *c == delimiter.at(0); });
     }
 
-    auto* splitStrings = new StringList();
+    std::vector<std::string> splitStrings;
     const char* strChar = str.c_str();
     const char* delimiterChar = delimiter.c_str();
     bool isMatchingDelimiter = false;
-    std::unique_ptr<String> currentString(new String());
-    std::unique_ptr<String> bufferString(new String());
+    std::string currentString;
+    std::string bufferString;
 
     while (*strChar != '\0') {
         if (*strChar == *delimiterChar) {
             // still unsure whether delimiter is matched or not
             isMatchingDelimiter = true;
-            bufferString->push_back(*strChar);
+            bufferString.push_back(*strChar);
             delimiterChar++;
 
         } else if (isMatchingDelimiter && *delimiterChar == '\0') {
             // successfully matched the entire delimiter
-            splitStrings->push_back(std::move(currentString));
-            currentString.reset(new String());
+            splitStrings.push_back(std::move(currentString));
+            currentString.clear();
             isMatchingDelimiter = false;
             // clear buffer
-            bufferString.reset(new String());
+            bufferString.clear();
             // reset delimiterChar
             delimiterChar = delimiter.c_str();
             // add in the current character
-            currentString->push_back(*strChar);
+            currentString.push_back(*strChar);
 
         } else if (isMatchingDelimiter) {
             // failed to match the entire delimiter
             isMatchingDelimiter = false;
-            currentString->append(*bufferString);
-            currentString->push_back(*strChar);
+            currentString.append(std::move(bufferString));
+            currentString.push_back(*strChar);
             // clear buffer
-            bufferString.reset(new String());
+            bufferString.clear();
             // reset delimiterChar
             delimiterChar = delimiter.c_str();
 
         } else {
             // did not match delimiter at all
-            currentString->push_back(*strChar);
+            currentString.push_back(*strChar);
         }
 
         strChar++;
     }
 
     // insert last word if any
-    if (!currentString->empty()) {
-        currentString->append(*bufferString);
-        splitStrings->push_back(std::move(currentString));
+    if (!currentString.empty()) {
+        currentString.append(bufferString);
+        splitStrings.push_back(std::move(currentString));
     }
 
     return splitStrings;

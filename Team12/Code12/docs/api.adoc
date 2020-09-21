@@ -997,9 +997,9 @@ a conforming standard.
 '''
 
 [#splitByDelimiter]
-`*STRING_LIST* splitByDelimiter(*STRING* str, *STRING* delimiter);`
+`*STRING_VECTOR* splitByDelimiter(*STRING* str, *STRING* delimiter);`
 
-*Description*: Returns a *STRING_LIST* of tokens after splitting
+*Description*: Returns a *STRING_VECTOR* of tokens after splitting
 `str` by the `delimiter`.
 
 '''
