@@ -74,13 +74,13 @@ TEST_CASE("Pattern a (_, \"x + y\")")
 
 TEST_CASE("Such That Follows* Statement")
 {
-    AbstractQuery abstractQuery = processQuery("stmt sa; Select sa such that Follows* (sa, _)");
+    AbstractQuery abstractQuery = processQuery("stmt a; Select a such that Follows* (a, _)");
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-              .addSelectSynonym("sa")
-              .addDeclaration("sa", "stmt")
-              .addSuchThatClause("Follows*", SynonymRefType, "sa", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSelectSynonym("a")
+              .addDeclaration("a", "stmt")
+              .addSuchThatClause("Follows*", SynonymRefType, "a", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -451,6 +451,22 @@ TEST_CASE("Such That Uses If and Literal Ident")
     REQUIRE(equals);
 }
 
+TEST_CASE("Such That Uses Literal Ident and Literal Ident")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that Uses (\"main\", \"x\")");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("s")
+              .addDeclaration("s", "stmt")
+              .addSuchThatClause("Uses", LiteralRefType, "main", NonExistentType, LiteralRefType, "x", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
 TEST_CASE("Such That Modifies NonVariable Returns Error")
 {
     AbstractQuery abstractQuery = processQuery("assign a; stmt s; Select a such that Modifies (a, s)");
@@ -468,6 +484,13 @@ TEST_CASE("Such That Uses NonVariable Returns Error")
 TEST_CASE("Such That Uses Constant Returns Error")
 {
     AbstractQuery abstractQuery = processQuery("stmt s; constant c; Select s such that Uses (s, c)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Such That Incomplete Relationship ")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that Uses (s,");
 
     REQUIRE(abstractQuery.isInvalid());
 }
@@ -614,6 +637,121 @@ TEST_CASE("Such That and Pattern Clauses 2")
     bool equals = abstractQuery == expectedAbstractQuery;
 
     REQUIRE(equals);
+}
+
+/************************************************************************************/
+/*  'and' connector within Clauses                                                  */
+/************************************************************************************/
+
+TEST_CASE("Such That Follows* and Uses Statement")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that Follows* (s, _) and Uses (s, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("s")
+              .addDeclaration("s", "stmt")
+              .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause("Uses", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("Pattern and Pattern Statement")
+{
+    AbstractQuery abstractQuery
+        = processQuery("assign a1, a2; Select a1 pattern a1 (_, \"x + y\") and a2 (_, \"z * z\")");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addSelectSynonym("a1")
+                                              .addDeclaration("a1", "assign")
+                                              .addDeclaration("a2", "assign")
+                                              .addPatternClause("a1", AssignPatternType, WildcardRefType, "_",
+                                                                NonExistentType, "x + y", LiteralExpressionType)
+                                              .addPatternClause("a2", AssignPatternType, WildcardRefType, "_",
+                                                                NonExistentType, "z * z", LiteralExpressionType)
+                                              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("Such That Follows* and Uses and Modifies and Parent Statement")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1, s2; variable v; Select s1 such that Follows* (s1, s2) and "
+                                               "Uses (s1, v) and Modifies (s2, v) and Parent (s1, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("s1")
+              .addDeclaration("s1", "stmt")
+              .addDeclaration("s2", "stmt")
+              .addDeclaration("v", "variable")
+              .addSuchThatClause("Follows*", SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .addSuchThatClause("Uses", SynonymRefType, "s1", StmtType, SynonymRefType, "v", VariableType)
+              .addSuchThatClause("Modifies", SynonymRefType, "s2", StmtType, SynonymRefType, "v", VariableType)
+              .addSuchThatClause("Parent", SynonymRefType, "s1", StmtType, WildcardRefType, "_", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("Such That Follows* and Pattern Statement")
+{
+    AbstractQuery abstractQuery
+        = processQuery("assign a; Select a and such that Follows* (a, _) and pattern a (_, \"x + y\")");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+// TODO: Uncomment it when with clause is implemented
+// TEST_CASE("Such That Follows* and With Statement")
+//{
+//    AbstractQuery abstractQuery
+//        = processQuery("assign a; Select a and such that Follows* (a, _) and with a.stmt# = 12");
+//
+//    REQUIRE(abstractQuery.isInvalid());
+//}
+
+TEST_CASE("'and' occurs before clauses")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s and such that Follows* (s, _) and Uses (s, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("'and' occurs between such that identifier")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such and that Follows* (s, _) and Uses (s, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("'and' occurs after clause identifier")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that and Follows* (s, _) and Uses (s, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Two consecutive 'and'")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that and Follows* (s, _) and and Uses (s, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Clause ends with 'and'")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that Follows* (s, _) and");
+
+    REQUIRE(abstractQuery.isInvalid());
 }
 
 /************************************************************************************/

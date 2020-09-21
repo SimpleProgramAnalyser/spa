@@ -46,7 +46,7 @@ public:
     Boolean operator==(const DesignEntity& designEntity);
 };
 
-enum ClauseType : char { SuchThatClauseType = 0, PatternClauseType = 1 };
+enum ClauseType : char { SuchThatClauseType = 0, PatternClauseType = 1, NonExistentClauseType = 2 };
 
 class Clause {
 protected:

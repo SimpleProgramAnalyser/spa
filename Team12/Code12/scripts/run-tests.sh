@@ -2,7 +2,7 @@
 set -euo pipefail
 # Usage: run with --build to build
 
-rootdir=$(git rev-parse --show-toplevel)
+rootdir="$(git rev-parse --show-toplevel)"
 builddir="${rootdir}/Team12/Code12/build"
 testdir="${rootdir}/Team12/Tests12"
 BUILD_TYPE="${BUILD_TYPE:-DEBUG}"
