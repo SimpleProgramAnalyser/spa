@@ -5,8 +5,7 @@
 
 AbstractQuery processQuery(String queryString)
 {
-    Preprocessor preprocessor;
-    return preprocessor.processQuery(queryString);
+    return Preprocessor::processQuery(queryString);
 }
 
 TEST_CASE("Only Declarations without Select Clause returns Invalid Abstract Query")

@@ -5,6 +5,13 @@
 
 #include "AqTypes.h"
 
+Expression* createExpression(const String& literal)
+{
+    StringVector splitString = splitProgram(literal);
+    Expression* expression = parseExpression(splitString);
+    return expression;
+}
+
 Boolean isValidSynonym(String testString)
 {
     return util::isPossibleIdentifier(testString);

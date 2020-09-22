@@ -320,16 +320,19 @@ of their own, hence they are also known as "container statements".
 '''
 
 [#isStatementInProgram]
-`*BOOLEAN* isStatementInProgram(*INTEGER* number);`
+`*BOOLEAN* isStatementInProgram(*INTEGER* stmtNum);`
 
-*Description*: Returns a *BOOLEAN* stating whether statement is in the Statement Table.
+*Description*: Returns a *BOOLEAN* stating whether statement with `stmtNum` is in the Statement Table.
 
 '''
 
 [#insertIntoStatementTable]
-`*VOID* insertIntoStatementTable(*INTEGER* number, *STATEMENT_TYPE* type);`
+`*VOID* insertIntoStatementTable(*INTEGER* stmtNum, *STATEMENT_TYPE* type);`
 
-*Description*: Inserts a *STATEMENT* `statement` with its corresponding *STATEMENT_TYPE* into the Statement Table.
+*Requires*: `type` cannot be `AnyStatement` type.
+
+*Description*: Inserts a statement with `stmtNum` with its corresponding *STATEMENT_TYPE* into the Statement Table.
+If a same `stmtNum` already exists in the table, the old record will be overwritten without confirmation.
 
 === Variable Table API
 
@@ -359,6 +362,7 @@ of their own, hence they are also known as "container statements".
 `*VOID* insertIntoVariableTable(*VARIABLE* var);`
 
 *Description*: Inserts the *VARIABLE* `var` into Variable Table.
+If a `var` with the same name already exist in the Variable Table, then no change will occur in the Variable Table.
 
 === Procedure Table API
 
@@ -388,6 +392,7 @@ of their own, hence they are also known as "container statements".
 `*VOID* insertIntoProcedureTable(*PROCEDURE* proc);`
 
 *Description*: Inserts the *PROCEDURE* `proc` into Procedure Table.
+If a `proc` with the same name already exist in the Variable Table, then no change will occur in the Procedure Table.
 
 === Constant Table API
 
@@ -417,6 +422,8 @@ of their own, hence they are also known as "container statements".
 `*VOID* insertIntoConstantTable(*CONSTANT* constant);`
 
 *Description*: Inserts the *CONSTANT* `constant` into Constant Table.
+If a same `constant`
+already exist in the Variable Table, then no change will occur in the Constant Table.
 
 === Uses API
 
@@ -432,32 +439,39 @@ of their own, hence they are also known as "container statements".
 * <<getUsesStatements>>
 * <<getUsesVariablesFromStatement>>
 * <<getUsesVariablesFromProcedure>>
+* <<getAllUsesVariablesFromStatementType>>
+* <<getAllUsesVariablesFromProgram>>
 * <<getAllUsesStatementTuple>>
 * <<getAllUsesProcedureTuple>>
 
 '''
 
 [#addUsesRelationships]
-`*VOID* addUsesRelationships(*INTEGER* stmt, *VARIABLE_LIST* varList);`
+`*VOID* addUsesRelationships(*INTEGER* stmt, *STATEMENT_TYPE* stmtType, *VARIABLE_LIST* varList);`
 
-*Description*: Add all variables in *VARIABLES_LIST* `varList` that are modified in `stmt`
+*Requires*: `type` cannot be `AnyStatement` type.
+
+*Description*: Add all variables in *VARIABLES_LIST* `varList` that are used in `stmt`
+to the Uses Table.
+
+`*VOID* addUsesRelationships(*PROCEDURE* proc, *VARIABLE_LIST* varList);`
+
+*Description*: Add all variables in *VARIABLES_LIST* `varList` that are used in `proc`
 to the Uses Table.
 
 '''
 
 [#checkIfProcedureUses]
-`*PROCEDURE_LIST* checkIfProcedureUses(*STRING* proc, *STRING* var);`
+`*BOOLEAN* checkIfProcedureUses(*STRING* proc, *STRING* var);`
 
-*Description*: Returns the *PROCEDURE* in a *PROCEDURE_LIST* if `proc` uses `var`,
-otherwise an empty *PROCEDURE_LIST* is returned.
+*Description*: Returns `TRUE` if `proc` uses `var`, `FALSE` otherwise.
 
 '''
 
 [#checkIfStatementUses]
-`*STATEMENT_LIST* checkIfStatementUses(*INTEGER* stmt, *STRING* var);`
+`*BOOLEAN* checkIfStatementUses(*INTEGER* stmt, *STRING* var);`
 
-*Description*: Returns the `*STATEMENT*` in a STATEMENT_LIST if `stmt` uses `var`, otherwise
-an empty *STATEMENT_LIST* is returned.
+*Description*: Returns `TRUE` if `stmt` uses `var`, `FALSE` otherwise.
 
 '''
 
@@ -511,6 +525,20 @@ that uses *VARIABLE* `var`.
 
 '''
 
+[#getAllUsesVariablesFromStatementType]
+`*VARIABLE_LIST* getUsesVariablesFromStatementType(*STATEMENT_TYPE* stmtType);`
+
+*Description*: Returns a *VARIABLE_LIST* of all *VARIABLE* that is used by any *STATEMENT* of type `stmtType`.
+
+'''
+
+[#getAllUsesVariablesFromProgram]
+`*VARIABLE_LIST* getAllUsesVariablesFromProgram();`
+
+*Description*: Returns a *VARIABLE_LIST* of variables that were used in any *PROCEDURE*.
+
+'''
+
 [#getAllUsesStatementTuple]
 `*LIST<PAIR<STATEMENT,VARIABLE>>* getAllUsesStatementTuple(*STATEMENT_TYPE* stmtType);`
 
@@ -537,30 +565,39 @@ that uses *VARIABLE* `var`.
 * <<getModifiesStatements>>
 * <<getModifiesVariablesFromStatement>>
 * <<getModifiesVariablesFromProcedure>>
+* <<getAllModifiesVariablesFromStatementType>>
+* <<getAllModifiesVariablesFromProgram>>
 * <<getAllModifiesStatementTuple>>
 * <<getAllModifiesProcedureTuple>>
 
 '''
 
 [#addModifiesRelationships]
-`*VOID* addModifiesRelationships(*INTEGER* stmt, *VARIABLE_LIST* varList);`
+`*VOID* addModifiesRelationships(*INTEGER* stmt, *STATEMENT_TYPE* stmtType, *VARIABLE_LIST* varList);`
+
+*Requires*: `type` cannot be `AnyStatement` type.
 
 *Description*: Add all variables in *VARIABLES_LIST* `varList` that are modified in `stmt`
+to the Modifies Table.
+
+`*VOID* addModifiesRelationships(*PROCEDURE* proc, *VARIABLE_LIST* varList);`
+
+*Description*: Add all variables in *VARIABLES_LIST* `varList` that are modified in `proc`
 to the Modifies Table.
 
 '''
 
 [#checkIfProcedureModifies]
-`*PROCEDURE_LIST* checkIfProcedureModifies(*STRING* proc, *STRING* var);`
+`*BOOLEAN* checkIfProcedureModifies(*STRING* proc, *STRING* var);`
 
-*Description*: Returns the *PROCEDURE* in a *PROCEDURE_LIST* if `proc` modifies `var`, otherwise an empty *PROCEDURE_LIST* is returned.
+*Description*: Returns `TRUE` if `proc` modifies `var`, `FALSE` otherwise.
 
 '''
 
 [#checkIfStatementModifies]
-`*STATEMENT_LIST* checkIfStatementModifies(*INTEGER* stmt, *STRING* var);`
+`*BOOLEAN* checkIfStatementModifies(*INTEGER* stmt, *STRING* var);`
 
-*Description*: Returns the `*STATEMENT*` in a STATEMENT_LIST if `stmt` modifies `var`, otherwise an empty *STATEMENT_LIST* is returned.
+*Description*: Returns `TRUE` if `stmt` modifies `var`, `FALSE` otherwise.
 
 '''
 
@@ -610,6 +647,20 @@ to the Modifies Table.
 `*VARIABLE_LIST* getModifiesVariablesFromProcedure(*PROCEDURE* proc);`
 
 *Description*: Returns a *VARIABLE_LIST* of variables that were modified in `proc`.
+
+'''
+
+[#getAllModifiesVariablesFromStatementType]
+`*VARIABLE_LIST* getModifiesVariablesFromStatementType(*STATEMENT_TYPE* stmtType);`
+
+*Description*: Returns a *VARIABLE_LIST* of all *VARIABLE* that is modified by any *STATEMENT* of type `stmtType`.
+
+'''
+
+[#getAllModifiesVariablesFromProgram]
+`*VARIABLE_LIST* getAllModifiesVariablesFromProgram();`
+
+*Description*: Returns a *VARIABLE_LIST* of all variables that were modified in any *PROCEDURE*.
 
 '''
 
@@ -930,6 +981,7 @@ PKB from memory. This is an irreversible action.
 `*ROOT_NODE* getRootNode()`
 
 *Description*: Retrieves the *rootNode* stored in PKB. If <<assignRootNode>> was never called, a *NULL_POINTER* will be returned.
+
 
 == PQL
 
