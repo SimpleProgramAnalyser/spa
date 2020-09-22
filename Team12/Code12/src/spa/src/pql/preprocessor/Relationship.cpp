@@ -100,7 +100,7 @@ Boolean Relationship::validateStmtAndStmtSemantics(Reference leftRef, Reference 
 }
 
 Boolean Relationship::validateStmtProcAndVarSemantics(RelationshipReferenceType relRefType, Reference leftRef,
-                                                       Reference rightRef)
+                                                      Reference rightRef)
 {
     if (relRefType != ModifiesType && relRefType != UsesType) {
         return false;

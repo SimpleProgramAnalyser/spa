@@ -123,7 +123,7 @@ private:
     static Boolean validateRelationshipSemantics(RelationshipReferenceType relationshipReferenceType, Reference leftRef,
                                                  Reference rightRef);
     static Boolean validateStmtProcAndVarSemantics(RelationshipReferenceType relRefType, Reference leftRef,
-                                                    Reference rightRef);
+                                                   Reference rightRef);
     static Boolean validateStmtAndStmtSemantics(Reference leftRef, Reference rightRef);
 
 public:
@@ -172,7 +172,7 @@ public:
 enum PatternStatementType : char {
     AssignPatternType = 0,
     WhilePatternType = 1, // Advanced SPA
-    IfPatternType = 2 // Advanced SPA
+    IfPatternType = 2     // Advanced SPA
 };
 
 class PatternClause: public Clause {
