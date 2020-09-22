@@ -581,7 +581,7 @@ to the Modifies Table.
 [#getAllModifiesVariables]
 `*VARIABLE_LIST* getAllModifiesVariables();`
 
-Description: Returns a *VARIABLE_LIST* of all variables that are modified in the SIMPLE program.
+*Description*: Returns a *VARIABLE_LIST* of all variables that are modified in the SIMPLE program.
 
 '''
 
@@ -632,7 +632,7 @@ Description: Returns a *VARIABLE_LIST* of all variables that are modified in the
 * <<addParentRelationships>>
 * <<addParentRelationshipsStar>>
 * <<checkIfParentHolds>>
-* <<checkIfParentStarHolds>>
+* <<checkIfParentHoldsStar>>
 * <<getAllChildStatements>>
 * <<getAllChildStatementsStar>>
 * <<getAllChildStatementsTyped>>
@@ -657,10 +657,10 @@ with `childType` into the Parent Table.
 
 [#addParentRelationshipsStar]
 `*VOID* addParentRelationshipsStar(*INTEGER* parent, *STATEMENT_TYPE* parentType,
-*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* childrenWithTYpe);`
+*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* childrenStmttypePairs);`
 
 *Description*: Adds a Parent relationship between `parent` with `parentType` and all
-`childrenWithType` into the Parent Table.
+`childrenStmttypePairs` into the Parent Table.
 
 '''
 
@@ -671,8 +671,8 @@ with `childType` into the Parent Table.
 
 '''
 
-[#checkIfParentStarHolds]
-`*BOOLEAN* checkIfParentStarHolds(*INTEGER* parent, *INTEGER* child);`
+[#checkIfParentHoldsStar]
+`*BOOLEAN* checkIfParentHoldsStar(*INTEGER* parent, *INTEGER* child);`
 
 *Description*: Returns `TRUE` if there is a Parent* relationship between `parent` and `child`, else return `FALSE`.
 
@@ -760,14 +760,15 @@ Parents are of STATEMENT_TYPE `stmtType`.
 
 *Description*: Returns a list of pairs, where for each pair, the *Parent** relationship holds between them, and the parent is of `stmtTypeOfParent`, and the child is of `stmtTypeOfChild`.
 
-=== Before API
+=== Follows API
 
-*Overview*: The Before API describes the methods exposed by Before Table to insert and extract information related to the Before relationships in the processed SIMPLE program.
+*Overview*: The Follows API describes the methods exposed by Follows Table to insert and extract
+information related to the Follows relationships in the processed SIMPLE program.
 
-* <<addBeforeRelationships>>
-* <<addBeforeRelationshipsStar>>
-* <<checkIfBeforeHolds>>
-* <<checkIfBeforeStarHolds>>
+* <<addFollowsRelationships>>
+* <<addFollowsRelationshipsStar>>
+* <<checkIfFollowsHolds>>
+* <<checkIfFollowsHoldsStar>>
 * <<getAfterStatement>>
 * <<getAllAfterStatementsStar>>
 * <<getAllAfterStatementsTyped>>
@@ -965,7 +966,7 @@ with the PKB.
 from the PKB.
 
 === Projector API
-*Overview*: Formats query results into human readable context.
+*Overview*: Formats query results into human readable context, for the Autotester and UI.
 
 * <<formatResult>>
 
