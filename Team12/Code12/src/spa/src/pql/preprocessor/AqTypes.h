@@ -79,7 +79,6 @@ class Reference {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
-    //    Boolean isProcedureType;
     DesignEntity designEntity;
     Boolean hasError;
     Reference();
@@ -123,9 +122,9 @@ private:
 
     static Boolean validateRelationshipSemantics(RelationshipReferenceType relationshipReferenceType, Reference leftRef,
                                                  Reference rightRef);
-    static Boolean validateUsesAndModifiesSemantics(RelationshipReferenceType relRefType, Reference leftRef,
-                                                    Reference rightRef);
-    static Boolean validateStmtAndStmtRelationshipSemantics(Reference leftRef, Reference rightRef);
+    static Boolean validateStmtProcAndVarSemantics(RelationshipReferenceType relRefType, Reference leftRef,
+                                                   Reference rightRef);
+    static Boolean validateStmtAndStmtSemantics(Reference leftRef, Reference rightRef);
 
 public:
     Relationship(String relationshipRef, Reference leftRef, Reference rightRef);
@@ -161,7 +160,6 @@ private:
 
 public:
     ExpressionSpecType expressionSpecType;
-
     ExpressionSpec();
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
@@ -171,7 +169,11 @@ public:
     Boolean operator==(const ExpressionSpec& expressionSpec);
 };
 
-enum PatternStatementType : char { AssignPatternType = 0 };
+enum PatternStatementType : char {
+    AssignPatternType = 0,
+    WhilePatternType = 1, // Advanced SPA
+    IfPatternType = 2     // Advanced SPA
+};
 
 class PatternClause: public Clause {
 private:
