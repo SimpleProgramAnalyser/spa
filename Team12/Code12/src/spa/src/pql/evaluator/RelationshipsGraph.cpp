@@ -45,6 +45,12 @@ Boolean RelationshipsGraph::checkIfPotentialValueHasRelationships(const Potentia
     }
 }
 
+bool RelationshipsGraph::operator==(const RelationshipsGraph& rg)
+{
+    return this->relationshipsTable == rg.relationshipsTable
+           && this->synonymRelationshipsCache == rg.synonymRelationshipsCache;
+}
+
 void RelationshipsGraph::insertRelationships(Vector<Pair<String, String>> valueRelationships,
                                              const Synonym& firstSynonym, const Synonym& secondSynonym)
 {

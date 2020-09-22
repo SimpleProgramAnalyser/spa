@@ -14,12 +14,6 @@
 
 #include "pkb/PKB.h"
 
-// set hasResult to true at the start, since no clauses have been evaluated
-ResultsTable::ResultsTable(DeclarationTable decls):
-    declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
-    hasResult(true)
-{}
-
 /**
  * Checks if a synonym exists in the results table.
  *
@@ -30,6 +24,24 @@ ResultsTable::ResultsTable(DeclarationTable decls):
 inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
 {
     return resultsMap.find(syn) != resultsMap.end();
+}
+
+/**
+ * Associates a synonym with a set of results
+ * in the table, assuming results are non-empty.
+ *
+ * @param syn The synonym.
+ * @param results The results to associate with.
+ */
+void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResult& results)
+{
+    assert(!results.empty()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    if (checkIfSynonymInMap(syn)) {
+        resultsMap[syn] = findCommonElements(results, syn);
+    } else {
+        // synonym is not found in table, associate results with synonym
+        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
+    }
 }
 
 /**
@@ -66,22 +78,16 @@ ClauseResult ResultsTable::findCommonElements(const ClauseResult& newResults, co
     return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
 }
 
-/**
- * Associates a synonym with a set of results
- * in the table, assuming results are non-empty.
- *
- * @param syn The synonym.
- * @param results The results to associate with.
- */
-void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResult& results)
+// set hasResult to true at the start, since no clauses have been evaluated
+ResultsTable::ResultsTable(DeclarationTable decls):
+    declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
+    hasResult(true)
+{}
+
+bool ResultsTable::operator==(const ResultsTable& rt)
 {
-    assert(!results.empty()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    if (checkIfSynonymInMap(syn)) {
-        resultsMap[syn] = findCommonElements(results, syn);
-    } else {
-        // synonym is not found in table, associate results with synonym
-        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
-    }
+    return this->resultsMap == rt.resultsMap && this->declarations == rt.declarations
+           && this->relationships == rt.relationships && this->hasResult == rt.hasResult;
 }
 
 void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)

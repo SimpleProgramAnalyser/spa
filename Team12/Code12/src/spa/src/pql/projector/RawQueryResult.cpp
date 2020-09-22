@@ -90,8 +90,8 @@ size_t RawQueryResult::count()
  * what it means for 2 such objects to be equal.
  *
  * In our definition, this equality holds if and only
- * if the Vector<RawResultFromClauses> are the same
- * and so on (recursively).
+ * if the ClauseResult contains the same elements at
+ * every position when they are sorted.
  *
  * @param rawQueryResult Another RawQueryResult object
  * to compare with current instance.
@@ -100,7 +100,11 @@ size_t RawQueryResult::count()
  */
 Boolean RawQueryResult::operator==(const RawQueryResult& rawQueryResult) const
 {
-    return this->results == rawQueryResult.results && this->isSyntaxError == rawQueryResult.isSyntaxError
+    std::vector<std::string> sortedThis = this->results;
+    std::vector<std::string> sortedOther = rawQueryResult.results;
+    std::sort(sortedThis.begin(), sortedThis.end());
+    std::sort(sortedOther.begin(), sortedOther.end());
+    return sortedThis == sortedOther && this->isSyntaxError == rawQueryResult.isSyntaxError
            && this->errorMessage == rawQueryResult.errorMessage;
 }
 
