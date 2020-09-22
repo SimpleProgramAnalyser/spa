@@ -804,7 +804,7 @@ with `afterStmtType` into the Follows Table.
 *Requires*: `afterStmttypePairs` cannot have statements with `AnyStatement` type.
 
 *Description*: Adds a Follows relationship between `before` with `beforeStmtType` and all
-`afterStmtTypePairs` into the Before Table.
+`afterStmtTypePairs` into the Follows Table.
 
 '''
 
@@ -893,7 +893,7 @@ holds and are of STATEMENT_TYPE `stmtType`.
 `*LIST<PAIR<STATEMENT,STATEMENT>>* getAllFollowsTuple(*STATEMENT_TYPE* stmtTypeOfBefore,
 *STATEMENT_TYPE* stmtTypeOfAfter);`
 
-*Description*: Returns a list of pairs, where for each pair, the *Before* relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
+*Description*: Returns a list of pairs, where for each pair, the *Follows* relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
 
 '''
 
@@ -901,7 +901,7 @@ holds and are of STATEMENT_TYPE `stmtType`.
 `*LIST<PAIR<STATEMENT,STATEMENT>>* getAllFollowsTupleStar(*STATEMENT_TYPE* stmtTypeOfBefore,
 *STATEMENT_TYPE* stmtTypeOfAfter);`
 
-*Description*: Returns a list of pairs, where for each pair, the *Before** relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
+*Description*: Returns a list of pairs, where for each pair, the *Follows* relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
 
 === Utilities API
 
@@ -914,21 +914,22 @@ holds and are of STATEMENT_TYPE `stmtType`.
 [#resetPKB]
 `*VOID* resetPKB()`
 
-*Description*: An irreversible action resetting *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in PKB from memory.
+*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
+PKB from memory. This is an irreversible action.
 
 '''
 
 [#assignRootNode]
 `*VOID* assignRootNode(*ROOT_NODE* rootNode)`
 
-*Description*: Assign *rootNode* to be the root node for the AST for the SIMPLE program.
+*Description*: Assigns *rootNode* to be the root node for the AST for the SIMPLE program.
 
 '''
 
 [#getRootNode]
 `*ROOT_NODE* getRootNode()`
 
-*Description*: Get *rootNode* stored in PKB. If <<assignRootNode>> was never called, a *NULL_POINTER* will be returned.
+*Description*: Retrieves the *rootNode* stored in PKB. If <<assignRootNode>> was never called, a *NULL_POINTER* will be returned.
 
 == PQL
 
