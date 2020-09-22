@@ -14,8 +14,9 @@
 #include "Types.h"
 #include "Util.h"
 #include "ast/AstTypes.h"
+#include "frontend/parser/Parser.h"
+#include "lexer/Lexer.h"
 
-typedef std::pair<String, String> StringPair;
 typedef String Synonym;
 
 enum DesignEntityType : unsigned char {
@@ -44,6 +45,20 @@ public:
     explicit DesignEntity(const String& stringType);
     DesignEntityType getType();
     Boolean operator==(const DesignEntity& designEntity);
+};
+
+class DeclarationTable {
+private:
+    std::unordered_map<Synonym, DesignEntity> table;
+    bool hasError = false;
+
+public:
+    Void addDeclaration(Synonym s, DesignEntity& designEntity);
+    DesignEntity getDesignEntityOfSynonym(Synonym s) const;
+    Boolean isInvalid();
+    Boolean hasSynonym(Synonym s);
+    static DeclarationTable invalidDeclarationTable();
+    Boolean operator==(const DeclarationTable& declarationTable);
 };
 
 enum ClauseType : char { SuchThatClauseType = 0, PatternClauseType = 1, NonExistentClauseType = 2 };
@@ -82,9 +97,9 @@ protected:
     //    Boolean isProcedureType;
     DesignEntity designEntity;
     Boolean hasError;
-    Reference();
 
 public:
+    Reference(Boolean hasError);
     Reference(ReferenceType refType, ReferenceValue refValue);
     Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt);
     ReferenceType getReferenceType() const;
@@ -96,8 +111,9 @@ public:
     Boolean isProcedure();
     Boolean isWildCard() const;
     Boolean isNonStatementSynonym();
-    static Reference invalidReference();
+    static Reference createReference(String ref, DeclarationTable& declarationTable);
     Boolean operator==(const Reference& reference);
+    Reference();
 };
 
 enum RelationshipReferenceType : uint16_t {
@@ -116,23 +132,25 @@ enum RelationshipReferenceType : uint16_t {
 
 class Relationship {
 private:
-    RelationshipReferenceType relationshipReference;
+    RelationshipReferenceType relationshipReferenceType;
     Reference leftReference;
     Reference rightReference;
     Boolean hasError;
 
-    static Boolean validateRelationshipSemantics(RelationshipReferenceType relationshipReferenceType, Reference leftRef,
+    static Boolean validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                  Reference rightRef);
     static Boolean validateUsesAndModifiesSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                     Reference rightRef);
     static Boolean validateStmtAndStmtRelationshipSemantics(Reference leftRef, Reference rightRef);
 
 public:
-    Relationship(String relationshipRef, Reference leftRef, Reference rightRef);
+    Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
+    explicit Relationship(Boolean hasError);
     RelationshipReferenceType getRelationship();
     Reference getLeftRef();
     Reference getRightRef();
     Boolean isInvalid();
+    static Relationship createRelationship(String relationshipRef, Reference leftRef, Reference rightRef);
     static RelationshipReferenceType getRelRefType(String relRef);
     Boolean operator==(const Relationship& relationship);
 };
@@ -142,6 +160,7 @@ private:
     Relationship relationship;
 
 public:
+    static Clause* createSuchThatClause(const String& clauseConstraint, DeclarationTable& declarationTable);
     explicit SuchThatClause(Relationship& r);
     Relationship getRelationship();
     Boolean operator==(const SuchThatClause& suchThatClause);
@@ -161,13 +180,13 @@ private:
 
 public:
     ExpressionSpecType expressionSpecType;
-
     ExpressionSpec();
+    explicit ExpressionSpec(Boolean hasError);
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
     Expression* getExpression() const;
     Boolean isInvalid() const;
-    static ExpressionSpec invalidExpressionSpec();
+    static ExpressionSpec createExpressionSpec(const String& exprSpecString);
     Boolean operator==(const ExpressionSpec& expressionSpec);
 };
 
@@ -186,21 +205,8 @@ public:
     Reference getEntRef() const;
     const ExpressionSpec& getExprSpec() const;
     Synonym getPatternSynonym() const;
+    static Clause* createPatternClause(String clauseConstraint, DeclarationTable& declarationTable);
     Boolean operator==(const PatternClause& patternClause);
-};
-
-class DeclarationTable {
-private:
-    std::unordered_map<Synonym, DesignEntity> table;
-    bool hasError = false;
-
-public:
-    Void addDeclaration(Synonym s, DesignEntity& designEntity);
-    DesignEntity getDesignEntityOfSynonym(Synonym s) const;
-    Boolean isInvalid();
-    Boolean hasSynonym(Synonym s);
-    static DeclarationTable invalidDeclarationTable();
-    Boolean operator==(const DeclarationTable& declarationTable);
 };
 
 class ClauseVector {
@@ -246,6 +252,14 @@ public:
 };
 
 // Utils
+
+/**
+ * Returns an Expression pointer after constructing the
+ * Expression object using the given literal.
+ * @param literal   String to be converted into Expression
+ * @return          Pointer of the constructed Expression
+ */
+Expression* createExpression(const String& literal);
 
 Boolean isValidSynonym(String s);
 

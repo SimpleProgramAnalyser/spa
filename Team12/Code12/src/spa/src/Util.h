@@ -55,6 +55,8 @@ Boolean isPossibleConstant(const String& str);
 Boolean isRelationshipReference(const String& str);
 Boolean isLiteralIdent(const String& str);
 String removeCharFromBothEnds(String str);
+StringPair splitByFirstDelimiter(const String& str, char c);
+Boolean isEnclosedWith(String str, char leftEnd, char rightEnd);
 } // namespace util
 
 #endif // SPA_UTIL_H
