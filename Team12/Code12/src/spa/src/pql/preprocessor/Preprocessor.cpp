@@ -2,10 +2,10 @@
 
 #include "frontend/parser/Parser.h"
 
-StringVector splitByFirstConsecutiveWhitespace(String str);
-Boolean containsOpenParentheses(String str);
+StringVector splitByFirstConsecutiveWhitespace(const String& str);
+Boolean containsOpenParentheses(const String& str);
 StringPair splitDeclarationAndSelectClause(const String& query);
-std::pair<Boolean, Integer> countNumOfOpenParentheses(String token, Integer previousNumOfOpenParentheses);
+std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
 
 /**
  * Processes a given PQL query into an AbstractQuery.
@@ -21,7 +21,7 @@ std::pair<Boolean, Integer> countNumOfOpenParentheses(String token, Integer prev
  * @return      AbstractQuery that breaks the PQL query into
  *              abstract objects that can be evaluated.
  */
-AbstractQuery Preprocessor::processQuery(String query)
+AbstractQuery Preprocessor::processQuery(const String& query)
 {
     StringPair splitQuery = splitDeclarationAndSelectClause(query);
 
@@ -31,7 +31,7 @@ AbstractQuery Preprocessor::processQuery(String query)
     // Process declarations into declaration table
     DeclarationTable declarationTable = processDeclarations(declarationString);
     if (declarationTable.isInvalid()) {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
     // Extract select synonym
@@ -39,25 +39,25 @@ AbstractQuery Preprocessor::processQuery(String query)
 
     // No select clause
     if (selectAndClausesVector.size() < 2) {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
     String possibleSelectKeyword = selectAndClausesVector.at(0);
     if (possibleSelectKeyword != "Select") {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
     String synonymAndClauses = selectAndClausesVector.at(1);
     StringVector synonymAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClauses);
 
     // No synonym
-    if (selectAndClausesVector.size() == 0) {
-        return AbstractQuery::invalidAbstractQuery();
+    if (selectAndClausesVector.empty()) {
+        return AbstractQuery(true);
     }
 
     Synonym selectSynonym = synonymAndClausesVector.at(0);
     if (!isValidSynonym(selectSynonym) || !declarationTable.hasSynonym(selectSynonym)) {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
     // Only select a synonym, with no other clauses
@@ -70,7 +70,7 @@ AbstractQuery Preprocessor::processQuery(String query)
     String clausesString = synonymAndClausesVector.at(1);
     ClauseVector clausesVector = processClauses(clausesString, declarationTable);
     if (clausesVector.isInvalid()) {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
     AbstractQuery aq(selectSynonym, declarationTable, clausesVector);
@@ -309,7 +309,7 @@ StringPair splitDeclarationAndSelectClause(const String& query)
  * @param str String to be split
  * @return vector of 2 strings
  */
-StringVector splitByFirstConsecutiveWhitespace(String str)
+StringVector splitByFirstConsecutiveWhitespace(const String& str)
 {
     const char* currentChar = str.c_str();
     String currentToken;
@@ -338,7 +338,7 @@ StringVector splitByFirstConsecutiveWhitespace(String str)
     return splitByFirstWhitespaceVector;
 }
 
-Boolean hasChar(String str, char charToLookFor)
+Boolean hasChar(const String& str, char charToLookFor)
 {
     const char* currentChar = str.c_str();
     while (*currentChar != '\0') {
@@ -351,7 +351,7 @@ Boolean hasChar(String str, char charToLookFor)
     return false;
 }
 
-Boolean containsOpenParentheses(String str)
+Boolean containsOpenParentheses(const String& str)
 {
     return hasChar(str, '(');
 }
@@ -384,7 +384,7 @@ Boolean containsOpenParentheses(String str)
  *                                      was appended with token.
  * @return                              Current number of opened parentheses
  */
-std::pair<Boolean, Integer> countNumOfOpenParentheses(String token, Integer previousNumOfOpenParentheses)
+std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses)
 {
     const char* currentChar = token.c_str();
     Integer numOfOpenParentheses = previousNumOfOpenParentheses;

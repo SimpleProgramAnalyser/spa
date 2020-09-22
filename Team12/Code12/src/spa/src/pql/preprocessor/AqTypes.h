@@ -99,7 +99,7 @@ protected:
     Boolean hasError;
 
 public:
-    Reference(Boolean hasError);
+    explicit Reference(Boolean hasError);
     Reference(ReferenceType refType, ReferenceValue refValue);
     Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt);
     ReferenceType getReferenceType() const;
@@ -237,9 +237,9 @@ private:
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
-    AbstractQuery(Boolean hasError);
 
 public:
+    explicit AbstractQuery(Boolean hasError);
     AbstractQuery(Synonym synonym, DeclarationTable& declarations);
     AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();

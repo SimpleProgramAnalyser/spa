@@ -4,7 +4,7 @@
 #include "AqTypes.h"
 
 namespace Preprocessor {
-AbstractQuery processQuery(String query);
+AbstractQuery processQuery(const String& query);
 DeclarationTable processDeclarations(const String& declarationString);
 ClauseVector processClauses(const String& clausesString, DeclarationTable& declarationTable);
 }; // namespace Preprocessor
