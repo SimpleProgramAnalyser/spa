@@ -13,7 +13,7 @@ private:
     Clause* processPatternClause(String clauseConstraint);
     Reference createReference(String ref);
     ExpressionSpec createExpressionSpec(String exprSpecString);
-    Expression* createExpression(String literal);
+    static Expression* createExpression(const String& literal);
 
 public:
     AbstractQuery processQuery(String query);

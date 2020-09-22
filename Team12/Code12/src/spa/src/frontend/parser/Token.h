@@ -63,8 +63,8 @@ public:
 Boolean isIdentifierTag(Tag tag);
 Boolean isRelationalOperatorTag(Tag tag);
 
-typedef List<Token> TokenList;
-TokenList* tokeniseSimple(StringList* lexedSimpleProgram);
+typedef Vector<Token> TokenList;
+TokenList tokeniseSimple(StringVector lexedSimpleProgram);
 
 } // namespace frontend
 

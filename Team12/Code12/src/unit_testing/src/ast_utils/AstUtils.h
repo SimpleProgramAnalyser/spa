@@ -98,7 +98,7 @@ ProgramNode* getProgram14Tree_whileExample();
 // Program 15: Complicated conditional in while
 String getProgram15String_complicatedConditional();
 // Program 15: Complicated conditional in while
-StringList* getProgram15StringList_complicatedConditional();
+StringVector getProgram15StringList_complicatedConditional();
 // Program 15: Complicated conditional in while
 ProgramNode* getProgram15Tree_complicatedConditional();
 

@@ -59,7 +59,7 @@ AbstractQueryBuilder& AbstractQueryBuilder::addPatternClause(Synonym s, PatternS
 
 Expression* AbstractQueryBuilder::createExpression(const String& expressionString)
 {
-    StringList* splitString = splitProgram(expressionString);
+    StringVector splitString = splitProgram(expressionString);
     Expression* expression = parseExpression(splitString);
     return expression;
 }

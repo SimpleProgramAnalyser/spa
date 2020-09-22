@@ -122,23 +122,23 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
      */
     int numOfTokensWithoutOpenParentheses = 0;
 
-    StringList* splitStringList = splitByWhitespace(clausesString);
+    StringVector splitStringList = splitByWhitespace(clausesString);
 
-    for (auto& token : *splitStringList) {
-        if (*token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
+    for (auto& token : splitStringList) {
+        if (token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
             hasCurrentClause = true;
             isInProcessOfCreatingClause = true;
             continue;
         }
 
         if (!hasCurrentClause) {
-            if (*token != "such" && *token != "pattern") {
+            if (token != "such" && token != "pattern") {
                 return ClauseVector::invalidClauseVector();
             }
 
-            if (*token == "such") {
+            if (token == "such") {
                 isPreviousTokenSuch = true;
-            } else if (*token == "pattern") {
+            } else if (token == "pattern") {
                 currentClauseType = PatternClauseType;
             }
 
@@ -146,16 +146,16 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
             hasCurrentClause = true;
         } else {
             if (isPreviousTokenSuch) {
-                if (*token != "that") {
+                if (token != "that") {
                     return ClauseVector::invalidClauseVector();
                 }
 
                 isPreviousTokenSuch = false;
                 currentClauseType = SuchThatClauseType;
             } else {
-                currentClauseConstraint.append(*token);
+                currentClauseConstraint.append(token);
 
-                std::pair<Boolean, Integer> result = countNumOfOpenParentheses(*token, numOfOpenedParentheses);
+                std::pair<Boolean, Integer> result = countNumOfOpenParentheses(token, numOfOpenedParentheses);
                 if (!result.first) {
                     return ClauseVector::invalidClauseVector();
                 }
@@ -163,7 +163,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
                 numOfOpenedParentheses = result.second;
 
                 if (!hasOpenParentheses) {
-                    hasOpenParentheses = containsOpenParentheses(*token);
+                    hasOpenParentheses = containsOpenParentheses(token);
                 }
 
                 if (numOfOpenedParentheses < 0) {
@@ -206,8 +206,6 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
     if (!currentClauseConstraint.empty() || isInProcessOfCreatingClause) {
         return ClauseVector::invalidClauseVector();
     }
-
-    delete splitStringList;
 
     return clauseVector;
 }
@@ -343,11 +341,10 @@ ExpressionSpec Preprocessor::createExpressionSpec(String exprSpecString)
     return expressionSpec;
 }
 
-Expression* Preprocessor::createExpression(String literal)
+Expression* Preprocessor::createExpression(const String& literal)
 {
-    StringList* splitString = splitProgram(literal);
+    StringVector splitString = splitProgram(literal);
     Expression* expression = parseExpression(splitString);
-    delete splitString;
     return expression;
 }
 
@@ -409,21 +406,21 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 {
     DeclarationTable newDeclarations;
 
-    StringList* tokenizedStringList = splitProgram(declarationsString);
+    StringVector tokenizedStringList = splitProgram(declarationsString);
     DesignEntity currentDesignEntity;
     bool hasCurrentDesignEntity = false;
     bool isPreviousTokenASynonym = false;
 
-    for (std::unique_ptr<std::string>& token : *tokenizedStringList) {
+    for (std::string& token : tokenizedStringList) {
         if (!hasCurrentDesignEntity) {
-            currentDesignEntity = DesignEntity(*token);
+            currentDesignEntity = DesignEntity(token);
             if (currentDesignEntity.getType() == NonExistentType) {
                 return DeclarationTable::invalidDeclarationTable();
             }
 
             hasCurrentDesignEntity = true;
         } else {
-            if (*token == ";") {
+            if (token == ";") {
                 if (!isPreviousTokenASynonym) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
@@ -431,7 +428,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 hasCurrentDesignEntity = false;
                 isPreviousTokenASynonym = false;
                 continue;
-            } else if (*token == ",") {
+            } else if (token == ",") {
                 if (!isPreviousTokenASynonym) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
@@ -442,16 +439,15 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 // Syntax error e.g. while w w1;
                 return DeclarationTable::invalidDeclarationTable();
             } else {
-                if (!isValidSynonym(*token) || newDeclarations.hasSynonym(*token)) {
+                if (!isValidSynonym(token) || newDeclarations.hasSynonym(token)) {
                     return DeclarationTable::invalidDeclarationTable();
                 }
 
-                newDeclarations.addDeclaration(*token, currentDesignEntity);
+                newDeclarations.addDeclaration(token, currentDesignEntity);
                 isPreviousTokenASynonym = true;
             }
         }
     }
-    delete tokenizedStringList;
     return newDeclarations;
 }
 
