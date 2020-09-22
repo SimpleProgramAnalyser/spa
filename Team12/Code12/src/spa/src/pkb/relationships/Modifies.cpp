@@ -1,5 +1,7 @@
 #include "Modifies.h"
 
+#include <cassert>
+
 void ModifiesTable::addModifiesRelationships(const String& procName, Vector<String> varNames)
 {
     // add to procVarsetMap
@@ -34,6 +36,8 @@ void ModifiesTable::addModifiesRelationships(const String& procName, Vector<Stri
 
 void ModifiesTable::addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
 {
+    assert(stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT
+           && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT");
     // add to stmtVarsetMap
     stmtVarsetMap[stmtNum].insert(varNames.begin(), varNames.end());
 
