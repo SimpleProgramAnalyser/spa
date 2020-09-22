@@ -534,10 +534,6 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-/*
- * TODO: Get this test case to work after PKB bug fixed, where
- * a Parent can have multiple children (unlike follows.)
- */
 TEST_CASE("query with such that Parent clause, left operand line number, right operand synonym")
 {
     // === Test set-up ===
@@ -3141,12 +3137,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-/*
- * TODO: Get this test to work after merging from new master
- */
-/*
-TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand
-synonym, right operand wildcard, at least one operand in clauses is related")
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, at least one operand in clauses is related")
 {
     // === Test set-up ===
     String query = "stmt s; variable v; assign a; Select s such that Uses(s,v) pattern a(v,_)";
@@ -3202,10 +3193,8 @@ synonym, right operand wildcard, at least one operand in clauses is related")
     REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
-*/
 
-TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand "
-          "synonym, right operand wildcard, all operands in clauses unrelated")
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, all operands in clauses unrelated")
 {
     // === Test set-up ===
     String query = "stmt s; variable v, v1; assign a; Select s such that Uses(s,v1) pattern a(v,_)";
