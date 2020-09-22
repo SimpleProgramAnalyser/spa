@@ -1,5 +1,7 @@
 #include "Uses.h"
 
+#include <cassert>
+
 void UsesTable::addUsesRelationships(const String& procName, Vector<String> varNames)
 {
     // add to procVarsetMap
@@ -33,6 +35,10 @@ void UsesTable::addUsesRelationships(const String& procName, Vector<String> varN
 
 void UsesTable::addUsesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(
+        stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT
+        && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     // add to stmtVarsetMap
     stmtVarsetMap[stmtNum].insert(varNames.begin(), varNames.end());
 
