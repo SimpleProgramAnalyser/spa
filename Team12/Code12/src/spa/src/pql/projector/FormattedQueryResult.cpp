@@ -5,6 +5,10 @@
 
 #include "FormattedQueryResult.h"
 
+#include <algorithm>
+
+#include "lexer/Lexer.h"
+
 /*
  * Constructs a FormattedQueryResult instance. This constructor
  * is the only public constructor available for creating a
@@ -69,5 +73,9 @@ String FormattedQueryResult::getResults()
  */
 Boolean FormattedQueryResult::operator==(const FormattedQueryResult& formattedQueryResult) const
 {
-    return this->results == formattedQueryResult.results;
+    StringVector splitThis = splitByDelimiter(this->results, ", ");
+    StringVector splitOther = splitByDelimiter(formattedQueryResult.results, ", ");
+    std::sort(splitThis.begin(), splitThis.end());
+    std::sort(splitOther.begin(), splitOther.end());
+    return splitThis == splitOther;
 }

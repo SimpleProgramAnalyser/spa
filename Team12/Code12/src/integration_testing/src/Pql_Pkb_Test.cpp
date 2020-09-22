@@ -8,9 +8,8 @@
 
 #include "../../unit_testing/src/ast_utils/AstUtils.h"
 #include "catch.hpp"
-#include "pql/PqlManager.h"
 #include "pkb/PKB.h"
-
+#include "pql/PqlManager.h"
 
 TEST_CASE("syntatically invalid query")
 {
@@ -30,15 +29,12 @@ TEST_CASE("syntatically invalid query")
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -62,15 +58,12 @@ TEST_CASE("semantically invalid query")
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -94,15 +87,12 @@ TEST_CASE("vacuously true query no clauses")
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -124,15 +114,12 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -146,15 +133,12 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -168,15 +152,12 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -190,15 +171,12 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -212,15 +190,12 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -234,15 +209,12 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -269,15 +241,12 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -304,22 +273,20 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Follows clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+TEST_CASE("query with such that Follows clause, left operand line number, right operand synonym, but clause unrelated "
+          "to synonym and is false")
 {
     // === Test set-up ===
     String query = "stmt s, s1; Select s such that Follows(2,s1)";
@@ -337,15 +304,12 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -378,15 +342,12 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -412,15 +373,12 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -447,22 +405,20 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Follows clause, left operand synonym, right operand synonym, but both synonyms are the same")
+TEST_CASE(
+    "query with such that Follows clause, left operand synonym, right operand synonym, but both synonyms are the same")
 {
     // === Test set-up ===
     String query = "stmt s; Select s such that Follows(s,s)";
@@ -482,15 +438,12 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -511,15 +464,12 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -540,15 +490,12 @@ TEST_CASE("query with such that Follows clause, left operand wildcard, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "4, 3";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -575,15 +522,12 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -766,15 +710,12 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -801,22 +742,20 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Parent clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+TEST_CASE("query with such that Parent clause, left operand line number, right operand synonym, but clause unrelated "
+          "to synonym and is false")
 {
     // === Test set-up ===
     String query = "stmt s, s1; Select s such that Parent(2,s1)";
@@ -834,15 +773,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -875,15 +811,12 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -910,15 +843,12 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -945,22 +875,20 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Parent clause, left operand synonym, right operand synonym, but both synonyms are the same")
+TEST_CASE(
+    "query with such that Parent clause, left operand synonym, right operand synonym, but both synonyms are the same")
 {
     // === Test set-up ===
     String query = "stmt s; Select s such that Parent(s,s)";
@@ -980,15 +908,12 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1009,15 +934,12 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1038,15 +960,12 @@ TEST_CASE("query with such that Parent clause, left operand wildcard, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "4, 3";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1073,15 +992,12 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1110,15 +1026,12 @@ TEST_CASE("query with such that Uses clause, left operand line number, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = varName2 + ", " + varName1;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1152,15 +1065,12 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand line 
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1194,22 +1104,20 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand line 
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Uses clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+TEST_CASE("query with such that Uses clause, left operand line number, right operand synonym, but clause unrelated to "
+          "synonym and is false")
 {
     // === Test set-up ===
     String query = "variable v, v1; Select v such that Uses(2,v1)";
@@ -1226,15 +1134,12 @@ TEST_CASE("query with such that Uses clause, left operand line number, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1279,15 +1184,12 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1329,15 +1231,12 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand proce
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = procName1 + ", " + procName2;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1366,15 +1265,12 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1403,15 +1299,12 @@ TEST_CASE("query with such that Modifies clause, left operand line number, right
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = varName2 + ", " + varName1;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1445,15 +1338,12 @@ TEST_CASE("(vacuously true) query with such that Modifies clause, left operand l
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1487,22 +1377,20 @@ TEST_CASE("(vacuously true) query with such that Modifies clause, left operand l
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Modifies clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+TEST_CASE("query with such that Modifies clause, left operand line number, right operand synonym, but clause unrelated "
+          "to synonym and is false")
 {
     // === Test set-up ===
     String query = "variable v, v1; Select v such that Modifies(2,v1)";
@@ -1519,15 +1407,12 @@ TEST_CASE("query with such that Modifies clause, left operand line number, right
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1572,22 +1457,20 @@ TEST_CASE("query with such that Modifies clause, left operand synonym, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("(vacuously true) query with such that Modifies clause, left operand procedure name, right operand variable name")
+TEST_CASE(
+    "(vacuously true) query with such that Modifies clause, left operand procedure name, right operand variable name")
 {
     // === Test set-up ===
     String query = "procedure p; Select p such that Modifies(\"proc3\",\"x\")";
@@ -1622,15 +1505,12 @@ TEST_CASE("(vacuously true) query with such that Modifies clause, left operand p
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = procName1 + ", " + procName2;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1659,15 +1539,12 @@ TEST_CASE("query with such that Modifies clause, left operand synonym, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1698,15 +1575,12 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -1729,15 +1603,12 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -1760,15 +1631,12 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -1791,15 +1659,12 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -1822,15 +1687,12 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -1853,15 +1715,12 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -1896,15 +1755,12 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -1939,22 +1795,20 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Follows* clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+TEST_CASE("query with such that Follows* clause, left operand line number, right operand synonym, but clause unrelated "
+          "to synonym and is false")
 {
     // === Test set-up ===
     String query = "stmt s, s1; Select s such that Follows*(2,s1)";
@@ -1972,15 +1826,12 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2027,18 +1878,14 @@ TEST_CASE("query with such that Follows* clause, left operand synonym, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "2, 1";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
-
     // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
@@ -2070,15 +1917,12 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand w
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2113,22 +1957,20 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Follows* clause, left operand synonym, right operand synonym, but both synonyms are the same")
+TEST_CASE(
+    "query with such that Follows* clause, left operand synonym, right operand synonym, but both synonyms are the same")
 {
     // === Test set-up ===
     String query = "stmt s; Select s such that Follows*(s,s)";
@@ -2162,15 +2004,12 @@ TEST_CASE("query with such that Follows* clause, left operand synonym, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2208,15 +2047,12 @@ TEST_CASE("query with such that Follows* clause, left operand synonym, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2254,15 +2090,12 @@ TEST_CASE("query with such that Follows* clause, left operand wildcard, right op
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "5, 4, 3";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2297,15 +2130,12 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand w
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2336,15 +2166,12 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -2367,15 +2194,12 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -2398,15 +2222,12 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -2429,15 +2250,12 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -2460,15 +2278,12 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -2491,15 +2306,12 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -2534,15 +2346,12 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2577,22 +2386,20 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Parent* clause, left operand line number, right operand synonym, but clause unrelated to synonym and is false")
+TEST_CASE("query with such that Parent* clause, left operand line number, right operand synonym, but clause unrelated "
+          "to synonym and is false")
 {
     // === Test set-up ===
     String query = "stmt s, s1; Select s such that Parent*(2,s1)";
@@ -2610,15 +2417,12 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2665,15 +2469,12 @@ TEST_CASE("query with such that Parent* clause, left operand synonym, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "2, 1";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2708,15 +2509,12 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wi
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2751,22 +2549,20 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Parent* clause, left operand synonym, right operand synonym, but both synonyms are the same")
+TEST_CASE(
+    "query with such that Parent* clause, left operand synonym, right operand synonym, but both synonyms are the same")
 {
     // === Test set-up ===
     String query = "stmt s; Select s such that Parent*(s,s)";
@@ -2800,15 +2596,12 @@ TEST_CASE("query with such that Parent* clause, left operand synonym, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2846,15 +2639,12 @@ TEST_CASE("query with such that Parent* clause, left operand synonym, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2892,15 +2682,12 @@ TEST_CASE("query with such that Parent* clause, left operand wildcard, right ope
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "5, 4, 3";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2935,15 +2722,12 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wi
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -2976,22 +2760,20 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand variable nam
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("(vacuously true) query with Pattern clause, left operand variable name, right operand wildcard partial expression")
+TEST_CASE(
+    "(vacuously true) query with Pattern clause, left operand variable name, right operand wildcard partial expression")
 {
     // === Test set-up ===
     String query = "assign a; stmt s; Select s pattern a(\"sum\",_\"(num1 + num 2)\"_)";
@@ -3012,15 +2794,12 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand variable nam
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -3048,22 +2827,20 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand variable nam
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with Pattern clause, left operand variable name, right operand full expression, but clause unrelated to synonym and is false")
+TEST_CASE("query with Pattern clause, left operand variable name, right operand full expression, but clause unrelated "
+          "to synonym and is false")
 {
     // === Test set-up ===
     String query = "assign a; stmt s; Select s pattern a(\"sum\",\"(num1 + num2) + num3\")";
@@ -3084,15 +2861,12 @@ TEST_CASE("query with Pattern clause, left operand variable name, right operand 
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -3106,7 +2880,6 @@ TEST_CASE("query with Pattern clause, left operand variable name, right operand 
  * doubt that our autotester system tests will cover
  * all of these cases).
  */
-
 
 TEST_CASE("query with Pattern clause, left operand synonym, right operand full expression")
 {
@@ -3123,15 +2896,12 @@ TEST_CASE("query with Pattern clause, left operand synonym, right operand full e
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "sum";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -3153,15 +2923,12 @@ TEST_CASE("query with Pattern clause, left operand synonym, right operand wildca
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "sum";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -3183,22 +2950,20 @@ TEST_CASE("query with Pattern clause, left operand synonym, right operand wildca
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "ave, sum";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with Pattern clause, left operand variable synonym, right operand full expression, but clause unrelated to synonym and is false")
+TEST_CASE("query with Pattern clause, left operand variable synonym, right operand full expression, but clause "
+          "unrelated to synonym and is false")
 {
     // === Test set-up ===
     String query = "assign a; stmt s; variable v; Select s pattern a(v,\"(num1 + num2) + num3\")";
@@ -3219,15 +2984,12 @@ TEST_CASE("query with Pattern clause, left operand variable synonym, right opera
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -3255,15 +3017,12 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand wildcard, ri
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -3275,7 +3034,9 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand wildcard, ri
  * attention to possible combinations of 2 clauses (a pattern clause, and some
  * other clause that is not pattern).
  */
-TEST_CASE("(vacuously true) query with such that Follows clause, left operand synonym, right operand wildcard, Pattern clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, all operands in clauses unrelated")
+TEST_CASE("(vacuously true) query with such that Follows clause, left operand synonym, right operand wildcard, Pattern "
+          "clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, all operands in "
+          "clauses unrelated")
 {
     // === Test set-up ===
     String query = "stmt s, s1; assign a; Select s such that Follows(s1,_) pattern a(_,_)";
@@ -3298,22 +3059,21 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand sy
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("(vacuously true) query with such that Follows clause, left operand synonym, right operand wildcard, Pattern clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, at least one operand in clauses is related")
+TEST_CASE("(vacuously true) query with such that Follows clause, left operand synonym, right operand wildcard, Pattern "
+          "clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, at least one "
+          "operand in clauses is related")
 {
     // === Test set-up ===
     String query = "stmt s; assign a; Select s such that Follows(a,_) pattern a(_,_)";
@@ -3336,22 +3096,21 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand sy
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Follows clause, left operand synonym, right operand wildcard, Pattern clause, left operand wildcard, right operand wildcard, but clauses unrelated to synonym, all clauses in operands unrelated, and at least one clause is false")
+TEST_CASE("query with such that Follows clause, left operand synonym, right operand wildcard, Pattern clause, left "
+          "operand wildcard, right operand wildcard, but clauses unrelated to synonym, all clauses in operands "
+          "unrelated, and at least one clause is false")
 {
     // === Test set-up ===
     String query = "stmt s, s1; assign a; Select s such that Follows(s1,_) pattern a(_,_)";
@@ -3372,15 +3131,12 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -3391,7 +3147,8 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
  * TODO: Get this test to work after merging from new master
  */
 /*
-TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, at least one operand in clauses is related")
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand
+synonym, right operand wildcard, at least one operand in clauses is related")
 {
     // === Test set-up ===
     String query = "stmt s; variable v; assign a; Select s such that Uses(s,v) pattern a(v,_)";
@@ -3449,7 +3206,8 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
 }
 */
 
-TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, all operands in clauses unrelated")
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand "
+          "synonym, right operand wildcard, all operands in clauses unrelated")
 {
     // === Test set-up ===
     String query = "stmt s; variable v, v1; assign a; Select s such that Uses(s,v1) pattern a(v,_)";
@@ -3491,15 +3249,12 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "6, 5, 4";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);

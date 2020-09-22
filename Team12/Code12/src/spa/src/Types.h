@@ -19,8 +19,6 @@ typedef void Void;
 template <typename T>
 using List = std::vector<std::unique_ptr<T>>;
 
-typedef List<String> StringList;
-
 template <typename T>
 using Vector = std::vector<T>;
 

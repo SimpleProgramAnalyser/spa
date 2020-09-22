@@ -11,7 +11,7 @@
 #include "error/InputError.h"
 
 ProgramNode* parseSimpleReturnNode(const String& rawProgram);
-Expression* parseExpression(StringList* lexedExpression);
+Expression* parseExpression(const StringVector& lexedExpression);
 Void postSyntaxError(InputError syntaxError);
 
 #endif // SPA_FRONTEND_PARSER_H
