@@ -650,6 +650,8 @@ to the Modifies Table.
 `*VOID* addParentRelationships(*INTEGER* parent, *STATEMENT_TYPE*, parentType, *INTEGER* child,
 *STATEMENT_TYPE* childType);`
 
+*Requires*: `parentType` and `childType` cannot be `AnyStatement` type.
+
 *Description*: Adds a Parent relationship between `parent` with `parentType` and `child`
 with `childType` into the Parent Table.
 
@@ -658,6 +660,8 @@ with `childType` into the Parent Table.
 [#addParentRelationshipsStar]
 `*VOID* addParentRelationshipsStar(*INTEGER* parent, *STATEMENT_TYPE* parentType,
 *LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* childrenStmttypePairs);`
+
+*Requires*: `childrenStmttypePairs` cannot have statements with `AnyStatement` type.
 
 *Description*: Adds a Parent relationship between `parent` with `parentType` and all
 `childrenStmttypePairs` into the Parent Table.
@@ -782,21 +786,25 @@ information related to the Follows relationships in the processed SIMPLE program
 
 '''
 
-[#addBeforeRelationships]
-`*VOID* addBeforeRelationships(*INTEGER* before, *STATEMENT_TYPE*, beforeType, *INTEGER* after,
-*STATEMENT_TYPE* afterType);`
+[#addFollowsRelationships]
+`*VOID* addFollowsRelationships(*INTEGER* before, *STATEMENT_TYPE*, beforeStmtType, *INTEGER* after,
+*STATEMENT_TYPE* afterStmtType);`
 
-*Description*: Adds a Before relationship between `before` with `beforeType` and `after`
-with `afterType` into the Before Table.
+*Requires*: `beforeStmtType` and `afterStmtType` cannot be `AnyStatement` type.
+
+*Description*: Adds a Follows relationship between `before` with `beforeStmtType` and `after`
+with `afterStmtType` into the Follows Table.
 
 '''
 
-[#addBeforeRelationshipsStar]
-`*VOID* addBeforeRelationshipsStar(*INTEGER* before, *STATEMENT_TYPE* beforeType,
-*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* afterWithTYpe);`
+[#addFollowsRelationshipsStar]
+`*VOID* addFollowsRelationshipsStar(*INTEGER* before, *STATEMENT_TYPE* beforeStmtType,
+*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* afterStmtTypePairs);`
 
-*Description*: Adds a Before relationship between `before` with `beforeType` and all
-`afterWithType` into the Before Table.
+*Requires*: `afterStmttypePairs` cannot have statements with `AnyStatement` type.
+
+*Description*: Adds a Follows relationship between `before` with `beforeStmtType` and all
+`afterStmtTypePairs` into the Before Table.
 
 '''
 
