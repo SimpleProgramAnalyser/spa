@@ -928,17 +928,18 @@ holds and are of STATEMENT_TYPE `stmtType`.
 *Overview*: Handles the business logic for processing and evaluating Processed
 Query Language (PQL) queries.
 
-* <<execute>>
+* <<executeQuery>>
 
 '''
 
-[#execute]
-`*FORMATTED_QUERY_RESULT* execute(*STRING* query);`
+[#executeQuery]
+`*FORMATTED_QUERY_RESULT* executeQuery(*STRING* query, *QUERY_RESULT_FORMAT_TYPE* format);`
 
 *Description*: Returns a *FORMATTED_QUERY_RESULT* after processing and evaluating a
-`query` in *Processed Query Language* (PQL) form.
+`query` in *Processed Query Language* (PQL) form. Results are formatted according to
+specified `format`.
 
-=== PreProcessor API
+=== Preprocessor API
 *Overview*: Handles the business logic for pre-processing PQL queries, including validating
 syntax and semantics.
 
@@ -960,23 +961,30 @@ with the PKB.
 '''
 
 [#evaluateQuery]
-`*RAW_QUERY_RESULT* evaluateQuery(*STRING* query);`
+`*RAW_QUERY_RESULT* evaluateQuery(*ABSTRACT_QUERY* abstractQuery);`
 
-*Description*: Returns a *RAW_QUERY_RESULT* after evaluating the `query` and obtaining information
-from the PKB.
+*Description*: Returns a *RAW_QUERY_RESULT* after evaluating the `abstractQuery` and
+obtaining information from the PKB.
 
 === Projector API
 *Overview*: Formats query results into human readable context, for the Autotester and UI.
 
-* <<formatResult>>
+* <<formatAutotester>>
+* <<formatUI>>
 
 '''
 
-[#formatResult]
-`*FORMATTED_RESULT* formatResult(*RAW_QUERY_RESULT* rawQueryResult);`
+[#formatAutotester]
+`*FORMATTED_RESULT* formatAutotester(*RAW_QUERY_RESULT* rawQueryResult);`
 
 *Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to
-a conforming standard.
+a conforming standard, for the Autotester.
+
+[#formatUI]
+`*FORMATTED_RESULT* formatUI(*RAW_QUERY_RESULT* rawQueryResult);`
+
+*Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to
+a conforming standard, for the UI.
 
 == Shared Libraries (for internal use)
 
