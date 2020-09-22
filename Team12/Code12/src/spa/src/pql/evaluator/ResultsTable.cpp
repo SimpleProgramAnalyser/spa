@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <functional>
 #include <iterator>
 #include <stdexcept>
 #include <utility>
@@ -84,10 +85,55 @@ ResultsTable::ResultsTable(DeclarationTable decls):
     hasResult(true)
 {}
 
-bool ResultsTable::operator==(const ResultsTable& rt)
+/**
+ * A method to compare two vectors, to see whether
+ * they have the same elements regardless of order.
+ *
+ * @tparam T Type of elements in the vector. Elements
+ *           must implement the method
+ *           bool cmp(const T&, const T&).
+ */
+template <typename T>
+bool doVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vector2)
 {
-    return this->resultsMap == rt.resultsMap && this->declarations == rt.declarations
-           && this->relationships == rt.relationships && this->hasResult == rt.hasResult;
+    std::sort(vector1.begin(), vector1.end());
+    std::sort(vector2.begin(), vector2.end());
+    return vector1 == vector2;
+}
+
+bool ResultsTable::operator==(const ResultsTable& rt) const
+{
+    if (this->resultsMap.size() != rt.resultsMap.size()) {
+        return false;
+    }
+
+    std::function<bool(std::pair<std::string, std::vector<std::string>>,
+                       std::pair<std::string, std::vector<std::string>>)>
+        comparator = [](const std::pair<std::string, std::vector<std::string>>& pair1,
+                        const std::pair<std::string, std::vector<std::string>>& pair2) {
+            return pair1.first < pair2.first;
+        };
+
+    std::vector<std::pair<std::string, std::vector<std::string>>> thisResultsList;
+    std::copy(this->resultsMap.begin(), this->resultsMap.end(), std::back_inserter(thisResultsList));
+    std::sort(thisResultsList.begin(), thisResultsList.end(), comparator);
+
+    std::vector<std::pair<std::string, std::vector<std::string>>> otherResultsList;
+    std::copy(rt.resultsMap.begin(), rt.resultsMap.end(), std::back_inserter(otherResultsList));
+    std::sort(otherResultsList.begin(), otherResultsList.end(), comparator);
+
+    bool isResultsTheSame = true;
+    size_t length = this->resultsMap.size();
+    for (size_t i = 0; i < length; i++) {
+        if (thisResultsList.at(i).first != otherResultsList.at(i).first
+            || !doVectorsHaveSameElements(thisResultsList.at(i).second, otherResultsList.at(i).second)) {
+            // either key or value is different
+            isResultsTheSame = false;
+            break;
+        }
+    }
+    return isResultsTheSame && this->declarations == rt.declarations && *(this->relationships) == *(rt.relationships)
+           && this->hasResult == rt.hasResult;
 }
 
 void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)

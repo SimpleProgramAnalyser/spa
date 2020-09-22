@@ -48,7 +48,7 @@ public:
     /**
      * A method to compare two ResultsTable for testing purposes.
      */
-    bool operator==(const ResultsTable& rt);
+    bool operator==(const ResultsTable& rt) const;
 
     /**
      * Associates some results with a synonym, if the synonym
@@ -302,7 +302,7 @@ public:
     /**
      * A method to compare two RelationshipsGraph for testing purposes.
      */
-    bool operator==(const RelationshipsGraph& rg);
+    bool operator==(const RelationshipsGraph& rg) const;
 
     /**
      * Adds a list of relationships between potential values

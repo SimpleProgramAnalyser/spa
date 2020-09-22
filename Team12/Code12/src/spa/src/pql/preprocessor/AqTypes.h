@@ -200,7 +200,7 @@ public:
     Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
     static DeclarationTable invalidDeclarationTable();
-    Boolean operator==(const DeclarationTable& declarationTable);
+    Boolean operator==(const DeclarationTable& declarationTable) const;
 };
 
 class ClauseVector {
