@@ -26,12 +26,12 @@ Select a such that Parent(8,9)
 6 - Select All Read
 read r;
 Select r such that Parent(8,9)
-13, 29, 33
+1, 13, 29, 33
 5000
 7 - Select All Print
 print p;
 Select p such that Parent(8,9)
-14, 28
+3, 14, 28
 5000
 8 - Select All Call
 call c;
@@ -56,7 +56,7 @@ depth, dist, epsilon, main, notdepth, p, raymarch, rd, ro, steps, x, y, z
 12 - Select All Constant
 constant c;
 Select c such that Parent(8,9)
-13, 19
+2, 13, 19
 5000
 13 - Select All Procedure
 procedure c;
@@ -71,12 +71,12 @@ Select a such that Parent*(8,9)
 15 - Select All Read Parent*
 read r;
 Select r such that Parent*(8,9)
-13, 29, 33
+1, 13, 29, 33
 5000
 16 - Select All Print Parent*
 print p;
 Select p such that Parent*(8,9)
-14, 28
+3, 14, 28
 5000
 17 - Select All Call
 call c;
@@ -101,7 +101,7 @@ depth, dist, epsilon, main, notdepth, p, raymarch, rd, ro, steps, x, y, z
 20 - Select All Constant
 constant c;
 Select c such that Parent*(8,9)
-13, 19
+2, 13, 19
 5000
 21 - Select All Procedure
 procedure c;
