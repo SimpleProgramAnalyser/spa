@@ -538,7 +538,6 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
  * TODO: Get this test case to work after PKB bug fixed, where
  * a Parent can have multiple children (unlike follows.)
  */
-/*
 TEST_CASE("query with such that Parent clause, left operand line number, right operand synonym")
 {
     // === Test set-up ===
@@ -564,12 +563,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
 
         // === Expected test results ===
-        String expectedResultsStr = "3";
+        String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
         // === Check expected test results ===
-        REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+        // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
     }
 
@@ -588,7 +587,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
 
         // === Expected test results ===
-        String expectedResultsStr = "3";
+        String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
@@ -611,7 +610,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
 
         // === Expected test results ===
-        String expectedResultsStr = "3";
+        String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
@@ -634,7 +633,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
 
         // === Expected test results ===
-        String expectedResultsStr = "3";
+        String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
@@ -657,7 +656,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
 
         // === Expected test results ===
-        String expectedResultsStr = "3";
+        String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
@@ -680,7 +679,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
 
         // === Expected test results ===
-        String expectedResultsStr = "3";
+        String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
 
@@ -688,7 +687,6 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
     }
 }
-*/
 
 TEST_CASE("(vacuously true) query with such that Parent clause, left operand line number, right operand synonym")
 {
