@@ -79,7 +79,7 @@ else
 fi
 
 echo "Run autotester..."
-autotester="${builddir}/../cmake-build-debug/src/autotester/autotester"
+autotester="${builddir}/src/autotester/autotester"
 outdir="${rootdir}/Team12/Code12/tests/output"
 rm -rf "${outdir}"
 mkdir -p "${outdir}"
