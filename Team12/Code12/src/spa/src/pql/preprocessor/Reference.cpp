@@ -2,20 +2,20 @@
 
 Reference::Reference(): designEntity{}, hasError{false}
 {
-    referenceType = SynonymRefType;
+    referenceType = InvalidRefType;
 }
 
-Reference::Reference(Boolean hasError): hasError{hasError} {}
+Reference::Reference(Boolean hasError): hasError{hasError}, referenceType{InvalidRefType} {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{refValue}, designEntity{}, hasError{false}
+    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, hasError{false}
 {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt):
     referenceType{refType}, referenceValue{refValue}, designEntity{designEnt}, hasError{false}
 {}
 
-Boolean Reference::isInvalid()
+Boolean Reference::isInvalid() const
 {
     return hasError;
 }

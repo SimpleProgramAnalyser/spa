@@ -86,6 +86,7 @@ enum ReferenceType : char {
     WildcardRefType = 1,
     LiteralRefType = 2,
     IntegerRefType = 4,
+    InvalidRefType = 8
 };
 
 typedef String ReferenceValue;
@@ -106,7 +107,7 @@ public:
     ReferenceValue getValue() const;
     Boolean isValidEntityRef();
     Boolean isValidStatementRef();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
     Boolean isProcedure();
     Boolean isWildCard() const;
     Boolean isNonStatementSynonym();
