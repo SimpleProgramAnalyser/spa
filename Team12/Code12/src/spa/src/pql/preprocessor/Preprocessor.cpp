@@ -119,7 +119,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
      */
     int numOfTokensWithoutOpenParentheses = 0;
 
-    StringVector splitStringList = splitByWhitespace(clausesString);
+    StringVector splitStringList = splitProgram(clausesString);
 
     for (auto& token : splitStringList) {
         if (token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
@@ -167,7 +167,9 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
                     return ClauseVector::invalidClauseVector();
                 } else if (numOfOpenedParentheses == 0) {
                     if (!hasOpenParentheses) {
-                        numOfTokensWithoutOpenParentheses++;
+                        if (token != "*") {
+                            numOfTokensWithoutOpenParentheses++;
+                        }
 
                         if (numOfTokensWithoutOpenParentheses >= 2) {
                             return ClauseVector::invalidClauseVector();

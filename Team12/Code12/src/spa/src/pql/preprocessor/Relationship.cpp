@@ -72,21 +72,21 @@ Reference Relationship::getRightRef()
     return rightReference;
 }
 
-// TODO: Consider to abstract the validation to their own classes?
+// TODO: Consider to abstract into hash table
 Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                     Reference rightRef)
 {
     if (relRefType == FollowsType || relRefType == FollowsStarType || relRefType == ParentType
         || relRefType == ParentStarType) {
-        return Relationship::validateStmtAndStmtRelationshipSemantics(leftRef, rightRef);
+        return Relationship::validateStmtAndStmtSemantics(leftRef, rightRef);
     } else if (relRefType == UsesType || relRefType == ModifiesType) {
-        return Relationship::validateUsesAndModifiesSemantics(relRefType, leftRef, rightRef);
+        return Relationship::validateStmtProcAndVarSemantics(relRefType, leftRef, rightRef);
     }
 
     return false;
 }
 
-Boolean Relationship::validateStmtAndStmtRelationshipSemantics(Reference leftRef, Reference rightRef)
+Boolean Relationship::validateStmtAndStmtSemantics(Reference leftRef, Reference rightRef)
 {
     Boolean bothAreValidStatementRefs = leftRef.isValidStatementRef() && rightRef.isValidStatementRef();
     Boolean eitherIsNonStatementSynonym = leftRef.isNonStatementSynonym() || rightRef.isNonStatementSynonym();
@@ -98,8 +98,8 @@ Boolean Relationship::validateStmtAndStmtRelationshipSemantics(Reference leftRef
     return true;
 }
 
-Boolean Relationship::validateUsesAndModifiesSemantics(RelationshipReferenceType relRefType, Reference leftRef,
-                                                       Reference rightRef)
+Boolean Relationship::validateStmtProcAndVarSemantics(RelationshipReferenceType relRefType, Reference leftRef,
+                                                      Reference rightRef)
 {
     if (relRefType != ModifiesType && relRefType != UsesType) {
         return false;

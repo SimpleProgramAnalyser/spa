@@ -26,7 +26,7 @@ FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatTyp
     AbstractQuery abstractQuery = Preprocessor::processQuery(query);
 
     /*
-     * Pass the parsed query (AbstractQueryType to the PQL
+     * Pass the parsed query (AbstractQuery) to the PQL
      * query evaluator
      */
     RawQueryResult rawQueryResult = evaluateQuery(abstractQuery);
