@@ -43,8 +43,10 @@ Boolean VariableTable::isVariableInProgram(const String& varName)
 // Statement Table
 void StatementTable::insertIntoStatementTable(Integer stmtNum, StatementType stmtType)
 {
-    assert(stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT
-           && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT");
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(
+        stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT
+        && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     if (setOfStatements.find(stmtNum) == setOfStatements.end()) {
         setOfStatements.insert(stmtNum);
         listOfAllStatement.byType[stmtType].push_back(stmtNum);
