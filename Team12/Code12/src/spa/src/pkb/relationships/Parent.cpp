@@ -74,8 +74,10 @@ void ParentTable::typedShenanigansStar(Integer parent, StatementType parentStmtT
 void ParentTable::addParentRelationships(Integer parent, StatementType parentStmtType, Integer child,
                                          StatementType childStmtType)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(parentStmtType > AnyStatement && parentStmtType < STATEMENT_TYPE_COUNT
            && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT");
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(childStmtType > AnyStatement && childStmtType < STATEMENT_TYPE_COUNT
            && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT");
     // store statements parent it
@@ -93,11 +95,13 @@ void ParentTable::addParentRelationships(Integer parent, StatementType parentStm
 void ParentTable::addParentRelationshipsStar(Integer parent, StatementType parentStmtType,
                                              const Vector<StatementNumWithType>& childStmttypePairs)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(parentStmtType > AnyStatement && parentStmtType < STATEMENT_TYPE_COUNT
            && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT");
     for (auto stmtTypePair : childStmttypePairs) {
         Integer child = stmtTypePair.first;
         StatementType childStmtType = stmtTypePair.second;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         assert(childStmtType > AnyStatement && childStmtType < STATEMENT_TYPE_COUNT
                && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT");
         // set and list

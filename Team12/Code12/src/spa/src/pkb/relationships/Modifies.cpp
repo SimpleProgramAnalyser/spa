@@ -36,6 +36,7 @@ void ModifiesTable::addModifiesRelationships(const String& procName, Vector<Stri
 
 void ModifiesTable::addModifiesRelationships(Integer stmtNum, StatementType stmtType, Vector<String> varNames)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT
            && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT");
     // add to stmtVarsetMap
