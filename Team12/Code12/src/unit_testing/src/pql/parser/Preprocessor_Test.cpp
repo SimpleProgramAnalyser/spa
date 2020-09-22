@@ -919,3 +919,21 @@ TEST_CASE("Incomplete Clause")
 
     REQUIRE(abstractQuery.isInvalid());
 }
+
+TEST_CASE("No space between Clauses")
+{
+    AbstractQuery abstractQuery = processQuery("assign a; Select a pattern a (_, \"x + y\")such that Uses (a, \"z\")");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+            .addSelectSynonym("a")
+            .addDeclaration("a", "assign")
+            .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
+                              LiteralExpressionType)
+            .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
+            .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
