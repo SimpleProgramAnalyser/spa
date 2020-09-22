@@ -618,7 +618,7 @@ to the Modifies Table.
 [#getAllModifiesVariables]
 `*VARIABLE_LIST* getAllModifiesVariables();`
 
-Description: Returns a *VARIABLE_LIST* of all variables that are modified in the SIMPLE program.
+*Description*: Returns a *VARIABLE_LIST* of all variables that are modified in the SIMPLE program.
 
 '''
 
@@ -683,7 +683,7 @@ Description: Returns a *VARIABLE_LIST* of all variables that are modified in the
 * <<addParentRelationships>>
 * <<addParentRelationshipsStar>>
 * <<checkIfParentHolds>>
-* <<checkIfParentStarHolds>>
+* <<checkIfParentHoldsStar>>
 * <<getAllChildStatements>>
 * <<getAllChildStatementsStar>>
 * <<getAllChildStatementsTyped>>
@@ -701,6 +701,8 @@ Description: Returns a *VARIABLE_LIST* of all variables that are modified in the
 `*VOID* addParentRelationships(*INTEGER* parent, *STATEMENT_TYPE*, parentType, *INTEGER* child,
 *STATEMENT_TYPE* childType);`
 
+*Requires*: `parentType` and `childType` cannot be `AnyStatement` type.
+
 *Description*: Adds a Parent relationship between `parent` with `parentType` and `child`
 with `childType` into the Parent Table.
 
@@ -708,10 +710,12 @@ with `childType` into the Parent Table.
 
 [#addParentRelationshipsStar]
 `*VOID* addParentRelationshipsStar(*INTEGER* parent, *STATEMENT_TYPE* parentType,
-*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* childrenWithTYpe);`
+*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* childrenStmttypePairs);`
+
+*Requires*: `childrenStmttypePairs` cannot have statements with `AnyStatement` type.
 
 *Description*: Adds a Parent relationship between `parent` with `parentType` and all
-`childrenWithType` into the Parent Table.
+`childrenStmttypePairs` into the Parent Table.
 
 '''
 
@@ -722,8 +726,8 @@ with `childType` into the Parent Table.
 
 '''
 
-[#checkIfParentStarHolds]
-`*BOOLEAN* checkIfParentStarHolds(*INTEGER* parent, *INTEGER* child);`
+[#checkIfParentHoldsStar]
+`*BOOLEAN* checkIfParentHoldsStar(*INTEGER* parent, *INTEGER* child);`
 
 *Description*: Returns `TRUE` if there is a Parent* relationship between `parent` and `child`, else return `FALSE`.
 
@@ -811,14 +815,15 @@ Parents are of STATEMENT_TYPE `stmtType`.
 
 *Description*: Returns a list of pairs, where for each pair, the *Parent** relationship holds between them, and the parent is of `stmtTypeOfParent`, and the child is of `stmtTypeOfChild`.
 
-=== Before API
+=== Follows API
 
-*Overview*: The Before API describes the methods exposed by Before Table to insert and extract information related to the Before relationships in the processed SIMPLE program.
+*Overview*: The Follows API describes the methods exposed by Follows Table to insert and extract
+information related to the Follows relationships in the processed SIMPLE program.
 
-* <<addBeforeRelationships>>
-* <<addBeforeRelationshipsStar>>
-* <<checkIfBeforeHolds>>
-* <<checkIfBeforeStarHolds>>
+* <<addFollowsRelationships>>
+* <<addFollowsRelationshipsStar>>
+* <<checkIfFollowsHolds>>
+* <<checkIfFollowsHoldsStar>>
 * <<getAfterStatement>>
 * <<getAllAfterStatementsStar>>
 * <<getAllAfterStatementsTyped>>
@@ -832,21 +837,25 @@ Parents are of STATEMENT_TYPE `stmtType`.
 
 '''
 
-[#addBeforeRelationships]
-`*VOID* addBeforeRelationships(*INTEGER* before, *STATEMENT_TYPE*, beforeType, *INTEGER* after,
-*STATEMENT_TYPE* afterType);`
+[#addFollowsRelationships]
+`*VOID* addFollowsRelationships(*INTEGER* before, *STATEMENT_TYPE*, beforeStmtType, *INTEGER* after,
+*STATEMENT_TYPE* afterStmtType);`
 
-*Description*: Adds a Before relationship between `before` with `beforeType` and `after`
-with `afterType` into the Before Table.
+*Requires*: `beforeStmtType` and `afterStmtType` cannot be `AnyStatement` type.
+
+*Description*: Adds a Follows relationship between `before` with `beforeStmtType` and `after`
+with `afterStmtType` into the Follows Table.
 
 '''
 
-[#addBeforeRelationshipsStar]
-`*VOID* addBeforeRelationshipsStar(*INTEGER* before, *STATEMENT_TYPE* beforeType,
-*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* afterWithTYpe);`
+[#addFollowsRelationshipsStar]
+`*VOID* addFollowsRelationshipsStar(*INTEGER* before, *STATEMENT_TYPE* beforeStmtType,
+*LIST<PAIR<STATEMENT, STATEMENT_TYPE>>* afterStmtTypePairs);`
 
-*Description*: Adds a Before relationship between `before` with `beforeType` and all
-`afterWithType` into the Before Table.
+*Requires*: `afterStmttypePairs` cannot have statements with `AnyStatement` type.
+
+*Description*: Adds a Follows relationship between `before` with `beforeStmtType` and all
+`afterStmtTypePairs` into the Follows Table.
 
 '''
 
@@ -935,7 +944,7 @@ holds and are of STATEMENT_TYPE `stmtType`.
 `*LIST<PAIR<STATEMENT,STATEMENT>>* getAllFollowsTuple(*STATEMENT_TYPE* stmtTypeOfBefore,
 *STATEMENT_TYPE* stmtTypeOfAfter);`
 
-*Description*: Returns a list of pairs, where for each pair, the *Before* relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
+*Description*: Returns a list of pairs, where for each pair, the *Follows* relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
 
 '''
 
@@ -943,7 +952,7 @@ holds and are of STATEMENT_TYPE `stmtType`.
 `*LIST<PAIR<STATEMENT,STATEMENT>>* getAllFollowsTupleStar(*STATEMENT_TYPE* stmtTypeOfBefore,
 *STATEMENT_TYPE* stmtTypeOfAfter);`
 
-*Description*: Returns a list of pairs, where for each pair, the *Before** relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
+*Description*: Returns a list of pairs, where for each pair, the *Follows* relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
 
 === Utilities API
 
@@ -956,21 +965,23 @@ holds and are of STATEMENT_TYPE `stmtType`.
 [#resetPKB]
 `*VOID* resetPKB()`
 
-*Description*: An irreversible action resetting *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in PKB from memory.
+*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
+PKB from memory. This is an irreversible action.
 
 '''
 
 [#assignRootNode]
 `*VOID* assignRootNode(*ROOT_NODE* rootNode)`
 
-*Description*: Assign *rootNode* to be the root node for the AST for the SIMPLE program.
+*Description*: Assigns *rootNode* to be the root node for the AST for the SIMPLE program.
 
 '''
 
 [#getRootNode]
 `*ROOT_NODE* getRootNode()`
 
-*Description*: Get *rootNode* stored in PKB. If <<assignRootNode>> was never called since the start of the program or since the latest <<resetPKB>> call, a *NULL_POINTER* will be returned.
+*Description*: Retrieves the *rootNode* stored in PKB. If <<assignRootNode>> was never called, a *NULL_POINTER* will be returned.
+
 
 == PQL
 
@@ -978,17 +989,18 @@ holds and are of STATEMENT_TYPE `stmtType`.
 *Overview*: Handles the business logic for processing and evaluating Processed
 Query Language (PQL) queries.
 
-* <<execute>>
+* <<executeQuery>>
 
 '''
 
-[#execute]
-`*FORMATTED_QUERY_RESULT* execute(*STRING* query);`
+[#executeQuery]
+`*FORMATTED_QUERY_RESULT* executeQuery(*STRING* query, *QUERY_RESULT_FORMAT_TYPE* format);`
 
 *Description*: Returns a *FORMATTED_QUERY_RESULT* after processing and evaluating a
-`query` in *Processed Query Language* (PQL) form.
+`query` in *Processed Query Language* (PQL) form. Results are formatted according to
+specified `format`.
 
-=== PreProcessor API
+=== Preprocessor API
 *Overview*: Handles the business logic for pre-processing PQL queries, including validating
 syntax and semantics.
 
@@ -1010,23 +1022,30 @@ with the PKB.
 '''
 
 [#evaluateQuery]
-`*RAW_QUERY_RESULT* evaluateQuery(*STRING* query);`
+`*RAW_QUERY_RESULT* evaluateQuery(*ABSTRACT_QUERY* abstractQuery);`
 
-*Description*: Returns a *RAW_QUERY_RESULT* after evaluating the `query` and obtaining information
-from the PKB.
+*Description*: Returns a *RAW_QUERY_RESULT* after evaluating the `abstractQuery` and
+obtaining information from the PKB.
 
 === Projector API
-*Overview*: Formats query results into human readable context.
+*Overview*: Formats query results into human readable context, for the Autotester and UI.
 
-* <<formatResult>>
+* <<formatAutotester>>
+* <<formatUI>>
 
 '''
 
-[#formatResult]
-`*FORMATTED_RESULT* formatResult(*RAW_QUERY_RESULT* rawQueryResult);`
+[#formatAutotester]
+`*FORMATTED_RESULT* formatAutotester(*RAW_QUERY_RESULT* rawQueryResult);`
 
 *Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to
-a conforming standard.
+a conforming standard, for the Autotester.
+
+[#formatUI]
+`*FORMATTED_RESULT* formatUI(*RAW_QUERY_RESULT* rawQueryResult);`
+
+*Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to
+a conforming standard, for the UI.
 
 == Shared Libraries (for internal use)
 
