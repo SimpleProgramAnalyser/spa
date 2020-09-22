@@ -7,6 +7,6 @@ namespace Preprocessor {
 AbstractQuery processQuery(const String& query);
 DeclarationTable processDeclarations(const String& declarationString);
 ClauseVector processClauses(const String& clausesString, DeclarationTable& declarationTable);
-}; // namespace Preprocessor
+} // namespace Preprocessor
 
 #endif // SPA_PQL_PREPROCESSOR_H
