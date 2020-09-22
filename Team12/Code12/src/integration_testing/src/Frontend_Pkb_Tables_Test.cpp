@@ -10,6 +10,8 @@
 
 TEST_CASE("Multiple procedures Spheresdf Tables")
 {
+    resetPKB();
+
     parseSimple(getProgram20String_multipleProceduresSpheresdf());
     SECTION("Procedure Table stored program correctly for test program")
     {
