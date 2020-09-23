@@ -5,8 +5,7 @@
 
 AbstractQuery processQuery(String queryString)
 {
-    Preprocessor preprocessor;
-    return preprocessor.processQuery(queryString);
+    return Preprocessor::processQuery(queryString);
 }
 
 TEST_CASE("Only Declarations without Select Clause returns Invalid Abstract Query")
@@ -887,9 +886,18 @@ TEST_CASE("Variable whitespace between tokens")
 
 TEST_CASE("Follows* with a space between between Follows and *")
 {
-    AbstractQuery abstractQuery = processQuery("stmt sa; Select sa such that Follows * (sa, _)");
+    AbstractQuery abstractQuery = processQuery("assign a; Select a such that Follows * (a, _)");
 
-    REQUIRE(abstractQuery.isInvalid());
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+            .addSelectSynonym("a")
+            .addDeclaration("a", "assign")
+            .addSuchThatClause("Follows*", SynonymRefType, "a", AssignType, WildcardRefType, "_", NonExistentType)
+            .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
 }
 
 TEST_CASE("ReadType as left reference of Uses")
@@ -916,6 +924,31 @@ TEST_CASE("Incomplete Such That")
 TEST_CASE("Incomplete Clause")
 {
     AbstractQuery abstractQuery = processQuery("stmt s; Select s such that");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("No space between Clauses")
+{
+    AbstractQuery abstractQuery = processQuery("assign a; Select a pattern a (_, \"x + y\")such that Uses (a, \"z\")");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+            .addSelectSynonym("a")
+            .addDeclaration("a", "assign")
+            .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
+                              LiteralExpressionType)
+            .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
+            .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("Follows**")
+{
+    AbstractQuery abstractQuery = processQuery("stmt a; Select a such that Follows** (a, _)");
 
     REQUIRE(abstractQuery.isInvalid());
 }

@@ -22,6 +22,7 @@ using List = std::vector<std::unique_ptr<T>>;
 template <typename T>
 using Vector = std::vector<T>;
 
+typedef std::pair<String, String> StringPair;
 typedef Vector<String> StringVector;
 
 enum StatementType : char {

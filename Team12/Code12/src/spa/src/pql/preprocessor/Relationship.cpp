@@ -1,31 +1,36 @@
 #include "AqTypes.h"
 
-Relationship::Relationship(String relationshipRef, Reference leftRef, Reference rightRef):
-    leftReference(leftRef), rightReference(rightRef), hasError(false)
+Relationship::Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef):
+    leftReference(leftRef), rightReference(rightRef), hasError(false), relationshipReferenceType(relRefType)
+{}
+
+Relationship::Relationship(Boolean hasError): hasError{hasError}, relationshipReferenceType{InvalidRelationshipType} {}
+
+Relationship Relationship::createRelationship(String relationshipRef, Reference leftRef, Reference rightRef)
 {
     // Validate relationship reference type
-    relationshipReference = getRelRefType(relationshipRef);
-    if (relationshipReference == InvalidRelationshipType) {
-        hasError = true;
-        return;
+    RelationshipReferenceType relationshipReferenceType = getRelRefType(relationshipRef);
+    if (relationshipReferenceType == InvalidRelationshipType) {
+        return Relationship(true);
     }
 
     // Validate semantics for relationships
-    if (!validateRelationshipSemantics(relationshipReference, leftRef, rightRef)) {
-        hasError = true;
-        return;
+    if (!validateRelationshipSemantics(relationshipReferenceType, leftRef, rightRef)) {
+        return Relationship(true);
     }
 
-    if (relationshipReference == UsesType || relationshipReference == ModifiesType) {
+    // Split Statement and Prodedure type for Uses and Modifies
+    if (relationshipReferenceType == UsesType || relationshipReferenceType == ModifiesType) {
         if (leftRef.isProcedure() || util::isLiteralIdent(leftRef.getValue())) {
-            relationshipReference = relationshipReference == UsesType ? UsesProcedureType : ModifiesProcedureType;
+            relationshipReferenceType
+                = relationshipReferenceType == UsesType ? UsesProcedureType : ModifiesProcedureType;
         } else {
-            relationshipReference = relationshipReference == UsesType ? UsesStatementType : ModifiesStatementType;
+            relationshipReferenceType
+                = relationshipReferenceType == UsesType ? UsesStatementType : ModifiesStatementType;
         }
     }
 
-    leftReference = leftRef;
-    rightReference = rightRef;
+    return Relationship(relationshipReferenceType, leftRef, rightRef);
 }
 
 RelationshipReferenceType Relationship::getRelRefType(String relRef)
@@ -54,7 +59,7 @@ Boolean Relationship::isInvalid()
 
 RelationshipReferenceType Relationship::getRelationship()
 {
-    return relationshipReference;
+    return relationshipReferenceType;
 }
 
 Reference Relationship::getLeftRef()
@@ -67,27 +72,21 @@ Reference Relationship::getRightRef()
     return rightReference;
 }
 
-Boolean Relationship::operator==(const Relationship& relationship)
-{
-    return this->relationshipReference == relationship.relationshipReference
-           && this->leftReference == relationship.leftReference && this->rightReference == relationship.rightReference;
-}
-
-// TODO: Consider to abstract the validation to their own classes?
+// TODO: Consider to abstract into hash table
 Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                     Reference rightRef)
 {
     if (relRefType == FollowsType || relRefType == FollowsStarType || relRefType == ParentType
         || relRefType == ParentStarType) {
-        return Relationship::validateStmtAndStmtRelationshipSemantics(leftRef, rightRef);
+        return Relationship::validateStmtAndStmtSemantics(leftRef, rightRef);
     } else if (relRefType == UsesType || relRefType == ModifiesType) {
-        return Relationship::validateUsesAndModifiesSemantics(relRefType, leftRef, rightRef);
+        return Relationship::validateStmtProcAndVarSemantics(relRefType, leftRef, rightRef);
     }
 
     return false;
 }
 
-Boolean Relationship::validateStmtAndStmtRelationshipSemantics(Reference leftRef, Reference rightRef)
+Boolean Relationship::validateStmtAndStmtSemantics(Reference leftRef, Reference rightRef)
 {
     Boolean bothAreValidStatementRefs = leftRef.isValidStatementRef() && rightRef.isValidStatementRef();
     Boolean eitherIsNonStatementSynonym = leftRef.isNonStatementSynonym() || rightRef.isNonStatementSynonym();
@@ -99,8 +98,8 @@ Boolean Relationship::validateStmtAndStmtRelationshipSemantics(Reference leftRef
     return true;
 }
 
-Boolean Relationship::validateUsesAndModifiesSemantics(RelationshipReferenceType relRefType, Reference leftRef,
-                                                       Reference rightRef)
+Boolean Relationship::validateStmtProcAndVarSemantics(RelationshipReferenceType relRefType, Reference leftRef,
+                                                      Reference rightRef)
 {
     if (relRefType != ModifiesType && relRefType != UsesType) {
         return false;
@@ -123,4 +122,10 @@ Boolean Relationship::validateUsesAndModifiesSemantics(RelationshipReferenceType
     }
 
     return true;
+}
+
+Boolean Relationship::operator==(const Relationship& relationship)
+{
+    return this->relationshipReferenceType == relationship.relationshipReferenceType
+           && this->leftReference == relationship.leftReference && this->rightReference == relationship.rightReference;
 }

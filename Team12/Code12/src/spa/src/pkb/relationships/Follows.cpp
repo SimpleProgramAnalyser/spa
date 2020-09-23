@@ -4,6 +4,8 @@
 
 #include "Follows.h"
 
+#include <cassert>
+
 void FollowsTable::tryAddBefore(Integer before, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
                                 ArrayArraySet& aas)
 {
@@ -72,6 +74,14 @@ void FollowsTable::typedShenanigansStar(Integer before, StatementType beforeStmt
 void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after,
                                            StatementType afterStmtType)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(
+        beforeStmtType > AnyStatement && beforeStmtType < STATEMENT_TYPE_COUNT
+        && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(
+        afterStmtType > AnyStatement && afterStmtType < STATEMENT_TYPE_COUNT
+        && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     // store statements before it
     stmtBeforeMap[after] = std::make_pair(before, beforeStmtType);
     // store statements after it
@@ -83,9 +93,17 @@ void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeS
 void FollowsTable::addFollowsRelationshipsStar(Integer before, StatementType beforeStmtType,
                                                const Vector<StatementNumWithType>& afterStmttypePairs)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(
+        beforeStmtType > AnyStatement && beforeStmtType < STATEMENT_TYPE_COUNT
+        && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     for (auto stmtTypePair : afterStmttypePairs) {
         Integer after = stmtTypePair.first;
         StatementType afterStmtType = stmtTypePair.second;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        assert(
+            afterStmtType > AnyStatement && afterStmtType < STATEMENT_TYPE_COUNT
+            && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         // set and list
         stmtBeforestarsetMap[after].insert(before);
         stmtBeforestarlistMap[after].byType[beforeStmtType].push_back(before);

@@ -4,6 +4,8 @@
 
 #include "Tables.h"
 
+#include <assert.h>
+
 // Procedure Table
 void ProcedureTable::insertIntoProcedureTable(const String& procName)
 {
@@ -41,6 +43,10 @@ Boolean VariableTable::isVariableInProgram(const String& varName)
 // Statement Table
 void StatementTable::insertIntoStatementTable(Integer stmtNum, StatementType stmtType)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(
+        stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT
+        && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     if (setOfStatements.find(stmtNum) == setOfStatements.end()) {
         setOfStatements.insert(stmtNum);
         listOfAllStatement.byType[stmtType].push_back(stmtNum);

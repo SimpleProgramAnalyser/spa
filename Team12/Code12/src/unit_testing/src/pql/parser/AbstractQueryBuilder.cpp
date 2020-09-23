@@ -33,7 +33,7 @@ AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(String relRefType,
     Reference leftReference{leftRefType, std::move(leftRefValue), leftDesignEntity};
     DesignEntity rightDesignEntity{rightDesignEntityType};
     Reference rightReference{rightRefType, std::move(rightRefValue), rightDesignEntity};
-    Relationship relationship{std::move(relRefType), leftReference, rightReference};
+    Relationship relationship = Relationship::createRelationship(std::move(relRefType), leftReference, rightReference);
 
     Clause* suchThatClause = new SuchThatClause(relationship);
     clauseVector.add(suchThatClause);

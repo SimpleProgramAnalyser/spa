@@ -2,12 +2,10 @@
 
 #include "frontend/parser/Parser.h"
 
-StringPair splitByFirstDelimiter(const String& str, char c);
-StringVector splitByFirstConsecutiveWhitespace(String str);
-Boolean containsOpenParentheses(String str);
-Boolean isEnclosedWith(String str, char leftEnd, char rightEnd);
+StringVector splitByFirstConsecutiveWhitespace(const String& str);
+Boolean containsOpenParentheses(const String& str);
 StringPair splitDeclarationAndSelectClause(const String& query);
-std::pair<Boolean, Integer> countNumOfOpenParentheses(String token, Integer previousNumOfOpenParentheses);
+std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
 
 /**
  * Processes a given PQL query into an AbstractQuery.
@@ -23,7 +21,7 @@ std::pair<Boolean, Integer> countNumOfOpenParentheses(String token, Integer prev
  * @return      AbstractQuery that breaks the PQL query into
  *              abstract objects that can be evaluated.
  */
-AbstractQuery Preprocessor::processQuery(String query)
+AbstractQuery Preprocessor::processQuery(const String& query)
 {
     StringPair splitQuery = splitDeclarationAndSelectClause(query);
 
@@ -31,52 +29,51 @@ AbstractQuery Preprocessor::processQuery(String query)
     String synonymAndClausesString = trimWhitespace(splitQuery.second);
 
     // Process declarations into declaration table
-    DeclarationTable processedDeclarations = processDeclarations(declarationString);
-    if (processedDeclarations.isInvalid()) {
-        return AbstractQuery::invalidAbstractQuery();
+    DeclarationTable declarationTable = processDeclarations(declarationString);
+    if (declarationTable.isInvalid()) {
+        return AbstractQuery(true);
     }
-    this->declarationTable = processedDeclarations;
 
     // Extract select synonym
     StringVector selectAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClausesString);
 
     // No select clause
     if (selectAndClausesVector.size() < 2) {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
     String possibleSelectKeyword = selectAndClausesVector.at(0);
     if (possibleSelectKeyword != "Select") {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
     String synonymAndClauses = selectAndClausesVector.at(1);
     StringVector synonymAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClauses);
 
     // No synonym
-    if (selectAndClausesVector.size() == 0) {
-        return AbstractQuery::invalidAbstractQuery();
+    if (selectAndClausesVector.empty()) {
+        return AbstractQuery(true);
     }
 
     Synonym selectSynonym = synonymAndClausesVector.at(0);
-    if (!isValidSynonym(selectSynonym) || !processedDeclarations.hasSynonym(selectSynonym)) {
-        return AbstractQuery::invalidAbstractQuery();
+    if (!isValidSynonym(selectSynonym) || !declarationTable.hasSynonym(selectSynonym)) {
+        return AbstractQuery(true);
     }
 
     // Only select a synonym, with no other clauses
     if (synonymAndClausesVector.size() == 1) {
-        AbstractQuery abstractQuery(selectSynonym, processedDeclarations);
+        AbstractQuery abstractQuery(selectSynonym, declarationTable);
         return abstractQuery;
     }
 
     // Process clauses into ClauseList
     String clausesString = synonymAndClausesVector.at(1);
-    ClauseVector clausesVector = processClauses(clausesString);
+    ClauseVector clausesVector = processClauses(clausesString, declarationTable);
     if (clausesVector.isInvalid()) {
-        return AbstractQuery::invalidAbstractQuery();
+        return AbstractQuery(true);
     }
 
-    AbstractQuery aq(selectSynonym, processedDeclarations, clausesVector);
+    AbstractQuery aq(selectSynonym, declarationTable, clausesVector);
     return aq;
 }
 
@@ -91,7 +88,7 @@ AbstractQuery Preprocessor::processQuery(String query)
  * @return              ClauseVector of all clauses in the
  *                      clausesString.
  */
-ClauseVector Preprocessor::processClauses(const String& clausesString)
+ClauseVector Preprocessor::processClauses(const String& clausesString, DeclarationTable& declarationTable)
 {
     ClauseVector clauseVector;
     String currentClauseConstraint;
@@ -122,7 +119,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
      */
     int numOfTokensWithoutOpenParentheses = 0;
 
-    StringVector splitStringList = splitByWhitespace(clausesString);
+    StringVector splitStringList = splitProgram(clausesString);
 
     for (auto& token : splitStringList) {
         if (token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
@@ -170,7 +167,9 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
                     return ClauseVector::invalidClauseVector();
                 } else if (numOfOpenedParentheses == 0) {
                     if (!hasOpenParentheses) {
-                        numOfTokensWithoutOpenParentheses++;
+                        if (token != "*") {
+                            numOfTokensWithoutOpenParentheses++;
+                        }
 
                         if (numOfTokensWithoutOpenParentheses >= 2) {
                             return ClauseVector::invalidClauseVector();
@@ -179,9 +178,9 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
                         Clause* clause;
 
                         if (currentClauseType == SuchThatClauseType) {
-                            clause = processSuchThatClause(currentClauseConstraint);
+                            clause = SuchThatClause::createSuchThatClause(currentClauseConstraint, declarationTable);
                         } else { // PatternClause
-                            clause = processPatternClause(currentClauseConstraint);
+                            clause = PatternClause::createPatternClause(currentClauseConstraint, declarationTable);
                         }
 
                         if (clause->isInvalid()) {
@@ -190,10 +189,10 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
 
                         clauseVector.add(clause);
 
-                        hasCurrentClause = false;
+                        currentClauseConstraint.clear();
                         numOfOpenedParentheses = 0;
                         numOfTokensWithoutOpenParentheses = 0;
-                        currentClauseConstraint.clear();
+                        hasCurrentClause = false;
                         hasOpenParentheses = false;
                         isInProcessOfCreatingClause = false;
                     }
@@ -208,183 +207,6 @@ ClauseVector Preprocessor::processClauses(const String& clausesString)
     }
 
     return clauseVector;
-}
-
-/**
- * Processes the clause constraint string for a
- * SuchThatClause, by abstracting it into its relevant
- * Relationship and References.
- *
- * @param clauseConstraint  String of the clause constraint with all
- *                          whitespaces removed.
- * @return                  A Clause pointer of the SuchThatClause
- *                          that was constructed.
- */
-Clause* Preprocessor::processSuchThatClause(String clauseConstraint)
-{
-    StringPair pair = splitByFirstDelimiter(clauseConstraint, '(');
-
-    String relRef = pair.first;
-    if (!util::isRelationshipReference(relRef)) {
-        return Clause::invalidClause(SuchThatClauseType);
-    }
-
-    String references
-        = pair.second.substr(0, pair.second.size() - 1); // remove the last char which is a close parentheses
-    StringPair refPair = splitByFirstDelimiter(references, ',');
-    String leftRefString = refPair.first;
-    String rightRefString = refPair.second;
-
-    Reference leftReference = createReference(leftRefString);
-    Reference rightReference = createReference(rightRefString);
-
-    if (leftReference.isInvalid() || rightReference.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType);
-    }
-
-    Relationship relationship(relRef, leftReference, rightReference);
-    if (relationship.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType);
-    }
-
-    return new SuchThatClause(relationship);
-}
-
-/**
- * Processes the clause constraint string for a
- * PatternClause, by abstracting it into its relevant
- * PatternTypeStatement, Reference and ExpressionSpec.
- *
- * @param clauseConstraint  String of the clause constraint with all
- *                          whitespaces removed.
- * @return                  A Clause pointer of the PatternClause
- *                          that was constructed.
- */
-Clause* Preprocessor::processPatternClause(String clauseConstraint)
-{
-    StringPair pair = splitByFirstDelimiter(clauseConstraint, '(');
-
-    Synonym patternSynonym = pair.first;
-    DesignEntity synonymDesignEntity = declarationTable.getDesignEntityOfSynonym(patternSynonym);
-    if (synonymDesignEntity.getType() != AssignType) {
-        return Clause::invalidClause(PatternClauseType);
-    }
-
-    String constraintVariablesString
-        = pair.second.substr(0, pair.second.size() - 1); // remove the last char which is a close parentheses
-    StringPair constraintVariablesPair = splitByFirstDelimiter(constraintVariablesString, ',');
-    String leftConstraintString = constraintVariablesPair.first;
-    String rightConstraintString = constraintVariablesPair.second;
-
-    Reference leftReference = createReference(leftConstraintString);
-    Boolean isLeftRefInvalid = !leftReference.isValidEntityRef()
-                               || (leftReference.getReferenceType() == SynonymRefType
-                                   && leftReference.getDesignEntity().getType() != VariableType);
-    if (leftReference.isInvalid() || isLeftRefInvalid) {
-        return Clause::invalidClause(PatternClauseType);
-    }
-
-    ExpressionSpec rightExpressionSpec = createExpressionSpec(rightConstraintString);
-    if (rightExpressionSpec.isInvalid()) {
-        return Clause::invalidClause(PatternClauseType);
-    }
-
-    return new PatternClause(patternSynonym, AssignPatternType, leftReference, std::move(rightExpressionSpec));
-}
-
-/**
- * Creates an ExpressionSpec of based on the given
- * exprSpecString. It will determine the ExpressionSpecType
- * and call the parser from frontend to parse the expression
- * string into an Expression.
- *
- * If the exprSpecString is an invalid form of
- * ExpressionSpec, an invalid ExpressionSpec will be
- * returned.
- *
- * @param exprSpecString    The string to be parsed into an ExpressionSpec.
- * @return                  The ExpressionSpec constructed using exprSpectString.
- */
-ExpressionSpec Preprocessor::createExpressionSpec(String exprSpecString)
-{
-    if (exprSpecString == "_") {
-        ExpressionSpec expressionSpec{WildcardExpressionType};
-        return expressionSpec;
-    }
-
-    if (isEnclosedWith(exprSpecString, '_', '_')) {
-        String possibleLiteral = util::removeCharFromBothEnds(exprSpecString);
-        if (!isEnclosedWith(possibleLiteral, '\"', '\"')) {
-            return ExpressionSpec::invalidExpressionSpec();
-        }
-
-        Expression* expression = createExpression(util::removeCharFromBothEnds(possibleLiteral));
-        if (!expression) {
-            return ExpressionSpec::invalidExpressionSpec();
-        }
-
-        ExpressionSpec expressionSpec{expression, ExtendableLiteralExpressionType};
-        return expressionSpec;
-    }
-
-    if (!isEnclosedWith(exprSpecString, '\"', '\"')) {
-        return ExpressionSpec::invalidExpressionSpec();
-    }
-
-    String expressionString = util::removeCharFromBothEnds(exprSpecString);
-    Expression* expression = createExpression(expressionString);
-    if (!expression) {
-        return ExpressionSpec::invalidExpressionSpec();
-    }
-
-    ExpressionSpec expressionSpec{expression, LiteralExpressionType};
-    return expressionSpec;
-}
-
-Expression* Preprocessor::createExpression(const String& literal)
-{
-    StringVector splitString = splitProgram(literal);
-    Expression* expression = parseExpression(splitString);
-    return expression;
-}
-
-/**
- * Creates a Reference using the given ref String. It will
- * determine the ReferenceType based on the ref given.
- * If the ref is a synonym, the design entity of the synonym
- * will be stored in the Reference object.
- *
- * If the ref is an invalid form of a Reference, an invalid
- * Reference will be returned.
- *
- * @param ref   String of the reference to be constructed.
- * @return      A Reference based on ref.
- */
-Reference Preprocessor::createReference(String ref)
-{
-    if (ref == "_") {
-        Reference reference(WildcardRefType, ref);
-        return reference;
-    }
-
-    if (util::isPossibleConstant(ref)) {
-        // An Integer as a reference will always be of StmtType
-        Reference reference(IntegerRefType, ref, DesignEntity(StmtType));
-        return reference;
-    }
-
-    if (util::isLiteralIdent(ref)) {
-        // unquote the string literal
-        Reference reference(LiteralRefType, util::removeCharFromBothEnds(ref));
-        return reference;
-    }
-
-    if (declarationTable.hasSynonym(ref)) {
-        Reference reference(SynonymRefType, ref, declarationTable.getDesignEntityOfSynonym(ref));
-        return reference;
-    }
-
-    return Reference::invalidReference();
 }
 
 /**
@@ -455,44 +277,6 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
 /**
  * Returns a pair of Strings, split by the
- * first appearance of the delimiter. If the
- * delimiter does not exist, a pair of empty
- * strings will be returned. The particular
- * delimiter will be removed.
- *
- * @param str String to be split.
- * @param c Delimiter.
- * @return Pair of Strings split by delimiter.
- */
-StringPair splitByFirstDelimiter(const String& str, char c)
-{
-    StringPair stringVector;
-    const char* currentChar = str.c_str();
-    String currentToken;
-
-    // Find first delimiter
-    while (*currentChar != c && *currentChar != '\0') {
-        currentToken.push_back(*currentChar);
-        currentChar++;
-    }
-
-    String leftString = currentToken;
-    currentToken.clear();
-
-    if (*currentChar != '\0') {
-        currentChar++; // Skips '('
-    }
-
-    while (*currentChar != '\0') {
-        currentToken.push_back(*currentChar);
-        currentChar++;
-    }
-
-    return std::make_pair(leftString, currentToken);
-}
-
-/**
- * Returns a pair of Strings, split by the
  * last appearance of the semicolon. If the
  * semicolon does not exist, a pair of empty
  * strings will be returned.
@@ -527,7 +311,7 @@ StringPair splitDeclarationAndSelectClause(const String& query)
  * @param str String to be split
  * @return vector of 2 strings
  */
-StringVector splitByFirstConsecutiveWhitespace(String str)
+StringVector splitByFirstConsecutiveWhitespace(const String& str)
 {
     const char* currentChar = str.c_str();
     String currentToken;
@@ -556,7 +340,7 @@ StringVector splitByFirstConsecutiveWhitespace(String str)
     return splitByFirstWhitespaceVector;
 }
 
-Boolean hasChar(String str, char charToLookFor)
+Boolean hasChar(const String& str, char charToLookFor)
 {
     const char* currentChar = str.c_str();
     while (*currentChar != '\0') {
@@ -569,22 +353,9 @@ Boolean hasChar(String str, char charToLookFor)
     return false;
 }
 
-Boolean containsOpenParentheses(String str)
+Boolean containsOpenParentheses(const String& str)
 {
     return hasChar(str, '(');
-}
-
-/**
- * Returns true if a non-empty substring is enclosed
- * by the given left end and right character.
- *
- * @param str String to be checked
- * @param leftEnd Character at left end
- * @param rightEnd Character at right end
- */
-Boolean isEnclosedWith(String str, char leftEnd, char rightEnd)
-{
-    return str[0] == leftEnd && str.size() > 2 && str[str.size() - 1] == rightEnd;
 }
 
 /**
@@ -615,7 +386,7 @@ Boolean isEnclosedWith(String str, char leftEnd, char rightEnd)
  *                                      was appended with token.
  * @return                              Current number of opened parentheses
  */
-std::pair<Boolean, Integer> countNumOfOpenParentheses(String token, Integer previousNumOfOpenParentheses)
+std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses)
 {
     const char* currentChar = token.c_str();
     Integer numOfOpenParentheses = previousNumOfOpenParentheses;

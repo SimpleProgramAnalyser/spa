@@ -2,25 +2,20 @@
 
 Reference::Reference(): designEntity{}, hasError{false}
 {
-    referenceType = SynonymRefType;
+    referenceType = InvalidRefType;
 }
 
+Reference::Reference(Boolean hasError): hasError{hasError}, referenceType{InvalidRefType} {}
+
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{refValue}, designEntity{}, hasError{false}
+    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, hasError{false}
 {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt):
     referenceType{refType}, referenceValue{refValue}, designEntity{designEnt}, hasError{false}
 {}
 
-Reference Reference::invalidReference()
-{
-    Reference r;
-    r.hasError = true;
-    return r;
-}
-
-Boolean Reference::isInvalid()
+Boolean Reference::isInvalid() const
 {
     return hasError;
 }
@@ -70,4 +65,43 @@ Boolean Reference::operator==(const Reference& reference)
 {
     return this->referenceType == reference.referenceType && this->referenceValue == reference.referenceValue
            && this->designEntity == reference.designEntity;
+}
+
+/**
+ * Creates a Reference using the given ref String. It will
+ * determine the ReferenceType based on the ref given.
+ * If the ref is a synonym, the design entity of the synonym
+ * will be stored in the Reference object.
+ *
+ * If the ref is an invalid form of a Reference, an invalid
+ * Reference will be returned.
+ *
+ * @param ref   String of the reference to be constructed.
+ * @return      A Reference based on ref.
+ */
+Reference Reference::createReference(String ref, DeclarationTable& declarationTable)
+{
+    if (ref == "_") {
+        Reference reference(WildcardRefType, ref);
+        return reference;
+    }
+
+    if (util::isPossibleConstant(ref)) {
+        // An Integer as a reference will always be of StmtType
+        Reference reference(IntegerRefType, ref, DesignEntity(StmtType));
+        return reference;
+    }
+
+    if (util::isLiteralIdent(ref)) {
+        // unquote the string literal
+        Reference reference(LiteralRefType, util::removeCharFromBothEnds(ref));
+        return reference;
+    }
+
+    if (declarationTable.hasSynonym(ref)) {
+        Reference reference(SynonymRefType, ref, declarationTable.getDesignEntityOfSynonym(ref));
+        return reference;
+    }
+
+    return Reference(true);
 }
