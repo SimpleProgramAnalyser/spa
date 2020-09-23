@@ -89,7 +89,7 @@ cp "${rootdir}/Team12/Code12/tests/analysis.xsl" "${outdir}/analysis.xsl"
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b") # ignore spaces in filename
 for sourcefile in ${testdir}/Sample_source*.txt; do
-  queryfile="$(echo "$sourcefile" | sed -e 's/source/queries/g' -e 's/Source/Queries/g')"
+  queryfile="$(dirname "$sourcefile")/$(basename "$sourcefile" | sed -e 's/source/queries/g' -e 's/Source/Queries/g')"
   testdescription=$(basename -s .txt $sourcefile | sed 's/Sample_source_/output_/g')
   outfile="${outdir}/${testdescription}.XML"
   echo "Running AutoTester for $testdescription..."
