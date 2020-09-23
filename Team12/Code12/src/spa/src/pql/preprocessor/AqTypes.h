@@ -149,7 +149,7 @@ public:
     RelationshipReferenceType getRelationship();
     Reference getLeftRef();
     Reference getRightRef();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
     static Relationship createRelationship(String relationshipRef, Reference leftRef, Reference rightRef);
     static RelationshipReferenceType getRelRefType(String relRef);
     Boolean operator==(const Relationship& relationship);
