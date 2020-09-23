@@ -376,37 +376,237 @@ TEST_CASE("Parent star clauses are evaluated correctly")
 TEST_CASE("Modifies clauses are evaluated correctly")
 {
     resetPKB();
+    addModifiesRelationships(1, AssignmentStatement, std::vector<std::string>{"x"});
+    addModifiesRelationships(2, ReadStatement, std::vector<std::string>{"y"});
+    addModifiesRelationships(3, IfStatement, std::vector<std::string>{"z", "x"});
+    addModifiesRelationships(4, AssignmentStatement, std::vector<std::string>{"z"});
+    addModifiesRelationships(5, ReadStatement, std::vector<std::string>{"x"});
+    addModifiesRelationships("proc1", std::vector<std::string>{"x", "y", "z"});
+    addModifiesRelationships("proc2", std::vector<std::string>{"b", "c", "d"});
+    addModifiesRelationships(6, CallStatement, std::vector<std::string>{"b", "c", "d"});
+    addModifiesRelationships(7, ReadStatement, std::vector<std::string>{"c"});
+    addModifiesRelationships(8, WhileStatement, std::vector<std::string>{"b", "d"});
+    addModifiesRelationships(9, AssignmentStatement, std::vector<std::string>{"b"});
+    addModifiesRelationships(10, ReadStatement, std::vector<std::string>{"d"});
+    DeclarationTable declTable{};
+    DesignEntity procDesignEntity(ProcedureType);
+    DesignEntity ifDesignEntity(IfType);
+    DesignEntity whileDesignEntity(WhileType);
+    DesignEntity variableDesignEntity(VariableType);
+    declTable.addDeclaration("p", procDesignEntity);
+    declTable.addDeclaration("i", ifDesignEntity);
+    declTable.addDeclaration("w", whileDesignEntity);
+    declTable.addDeclaration("v", variableDesignEntity);
+    ResultsTable resTable(declTable);
 
-    SECTION("Both variables") {}
+    SECTION("Both variables (procedure)")
+    {
+        Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("p"), std::vector<std::string>({"proc1", "proc2"}));
+        doVectorsHaveSameElementsVoid(resTable.get("v"), std::vector<std::string>({"x", "y", "z", "b", "c", "d"}));
+        doVectorsHaveSameElementsVoid(
+            resTable.getRelationships("v", "p"),
+            std::vector<std::pair<std::string, std::string>>(
+                {{"x", "proc1"}, {"y", "proc1"}, {"z", "proc1"}, {"d", "proc2"}, {"b", "proc2"}, {"c", "proc2"}}));
+    }
 
-    SECTION("Both wildcards") {}
+    SECTION("Both variables (statement)")
+    {
+        Reference leftRef(SynonymRefType, "w", DesignEntity(WhileType));
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("w"), std::vector<std::string>({"8"}));
+        doVectorsHaveSameElementsVoid(resTable.get("v"), std::vector<std::string>({"b", "d"}));
+        doVectorsHaveSameElementsVoid(resTable.getRelationships("w", "v"),
+                                      std::vector<std::pair<std::string, std::string>>({{"8", "b"}, {"8", "d"}}));
+    }
 
-    SECTION("Left known, right wildcard") {}
+    SECTION("Left procedure synonym, right wildcard")
+    {
+        Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
+        Reference rightRef(WildcardRefType, "_");
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("p"), std::vector<std::string>({"proc1", "proc2"}));
+    }
 
-    SECTION("Left known, right variable") {}
+    SECTION("Left statement synonym, right wildcard")
+    {
+        Reference leftRef(SynonymRefType, "i", DesignEntity(IfType));
+        Reference rightRef(WildcardRefType, "_");
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("i"), std::vector<std::string>({"3"}));
+    }
 
-    SECTION("Left wildcard, right known") {}
+    SECTION("Left statement synonym, right known")
+    {
+        Reference leftRef(SynonymRefType, "i", DesignEntity(IfType));
+        Reference rightRef(LiteralRefType, "b");
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        REQUIRE_FALSE(resTable.hasResults());
+    }
 
-    SECTION("Left variable, right known") {}
+    SECTION("Left procedure synonym, right known")
+    {
+        Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
+        Reference rightRef(LiteralRefType, "b");
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("p"), std::vector<std::string>({"proc2"}));
+    }
 
-    SECTION("Both known") {}
+    SECTION("Left statement known, right synonym")
+    {
+        Reference leftRef(IntegerRefType, "4");
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("v"), std::vector<std::string>({"z"}));
+    }
+
+    SECTION("Left procedure known, right synonym")
+    {
+        Reference leftRef(LiteralRefType, "proc1");
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("v"), std::vector<std::string>({"z", "x", "y"}));
+    }
+
+    SECTION("Both known (procedure)")
+    {
+        Reference leftRef(LiteralRefType, "proc1");
+        Reference rightRef(LiteralRefType, "c");
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        REQUIRE_FALSE(resTable.hasResults());
+    }
+
+    SECTION("Both known (statement)")
+    {
+        Reference leftRef(IntegerRefType, "6");
+        Reference rightRef(LiteralRefType, "c");
+        evaluateModifiesClause(leftRef, rightRef, &resTable);
+        REQUIRE(resTable.hasResults());
+    }
 }
 
 TEST_CASE("Uses clauses are evaluated correctly")
 {
     resetPKB();
+    addUsesRelationships(1, AssignmentStatement, std::vector<std::string>{"x"});
+    addUsesRelationships(2, PrintStatement, std::vector<std::string>{"y"});
+    addUsesRelationships(3, IfStatement, std::vector<std::string>{"z", "x", "v", "u"});
+    addUsesRelationships(4, AssignmentStatement, std::vector<std::string>{"z", "v", "u"});
+    addUsesRelationships(5, PrintStatement, std::vector<std::string>{"x"});
+    addUsesRelationships("proc1", std::vector<std::string>{"x", "y", "z", "v", "u"});
+    addUsesRelationships("proc2", std::vector<std::string>{"b", "c", "d", "a", "f"});
+    addUsesRelationships(6, CallStatement, std::vector<std::string>{"b", "c", "d", "a", "f"});
+    addUsesRelationships(7, PrintStatement, std::vector<std::string>{"c"});
+    addUsesRelationships(8, WhileStatement, std::vector<std::string>{"b", "d", "a", "f"});
+    addUsesRelationships(9, AssignmentStatement, std::vector<std::string>{"b", "a", "f"});
+    addUsesRelationships(10, PrintStatement, std::vector<std::string>{"d"});
+    DeclarationTable declTable{};
+    DesignEntity procDesignEntity(ProcedureType);
+    DesignEntity assignDesignEntity(AssignType);
+    DesignEntity variableDesignEntity(VariableType);
+    declTable.addDeclaration("p", procDesignEntity);
+    declTable.addDeclaration("a", assignDesignEntity);
+    declTable.addDeclaration("v", variableDesignEntity);
+    ResultsTable resTable(declTable);
 
-    SECTION("Both variables") {}
+    SECTION("Both variables (procedure)")
+    {
+        Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("p"), std::vector<std::string>({"proc1", "proc2"}));
+        doVectorsHaveSameElementsVoid(resTable.get("v"),
+                                      std::vector<std::string>({"x", "y", "z", "b", "c", "d", "v", "u", "a", "f"}));
+        doVectorsHaveSameElementsVoid(resTable.getRelationships("v", "p"),
+                                      std::vector<std::pair<std::string, std::string>>({{"x", "proc1"},
+                                                                                        {"y", "proc1"},
+                                                                                        {"z", "proc1"},
+                                                                                        {"d", "proc2"},
+                                                                                        {"b", "proc2"},
+                                                                                        {"c", "proc2"},
+                                                                                        {"v", "proc1"},
+                                                                                        {"u", "proc1"},
+                                                                                        {"a", "proc2"},
+                                                                                        {"f", "proc2"}}));
+    }
 
-    SECTION("Both wildcards") {}
+    SECTION("Both variables (statement)")
+    {
+        Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("a"), std::vector<std::string>({"1", "4", "9"}));
+        doVectorsHaveSameElementsVoid(resTable.get("v"), std::vector<std::string>({"b", "z", "v", "u", "a", "f", "x"}));
+        doVectorsHaveSameElementsVoid(
+            resTable.getRelationships("a", "v"),
+            std::vector<std::pair<std::string, std::string>>(
+                {{"1", "x"}, {"4", "z"}, {"4", "v"}, {"4", "u"}, {"9", "b"}, {"9", "a"}, {"9", "f"}}));
+    }
 
-    SECTION("Left known, right wildcard") {}
+    SECTION("Left procedure synonym, right wildcard")
+    {
+        Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
+        Reference rightRef(WildcardRefType, "_");
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("p"), std::vector<std::string>({"proc1", "proc2"}));
+    }
 
-    SECTION("Left known, right variable") {}
+    SECTION("Left statement synonym, right wildcard")
+    {
+        Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
+        Reference rightRef(WildcardRefType, "_");
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("a"), std::vector<std::string>({"1", "4", "9"}));
+    }
 
-    SECTION("Left wildcard, right known") {}
+    SECTION("Left statement synonym, right known")
+    {
+        Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
+        Reference rightRef(LiteralRefType, "b");
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("a"), std::vector<std::string>({"9"}));
+    }
 
-    SECTION("Left variable, right known") {}
+    SECTION("Left procedure synonym, right known")
+    {
+        Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
+        Reference rightRef(LiteralRefType, "u");
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("p"), std::vector<std::string>({"proc1"}));
+    }
 
-    SECTION("Both known") {}
+    SECTION("Left statement known, right synonym")
+    {
+        Reference leftRef(IntegerRefType, "4");
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("v"), std::vector<std::string>({"z", "v", "u"}));
+    }
+
+    SECTION("Left procedure known, right synonym")
+    {
+        Reference leftRef(LiteralRefType, "proc2");
+        Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        doVectorsHaveSameElementsVoid(resTable.get("v"), std::vector<std::string>({"b", "c", "d", "a", "f"}));
+    }
+
+    SECTION("Both known (procedure)")
+    {
+        Reference leftRef(LiteralRefType, "proc2");
+        Reference rightRef(LiteralRefType, "x");
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        REQUIRE_FALSE(resTable.hasResults());
+    }
+
+    SECTION("Both known (statement)")
+    {
+        Reference leftRef(IntegerRefType, "6");
+        Reference rightRef(LiteralRefType, "f");
+        evaluateUsesClause(leftRef, rightRef, &resTable);
+        REQUIRE(resTable.hasResults());
+    }
 }
