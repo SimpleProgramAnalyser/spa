@@ -52,6 +52,11 @@ bool RelationshipsGraph::operator==(const RelationshipsGraph& rg) const
     // depending on order of addition to the relationships graph
 }
 
+bool RelationshipsGraph::checkEqualIncludingCache(const RelationshipsGraph& rg) const
+{
+    return *this == rg && this->synonymRelationshipsCache == rg.synonymRelationshipsCache;
+}
+
 void RelationshipsGraph::insertRelationships(Vector<Pair<String, String>> valueRelationships,
                                              const Synonym& firstSynonym, const Synonym& secondSynonym)
 {

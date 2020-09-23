@@ -301,8 +301,15 @@ private:
 public:
     /**
      * A method to compare two RelationshipsGraph for testing purposes.
+     * This method ignores differences in the synonym cache.
      */
     bool operator==(const RelationshipsGraph& rg) const;
+
+    /**
+     * A method to compare two RelationshipsGraph for testing purposes.
+     * This method compares the synonym cache of the graph as well.
+     */
+    bool checkEqualIncludingCache(const RelationshipsGraph& rg) const;
 
     /**
      * Adds a list of relationships between potential values
