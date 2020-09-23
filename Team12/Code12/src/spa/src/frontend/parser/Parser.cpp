@@ -355,7 +355,7 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
 
 Expression* parseExpression(const StringVector& lexedExpression)
 {
-    frontend::TokenList tokenised = frontend::tokeniseSimple(std::move(lexedExpression));
+    frontend::TokenList tokenised = frontend::tokeniseSimple(lexedExpression);
     Expression* parsed = parseExpression(&tokenised, 0, tokenised.size() - 1, false).astNode.release();
     return parsed;
 }
