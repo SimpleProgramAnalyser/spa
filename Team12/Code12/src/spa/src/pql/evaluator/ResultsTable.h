@@ -46,6 +46,11 @@ public:
     explicit ResultsTable(DeclarationTable decls);
 
     /**
+     * A method to compare two ResultsTable for testing purposes.
+     */
+    bool operator==(const ResultsTable& rt) const;
+
+    /**
      * Associates some results with a synonym, if the synonym
      * does not already exist in the table. If the synonym
      * exists, and is mapped to some results, find the common
@@ -294,6 +299,18 @@ private:
     }
 
 public:
+    /**
+     * A method to compare two RelationshipsGraph for testing purposes.
+     * This method ignores differences in the synonym cache.
+     */
+    bool operator==(const RelationshipsGraph& rg) const;
+
+    /**
+     * A method to compare two RelationshipsGraph for testing purposes.
+     * This method compares the synonym cache of the graph as well.
+     */
+    bool checkEqualIncludingCache(const RelationshipsGraph& rg) const;
+
     /**
      * Adds a list of relationships between potential values
      * of certain synonyms.

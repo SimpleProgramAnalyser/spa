@@ -1,15 +1,15 @@
 #include "AqTypes.h"
 
 Relationship::Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef):
-    leftReference(leftRef), rightReference(rightRef), hasError(false), relationshipReferenceType(relRefType)
+    relationshipReferenceType(relRefType), leftReference(leftRef), rightReference(rightRef), hasError(false)
 {}
 
-Relationship::Relationship(Boolean hasError): hasError{hasError}, relationshipReferenceType{InvalidRelationshipType} {}
+Relationship::Relationship(Boolean hasError): relationshipReferenceType{InvalidRelationshipType}, hasError{hasError} {}
 
 Relationship Relationship::createRelationship(String relationshipRef, Reference leftRef, Reference rightRef)
 {
     // Validate relationship reference type
-    RelationshipReferenceType relationshipReferenceType = getRelRefType(relationshipRef);
+    RelationshipReferenceType relationshipReferenceType = getRelRefType(std::move(relationshipRef));
     if (relationshipReferenceType == InvalidRelationshipType) {
         return Relationship(true);
     }
@@ -52,7 +52,7 @@ RelationshipReferenceType Relationship::getRelRefType(String relRef)
     return InvalidRelationshipType;
 }
 
-Boolean Relationship::isInvalid()
+Boolean Relationship::isInvalid() const
 {
     return hasError;
 }

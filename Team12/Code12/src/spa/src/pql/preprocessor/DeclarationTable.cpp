@@ -37,7 +37,7 @@ DeclarationTable DeclarationTable::invalidDeclarationTable()
     return dT;
 }
 
-Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable)
+Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable) const
 {
     if (this->table.size() != declarationTable.table.size()) {
         return false;

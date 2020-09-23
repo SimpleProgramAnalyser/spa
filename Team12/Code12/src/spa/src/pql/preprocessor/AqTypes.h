@@ -58,7 +58,7 @@ public:
     Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
     static DeclarationTable invalidDeclarationTable();
-    Boolean operator==(const DeclarationTable& declarationTable);
+    Boolean operator==(const DeclarationTable& declarationTable) const;
 };
 
 enum ClauseType : char { SuchThatClauseType = 0, PatternClauseType = 1, NonExistentClauseType = 2 };
@@ -149,7 +149,7 @@ public:
     RelationshipReferenceType getRelationship();
     Reference getLeftRef();
     Reference getRightRef();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
     static Relationship createRelationship(String relationshipRef, Reference leftRef, Reference rightRef);
     static RelationshipReferenceType getRelRefType(String relRef);
     Boolean operator==(const Relationship& relationship);
@@ -168,8 +168,8 @@ public:
 
 enum ExpressionSpecType : char {
     WildcardExpressionType = 0,          // _
-    LiteralExpressionType = 1,           // _"x + y"_
-    ExtendableLiteralExpressionType = 2, // "x + y"
+    LiteralExpressionType = 1,           // "x + y"
+    ExtendableLiteralExpressionType = 2, // _"x + y"_
     InvalidExpressionType = 4
 };
 

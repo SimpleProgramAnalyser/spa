@@ -1,5 +1,5 @@
-#ifndef SPA_ABSTRACTQUERYBUILDER_H
-#define SPA_ABSTRACTQUERYBUILDER_H
+#ifndef UNIT_TESTING_ABSTRACT_QUERY_BUILDER_H
+#define UNIT_TESTING_ABSTRACT_QUERY_BUILDER_H
 
 #include "pql/preprocessor/AqTypes.h"
 
@@ -26,4 +26,4 @@ public:
     AbstractQuery build();
 };
 
-#endif // SPA_ABSTRACTQUERYBUILDER_H
+#endif // UNIT_TESTING_ABSTRACT_QUERY_BUILDER_H

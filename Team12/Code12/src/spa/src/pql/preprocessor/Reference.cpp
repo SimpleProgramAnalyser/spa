@@ -5,7 +5,7 @@ Reference::Reference(): designEntity{}, hasError{false}
     referenceType = InvalidRefType;
 }
 
-Reference::Reference(Boolean hasError): hasError{hasError}, referenceType{InvalidRefType} {}
+Reference::Reference(Boolean hasError): referenceType{InvalidRefType}, hasError{hasError} {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
     referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, hasError{false}

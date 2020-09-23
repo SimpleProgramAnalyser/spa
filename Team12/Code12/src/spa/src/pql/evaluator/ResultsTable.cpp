@@ -8,17 +8,12 @@
 
 #include <algorithm>
 #include <cassert>
+#include <functional>
 #include <iterator>
 #include <stdexcept>
 #include <utility>
 
 #include "pkb/PKB.h"
-
-// set hasResult to true at the start, since no clauses have been evaluated
-ResultsTable::ResultsTable(DeclarationTable decls):
-    declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
-    hasResult(true)
-{}
 
 /**
  * Checks if a synonym exists in the results table.
@@ -30,6 +25,24 @@ ResultsTable::ResultsTable(DeclarationTable decls):
 inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
 {
     return resultsMap.find(syn) != resultsMap.end();
+}
+
+/**
+ * Associates a synonym with a set of results
+ * in the table, assuming results are non-empty.
+ *
+ * @param syn The synonym.
+ * @param results The results to associate with.
+ */
+void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResult& results)
+{
+    assert(!results.empty()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    if (checkIfSynonymInMap(syn)) {
+        resultsMap[syn] = findCommonElements(results, syn);
+    } else {
+        // synonym is not found in table, associate results with synonym
+        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
+    }
 }
 
 /**
@@ -66,22 +79,61 @@ ClauseResult ResultsTable::findCommonElements(const ClauseResult& newResults, co
     return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
 }
 
+// set hasResult to true at the start, since no clauses have been evaluated
+ResultsTable::ResultsTable(DeclarationTable decls):
+    declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
+    hasResult(true)
+{}
+
 /**
- * Associates a synonym with a set of results
- * in the table, assuming results are non-empty.
+ * A method to compare two vectors, to see whether
+ * they have the same elements regardless of order.
  *
- * @param syn The synonym.
- * @param results The results to associate with.
+ * @tparam T Type of elements in the vector. Elements
+ *           must implement the method
+ *           bool cmp(const T&, const T&).
  */
-void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResult& results)
+template <typename T>
+bool doVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vector2)
 {
-    assert(!results.empty()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    if (checkIfSynonymInMap(syn)) {
-        resultsMap[syn] = findCommonElements(results, syn);
-    } else {
-        // synonym is not found in table, associate results with synonym
-        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
+    std::sort(vector1.begin(), vector1.end());
+    std::sort(vector2.begin(), vector2.end());
+    return vector1 == vector2;
+}
+
+bool ResultsTable::operator==(const ResultsTable& rt) const
+{
+    if (this->resultsMap.size() != rt.resultsMap.size()) {
+        return false;
     }
+
+    std::function<bool(std::pair<std::string, std::vector<std::string>>,
+                       std::pair<std::string, std::vector<std::string>>)>
+        comparator = [](const std::pair<std::string, std::vector<std::string>>& pair1,
+                        const std::pair<std::string, std::vector<std::string>>& pair2) {
+            return pair1.first < pair2.first;
+        };
+
+    std::vector<std::pair<std::string, std::vector<std::string>>> thisResultsList;
+    std::copy(this->resultsMap.begin(), this->resultsMap.end(), std::back_inserter(thisResultsList));
+    std::sort(thisResultsList.begin(), thisResultsList.end(), comparator);
+
+    std::vector<std::pair<std::string, std::vector<std::string>>> otherResultsList;
+    std::copy(rt.resultsMap.begin(), rt.resultsMap.end(), std::back_inserter(otherResultsList));
+    std::sort(otherResultsList.begin(), otherResultsList.end(), comparator);
+
+    bool isResultsTheSame = true;
+    size_t length = this->resultsMap.size();
+    for (size_t i = 0; i < length; i++) {
+        if (thisResultsList.at(i).first != otherResultsList.at(i).first
+            || !doVectorsHaveSameElements(thisResultsList.at(i).second, otherResultsList.at(i).second)) {
+            // either key or value is different
+            isResultsTheSame = false;
+            break;
+        }
+    }
+    return isResultsTheSame && this->declarations == rt.declarations && *(this->relationships) == *(rt.relationships)
+           && this->hasResult == rt.hasResult;
 }
 
 void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)
