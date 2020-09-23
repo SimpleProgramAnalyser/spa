@@ -149,8 +149,8 @@ public:
 
 enum ExpressionSpecType : char {
     WildcardExpressionType = 0,          // _
-    LiteralExpressionType = 1,           // _"x + y"_
-    ExtendableLiteralExpressionType = 2, // "x + y"
+    LiteralExpressionType = 1,           // "x + y"
+    ExtendableLiteralExpressionType = 2, // _"x + y"_
     InvalidExpressionType = 4
 };
 
