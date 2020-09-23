@@ -56,6 +56,9 @@ ResultsTable setUpResultsTable()
                                   "marymount",    "caldecott",    "botanicgardens", "farrerroad",  "hollandvillage",
                                   "buonavista",   "onenorth",     "kentridge",      "hawparvilla", "pasirpanjang",
                                   "labradorpark", "telokblangah", "harbourfront"}));
+    results.filterTable("num", std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
+                                                         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                                                         "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
     return results;
 }
 
@@ -150,19 +153,28 @@ TEST_CASE("deleteFromGraph leaves other relationships untouched")
     ResultsTable results = setUpResultsTable();
     graph.deleteFromGraph(PotentialValue("purple", "sengkang"), &results);
 
+    // original is unmodified as the method assumes it will only be
+    // called after original potential value is removed from results
     doVectorsHaveSameElementsVoid(
         results.get("purple"),
         std::vector<std::string>({"harbourfront", "outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia",
                                   "farrerpark", "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang",
-                                  "buangkok", "punggol"}));
+                                  "sengkang", "buangkok", "punggol"}));
+    // num is unmodified as there is still a relationship
+    // between 16 <--> marymount
+    doVectorsHaveSameElementsVoid(results.get("num"),
+                                  std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
+                                                            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                                                            "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
+    // same for circle
     doVectorsHaveSameElementsVoid(
         results.get("circle"),
-        std::vector<std::string>({"dhobyghaut",   "brasbasah",      "esplanade",   "promenade",      "nicollhighway",
-                                  "stadium",      "mountbatten",    "dakota",      "payalebar",      "macpherson",
-                                  "taiseng",      "bartley",        "serangoon",   "lorongchuan",    "bishan",
-                                  "caldecott",    "botanicgardens", "farrerroad",  "hollandvillage", "buonavista",
-                                  "onenorth",     "kentridge",      "hawparvilla", "pasirpanjang",   "labradorpark",
-                                  "telokblangah", "harbourfront"}));
+        std::vector<std::string>({"dhobyghaut",   "brasbasah",    "esplanade",      "promenade",   "nicollhighway",
+                                  "stadium",      "mountbatten",  "dakota",         "payalebar",   "macpherson",
+                                  "taiseng",      "bartley",      "serangoon",      "lorongchuan", "bishan",
+                                  "marymount",    "caldecott",    "botanicgardens", "farrerroad",  "hollandvillage",
+                                  "buonavista",   "onenorth",     "kentridge",      "hawparvilla", "pasirpanjang",
+                                  "labradorpark", "telokblangah", "harbourfront"}));
 }
 
 TEST_CASE("deleteFromGraph does nothing to ResultsTable if no relationships exist for that potential value")
