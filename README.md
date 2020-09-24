@@ -46,30 +46,31 @@ On Windows, you may follow these steps to build the CMake project in Visual Stud
 1. Click Build and wait for 'Build All' option to appear, then click on 'Build All'
 
 ### Running Tests
-Unfortunately on Windows, the `run-tests.sh` scripts is not compatible, however you can run
+On Windows unfortunately, the `run-tests.sh` scripts is not compatible, however you can still run
 the `autotester` system tests (manually), by following these steps:
 
 1. `cd` into autotester directory, i.e. `Team12/Code12/build_win/x86_Release/src/autotester`
 1. Run the commands below to run the various autotester test suites
 
-`autotester.exe  ../../../../../Tests12/basicQueries_source.txt  ../../../../../Tests12/basicQueries_queries.txt ../../../../tests/basicOut.xml`
+```
+autotester.exe  ../../../../../Tests12/basicQueries_source.txt  ../../../../../Tests12/basicQueries_queries.txt ../../../../tests/basicOut.xml
 
-`autotester.exe  ../../../../../Tests12/complexQueries_source.txt  ../../../../../Tests12/complexQueries_queries.txt ../../../../tests/complexOut.xml`
+autotester.exe  ../../../../../Tests12/complexQueries_source.txt  ../../../../../Tests12/complexQueries_queries.txt ../../../../tests/complexOut.xml
 
-`autotester.exe  ../../../../../Tests12/followsQueries_source.txt  ../../../../../Tests12/followsQueries_queries.txt ../../../../tests/followsOut.xml`
+autotester.exe  ../../../../../Tests12/followsQueries_source.txt  ../../../../../Tests12/followsQueries_queries.txt ../../../../tests/followsOut.xml
 
-`autotester.exe  ../../../../../Tests12/invalidQueries_source.txt  ../../../../../Tests12/invalidQueries_queries.txt ../../../../tests/invalidQueriesOut.xml`
+autotester.exe  ../../../../../Tests12/invalidQueries_source.txt  ../../../../../Tests12/invalidQueries_queries.txt ../../../../tests/invalidQueriesOut.xml
 
-`autotester.exe  ../../../../../Tests12/modifiesQueries_source.txt  ../../../../../Tests12/modifiesQueries_queries.txt ../../../../tests/modifiesOut.xml`
+autotester.exe  ../../../../../Tests12/modifiesQueries_source.txt  ../../../../../Tests12/modifiesQueries_queries.txt ../../../../tests/modifiesOut.xml
 
-`autotester.exe  ../../../../../Tests12/multipleProcedureQueries_source.txt  ../../../../../Tests12/multipleProcedureQueries_queries.txt ../../../../tests/multipleProcedureOut.xml`
+autotester.exe  ../../../../../Tests12/multipleProcedureQueries_source.txt  ../../../../../Tests12/multipleProcedureQueries_queries.txt ../../../../tests/multipleProcedureOut.xml
 
-`autotester.exe  ../../../../../Tests12/parentQueries_source.txt  ../../../../../Tests12/parentQueries_queries.txt ../../../../tests/parentOut.xml`
+autotester.exe  ../../../../../Tests12/parentQueries_source.txt  ../../../../../Tests12/parentQueries_queries.txt ../../../../tests/parentOut.xml
 
-`autotester.exe  ../../../../../Tests12/patternQueries_source.txt  ../../../../../Tests12/patternQueries_queries.txt ../../../../tests/patternOut.xml`
+autotester.exe  ../../../../../Tests12/patternQueries_source.txt  ../../../../../Tests12/patternQueries_queries.txt ../../../../tests/patternOut.xml
 
-`autotester.exe  ../../../../../Tests12/Sample_source.txt  ../../../../../Tests12/Sample_queries.txt ../../../../tests/out.xml`
+autotester.exe  ../../../../../Tests12/Sample_source.txt  ../../../../../Tests12/Sample_queries.txt ../../../../tests/out.xml
 
-`autotester.exe  ../../../../../Tests12/singleProcedureQueries_source.txt  ../../../../../Tests12/singleProcedureQueries_queries.txt ../../../../tests/singleProcedureOut.xml`
+autotester.exe  ../../../../../Tests12/singleProcedureQueries_source.txt  ../../../../../Tests12/singleProcedureQueries_queries.txt ../../../../tests/singleProcedureOut.xml
 
-`autotester.exe  ../../../../../Tests12/usesQueries_source.txt ../../../../../Tests12/usesQueries_queries.txt ../../../../tests/UsesOut.xml`
+autotester.exe  ../../../../../Tests12/usesQueries_source.txt ../../../../../Tests12/usesQueries_queries.txt ../../../../tests/UsesOut.xml
