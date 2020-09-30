@@ -3190,7 +3190,7 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
 
 
     // === Check expected test results ===
-    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
