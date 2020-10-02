@@ -308,6 +308,9 @@ of their own, hence they are also known as "container statements".
 
 * <<getAllStatements>>
 * <<isStatementInProgram>>
+* <<getProcedureCalled>>
+* <<getAllCallStatementsByProcedure>>
+* <<getAllProceduresCalled>>
 * <<insertIntoStatementTable>>
 
 '''
@@ -323,6 +326,30 @@ of their own, hence they are also known as "container statements".
 `*BOOLEAN* isStatementInProgram(*INTEGER* stmtNum);`
 
 *Description*: Returns a *BOOLEAN* stating whether statement with `stmtNum` is in the Statement Table.
+
+'''
+
+[#getProcedureCalled]
+`*PROCEDURE_LIST* getProcedureCalled(*INTEGER* stmtNum);`
+
+*Description*: Returns the *PROCEDURE* called by the statement with `stmtNum`. If the statement is
+not a *Call Statement*, an empty list is returned.
+
+'''
+
+[#getAllCallStatementsByProcedure]
+`*STATEMENT_LIST* getAllCallStatementsByProcedure(*PROCEDURE* proc);`
+
+*Description*: Returns a *STATEMENT_LIST* of statements that called `proc`. If `proc` is not a valid
+*PROCEDURE* or is not called by any *Call Statement*, returns an empty list.
+
+'''
+
+[#getAllProceduresCalled]
+`*PROCEDURE_LIST* getAllProceduresCalled();`
+
+*Description*: Returns a *PROCEDURE_LIST* of procedures called by any *Call Statements*. An empty list
+is returned if there are no *Call Statements* in the SIMPLE program.
 
 '''
 
@@ -370,6 +397,8 @@ If a `var` with the same name already exist in the Variable Table, then no chang
 
 * <<getAllProcedures>>
 * <<isProcedureInProgram>>
+* <<getAllStatementsInProcedure>>
+* <<getContainingProcedure>>
 * <<insertIntoProcedureTable>>
 
 '''
@@ -388,11 +417,28 @@ If a `var` with the same name already exist in the Variable Table, then no chang
 
 '''
 
-[#insertIntoProcedureTable]
-`*VOID* insertIntoProcedureTable(*PROCEDURE* proc);`
+[#getAllStatementsInProcedure]
+`*STATEMENT_LIST* getAllStatementsInProcedure(*PROCEDURE* proc);`
 
-*Description*: Inserts the *PROCEDURE* `proc` into Procedure Table.
-If a `proc` with the same name already exist in the Variable Table, then no change will occur in the Procedure Table.
+*Description*: Returns a *STATEMENT_LIST* of all statements within the `proc`. If `proc` is not
+found in Procedure Table, returns an empty *STATEMENT_LIST*.
+
+'''
+
+[#getContainingProcedure]
+`*PROCEDURE_LIST* getContainingProcedure(*STATEMENT* stmt);`
+
+*Description*: Returns a *PROCEDURE_LIST* containing the procedure in which `stmt` is found,
+otherwise an empty *PROCEDURE_LIST* is returned.
+
+'''
+
+[#insertIntoProcedureTable]
+`*VOID* insertIntoProcedureTable(*PROCEDURE* proc, *STATEMENT_LIST* statements);`
+
+*Description*: Inserts the *PROCEDURE* `proc` and the `statements` it contain into Procedure Table.
+This method is idempotent - repeated `proc` with different statements cause a union of statements recorded
+in PKB associated with the same `proc`.
 
 === Constant Table API
 
@@ -859,15 +905,15 @@ with `afterStmtType` into the Follows Table.
 
 '''
 
-[#checkIfBeforeHolds]
-`*BOOLEAN* checkIfBeforeHolds(*INTEGER* before, *INTEGER* after);`
+[#checkIfFollowsHolds]
+`*BOOLEAN* checkIfFollowsHolds(*INTEGER* before, *INTEGER* after);`
 
 *Description*: Returns `TRUE` if there is a Follows relationship between `before` and `after`, else return `FALSE`.
 
 '''
 
-[#checkIfBeforeStarHolds]
-`*BOOLEAN* checkIfBeforeStarHolds(*INTEGER* before, *INTEGER* after);`
+[#checkIfFollowsHoldsStar]
+`*BOOLEAN* checkIfFollowsHoldsStar(*INTEGER* before, *INTEGER* after);`
 
 *Description*: Returns `TRUE` if there is a Follows* relationship between `before` and `after`, else return `FALSE`.
 
@@ -954,11 +1000,178 @@ holds and are of STATEMENT_TYPE `stmtType`.
 
 *Description*: Returns a list of pairs, where for each pair, the *Follows* relationship holds between them, and the before is of `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
 
+=== Next API
+
+*Overview*: The Next API describes the methods exposed by Next Table to insert and extract
+information related to the Next relationships in the processed SIMPLE program.
+
+* <<addNextRelationships>>
+* <<checkIfNextHolds>>
+* <<getAllNextStatements>>
+* <<getAllNextStatementsTyped>>
+* <<getAllPreviousStatements>>
+* <<getAllPreviousStatementsTyped>>
+* <<getAllNextTuple>>
+
+'''
+
+[#addNextRelationships]
+`*VOID* addNextRelationships(*INTEGER* previous, *STATEMENT_TYPE*, previousStmtType, *INTEGER* next,
+*STATEMENT_TYPE* nextStmtType);`
+
+*Requires*: `previousStmtType` and `nextStmtType` cannot be `AnyStatement` type.
+
+*Description*: Adds a Next relationship between `previous` with `previousStmtType` and `next`
+with `nextStmtType` into the Next Table.
+
+'''
+
+[#checkIfNextHolds]
+`*BOOLEAN* checkIfNextHolds(*INTEGER* previous, *INTEGER* next);`
+
+*Description*: Returns `TRUE` if there is a Next relationship between `previous` and `next`, else return `FALSE`.
+
+'''
+
+[#getAllNextStatements]
+`*STATEMENT_LIST* getAllNextStatements(*INTEGER* previous);`
+
+*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT* of `previous`.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
+
+'''
+
+[#getAllNextStatementsTyped]
+`*STATEMENT_LIST* getAllNextStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a *STATEMENT_LIST* of statements such that `Next*(previous,returned)`
+holds and are of STATEMENT_TYPE `stmtType`.
+
+'''
+
+[#getAllPreviousStatements]
+`*STATEMENT_LIST* getPreviousStatement(*INTEGER* next);`
+
+*Description*: Returns a *STATEMENT_LIST* containing the previous *STATEMENT* of `next`.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `next`.
+
+'''
+
+[#getAllPreviousStatementsTyped]
+`*STATEMENT_LIST* getAllPreviousStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a *STATEMENT_LIST* of all previous statements that are of *STATEMENT_TYPE*
+`stmtTypeOfPrevious`, with a next of *STATEMENT_TYPE* `stmtTypeOfNext`.
+
+'''
+
+[#getAllNextTuple]
+`*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextTuple(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a list of pairs, where for each pair, the *Next* relationship holds between them, and the
+previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
+
+=== Calls API
+
+*Overview*: The Calls API describes the methods exposed by Calls Table to insert and extract information related to the Calls relationships in the processed SIMPLE program.
+
+* <<addCallsRelationships>>
+* <<addCallsRelationshipsStar>>
+* <<checkIfCallsHolds>>
+* <<checkIfCallsHoldsStar>>
+* <<getAllCallers>>
+* <<getAllCallersStar>>
+* <<getAllCallees>>
+* <<getAllCalleesStar>>
+* <<getAllCallsTuple>>
+* <<getAllCallsTupleStar>>
+
+'''
+
+[#addCallsRelationships]
+`*VOID* addCallerRelationships(*PROCEDURE* caller, *PROCEDURE* callee);`
+
+*Description*: Adds a Calls relationship between `caller` and `callee`. This method is idempotent.
+
+'''
+
+[#addCallsRelationshipsStar]
+`*VOID* addCallerRelationshipsStar(*PROCEDURE* caller, *PROCEDURE* callee);`
+
+*Description*: Adds a Calls* relationship between `caller` and `callee`. This method is idempotent.
+
+'''
+
+[#checkIfCallsHolds]
+`*BOOLEAN* checkIfCallsHolds(*PROCEDURE* caller, *PROCEDURE* callee);`
+
+*Description*: Returns `TRUE` if there is a Calls relationship between `caller` and `callee`, else return `FALSE`.
+
+'''
+
+[#checkIfCallsHoldsStar]
+`*BOOLEAN* checkIfCallsHoldsStar(*PROCEDURE* caller, *PROCEDURE* callee);`
+
+*Description*: Returns `TRUE` if there is a Calls* relationship between `caller` and `callee`, else return `FALSE`.
+
+'''
+
+[#getAllCallers]
+`*PROCEDURE_LIST* getAllCallers(*PROCEDURE* callee);`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls `callee` directly.
+*PROCEDURE_LIST* returned is empty if there is no procedure that calls `callee` directly.
+
+'''
+
+[#getAllCallersStar]
+`*PROCEDURE_LIST* getAllCallersStar(*PROCEDURE* callee);`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls `callee` directly or indirectly.
+*PROCEDURE_LIST* returned is empty if there is no procedure that calls `callee`.
+
+'''
+
+[#getAllCallees]
+`*PROCEDURE_LIST* getAllCallees(*PROCEDURE* caller);`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that are called by `caller` directly.
+*PROCEDURE_LIST* returned is empty if there is no procedure that are called by `caller` directly.
+
+'''
+
+[#getAllCalleesStar]
+`*PROCEDURE_LIST* getAllCalleesStar(*PROCEDURE* caller);`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that are called by `caller` directly or indirectly.
+*PROCEDURE_LIST* returned is empty if there is no procedure that are called by `caller`.
+
+'''
+
+[#getAllCallsTuple]
+`*LIST<PAIR<PROCEDURE,PROCEDURE>>* getAllCallsTuple();`
+
+*Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls* relationship holds
+between them.
+
+'''
+
+[#getAllCallsTupleStar]
+`*LIST<PAIR<PROCEDURE,PROCEDURE>>* getAllCallsTupleStar();`
+
+*Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls** relationship holds
+between them.
+
 === Utilities API
 
 * <<resetPKB>>
 * <<assignRootNode>>
 * <<getRootNode>>
+* <<setCFG>>
+* <<getCFG>>
 
 '''
 
@@ -981,6 +1194,21 @@ PKB from memory. This is an irreversible action.
 `*ROOT_NODE* getRootNode()`
 
 *Description*: Retrieves the *rootNode* stored in PKB. If <<assignRootNode>> was never called, a *NULL_POINTER* will be returned.
+
+'''
+
+[#setCFG]
+`*VOID* storeCFG(*CFG* rootNode, *PROCEDURE* proc)`
+
+*Description*: Store `CFG` as the *CFG* for the *PROCEDURE* `proc` in PKB.
+
+'''
+
+[#getCFG]
+`*CFG* getCFG()`
+
+*Description*: Retrieves the *CFG* for `proc` stored in PKB.
+If <<setCFG>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
 
 
 == PQL
