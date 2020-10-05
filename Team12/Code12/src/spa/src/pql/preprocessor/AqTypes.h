@@ -8,7 +8,9 @@
 #ifndef SPA_PQL_AQTYPES_H
 #define SPA_PQL_AQTYPES_H
 
+#include <assert.h>
 #include <cstdint>
+#include <unordered_set>
 #include <utility>
 
 #include "Types.h"
@@ -21,19 +23,22 @@ typedef String Synonym;
 
 enum DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
-    StmtType = 1,    // 0000 0001
-    ReadType = 5,    // 0000 0101
-    PrintType = 9,   // 0000 1001
-    CallType = 13,   // 0000 1101
-    WhileType = 17,  // 0001 0001
-    IfType = 21,     // 0001 0101
-    AssignType = 25, // 0001 1001
+    StmtType = 1,       // 0000 0001
+    ReadType = 5,       // 0000 0101
+    PrintType = 9,      // 0000 1001
+    CallType = 13,      // 0000 1101
+    WhileType = 17,     // 0001 0001
+    IfType = 21,        // 0001 0101
+    AssignType = 25,    // 0001 1001
+    Prog_LineType = 29, // 0001 1101
     // other types: smallest bits are 00
     VariableType = 0,    // 0000 0000
     ConstantType = 4,    // 0000 0100
     ProcedureType = 8,   // 0000 1000
     NonExistentType = 12 // 0000 1100
 };
+
+typedef std::unordered_set<DesignEntityType> DesignEntityTypeSet;
 
 class DesignEntity {
 private:
@@ -89,6 +94,8 @@ enum ReferenceType : char {
     InvalidRefType = 8
 };
 
+typedef std::unordered_set<ReferenceType> ReferenceTypeSet;
+
 typedef String ReferenceValue;
 
 class Reference {
@@ -136,12 +143,18 @@ private:
     Reference leftReference;
     Reference rightReference;
     Boolean hasError;
+    static std::unordered_map<String, RelationshipReferenceType> relationshipReferenceTypeMap;
+    static std::unordered_map<RelationshipReferenceType, std::unordered_set<DesignEntityType>>
+        leftReferenceSynonymValidationTable;
+    static std::unordered_map<RelationshipReferenceType, std::unordered_set<DesignEntityType>>
+        rightReferenceSynonymValidationTable;
+    static std::unordered_map<RelationshipReferenceType, std::unordered_set<ReferenceType>>
+        leftReferenceTypeValidationTable;
+    static std::unordered_map<RelationshipReferenceType, std::unordered_set<ReferenceType>>
+        rightReferenceTypeValidationTable;
 
     static Boolean validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                  Reference rightRef);
-    static Boolean validateStmtProcAndVarSemantics(RelationshipReferenceType relRefType, Reference leftRef,
-                                                   Reference rightRef);
-    static Boolean validateStmtAndStmtSemantics(Reference leftRef, Reference rightRef);
 
 public:
     Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
