@@ -145,7 +145,6 @@ Reference Relationship::getRightRef()
     return rightReference;
 }
 
-
 Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                     Reference rightRef)
 {
