@@ -148,6 +148,7 @@ Reference Relationship::getRightRef()
 Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                     Reference rightRef)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(relRefType != InvalidRelationshipType);
 
     ReferenceType leftReferenceType = leftRef.getReferenceType();
