@@ -290,17 +290,7 @@ TEST_CASE("Assign as Parent Does Not Returns Error") // Accept as semantically c
 {
     AbstractQuery abstractQuery = processQuery("assign a; read re; Select a such that Parent (a, re)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addSelectSynonym("a")
-              .addDeclaration("a", "assign")
-              .addDeclaration("re", "read")
-              .addSuchThatClause("Parent", SynonymRefType, "a", AssignType, SynonymRefType, "re", ReadType)
-              .build();
-
-    bool equals = abstractQuery == expectedAbstractQuery;
-
-    REQUIRE(equals);
+    REQUIRE(abstractQuery.isInvalid());
 }
 
 TEST_CASE("Such That Modifies Wildcard Returns Error")
@@ -890,10 +880,10 @@ TEST_CASE("Follows* with a space between between Follows and *")
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-            .addSelectSynonym("a")
-            .addDeclaration("a", "assign")
-            .addSuchThatClause("Follows*", SynonymRefType, "a", AssignType, WildcardRefType, "_", NonExistentType)
-            .build();
+              .addSelectSynonym("a")
+              .addDeclaration("a", "assign")
+              .addSuchThatClause("Follows*", SynonymRefType, "a", AssignType, WildcardRefType, "_", NonExistentType)
+              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -934,12 +924,12 @@ TEST_CASE("No space between Clauses")
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-            .addSelectSynonym("a")
-            .addDeclaration("a", "assign")
-            .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
-                              LiteralExpressionType)
-            .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
-            .build();
+              .addSelectSynonym("a")
+              .addDeclaration("a", "assign")
+              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
+                                LiteralExpressionType)
+              .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
+              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
