@@ -21,6 +21,40 @@
 
 typedef String Synonym;
 
+class Error {
+private:
+    Boolean hasError = false;
+
+public:
+    Boolean isInvalid() const
+    {
+        return hasError;
+    }
+    void setError(Boolean error)
+    {
+        hasError = error;
+    }
+};
+
+enum Attribute : char { ProcNameType, VarNameType, ValueType, StmtNumberType, NoAttribute, InvalidAttribute };
+
+class ResultSynonym: public Error {
+private:
+    Synonym synonym;
+    Attribute attribute;
+
+    static std::unordered_map<String, Attribute> attributeMap;
+
+public:
+    explicit ResultSynonym(Boolean hasError);
+    explicit ResultSynonym(Synonym syn);
+    ResultSynonym(Synonym syn, const String& attr);
+    Synonym getSynonym() const;
+    Attribute getAttribute();
+    Boolean operator==(const ResultSynonym& resultSynonym);
+    Boolean operator!=(const ResultSynonym& resultSynonym);
+};
+
 enum DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
     StmtType = 1,       // 0000 0001
@@ -52,15 +86,13 @@ public:
     Boolean operator==(const DesignEntity& designEntity);
 };
 
-class DeclarationTable {
+class DeclarationTable: public Error {
 private:
     std::unordered_map<Synonym, DesignEntity> table;
-    bool hasError = false;
 
 public:
-    Void addDeclaration(Synonym s, DesignEntity& designEntity);
+    Void addDeclaration(const Synonym& s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s) const;
-    Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
     static DeclarationTable invalidDeclarationTable();
     Boolean operator==(const DeclarationTable& declarationTable) const;
@@ -250,17 +282,19 @@ public:
 
 class AbstractQuery {
 private:
-    Synonym selectSynonym;
+    //    Synonym selectSynonym;
+    Vector<ResultSynonym> resultSynonyms;
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
 
 public:
     explicit AbstractQuery(Boolean hasError);
-    AbstractQuery(Synonym synonym, DeclarationTable& declarations);
-    AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
+    AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations);
+    AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
     Synonym getSelectSynonym() const;
+    Vector<ResultSynonym> getSynonyms();
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;
     Boolean isInvalid() const;

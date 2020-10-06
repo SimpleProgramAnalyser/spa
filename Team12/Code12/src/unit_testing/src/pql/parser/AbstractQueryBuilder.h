@@ -7,7 +7,7 @@ class AbstractQueryBuilder {
 private:
     DeclarationTable declarationTable;
     ClauseVector clauseVector;
-    Synonym selectSynonym;
+    Vector<ResultSynonym> resultSynonyms = Vector<ResultSynonym>();
 
     static Expression* createExpression(const String& literal);
 

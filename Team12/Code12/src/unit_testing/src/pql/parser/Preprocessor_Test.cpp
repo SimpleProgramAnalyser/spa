@@ -942,3 +942,82 @@ TEST_CASE("Follows**")
 
     REQUIRE(abstractQuery.isInvalid());
 }
+
+/************************************************************************************/
+/*  Select BOOLEAN                                                                  */
+/************************************************************************************/
+
+TEST_CASE("Select BOOLEAN with no Clauses")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select BOOLEAN");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create().addDeclaration("s", "stmt").build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Select BOOLEAN with Follows")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select BOOLEAN such that Follows (s, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("s", "stmt")
+              .addSuchThatClause("Follows", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+/************************************************************************************/
+/*  Select Tuple                                                                    */
+/************************************************************************************/
+
+TEST_CASE("Select Tuple <s1, s2> such that Follows")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1, s2; Select <s1, s2> such that Follows (s1, s2)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("s1", "stmt")
+              .addDeclaration("s2", "stmt")
+              .addSelectSynonym("s1")
+              .addSelectSynonym("s2")
+              .addSuchThatClause("Follows", SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Select Tuple <s1, s2, v1, v2, w, ifs> such that Follows")
+{
+    AbstractQuery abstractQuery = processQuery(
+        "stmt s1, s2; variable v1, v2; while w; if ifs; Select <s1, s2, v1, v2, w, ifs> such that Follows (s1, s2)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("s1", "stmt")
+              .addDeclaration("s2", "stmt")
+              .addDeclaration("v1", "variable")
+              .addDeclaration("v2", "variable")
+              .addDeclaration("w", "while")
+              .addDeclaration("ifs", "if")
+              .addSelectSynonym("s1")
+              .addSelectSynonym("s2")
+              .addSelectSynonym("v1")
+              .addSelectSynonym("v2")
+              .addSelectSynonym("w")
+              .addSelectSynonym("ifs")
+              .addSuchThatClause("Follows", SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}

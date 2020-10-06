@@ -2,17 +2,23 @@
 
 AbstractQuery::AbstractQuery(Boolean hasError): hasError(hasError) {}
 
-AbstractQuery::AbstractQuery(Synonym synonym, DeclarationTable& declarations):
-    selectSynonym(std::move(synonym)), declarationTable(declarations), hasError(false)
+AbstractQuery::AbstractQuery(const Vector<ResultSynonym>& synonyms, DeclarationTable& declarations):
+    resultSynonyms(synonyms), declarationTable(declarations), hasError(false)
 {}
 
-AbstractQuery::AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector):
-    selectSynonym(std::move(synonym)), clauses(std::move(clauseVector)), declarationTable(declarations), hasError(false)
+AbstractQuery::AbstractQuery(const Vector<ResultSynonym>& synonyms, DeclarationTable& declarations,
+                             ClauseVector& clauseVector):
+    resultSynonyms(synonyms),
+    clauses(std::move(clauseVector)), declarationTable(declarations), hasError(false)
 {}
 
 Synonym AbstractQuery::getSelectSynonym() const
 {
-    return selectSynonym;
+    return resultSynonyms.at(0).getSynonym();
+}
+
+Vector<ResultSynonym> AbstractQuery::getSynonyms() {
+    return resultSynonyms;
 }
 
 const ClauseVector& AbstractQuery::getClauses() const
@@ -39,6 +45,18 @@ AbstractQuery AbstractQuery::invalidAbstractQuery()
 
 Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
 {
-    return this->selectSynonym == abstractQuery.selectSynonym && this->clauses == abstractQuery.clauses
+    // Check equality of resultSynonyms
+    if (this->resultSynonyms.size() != abstractQuery.resultSynonyms.size()) {
+        return false;
+    }
+
+    size_t length = this->resultSynonyms.size();
+    for (size_t i = 0; i < length; i++) {
+        if (resultSynonyms.at(i) != abstractQuery.resultSynonyms.at(i)) {
+            return false;
+        }
+    }
+
+    return this->clauses == abstractQuery.clauses
            && this->declarationTable == abstractQuery.declarationTable;
 }

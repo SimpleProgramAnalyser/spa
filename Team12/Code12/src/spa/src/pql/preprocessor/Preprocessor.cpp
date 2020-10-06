@@ -6,6 +6,10 @@ StringVector splitByFirstConsecutiveWhitespace(const String& str);
 Boolean containsOpenParentheses(const String& str);
 StringPair splitDeclarationAndSelectClause(const String& query);
 std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
+std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
+                                                                    DeclarationTable& declarationTable);
+std::pair<Boolean, ResultSynonym> processResultSynonym(String resultSynonymString, DeclarationTable& declarationTable);
+StringVector splitResultAndClauses(String& s);
 
 /**
  * Processes a given PQL query into an AbstractQuery.
@@ -23,6 +27,7 @@ std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integ
  */
 AbstractQuery Preprocessor::processQuery(const String& query)
 {
+    // TODO: Improve splitting of Declarations and Select Clauses - iterate every char from the front until ; Select
     StringPair splitQuery = splitDeclarationAndSelectClause(query);
 
     String declarationString = trimWhitespace(splitQuery.first);
@@ -34,7 +39,7 @@ AbstractQuery Preprocessor::processQuery(const String& query)
         return AbstractQuery(true);
     }
 
-    // Extract select synonym
+    // Extract select keyword
     StringVector selectAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClausesString);
 
     // No select clause
@@ -48,21 +53,27 @@ AbstractQuery Preprocessor::processQuery(const String& query)
     }
 
     String synonymAndClauses = selectAndClausesVector.at(1);
-    StringVector synonymAndClausesVector = splitByFirstConsecutiveWhitespace(synonymAndClauses);
+    StringVector synonymAndClausesVector = splitResultAndClauses(synonymAndClauses);
 
     // No synonym
     if (selectAndClausesVector.empty()) {
         return AbstractQuery(true);
     }
 
-    Synonym selectSynonym = synonymAndClausesVector.at(0);
-    if (!isValidSynonym(selectSynonym) || !declarationTable.hasSynonym(selectSynonym)) {
+    String selectResultString = synonymAndClausesVector.at(0);
+
+    std::pair<Boolean, Vector<ResultSynonym>> processedResults
+        = processSelectResultString(selectResultString, declarationTable);
+
+    if (processedResults.first) {
         return AbstractQuery(true);
     }
 
+    Vector<ResultSynonym> resultSynonyms = processedResults.second;
+
     // Only select a synonym, with no other clauses
     if (synonymAndClausesVector.size() == 1) {
-        AbstractQuery abstractQuery(selectSynonym, declarationTable);
+        AbstractQuery abstractQuery(resultSynonyms, declarationTable);
         return abstractQuery;
     }
 
@@ -73,8 +84,111 @@ AbstractQuery Preprocessor::processQuery(const String& query)
         return AbstractQuery(true);
     }
 
-    AbstractQuery aq(selectSynonym, declarationTable, clausesVector);
-    return aq;
+    AbstractQuery abstractQuery(resultSynonyms, declarationTable, clausesVector);
+    return abstractQuery;
+}
+
+std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
+                                                                    DeclarationTable& declarationTable)
+{
+    // BOOLEAN result
+    if (selectResultString == "BOOLEAN") {
+        if (!declarationTable.hasSynonym(selectResultString)) {
+            // Empty Vector means result is of type BOOLEAN
+            return std::make_pair(false, Vector<ResultSynonym>());
+        }
+
+        return std::make_pair(false, Vector<ResultSynonym>{ ResultSynonym{selectResultString} });
+    }
+
+    // Single Synonym result
+    if (selectResultString.at(0) != '<') {
+        std::pair<Boolean, ResultSynonym> processedResultSynonym
+            = processResultSynonym(selectResultString, declarationTable);
+        if (processedResultSynonym.first) {
+            return std::make_pair(true, Vector<ResultSynonym>{});
+        }
+
+        return std::make_pair(false, Vector<ResultSynonym>{ processedResultSynonym.second });
+    }
+
+    // Tuple result
+    String removeTupleString = selectResultString.substr(1);
+    StringVector resultSynonymStrings = splitByDelimiter(removeTupleString, ",");
+    Vector<ResultSynonym> resultSynonyms;
+    for (auto& resultSynonymString : resultSynonymStrings) {
+        String trimmedResultSynonymString = trimWhitespace(resultSynonymString);
+        std::pair<Boolean, ResultSynonym> processedResultSynonym
+            = processResultSynonym(trimmedResultSynonymString, declarationTable);
+        if (processedResultSynonym.first) {
+            return std::make_pair(true, Vector<ResultSynonym>{});
+        }
+
+        resultSynonyms.push_back(processedResultSynonym.second);
+    }
+
+    return std::make_pair(false, resultSynonyms);
+}
+
+std::pair<Boolean, ResultSynonym> processResultSynonym(String resultSynonymString, DeclarationTable& declarationTable)
+{
+    StringVector splitByFullStop = splitByDelimiter(resultSynonymString, ".");
+    std::pair<Boolean, ResultSynonym> invalidResult = std::make_pair(true, ResultSynonym(true));
+    if (splitByFullStop.size() > 2) {
+        return invalidResult;
+    }
+
+    // Synonym without attributes
+    if (splitByFullStop.size() == 1) {
+        if (!isValidSynonym(resultSynonymString) || !declarationTable.hasSynonym(resultSynonymString)) {
+            return invalidResult;
+        }
+
+        return std::make_pair(false, ResultSynonym(resultSynonymString));
+    }
+    // TODO: Consider s . stmt # (s.stmt#)
+    String synonym = splitByFullStop[0];
+    String attribute = splitByFullStop[1];
+
+    if (!isValidSynonym(synonym) || declarationTable.hasSynonym(synonym)) {
+        return invalidResult;
+    }
+
+    ResultSynonym resultSynonym(synonym, attribute);
+    if (resultSynonym.isInvalid()) {
+        return invalidResult;
+    }
+
+    return std::make_pair(false, resultSynonym);
+}
+
+/**
+ * Splits the selected synonym, tuple or BOOLEAN
+ * from the rest of the clauses.
+ * @param s     String to be split
+ * @return      StringVector that contains either one or two strings.
+ *              If StringVector only contains one string, that means
+ *              that are no constraint clauses.
+ */
+StringVector splitResultAndClauses(String& s)
+{
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(s.length() > 0);
+
+    char firstChar = s.at(0);
+
+    // Normal single synonym or BOOLEAN
+    if (firstChar != '<') {
+        StringVector resultAndClauses = splitByFirstConsecutiveWhitespace(s);
+        return resultAndClauses;
+    }
+
+    StringVector tupleResultAndClauses = splitByDelimiter(s, ">");
+    if (tupleResultAndClauses.size() > 2) {
+        return StringVector();
+    }
+
+    return tupleResultAndClauses;
 }
 
 /**

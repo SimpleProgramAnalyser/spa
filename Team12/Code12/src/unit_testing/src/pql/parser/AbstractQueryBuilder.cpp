@@ -12,7 +12,8 @@ AbstractQueryBuilder AbstractQueryBuilder::create()
 
 AbstractQueryBuilder& AbstractQueryBuilder::addSelectSynonym(Synonym synonym)
 {
-    selectSynonym = std::move(synonym);
+    ResultSynonym resultSynonym(std::move(synonym));
+    resultSynonyms.push_back(resultSynonym);
     return *this;
 }
 
@@ -66,5 +67,5 @@ Expression* AbstractQueryBuilder::createExpression(const String& expressionStrin
 
 AbstractQuery AbstractQueryBuilder::build()
 {
-    return AbstractQuery(selectSynonym, declarationTable, clauseVector);
+    return AbstractQuery(resultSynonyms, declarationTable, clauseVector);
 }
