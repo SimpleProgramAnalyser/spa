@@ -1,4 +1,4 @@
-# team12-cp-spa-20s1
+# spa
 The best SIMPLE program analyser
 
 ## Setting-up on Linux/Unix
