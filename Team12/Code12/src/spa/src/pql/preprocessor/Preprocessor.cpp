@@ -8,7 +8,7 @@ StringPair splitDeclarationAndSelectClause(const String& query);
 std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
 std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
                                                                     DeclarationTable& declarationTable);
-std::pair<Boolean, ResultSynonym> processResultSynonym(String resultSynonymString, DeclarationTable& declarationTable);
+std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable);
 StringVector splitResultAndClauses(String& s);
 
 /**
@@ -130,7 +130,7 @@ std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selec
     return std::make_pair(false, resultSynonyms);
 }
 
-std::pair<Boolean, ResultSynonym> processResultSynonym(String resultSynonymString, DeclarationTable& declarationTable)
+std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable)
 {
     StringVector splitByFullStop = splitByDelimiter(resultSynonymString, ".");
     std::pair<Boolean, ResultSynonym> invalidResult = std::make_pair(true, ResultSynonym(true));

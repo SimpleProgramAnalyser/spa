@@ -52,7 +52,7 @@ Boolean checkVectorOfPointersEqual(const std::vector<T>& first, const std::vecto
 
 Boolean isPossibleIdentifier(const String& str);
 Boolean isPossibleConstant(const String& str);
-Boolean isRelationshipReference(const String& str);
+//Boolean isRelationshipReference(const String& str);
 Boolean isLiteralIdent(const String& str);
 String removeCharFromBothEnds(String str);
 StringPair splitByFirstDelimiter(const String& str, char c);

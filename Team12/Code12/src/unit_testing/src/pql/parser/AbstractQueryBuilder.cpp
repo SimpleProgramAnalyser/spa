@@ -24,7 +24,7 @@ AbstractQueryBuilder& AbstractQueryBuilder::addDeclaration(Synonym synonym, cons
     return *this;
 }
 
-AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(String relRefType, ReferenceType leftRefType,
+AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipReferenceType relRefType, ReferenceType leftRefType,
                                                               ReferenceValue leftRefValue,
                                                               DesignEntityType leftDesignEntityType,
                                                               ReferenceType rightRefType, ReferenceValue rightRefValue,

@@ -43,7 +43,7 @@ TEST_CASE("Such That Follows")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Follows", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(FollowsType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -79,7 +79,7 @@ TEST_CASE("Such That Follows* Statement")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "stmt")
-              .addSuchThatClause("Follows*", SynonymRefType, "a", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "a", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -95,7 +95,7 @@ TEST_CASE("Such That Parent")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Parent", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(ParentType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -111,7 +111,7 @@ TEST_CASE("Such That Parent*")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Parent*", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(ParentStarType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -127,7 +127,7 @@ TEST_CASE("Such That Uses")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Uses", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(UsesType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -143,7 +143,7 @@ TEST_CASE("Such That Modifies")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Modifies", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(ModifiesType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -163,7 +163,7 @@ TEST_CASE("Such That Follows* Read")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("re")
               .addDeclaration("re", "read")
-              .addSuchThatClause("Follows*", SynonymRefType, "re", ReadType, IntegerRefType, "5", StmtType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "re", ReadType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -179,7 +179,7 @@ TEST_CASE("Such That Follows* Print")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("pn")
               .addDeclaration("pn", "print")
-              .addSuchThatClause("Follows*", SynonymRefType, "pn", PrintType, IntegerRefType, "5", StmtType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "pn", PrintType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -195,7 +195,7 @@ TEST_CASE("Such That Follows* Call")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("cl")
               .addDeclaration("cl", "call")
-              .addSuchThatClause("Follows*", SynonymRefType, "cl", CallType, IntegerRefType, "5", StmtType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "cl", CallType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -211,7 +211,7 @@ TEST_CASE("Such That Follows* While")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("w")
               .addDeclaration("w", "while")
-              .addSuchThatClause("Follows*", SynonymRefType, "w", WhileType, IntegerRefType, "5", StmtType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "w", WhileType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -227,7 +227,7 @@ TEST_CASE("Such That Follows* If")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("ifs")
               .addDeclaration("ifs", "if")
-              .addSuchThatClause("Follows*", SynonymRefType, "ifs", IfType, IntegerRefType, "5", StmtType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "ifs", IfType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -243,7 +243,7 @@ TEST_CASE("Such That Follows* Assign")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addSuchThatClause("Follows*", SynonymRefType, "a", AssignType, IntegerRefType, "5", StmtType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "a", AssignType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -348,7 +348,7 @@ TEST_CASE("Such That Parent* While and Read")
               .addSelectSynonym("w")
               .addDeclaration("w", "while")
               .addDeclaration("re", "read")
-              .addSuchThatClause("Parent*", SynonymRefType, "w", WhileType, SynonymRefType, "re", ReadType)
+              .addSuchThatClause(ParentStarType, SynonymRefType, "w", WhileType, SynonymRefType, "re", ReadType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -365,7 +365,7 @@ TEST_CASE("Such That Follows* Stmt and Print")
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
               .addDeclaration("pn", "print")
-              .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, SynonymRefType, "pn", PrintType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "s", StmtType, SynonymRefType, "pn", PrintType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -382,7 +382,7 @@ TEST_CASE("Such That Parent If and Call")
               .addSelectSynonym("cl")
               .addDeclaration("cl", "call")
               .addDeclaration("ifs", "if")
-              .addSuchThatClause("Parent", SynonymRefType, "ifs", IfType, SynonymRefType, "cl", CallType)
+              .addSuchThatClause(ParentType, SynonymRefType, "ifs", IfType, SynonymRefType, "cl", CallType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -399,7 +399,7 @@ TEST_CASE("Such That Follows While and If")
               .addSelectSynonym("w")
               .addDeclaration("w", "while")
               .addDeclaration("ifs", "if")
-              .addSuchThatClause("Follows", SynonymRefType, "w", WhileType, SynonymRefType, "ifs", IfType)
+              .addSuchThatClause(FollowsType, SynonymRefType, "w", WhileType, SynonymRefType, "ifs", IfType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -416,7 +416,7 @@ TEST_CASE("Such That Modifies While and Variable")
               .addSelectSynonym("v")
               .addDeclaration("w", "while")
               .addDeclaration("v", "variable")
-              .addSuchThatClause("Modifies", SynonymRefType, "w", WhileType, SynonymRefType, "v", VariableType)
+              .addSuchThatClause(ModifiesType, SynonymRefType, "w", WhileType, SynonymRefType, "v", VariableType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -432,7 +432,7 @@ TEST_CASE("Such That Uses If and Literal Ident")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("ifs")
               .addDeclaration("ifs", "if")
-              .addSuchThatClause("Uses", SynonymRefType, "ifs", IfType, LiteralRefType, "x", NonExistentType)
+              .addSuchThatClause(UsesType, SynonymRefType, "ifs", IfType, LiteralRefType, "x", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -444,12 +444,12 @@ TEST_CASE("Such That Uses Literal Ident and Literal Ident")
 {
     AbstractQuery abstractQuery = processQuery("stmt s; Select s such that Uses (\"main\", \"x\")");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addSelectSynonym("s")
-              .addDeclaration("s", "stmt")
-              .addSuchThatClause("Uses", LiteralRefType, "main", NonExistentType, LiteralRefType, "x", NonExistentType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addSelectSynonym("s")
+                                              .addDeclaration("s", "stmt")
+                                              .addSuchThatClause(UsesType, LiteralRefType, "main", NonExistentType,
+                                                                 LiteralRefType, "x", NonExistentType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -583,7 +583,7 @@ TEST_CASE("Pattern and Such That Clauses")
               .addDeclaration("a", "assign")
               .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
                                 LiteralExpressionType)
-              .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
+              .addSuchThatClause(UsesType, SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -599,7 +599,7 @@ TEST_CASE("Such That and Pattern Clauses 1")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
+              .addSuchThatClause(UsesType, SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
               .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
                                 LiteralExpressionType)
               .build();
@@ -618,7 +618,7 @@ TEST_CASE("Such That and Pattern Clauses 2")
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, SynonymRefType, "a", AssignType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "s", StmtType, SynonymRefType, "a", AssignType)
               .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "_",
                                 WildcardExpressionType)
               .build();
@@ -640,8 +640,8 @@ TEST_CASE("Such That Follows* and Uses Statement")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
-              .addSuchThatClause("Uses", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(UsesType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -680,10 +680,10 @@ TEST_CASE("Such That Follows* and Uses and Modifies and Parent Statement")
               .addDeclaration("s1", "stmt")
               .addDeclaration("s2", "stmt")
               .addDeclaration("v", "variable")
-              .addSuchThatClause("Follows*", SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
-              .addSuchThatClause("Uses", SynonymRefType, "s1", StmtType, SynonymRefType, "v", VariableType)
-              .addSuchThatClause("Modifies", SynonymRefType, "s2", StmtType, SynonymRefType, "v", VariableType)
-              .addSuchThatClause("Parent", SynonymRefType, "s1", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .addSuchThatClause(UsesType, SynonymRefType, "s1", StmtType, SynonymRefType, "v", VariableType)
+              .addSuchThatClause(ModifiesType, SynonymRefType, "s2", StmtType, SynonymRefType, "v", VariableType)
+              .addSuchThatClause(ParentType, SynonymRefType, "s1", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -791,7 +791,7 @@ TEST_CASE("Vacuously True")
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Follows*", SynonymRefType, "s", StmtType, IntegerRefType, "5", StmtType)
+              .addSuchThatClause(FollowsStarType, SynonymRefType, "s", StmtType, IntegerRefType, "5", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -804,13 +804,13 @@ TEST_CASE("Keyword as variable names")
     AbstractQuery abstractQuery
         = processQuery("assign assign; stmt while; Select assign such that Parent* (while, assign)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addSelectSynonym("assign")
-              .addDeclaration("assign", "assign")
-              .addDeclaration("while", "stmt")
-              .addSuchThatClause("Parent*", SynonymRefType, "while", StmtType, SynonymRefType, "assign", AssignType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addSelectSynonym("assign")
+                                              .addDeclaration("assign", "assign")
+                                              .addDeclaration("while", "stmt")
+                                              .addSuchThatClause(ParentStarType, SynonymRefType, "while", StmtType,
+                                                                 SynonymRefType, "assign", AssignType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -834,7 +834,7 @@ TEST_CASE("Select as variable name")
               .addSelectSynonym("Select")
               .addDeclaration("stmt", "stmt")
               .addDeclaration("Select", "stmt")
-              .addSuchThatClause("Follows", SynonymRefType, "Select", StmtType, SynonymRefType, "stmt", StmtType)
+              .addSuchThatClause(FollowsType, SynonymRefType, "Select", StmtType, SynonymRefType, "stmt", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -866,7 +866,7 @@ TEST_CASE("Variable whitespace between tokens")
               .addSelectSynonym("Select")
               .addDeclaration("stmt", "stmt")
               .addDeclaration("Select", "stmt")
-              .addSuchThatClause("Follows", SynonymRefType, "Select", StmtType, SynonymRefType, "stmt", StmtType)
+              .addSuchThatClause(FollowsType, SynonymRefType, "Select", StmtType, SynonymRefType, "stmt", StmtType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -878,12 +878,12 @@ TEST_CASE("Follows* with a space between between Follows and *")
 {
     AbstractQuery abstractQuery = processQuery("assign a; Select a such that Follows * (a, _)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addSelectSynonym("a")
-              .addDeclaration("a", "assign")
-              .addSuchThatClause("Follows*", SynonymRefType, "a", AssignType, WildcardRefType, "_", NonExistentType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addSelectSynonym("a")
+                                              .addDeclaration("a", "assign")
+                                              .addSuchThatClause(FollowsStarType, SynonymRefType, "a", AssignType,
+                                                                 WildcardRefType, "_", NonExistentType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -928,7 +928,7 @@ TEST_CASE("No space between Clauses")
               .addDeclaration("a", "assign")
               .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
                                 LiteralExpressionType)
-              .addSuchThatClause("Uses", SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
+              .addSuchThatClause(UsesType, SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -965,7 +965,7 @@ TEST_CASE("Select BOOLEAN with Follows")
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
               .addDeclaration("s", "stmt")
-              .addSuchThatClause("Follows", SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(FollowsType, SynonymRefType, "s", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
@@ -987,7 +987,7 @@ TEST_CASE("Select Tuple <s1, s2> such that Follows")
               .addDeclaration("s2", "stmt")
               .addSelectSynonym("s1")
               .addSelectSynonym("s2")
-              .addSuchThatClause("Follows", SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .addSuchThatClause(FollowsType, SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
               .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
@@ -1014,10 +1014,427 @@ TEST_CASE("Select Tuple <s1, s2, v1, v2, w, ifs> such that Follows")
               .addSelectSynonym("v2")
               .addSelectSynonym("w")
               .addSelectSynonym("ifs")
-              .addSuchThatClause("Follows", SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .addSuchThatClause(FollowsType, SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
               .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
     REQUIRE(equal);
 }
+
+/************************************************************************************/
+/*  Advance Relationships                                                           */
+/************************************************************************************/
+
+TEST_CASE("Such that Affect between synonym stmts")
+{
+    AbstractQuery abstractQuery = processQuery("assign a1, a2; Select a1 such that Affects (a1, a2)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("a1", "assign")
+              .addDeclaration("a2", "assign")
+              .addSelectSynonym("a1")
+              .addSuchThatClause(AffectsType, SynonymRefType, "a1", AssignType, SynonymRefType, "a2", AssignType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Affect* between synonym stmts")
+{
+    AbstractQuery abstractQuery = processQuery("assign a1, a2; Select a1 such that Affects* (a1, a2)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("a1", "assign")
+              .addDeclaration("a2", "assign")
+              .addSelectSynonym("a1")
+              .addSuchThatClause(AffectsStarType, SynonymRefType, "a1", AssignType, SynonymRefType, "a2", AssignType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Next between synonym stmts")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1, s2; Select s1 such that Next (s1, s2)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("s1", "stmt")
+              .addDeclaration("s2", "stmt")
+              .addSelectSynonym("s1")
+              .addSuchThatClause(NextType, SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Next* between synonym stmts")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1, s2; Select s1 such that Next* (s1, s2)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("s1", "stmt")
+              .addDeclaration("s2", "stmt")
+              .addSelectSynonym("s1")
+              .addSuchThatClause(NextStarType, SynonymRefType, "s1", StmtType, SynonymRefType, "s2", StmtType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Calls between synonym stmts")
+{
+    AbstractQuery abstractQuery = processQuery("procedure p1, p2; Select p1 such that Calls (p1, p2)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addDeclaration("p1", "procedure")
+              .addDeclaration("p2", "procedure")
+              .addSelectSynonym("p1")
+              .addSuchThatClause(CallsType, SynonymRefType, "p1", ProcedureType, SynonymRefType, "p2", ProcedureType)
+              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Calls* between synonym procedures")
+{
+    AbstractQuery abstractQuery = processQuery("procedure p1, p2; Select p1 such that Calls* (p1, p2)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("p1", "procedure")
+                                              .addDeclaration("p2", "procedure")
+                                              .addSelectSynonym("p1")
+                                              .addSuchThatClause(CallsStarType, SynonymRefType, "p1", ProcedureType,
+                                                                 SynonymRefType, "p2", ProcedureType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Affect between Wildcards")
+{
+    AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects (_, _)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsType, WildcardRefType, "_", NonExistentType,
+                                                                 WildcardRefType, "_", NonExistentType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Affect between Integers")
+{
+    AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects (1, 2)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsType, IntegerRefType, "1", StmtType,
+                                                                 IntegerRefType, "2", StmtType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Affect* between synonym stmt and Wildcard")
+{
+    AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects* (a1, _)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsStarType, SynonymRefType, "a1", AssignType,
+                                                                 WildcardRefType, "_", NonExistentType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Affect* between synonym stmt and Integer")
+{
+    AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects* (a1, 4)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsStarType, SynonymRefType, "a1", AssignType,
+                                                                 IntegerRefType, "4", StmtType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Affect* between Wildcard and Integer")
+{
+    AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects* (_, 4)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsStarType, WildcardRefType, "_", NonExistentType,
+                                                                 IntegerRefType, "4", StmtType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Next between Wildcards")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Next (_, _)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("s1", "stmt")
+                                              .addSelectSynonym("s1")
+                                              .addSuchThatClause(NextType, WildcardRefType, "_", NonExistentType,
+                                                                 WildcardRefType, "_", NonExistentType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Next between Integers")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Next (1, 2)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("s1", "stmt")
+                                              .addSelectSynonym("s1")
+                                              .addSuchThatClause(NextType, IntegerRefType, "1", StmtType,
+                                                                 IntegerRefType, "2", StmtType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Next* between synonym stmt and Wildcard")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Next* (s1, _)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("s1", "stmt")
+                                              .addSelectSynonym("s1")
+                                              .addSuchThatClause(NextStarType, SynonymRefType, "s1", StmtType,
+                                                                 WildcardRefType, "_", NonExistentType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Next* between synonym stmt and Integer")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Next* (s1, 4)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("s1", "stmt")
+                                              .addSelectSynonym("s1")
+                                              .addSuchThatClause(NextStarType, SynonymRefType, "s1", StmtType,
+                                                                 IntegerRefType, "4", StmtType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Next* between Wildcard and Integer")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Next* (_, 4)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("s1", "stmt")
+                                              .addSelectSynonym("s1")
+                                              .addSuchThatClause(NextStarType, WildcardRefType, "_", NonExistentType,
+                                                                 IntegerRefType, "4", StmtType)
+                                              .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Calls between Wildcards")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Calls (_, _)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+        .addDeclaration("s1", "stmt")
+        .addSelectSynonym("s1")
+        .addSuchThatClause(CallsType, WildcardRefType, "_", NonExistentType,
+                           WildcardRefType, "_", NonExistentType)
+        .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Calls between Literal")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Calls (\"proc1\", \"proc2\")");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+        .addDeclaration("s1", "stmt")
+        .addSelectSynonym("s1")
+        .addSuchThatClause(CallsType, LiteralRefType, "proc1", NonExistentType,
+                           LiteralRefType, "proc2", NonExistentType)
+        .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Calls* between synonym procedure and Wildcard")
+{
+    AbstractQuery abstractQuery = processQuery("procedure p; Select p such that Calls* (p, _)");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+        .addDeclaration("p", "procedure")
+        .addSelectSynonym("p")
+        .addSuchThatClause(CallsStarType, SynonymRefType, "p", ProcedureType,
+                           WildcardRefType, "_", NonExistentType)
+        .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Calls* between synonym procedure and Literal")
+{
+    AbstractQuery abstractQuery = processQuery("procedure p; Select p such that Calls* (p, \"proc1\")");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+        .addDeclaration("p", "procedure")
+        .addSelectSynonym("p")
+        .addSuchThatClause(CallsStarType, SynonymRefType, "p", ProcedureType,
+                           LiteralRefType, "proc1", NonExistentType)
+        .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Such that Calls* between Wildcard and Literal")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Calls* (_, \"proc1\")");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+        .addDeclaration("s1", "stmt")
+        .addSelectSynonym("s1")
+        .addSuchThatClause(CallsStarType, WildcardRefType, "_", NonExistentType,
+                           LiteralRefType, "proc1", NonExistentType)
+        .build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
+TEST_CASE("Invalid such that Affects between read stmt")
+{
+    AbstractQuery abstractQuery = processQuery("read re1, re2; Select re1 such that Affects (re1, re2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Affects between print stmt")
+{
+    AbstractQuery abstractQuery = processQuery("print pn1, pn2; Select pn1 such that Affects (pn1, pn2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Affects between while stmt")
+{
+    AbstractQuery abstractQuery = processQuery("while w1, w2; Select w1 such that Affects (w1, w2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Affects between if stmt")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs1, ifs2; Select ifs1 such that Affects (ifs1, ifs2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Affects between call stmt")
+{
+    AbstractQuery abstractQuery = processQuery("call cl1, cl2; Select cl1 such that Affects (cl1, cl2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Affects between procedures")
+{
+    AbstractQuery abstractQuery = processQuery("procedure p1, p2; Select p1 such that Affects (p1, p2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Next between procedures")
+{
+    AbstractQuery abstractQuery = processQuery("procedure p1, p2; Select p1 such that Next (p1, p2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Affect with Literal")
+{
+    AbstractQuery abstractQuery = processQuery("assign a; Select a such that Affect (a, \"proc\")");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Next with Literal")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select s such that Next (s, \"proc\")");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Invalid such that Calls with Integer")
+{
+    AbstractQuery abstractQuery = processQuery("procedure p; Select p such that Calls (p, 2)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+

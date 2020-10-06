@@ -15,7 +15,7 @@ public:
     static AbstractQueryBuilder create();
     AbstractQueryBuilder& addSelectSynonym(Synonym synonym);
     AbstractQueryBuilder& addDeclaration(Synonym synonym, const String& designEntityType);
-    AbstractQueryBuilder& addSuchThatClause(String relRefType, ReferenceType leftRefType,
+    AbstractQueryBuilder& addSuchThatClause(RelationshipReferenceType relRefType, ReferenceType leftRefType,
                                                   ReferenceValue leftRefValue, DesignEntityType leftDesignEntityType,
                                                   ReferenceType rightRefType, ReferenceValue rightRefValue,
                                                   DesignEntityType rightDesignEntityType);

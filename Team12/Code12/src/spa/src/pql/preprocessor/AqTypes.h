@@ -156,17 +156,23 @@ public:
 };
 
 enum RelationshipReferenceType : uint16_t {
-    FollowsType = 0,
-    FollowsStarType = 1,
-    ParentType = 2,
-    ParentStarType = 4,
-    UsesType = 8, // placeholder type for UsesStatement and UsesProcedure
-    UsesStatementType = 16,
-    UsesProcedureType = 32,
-    ModifiesType = 64, // placeholder type for ModifiesStatement and ModifiesProcedure
-    ModifiesStatementType = 128,
-    ModifiesProcedureType = 256,
-    InvalidRelationshipType = 512
+    FollowsType,
+    FollowsStarType,
+    ParentType,
+    ParentStarType,
+    UsesType, // placeholder type for UsesStatement and UsesProcedure
+    UsesStatementType,
+    UsesProcedureType,
+    ModifiesType, // placeholder type for ModifiesStatement and ModifiesProcedure
+    ModifiesStatementType,
+    ModifiesProcedureType,
+    CallsType,
+    CallsStarType,
+    NextType,
+    NextStarType,
+    AffectsType,
+    AffectsStarType,
+    InvalidRelationshipType
 };
 
 class Relationship {
@@ -195,7 +201,7 @@ public:
     Reference getLeftRef();
     Reference getRightRef();
     Boolean isInvalid() const;
-    static Relationship createRelationship(String relationshipRef, Reference leftRef, Reference rightRef);
+    static Relationship createRelationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
     static RelationshipReferenceType getRelRefType(String relRef);
     Boolean operator==(const Relationship& relationship);
 };
