@@ -15,6 +15,9 @@ template <typename T, typename U>
 using Pair = std::pair<T, U>;
 
 typedef std::string Value;
+
+typedef Vector<Pair<String, String>> PairedResult;
+
 /**
  * A class implementing a tuple of synonym and string,
  * to associate a synonym with some potential value.

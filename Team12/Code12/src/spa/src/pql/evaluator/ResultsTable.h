@@ -10,46 +10,65 @@
 #ifndef SPA_PQL_RESULTS_TABLE_H
 #define SPA_PQL_RESULTS_TABLE_H
 
+#include <functional>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 
 #include "EvaluatorUtils.h"
+
+typedef std::queue<std::function<void()>> EvaluationQueue;
+typedef std::unordered_set<String> ResultsSet;
 
 // Forward declaration of RelationshipsGraph
 class RelationshipsGraph;
 
 class ResultsTable {
 private:
-    std::unordered_map<Synonym, ClauseResult> resultsMap;
+    std::unordered_map<Synonym, ResultsSet> resultsMap;
     DeclarationTable declarations;
     std::unique_ptr<RelationshipsGraph> relationships;
+    EvaluationQueue queue;
     Boolean hasResult;
+    Boolean hasEvaluated;
 
     Boolean checkIfSynonymInMap(const Synonym& syn);
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
-    ClauseResult findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
-
-public:
-    /**
-     * Constructor for a ResultsTable. The declarations table
-     * is required so that the ResultsTable will know what
-     * to return, in the event that a synonym is not
-     * associated with any results.
-     *
-     * Since ResultsTable is meant for narrowing down results,
-     * it will assume that a synonym not in the table has no
-     * restrictions at all (i.e. can match all possible values).
-     *
-     * @param declarations Declarations of all synonyms in
-     *                     the query.
-     */
-    explicit ResultsTable(DeclarationTable decls);
+    ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
 
     /**
-     * A method to compare two ResultsTable for testing purposes.
+     * Creates a evaluation closure for one synonym's results.
+     *
+     * @return The evaluation closure.
      */
-    bool operator==(const ResultsTable& rt) const;
+    static std::function<void()> createEvaluatorOne(ResultsTable* table, const Synonym& syn,
+                                                    const ClauseResult& results);
 
+    /**
+     * Creates a evaluation closure for two linked synonym's results.
+     *
+     * @return The evaluation closure.
+     */
+    static std::function<void()> createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const ClauseResult& res1,
+                                                    const Synonym& s2, const ClauseResult& res2,
+                                                    const PairedResult& tuples);
+    /**
+     * Merges the results for one synonym for the ResultsTable provided.
+     * This method assumes that the results are not empty.
+     */
+    static void mergeOneSynonym(ResultsTable* table, const Synonym& syn, const ClauseResult& results);
+    /**
+     * Merges the results for two synonyms for the ResultsTable provided.
+     * This method assumes both results are not empty.
+     */
+    static void mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const ClauseResult& res1, const Synonym& s2,
+                                 const ClauseResult& res2, const PairedResult& tuples);
+    /**
+     * Initiates merging of the results, if not yet merged.
+     */
+    void mergeResults();
+
+protected:
     /**
      * Associates some results with a synonym, if the synonym
      * does not already exist in the table. If the synonym
@@ -210,6 +229,18 @@ public:
                                 const Reference& rightRef);
 
     /**
+     * Removes all relationships between the leftValue of synonym left
+     * and the rightValue of synonym right.
+     *
+     * @param leftSyn The first synonym.
+     * @param leftValue Value of the first synonym.
+     * @param rightSyn The second synonym.
+     * @param rightValue Value of the second synonym.
+     */
+    void disassociateRelationships(const Synonym& leftSyn, const String& leftValue, const Synonym& rightSyn,
+                                   const String& rightValue);
+
+    /**
      * Checks the relationship table for two synonyms, to
      * see whether there is any relationships between the
      * potential values of the two.
@@ -233,7 +264,77 @@ public:
      * @return Pairs of the possible (left, right) values in
      *         the relationships table.
      */
-    std::vector<std::pair<String, String>> getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+    PairedResult getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+
+public:
+    /**
+     * Constructor for a ResultsTable. The declarations table
+     * is required so that the ResultsTable will know what
+     * to return, in the event that a synonym is not
+     * associated with any results.
+     *
+     * Since ResultsTable is meant for narrowing down results,
+     * it will assume that a synonym not in the table has no
+     * restrictions at all (i.e. can match all possible values).
+     *
+     * @param declarations Declarations of all synonyms in
+     *                     the query.
+     */
+    explicit ResultsTable(DeclarationTable decls);
+
+    /**
+     * A method to compare two ResultsTable for testing purposes.
+     */
+    bool operator==(const ResultsTable& rt) const;
+
+    /**
+     * Initiates merging of the results queue, unless
+     * a certain result in the queue was empty. Afterwards,
+     * returns the results for the synonym specified.
+     *
+     * @param syn The synonym to retrieve the results for.
+     * @return The results for syn.
+     */
+    ClauseResult getResultsOne(const Synonym& syn);
+
+    /**
+     * Adds the result for a single synonym into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called.
+     *
+     * @param syn The synonym that the results belong to.
+     * @param res Results for the synonym syn.
+     */
+    Void storeResultsOne(const Synonym& syn, const ClauseResult& res);
+
+    /**
+     * Adds the result for a single synonym into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called.
+     *
+     * @param rfc The reference that the results were evaluated
+     *            for. If this reference is not a synonym, the
+     *            results will just be checked for emptiness.
+     * @param res Results for the reference rfc.
+     */
+    Void storeResultsOne(const Reference& rfc, const ClauseResult& res);
+
+    /**
+     * Adds the result for two synonyms into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called. If any of the references are
+     * not synonyms, this method may call storeResultsOne
+     * instead.
+     *
+     * @param rfc1 First reference in the clause.
+     * @param res1 Results for the reference rfc1.
+     * @param rfc2 Second reference in the clause.
+     * @param res2 Results for the reference rfc2.
+     * @param tuples Pairs of results for the first reference
+     *               and the second reference.
+     */
+    Void storeResultsTwo(const Reference& rfc1, const ClauseResult& res1, const Reference& rfc2,
+                         const ClauseResult& res2, const PairedResult& tuples);
 };
 
 /*
@@ -272,7 +373,6 @@ private:
     std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
 
     void associate(const PotentialValue& firstKey, const PotentialValue& secondKey);
-    void deleteEdge(const PotentialValue& firstKey, const PotentialValue& secondKey);
     Boolean checkIfPotentialValueHasRelationships(const PotentialValue& pv);
 
     template <typename T, typename U, Value (*firstToString)(T), Value (*secondToString)(U)>
@@ -353,6 +453,15 @@ public:
      *                     synonyms can be removed as well
      */
     void deleteFromGraph(const PotentialValue& pv, ResultsTable* resultsTable);
+
+    /**
+     * Deletes any relations stored that involves both
+     * the firstKey and secondKey.
+     *
+     * @param firstKey First potential value in the relation.
+     * @param secondKey Second potential value in the relation.
+     */
+    void deleteEdges(const PotentialValue& firstKey, const PotentialValue& secondKey);
 
     /**
      * Checks whether two synonyms have relationships in the
