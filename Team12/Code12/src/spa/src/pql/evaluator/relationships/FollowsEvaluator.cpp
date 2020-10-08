@@ -22,7 +22,6 @@ private:
     // case where left is variable, right is known (integer)
     Void evaluateRightKnown() const;
     // case where both are variable
-    Void evaluateBothAnyConstrained() const;
     Void evaluateBothAny() const;
     // case where both are known
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
