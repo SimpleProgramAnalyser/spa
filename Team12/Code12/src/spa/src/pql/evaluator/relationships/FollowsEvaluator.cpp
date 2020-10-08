@@ -5,7 +5,6 @@
 #include "FollowsEvaluator.h"
 
 #include <stdexcept>
-#include <utility>
 
 #include "RelationshipsUtil.h"
 
@@ -77,22 +76,6 @@ Void FollowsEvaluator::evaluateRightKnown() const
     resultsTable->storeResultsOne(leftRef, convertToClauseResult(tempResult));
 }
 
-Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
-{
-    /*
-     * For this case, in iteration 1, the clause is perpetually not
-     * related to any synonym (because the wildcard to converted
-     * to any StmtType, hence no checking needs to be done here).
-     */
-    Boolean followsHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
-    std::vector<String> tempResult;
-    if (followsHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueFollows");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
-}
-
 Void FollowsEvaluator::evaluateBothAny() const
 {
     // we can only get the DesignEntityType of both the left and right operands
@@ -115,6 +98,22 @@ Void FollowsEvaluator::evaluateBothAny() const
         tuples = convertToPairedResult(getAllFollowsTuple(leftRefStmtType, rightRefStmtType));
     }
     resultsTable->storeResultsTwo(leftRef, leftResults, rightRef, rightResults, tuples);
+}
+
+Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
+{
+    /*
+     * For this case, in iteration 1, the clause is perpetually not
+     * related to any synonym (because the wildcard to converted
+     * to any StmtType, hence no checking needs to be done here).
+     */
+    Boolean followsHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
+    std::vector<String> tempResult;
+    if (followsHolds) {
+        // we add a placeholder item to denote presence of results
+        tempResult.emplace_back("trueFollows");
+    }
+    resultsTable->storeResultsOne(leftRef, tempResult);
 }
 
 Void FollowsEvaluator::evaluateFollowsClause()
