@@ -58,7 +58,7 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
         }
     }
     // call the result table to return the final result
-    return RawQueryResult(resultsTable.get(query.getSelectSynonym()));
+    return RawQueryResult(resultsTable.getResultsOne(query.getSelectSynonym()));
 }
 
 /*

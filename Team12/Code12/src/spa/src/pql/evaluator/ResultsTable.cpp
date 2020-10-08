@@ -228,16 +228,6 @@ ClauseResult ResultsTable::get(const Synonym& syn)
     }
 }
 
-DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
-{
-    return declarations.getDesignEntityOfSynonym(syn).getType();
-}
-
-Boolean ResultsTable::hasResults() const
-{
-    return hasResult;
-}
-
 Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
 {
     if (!hasResults()) {
@@ -246,13 +236,6 @@ Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
         return true;
     } else {
         return checkIfSynonymInMap(syn);
-    }
-}
-
-void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
-{
-    if (resultsMap.find(synonym) != resultsMap.end()) {
-        resultsMap[synonym].erase(value);
     }
 }
 
@@ -304,24 +287,6 @@ void ResultsTable::disassociateRelationships(const Synonym& leftSyn, const Strin
                                              const String& rightValue)
 {
     relationships->deleteEdges(PotentialValue(leftSyn, leftValue), PotentialValue(rightSyn, rightValue));
-}
-
-Boolean ResultsTable::checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
-{
-    if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
-        return true;
-    }
-    ClauseResult resultsForLeft = get(leftSynonym);
-    ClauseResult resultsForRight = get(rightSynonym);
-    for (const String& leftResult : resultsForLeft) {
-        for (const String& rightResult : resultsForRight) {
-            if (relationships->checkIfRelated(PotentialValue(leftSynonym, leftResult),
-                                              PotentialValue(rightSynonym, rightResult))) {
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 PairedResult ResultsTable::getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
@@ -380,6 +345,41 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
     }
     return isResultsTheSame && this->declarations == rt.declarations && *(this->relationships) == *(rt.relationships)
            && this->hasResult == rt.hasResult;
+}
+
+Boolean ResultsTable::hasResults() const
+{
+    return hasResult;
+}
+
+Boolean ResultsTable::checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
+{
+    if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
+        return true;
+    }
+    ClauseResult resultsForLeft = get(leftSynonym);
+    ClauseResult resultsForRight = get(rightSynonym);
+    for (const String& leftResult : resultsForLeft) {
+        for (const String& rightResult : resultsForRight) {
+            if (relationships->checkIfRelated(PotentialValue(leftSynonym, leftResult),
+                                              PotentialValue(rightSynonym, rightResult))) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
+{
+    if (resultsMap.find(synonym) != resultsMap.end()) {
+        resultsMap[synonym].erase(value);
+    }
+}
+
+DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
+{
+    return declarations.getDesignEntityOfSynonym(syn).getType();
 }
 
 ClauseResult ResultsTable::getResultsOne(const Synonym& syn)

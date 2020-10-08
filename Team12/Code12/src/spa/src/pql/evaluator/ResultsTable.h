@@ -52,23 +52,25 @@ private:
     static std::function<void()> createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const ClauseResult& res1,
                                                     const Synonym& s2, const ClauseResult& res2,
                                                     const PairedResult& tuples);
+
     /**
      * Merges the results for one synonym for the ResultsTable provided.
      * This method assumes that the results are not empty.
      */
     static void mergeOneSynonym(ResultsTable* table, const Synonym& syn, const ClauseResult& results);
+
     /**
      * Merges the results for two synonyms for the ResultsTable provided.
      * This method assumes both results are not empty.
      */
     static void mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const ClauseResult& res1, const Synonym& s2,
                                  const ClauseResult& res2, const PairedResult& tuples);
+
     /**
      * Initiates merging of the results, if not yet merged.
      */
     void mergeResults();
 
-protected:
     /**
      * Associates some results with a synonym, if the synonym
      * does not already exist in the table. If the synonym
@@ -117,28 +119,6 @@ protected:
     ClauseResult get(const Synonym& syn);
 
     /**
-     * Retrieves the type of synonym from the
-     * declarations table.
-     *
-     * @param syn Synonym to look up.
-     * @return The type of the synonym. If the synonym is
-     *         not in the table, return NonExistentType.
-     */
-    DesignEntityType getTypeOfSynonym(const Synonym& syn);
-
-    /**
-     * Returns true if the result table is marked as having
-     * no results at all, which happens if a clause returns
-     * no results. This would ensure that the entire program
-     * query returns no results.
-     *
-     * @return True, if so far all clauses have stored results
-     *         in the table. False, if a certain clause stored
-     *         an empty result.
-     */
-    Boolean hasResults() const;
-
-    /**
      * Checks if a synonym has been restricted to only match a
      * subset of all possible values due to another clause's
      * results that were previously stored in the table.
@@ -146,15 +126,6 @@ protected:
      * @return True, if synonym has been restricted.
      */
     Boolean checkIfSynonymHasConstraints(const Synonym& syn);
-
-    /**
-     * Disassociates a certain value from a synonym in
-     * the results table, if that value exists.
-     *
-     * @param synonym The synonym in the query.
-     * @param value The result to eliminate.
-     */
-    void eliminatePotentialValue(const Synonym& synonym, const String& value);
 
     /**
      * Adds a list of relationships between potential values
@@ -241,18 +212,6 @@ protected:
                                    const String& rightValue);
 
     /**
-     * Checks the relationship table for two synonyms, to
-     * see whether there is any relationships between the
-     * potential values of the two.
-     *
-     * @param leftSynonym Left synonym to be checked.
-     * @param rightSynonym Right synonym to be checked.
-     * @return True, if some clause has restricted the
-     *         left and right to certain relationships.
-     */
-    Boolean checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
-
-    /**
      * Gets all registered relationships between two synonyms
      * in the relationships table. Note that if no such
      * relationships exist, there may be a runtime error!
@@ -286,6 +245,49 @@ public:
      * A method to compare two ResultsTable for testing purposes.
      */
     bool operator==(const ResultsTable& rt) const;
+
+    /**
+     * Returns true if the result table is marked as having
+     * no results at all, which happens if a clause returns
+     * no results. This would ensure that the entire program
+     * query returns no results.
+     *
+     * @return True, if so far all clauses have stored results
+     *         in the table. False, if a certain clause stored
+     *         an empty result.
+     */
+    Boolean hasResults() const;
+
+    /**
+     * Checks the relationship table for two synonyms, to
+     * see whether there is any relationships between the
+     * potential values of the two.
+     *
+     * @param leftSynonym Left synonym to be checked.
+     * @param rightSynonym Right synonym to be checked.
+     * @return True, if some clause has restricted the
+     *         left and right to certain relationships.
+     */
+    Boolean checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+
+    /**
+     * Disassociates a certain value from a synonym in
+     * the results table, if that value exists.
+     *
+     * @param synonym The synonym in the query.
+     * @param value The result to eliminate.
+     */
+    void eliminatePotentialValue(const Synonym& synonym, const String& value);
+
+    /**
+     * Retrieves the type of synonym from the
+     * declarations table.
+     *
+     * @param syn Synonym to look up.
+     * @return The type of the synonym. If the synonym is
+     *         not in the table, return NonExistentType.
+     */
+    DesignEntityType getTypeOfSynonym(const Synonym& syn);
 
     /**
      * Initiates merging of the results queue, unless
