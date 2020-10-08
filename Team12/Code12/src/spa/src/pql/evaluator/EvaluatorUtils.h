@@ -57,6 +57,39 @@ struct PotentialValueHasher {
 ClauseResult convertToClauseResult(const Vector<Integer>& intList);
 
 /*
+ * An utility method to convert pairs of integers to pairs of strings.
+ * Pairs of strings are used to represent relationships between result
+ * values of two different synonyms.
+ *
+ * @param intPairsList An integer pair vector to convert.
+ *
+ * @return The converted vector of pairs of strings, or PairedResult.
+ */
+PairedResult convertToPairedResult(const Vector<Pair<Integer, Integer>>& intPairsList);
+
+/*
+ * An utility method to convert pairs of string and integer to pairs
+ * of two strings. Pairs of strings are used to represent relationships
+ * between result values of two different synonyms.
+ *
+ * @param intPairsList An string/integer pair vector to convert.
+ *
+ * @return The converted vector of pairs of strings, or PairedResult.
+ */
+PairedResult convertToPairedResult(const Vector<Pair<String, Integer>>& intPairsList);
+
+/*
+ * An utility method to convert pairs of integer and string to pairs
+ * of two strings. Pairs of strings are used to represent relationships
+ * between result values of two different synonyms.
+ *
+ * @param intPairsList An integer/string pair vector to convert.
+ *
+ * @return The converted vector of pairs of strings, or PairedResult.
+ */
+PairedResult convertToPairedResult(const Vector<Pair<Integer, String>>& intPairsList);
+
+/*
  * Given a DesignEntityType, this function maps it to
  * a StatementType, which is a type compatible for calling
  * the PKB API

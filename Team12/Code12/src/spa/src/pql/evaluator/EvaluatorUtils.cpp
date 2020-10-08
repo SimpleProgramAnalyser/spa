@@ -17,6 +17,33 @@ ClauseResult convertToClauseResult(const Vector<Integer>& intList)
     return strList;
 }
 
+PairedResult convertToPairedResult(const Vector<Pair<Integer, Integer>>& intPairsList)
+{
+    PairedResult strPairsList;
+    for (const Pair<Integer, Integer>& p : intPairsList) {
+        strPairsList.push_back(std::make_pair(std::to_string(p.first), std::to_string(p.second)));
+    }
+    return strPairsList;
+}
+
+PairedResult convertToPairedResult(const Vector<Pair<String, Integer>>& intPairsList)
+{
+    PairedResult strPairsList;
+    for (const Pair<String, Integer>& p : intPairsList) {
+        strPairsList.push_back(std::make_pair(p.first, std::to_string(p.second)));
+    }
+    return strPairsList;
+}
+
+PairedResult convertToPairedResult(const Vector<Pair<Integer, String>>& intPairsList)
+{
+    PairedResult strPairsList;
+    for (const Pair<Integer, String>& p : intPairsList) {
+        strPairsList.push_back(std::make_pair(std::to_string(p.first), p.second));
+    }
+    return strPairsList;
+}
+
 template <>
 struct std::hash<DesignEntityType> {
     std::size_t operator()(const DesignEntityType& pv) const

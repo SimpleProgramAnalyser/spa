@@ -405,6 +405,9 @@ Void ResultsTable::storeResultsOne(const Reference& rfc, const ClauseResult& res
     if (rfc.getReferenceType() == SynonymRefType) {
         // we get the synonym
         storeResultsOne(rfc.getValue(), res);
+    } else if (res.empty()) {
+        // if not synonym, just check empty or not
+        hasResult = false;
     }
 }
 

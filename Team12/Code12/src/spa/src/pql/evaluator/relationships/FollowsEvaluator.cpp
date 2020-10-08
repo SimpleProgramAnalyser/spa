@@ -64,7 +64,7 @@ Void FollowsEvaluator::evaluateLeftKnown() const
      */
     Vector<Integer> tempResult
         = (isStar ? getAllAfterStatementsStar : getAllAfterStatements)(leftValue, mapToStatementType(rightSynonymType));
-    resultsTable->filterTable(rightRef, convertToClauseResult(tempResult));
+    resultsTable->storeResultsOne(rightRef, convertToClauseResult(tempResult));
 }
 
 Void FollowsEvaluator::evaluateRightKnown() const
@@ -75,7 +75,7 @@ Void FollowsEvaluator::evaluateRightKnown() const
         = leftRef.isWildCard() ? StmtType : resultsTable->getTypeOfSynonym(leftRef.getValue());
     Vector<Integer> tempResult = (isStar ? getAllBeforeStatementsStar
                                          : getAllBeforeStatements)(rightValue, mapToStatementType(leftSynonymType));
-    resultsTable->filterTable(leftRef, convertToClauseResult(tempResult));
+    resultsTable->storeResultsOne(leftRef, convertToClauseResult(tempResult));
 }
 
 Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
@@ -86,86 +86,36 @@ Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal
      * to any StmtType, hence no checking needs to be done here).
      */
     Boolean followsHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
+    std::vector<String> tempResult;
     if (followsHolds) {
-        std::vector<String> tempResult{"trueFollows"};
-        resultsTable->filterTable(leftRef, tempResult);
-    } else {
-        // we store an empty list to denote a lack of results
-        resultsTable->filterTable(leftRef, std::vector<String>());
+        // we add a placeholder item to denote presence of results
+        tempResult.emplace_back("trueFollows");
     }
-}
-
-Void FollowsEvaluator::evaluateBothAnyConstrained() const
-{
-    std::vector<String> tempResultForLeft;
-    std::vector<String> tempResultForRight;
-    std::vector<std::pair<String, String>> tempResultForRelationships;
-    Boolean leftAndRightRelated = refsHaveRelationship(leftRef, rightRef, resultsTable);
-    // check if variables have relations determined by previous clauses
-    if (leftAndRightRelated) {
-        // refsHaveRelationship guarantees both left and right are synonyms
-        std::vector<std::pair<String, String>> relationsList
-            = resultsTable->getRelationships(leftRef.getValue(), rightRef.getValue());
-        for (const std::pair<String, String>& relation : relationsList) {
-            // for Follows, both are guaranteed to be integer
-            Boolean followsHolds = pkbBothKnownFunction(std::stoi(relation.first), std::stoi(relation.second));
-            if (followsHolds) {
-                tempResultForLeft.push_back(relation.first);
-                tempResultForRight.push_back(relation.second);
-                tempResultForRelationships.emplace_back(relation.first, relation.second);
-            }
-        }
-    } else {
-        ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
-        ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
-        // do a Cartesian product of both result lists and check each pair
-        for (const String& strLeft : previousResultsForLeft) {
-            for (const String& strRight : previousResultsForRight) {
-                // for Follows, both are guaranteed to be integer
-                Boolean followsHolds = pkbBothKnownFunction(std::stoi(strLeft), std::stoi(strRight));
-                if (followsHolds) {
-                    tempResultForLeft.push_back(strLeft);
-                    tempResultForRight.push_back(strRight);
-                    tempResultForRelationships.emplace_back(strLeft, strRight);
-                }
-            }
-        }
-    }
-    resultsTable->filterTable(leftRef, tempResultForLeft);
-    resultsTable->filterTable(rightRef, tempResultForRight);
-    resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
+    resultsTable->storeResultsOne(leftRef, tempResult);
 }
 
 Void FollowsEvaluator::evaluateBothAny() const
 {
-    Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
-    Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
-    if (leftHasConstraints || rightHasConstraints) {
-        evaluateBothAnyConstrained();
+    // we can only get the DesignEntityType of both the left and right operands
+    StatementType leftRefStmtType = leftRef.isWildCard()
+                                        ? AnyStatement
+                                        : mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
+    StatementType rightRefStmtType = rightRef.isWildCard()
+                                         ? AnyStatement
+                                         : mapToStatementType(resultsTable->getTypeOfSynonym(rightRef.getValue()));
+    ClauseResult leftResults;
+    ClauseResult rightResults;
+    PairedResult tuples;
+    if (isStar) {
+        leftResults = convertToClauseResult(getAllBeforeStatementsTypedStar(leftRefStmtType, rightRefStmtType));
+        rightResults = convertToClauseResult(getAllAfterStatementsTypedStar(leftRefStmtType, rightRefStmtType));
+        tuples = convertToPairedResult(getAllFollowsTupleStar(leftRefStmtType, rightRefStmtType));
     } else {
-        // In this case, we can only get the DesignEntityType of both the left and right operands
-        StatementType leftRefStmtType = leftRef.isWildCard()
-                                            ? AnyStatement
-                                            : mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
-        StatementType rightRefStmtType = rightRef.isWildCard()
-                                             ? AnyStatement
-                                             : mapToStatementType(resultsTable->getTypeOfSynonym(rightRef.getValue()));
-        if (isStar) {
-            resultsTable->filterTable(
-                leftRef, convertToClauseResult(getAllBeforeStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
-            resultsTable->filterTable(
-                rightRef, convertToClauseResult(getAllAfterStatementsTypedStar(leftRefStmtType, rightRefStmtType)));
-            resultsTable->associateRelationships(getAllFollowsTupleStar(leftRefStmtType, rightRefStmtType), leftRef,
-                                                 rightRef);
-        } else {
-            resultsTable->filterTable(
-                leftRef, convertToClauseResult(getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType)));
-            resultsTable->filterTable(
-                rightRef, convertToClauseResult(getAllAfterStatementsTyped(leftRefStmtType, rightRefStmtType)));
-            resultsTable->associateRelationships(getAllFollowsTuple(leftRefStmtType, rightRefStmtType), leftRef,
-                                                 rightRef);
-        }
+        leftResults =  convertToClauseResult(getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType));
+        rightResults = convertToClauseResult(getAllAfterStatementsTyped(leftRefStmtType, rightRefStmtType));
+        tuples = convertToPairedResult(getAllFollowsTuple(leftRefStmtType, rightRefStmtType));
     }
+    resultsTable->storeResultsTwo(leftRef, leftResults, rightRef, rightResults, tuples);
 }
 
 Void FollowsEvaluator::evaluateFollowsClause()
@@ -221,7 +171,7 @@ Void FollowsEvaluator::evaluateFollowsClause()
         evaluateBothKnown(leftRefVal, rightRefVal);
     } else if (!leftRef.isWildCard() && leftRef.getValue() == rightRef.getValue()) {
         // if left == right, for Follows this will always return empty
-        resultsTable->filterTable(leftRef, std::vector<String>());
+        resultsTable->storeResultsOne(leftRef, std::vector<String>());
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         evaluateBothAny();
     } else {
