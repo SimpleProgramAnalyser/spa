@@ -131,7 +131,12 @@ class ResultsRelation {
 public:
     String value1;
     String value2;
+
     ResultsRelation(String v1, String v2): value1(std::move(v1)), value2(std::move(v2)) {}
+    bool operator==(const ResultsRelation& rr) const
+    {
+        return this->value1 == rr.value1 && this->value2 == rr.value2;
+    }
 };
 
 // Hash function for ResultsRelation
