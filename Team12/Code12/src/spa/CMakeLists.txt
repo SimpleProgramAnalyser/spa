@@ -120,7 +120,7 @@ add_library(spa
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
+    target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic;-D_GLIBCXX_DEBUG")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(spa PRIVATE "-Wall;-Wextra;-pedantic")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
