@@ -208,37 +208,18 @@ TEST_CASE("eliminatePotentialValue does not do anything for synonym not found")
 
 TEST_CASE("Relationships are stored properly in ResultsTable")
 {
-    resetPKB();
-    insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(6, WhileStatement);
-    insertIntoStatementTable(12, IfStatement);
-    insertIntoStatementTable(33, ReadStatement);
-    insertIntoStatementTable(34, PrintStatement);
-    insertIntoStatementTable(89, CallStatement);
-    insertIntoVariableTable("swift");
-    insertIntoVariableTable("adkins");
-    insertIntoVariableTable("treintaytres");
-    insertIntoVariableTable("ochentaynueve");
-    insertIntoVariableTable("doce");
-    insertIntoProcedureTable("taylor");
-    insertIntoProcedureTable("adele");
-    insertIntoProcedureTable("terracotta");
-    insertIntoProcedureTable("concrete");
+    std::vector<std::string> procedures = {"taylor", "adele", "terracotta", "concrete"};
+    std::vector<std::string> statements = {"3", "6", "12", "33", "34", "89"};
+    std::vector<std::string> variables = {"swift", "adkins", "treintaytres", "ochentaynueve", "doce"};
 
-    DeclarationTable declTable{};
-    DesignEntity mudkipDesignEntity(ProcedureType);
-    DesignEntity pqlProcessorDesignEntity(ProcedureType);
-    DesignEntity swampertDesignEntity(VariableType);
-    DesignEntity designExtractorDesignEntity(StmtType);
-    DesignEntity astDesignEntity(StmtType);
-    DesignEntity parserDesignEntity(VariableType);
-    declTable.addDeclaration("mudkip", mudkipDesignEntity);
-    declTable.addDeclaration("swampert", swampertDesignEntity);
-    declTable.addDeclaration("ast", astDesignEntity);
-    declTable.addDeclaration("pqlprocessor", pqlProcessorDesignEntity);
-    declTable.addDeclaration("designextractor", designExtractorDesignEntity);
-    declTable.addDeclaration("parser", parserDesignEntity);
-    ResultsTable resTable(declTable);
+    ResultsTable resTable(DeclarationTable{});
+    resTable.storeResultsOne("mudkip", procedures);
+    resTable.storeResultsOne("swampert", variables);
+    resTable.storeResultsOne("ast", statements);
+    resTable.storeResultsOne("pqlprocessor", procedures);
+    resTable.storeResultsOne("designextractor", statements);
+    resTable.storeResultsOne("parser", variables);
+    resTable.getResultsZero();
 
     std::vector<std::pair<std::string, std::string>> mudkipSwampertRelationships(
         {{"taylor", "swift"}, {"adele", "adkins"}});
