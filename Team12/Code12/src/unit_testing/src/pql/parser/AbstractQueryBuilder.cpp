@@ -17,6 +17,14 @@ AbstractQueryBuilder& AbstractQueryBuilder::addSelectSynonym(Synonym synonym)
     return *this;
 }
 
+AbstractQueryBuilder& AbstractQueryBuilder::addSelectSynonym(Synonym synonym, String attribute, DesignEntityType type)
+{
+    DesignEntity de{type};
+    ResultSynonym resultSynonym(std::move(synonym), attribute, de);
+    resultSynonyms.push_back(resultSynonym);
+    return *this;
+}
+
 AbstractQueryBuilder& AbstractQueryBuilder::addDeclaration(Synonym synonym, const String& designEntityType)
 {
     DesignEntity designEntity{designEntityType};
@@ -24,16 +32,42 @@ AbstractQueryBuilder& AbstractQueryBuilder::addDeclaration(Synonym synonym, cons
     return *this;
 }
 
-AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipReferenceType relRefType, ReferenceType leftRefType,
-                                                              ReferenceValue leftRefValue,
+AbstractQueryBuilder& AbstractQueryBuilder::addWithClause(ReferenceType leftRefType, ReferenceValue leftRefValue,
+                                                          DesignEntityType leftDesignEntityType,
+                                                          AttributeType leftAttributeType, ReferenceType rightRefType,
+                                                          ReferenceValue rightRefValue,
+                                                          DesignEntityType rightDesignEntityType,
+                                                          AttributeType rightAttributeType)
+{
+    DesignEntity leftDesignEntity{leftDesignEntityType};
+    Reference leftReference = leftRefType == AttributeRefType
+                                  ? Reference(std::move(leftRefValue), leftDesignEntity, Attribute(leftAttributeType))
+                                  : Reference(leftRefType, std::move(leftRefValue), leftDesignEntity);
+
+    DesignEntity rightDesignEntity{rightDesignEntityType};
+    Reference rightReference
+        = rightRefType == AttributeRefType
+              ? Reference(std::move(rightRefValue), rightDesignEntity, Attribute(rightAttributeType))
+              : Reference(rightRefType, std::move(rightRefValue), rightDesignEntity);
+
+    Clause* withClause = new WithClause(leftReference, rightReference);
+    clauseVector.add(withClause);
+
+    return *this;
+}
+
+AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipReferenceType relRefType,
+                                                              ReferenceType leftRefType, ReferenceValue leftRefValue,
                                                               DesignEntityType leftDesignEntityType,
                                                               ReferenceType rightRefType, ReferenceValue rightRefValue,
                                                               DesignEntityType rightDesignEntityType)
 {
     DesignEntity leftDesignEntity{leftDesignEntityType};
     Reference leftReference{leftRefType, std::move(leftRefValue), leftDesignEntity};
+
     DesignEntity rightDesignEntity{rightDesignEntityType};
     Reference rightReference{rightRefType, std::move(rightRefValue), rightDesignEntity};
+
     Relationship relationship = Relationship::createRelationship(std::move(relRefType), leftReference, rightReference);
 
     Clause* suchThatClause = new SuchThatClause(relationship);

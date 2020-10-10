@@ -14,15 +14,19 @@ private:
 public:
     static AbstractQueryBuilder create();
     AbstractQueryBuilder& addSelectSynonym(Synonym synonym);
+    AbstractQueryBuilder& addSelectSynonym(Synonym synonym, String attribute, DesignEntityType);
     AbstractQueryBuilder& addDeclaration(Synonym synonym, const String& designEntityType);
+    AbstractQueryBuilder& addWithClause(ReferenceType leftRefType, ReferenceValue leftRefValue,
+                                        DesignEntityType leftDesignEntityType, AttributeType leftAttributeType,
+                                        ReferenceType rightRefType, ReferenceValue rightRefValue,
+                                        DesignEntityType rightDesignEntityType, AttributeType rightAttributeType);
     AbstractQueryBuilder& addSuchThatClause(RelationshipReferenceType relRefType, ReferenceType leftRefType,
-                                                  ReferenceValue leftRefValue, DesignEntityType leftDesignEntityType,
-                                                  ReferenceType rightRefType, ReferenceValue rightRefValue,
-                                                  DesignEntityType rightDesignEntityType);
-    AbstractQueryBuilder& addPatternClause(Synonym s, PatternStatementType patternStatementType,
-                                                 ReferenceType refType, ReferenceValue refValue,
-                                                 DesignEntityType designEntityType, const String& exprString,
-                                                 ExpressionSpecType exprSpecType);
+                                            ReferenceValue leftRefValue, DesignEntityType leftDesignEntityType,
+                                            ReferenceType rightRefType, ReferenceValue rightRefValue,
+                                            DesignEntityType rightDesignEntityType);
+    AbstractQueryBuilder& addPatternClause(Synonym s, PatternStatementType patternStatementType, ReferenceType refType,
+                                           ReferenceValue refValue, DesignEntityType designEntityType,
+                                           const String& exprString, ExpressionSpecType exprSpecType);
     AbstractQuery build();
 };
 

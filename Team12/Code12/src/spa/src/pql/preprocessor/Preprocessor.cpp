@@ -8,7 +8,8 @@ StringPair splitDeclarationAndSelectClause(const String& query);
 std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
 std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
                                                                     DeclarationTable& declarationTable);
-std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable);
+std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString,
+                                                       DeclarationTable& declarationTable);
 StringVector splitResultAndClauses(String& s);
 
 /**
@@ -98,7 +99,7 @@ std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selec
             return std::make_pair(false, Vector<ResultSynonym>());
         }
 
-        return std::make_pair(false, Vector<ResultSynonym>{ ResultSynonym{selectResultString} });
+        return std::make_pair(false, Vector<ResultSynonym>{ResultSynonym{selectResultString}});
     }
 
     // Single Synonym result
@@ -109,7 +110,7 @@ std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selec
             return std::make_pair(true, Vector<ResultSynonym>{});
         }
 
-        return std::make_pair(false, Vector<ResultSynonym>{ processedResultSynonym.second });
+        return std::make_pair(false, Vector<ResultSynonym>{processedResultSynonym.second});
     }
 
     // Tuple result
@@ -130,7 +131,8 @@ std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selec
     return std::make_pair(false, resultSynonyms);
 }
 
-std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable)
+std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString,
+                                                       DeclarationTable& declarationTable)
 {
     StringVector splitByFullStop = splitByDelimiter(resultSynonymString, ".");
     std::pair<Boolean, ResultSynonym> invalidResult = std::make_pair(true, ResultSynonym(true));
@@ -146,15 +148,17 @@ std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynon
 
         return std::make_pair(false, ResultSynonym(resultSynonymString));
     }
-    // TODO: Consider s . stmt # (s.stmt#)
-    String synonym = splitByFullStop[0];
+
+    Synonym synonym = splitByFullStop[0];
     String attribute = splitByFullStop[1];
 
-    if (!isValidSynonym(synonym) || declarationTable.hasSynonym(synonym)) {
+    if (!isValidSynonym(synonym) || !declarationTable.hasSynonym(synonym)) {
         return invalidResult;
     }
 
-    ResultSynonym resultSynonym(synonym, attribute);
+    DesignEntity designEntityOfSynonym = declarationTable.getDesignEntityOfSynonym(synonym);
+
+    ResultSynonym resultSynonym(synonym, attribute, designEntityOfSynonym);
     if (resultSynonym.isInvalid()) {
         return invalidResult;
     }
@@ -212,6 +216,9 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
     Integer numOfOpenedParentheses = 0;
     Boolean hasOpenParentheses = false;
     Boolean isInProcessOfCreatingClause = false;
+    Boolean hasEncounteredEqualsOperator = false;
+    Boolean hasClosedQuotes = false;
+    Boolean isPreviousTokenFullStop = false;
 
     /**
      * Syntactically incorrect if number of tokens after
@@ -234,8 +241,9 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
     int numOfTokensWithoutOpenParentheses = 0;
 
     StringVector splitStringList = splitProgram(clausesString);
-
-    for (auto& token : splitStringList) {
+    size_t length = splitStringList.size();
+    for (size_t i = 0; i < length; i++) {
+        auto& token = splitStringList.at(i);
         if (token == "and" && !hasCurrentClause && currentClauseType != NonExistentClauseType) {
             hasCurrentClause = true;
             isInProcessOfCreatingClause = true;
@@ -243,7 +251,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
         }
 
         if (!hasCurrentClause) {
-            if (token != "such" && token != "pattern") {
+            if (token != "such" && token != "pattern" && token != "with") {
                 return ClauseVector::invalidClauseVector();
             }
 
@@ -251,69 +259,124 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
                 isPreviousTokenSuch = true;
             } else if (token == "pattern") {
                 currentClauseType = PatternClauseType;
+            } else if (token == "with") {
+                currentClauseType = WithClauseType;
             }
 
             isInProcessOfCreatingClause = true;
             hasCurrentClause = true;
-        } else {
-            if (isPreviousTokenSuch) {
-                if (token != "that") {
-                    return ClauseVector::invalidClauseVector();
+            continue;
+        }
+
+        if (isPreviousTokenSuch) {
+            if (token != "that") {
+                return ClauseVector::invalidClauseVector();
+            }
+
+            isPreviousTokenSuch = false;
+            currentClauseType = SuchThatClauseType;
+            continue;
+        }
+
+        currentClauseConstraint.append(token);
+
+        if (currentClauseType == WithClauseType) {
+            if (hasEncounteredEqualsOperator) {
+                if (token == "\"" && !hasClosedQuotes) {
+                    continue;
                 }
 
-                isPreviousTokenSuch = false;
-                currentClauseType = SuchThatClauseType;
-            } else {
-                currentClauseConstraint.append(token);
-
-                std::pair<Boolean, Integer> result = countNumOfOpenParentheses(token, numOfOpenedParentheses);
-                if (!result.first) {
-                    return ClauseVector::invalidClauseVector();
+                if (token == ".") {
+                    isPreviousTokenFullStop = true;
+                    continue;
                 }
 
-                numOfOpenedParentheses = result.second;
+                if (isPreviousTokenFullStop) {
+                    isPreviousTokenFullStop = false;
 
-                if (!hasOpenParentheses) {
-                    hasOpenParentheses = containsOpenParentheses(token);
-                }
+                    // Expecting a '#' as the next token
+                    if (token == "stmt") {
+                        continue;
+                    }
+                } else if (i + 1 < length && !hasClosedQuotes) {
+                    if (splitStringList.at(i + 1) == ".") {
+                        continue;
+                    }
 
-                if (numOfOpenedParentheses < 0) {
-                    return ClauseVector::invalidClauseVector();
-                } else if (numOfOpenedParentheses == 0) {
-                    if (!hasOpenParentheses) {
-                        if (token != "*") {
-                            numOfTokensWithoutOpenParentheses++;
-                        }
-
-                        if (numOfTokensWithoutOpenParentheses >= 2) {
-                            return ClauseVector::invalidClauseVector();
-                        }
-                    } else {
-                        Clause* clause;
-
-                        if (currentClauseType == SuchThatClauseType) {
-                            clause = SuchThatClause::createSuchThatClause(currentClauseConstraint, declarationTable);
-                        } else { // PatternClause
-                            clause = PatternClause::createPatternClause(currentClauseConstraint, declarationTable);
-                        }
-
-                        if (clause->isInvalid()) {
-                            return ClauseVector::invalidClauseVector();
-                        }
-
-                        clauseVector.add(clause);
-
-                        currentClauseConstraint.clear();
-                        numOfOpenedParentheses = 0;
-                        numOfTokensWithoutOpenParentheses = 0;
-                        hasCurrentClause = false;
-                        hasOpenParentheses = false;
-                        isInProcessOfCreatingClause = false;
+                    if (splitStringList.at(i + 1) == "\"") {
+                        hasClosedQuotes = true;
+                        continue;
                     }
                 }
-                // if numOfOpenedParentheses is positive, continue looping
+
+                Clause* clause = WithClause::createWithClause(currentClauseConstraint, declarationTable);
+                if (clause->isInvalid()) {
+                    return ClauseVector::invalidClauseVector();
+                }
+
+                clauseVector.add(clause);
+
+                hasEncounteredEqualsOperator = false;
+                currentClauseConstraint.clear();
+                hasCurrentClause = false;
+                isInProcessOfCreatingClause = false;
+                hasClosedQuotes = false;
+                continue;
+            }
+
+            if (token == "=") {
+                hasEncounteredEqualsOperator = true;
+            }
+
+            continue;
+        }
+
+        std::pair<Boolean, Integer> result = countNumOfOpenParentheses(token, numOfOpenedParentheses);
+        if (!result.first) {
+            return ClauseVector::invalidClauseVector();
+        }
+
+        numOfOpenedParentheses = result.second;
+
+        if (!hasOpenParentheses) {
+            hasOpenParentheses = containsOpenParentheses(token);
+        }
+
+        if (numOfOpenedParentheses < 0) {
+            return ClauseVector::invalidClauseVector();
+        } else if (numOfOpenedParentheses == 0) {
+            if (!hasOpenParentheses) {
+                if (token != "*") {
+                    numOfTokensWithoutOpenParentheses++;
+                }
+
+                if (numOfTokensWithoutOpenParentheses >= 2) {
+                    return ClauseVector::invalidClauseVector();
+                }
+            } else {
+                Clause* clause;
+
+                if (currentClauseType == SuchThatClauseType) {
+                    clause = SuchThatClause::createSuchThatClause(currentClauseConstraint, declarationTable);
+                } else { // PatternClause
+                    clause = PatternClause::createPatternClause(currentClauseConstraint, declarationTable);
+                }
+
+                if (clause->isInvalid()) {
+                    return ClauseVector::invalidClauseVector();
+                }
+
+                clauseVector.add(clause);
+
+                currentClauseConstraint.clear();
+                numOfOpenedParentheses = 0;
+                numOfTokensWithoutOpenParentheses = 0;
+                hasCurrentClause = false;
+                hasOpenParentheses = false;
+                isInProcessOfCreatingClause = false;
             }
         }
+        // if numOfOpenedParentheses is positive, continue looping
     }
 
     if (!currentClauseConstraint.empty() || isInProcessOfCreatingClause) {
@@ -344,11 +407,39 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
     StringVector tokenizedStringList = splitProgram(declarationsString);
     DesignEntity currentDesignEntity;
-    bool hasCurrentDesignEntity = false;
-    bool isPreviousTokenASynonym = false;
+    Boolean hasCurrentDesignEntity = false;
+    Boolean isPreviousTokenASynonym = false;
+    Boolean isPotentialProgLineDesignEntity = false;
+    Boolean isHighPotentialProgLineDesignEntity = false;
 
     for (std::string& token : tokenizedStringList) {
         if (!hasCurrentDesignEntity) {
+            if (token == "prog") {
+                isPotentialProgLineDesignEntity = true;
+                continue;
+            }
+
+            if (token == "_") {
+                if (!isPotentialProgLineDesignEntity) {
+                    return DeclarationTable::invalidDeclarationTable();
+                }
+
+                isPotentialProgLineDesignEntity = false;
+                isHighPotentialProgLineDesignEntity = true;
+                continue;
+            }
+
+            if (token == "line") {
+                if (!isHighPotentialProgLineDesignEntity) {
+                    return DeclarationTable::invalidDeclarationTable();
+                }
+
+                currentDesignEntity = DesignEntity(Prog_LineType);
+                isHighPotentialProgLineDesignEntity = false;
+                hasCurrentDesignEntity = true;
+                continue;
+            }
+
             currentDesignEntity = DesignEntity(token);
             if (currentDesignEntity.getType() == NonExistentType) {
                 return DeclarationTable::invalidDeclarationTable();
