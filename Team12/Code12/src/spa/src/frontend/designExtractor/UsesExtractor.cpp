@@ -176,7 +176,7 @@ VariablesSet extractUsesStmtlst(const StmtlstNode* stmtLstNode, ProcedureUsesMap
         if (!usedInStatement.empty()) {
             storeUsesVariablesInPkb(currentStatement->getStatementNumber(), currentStatementType, usedInStatement);
         }
-        // associateZeroExisting variables with the statement list as well
+        // associate variables with the statement list as well
         allVariablesUsed = concatenateVectors(allVariablesUsed, usedInStatement);
     }
     return allVariablesUsed;
