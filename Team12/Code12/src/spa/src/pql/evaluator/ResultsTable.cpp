@@ -315,6 +315,17 @@ ResultsTable::ResultsTable(DeclarationTable decls):
     hasResult(true), hasEvaluated(false)
 {}
 
+std::vector<std::pair<std::string, std::vector<std::string>>>
+getVectorFromResultsMap(const std::unordered_map<Synonym, ResultsSet>& resultsMap)
+{
+    std::vector<std::pair<std::string, std::vector<std::string>>> resultsVector;
+    for (const std::pair<Synonym, ResultsSet> entry : resultsMap) {
+        std::vector<std::string> resultForEntry = std::vector<String>(entry.second.begin(), entry.second.end());
+        resultsVector.emplace_back(entry.first, resultForEntry);
+    }
+    return resultsVector;
+}
+
 bool ResultsTable::operator==(const ResultsTable& rt) const
 {
     if (this->resultsMap.size() != rt.resultsMap.size()) {
@@ -328,13 +339,10 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
             return pair1.first < pair2.first;
         };
 
-    std::vector<std::pair<std::string, std::vector<std::string>>> thisResultsList;
-    std::copy(this->resultsMap.begin(), this->resultsMap.end(), std::back_inserter(thisResultsList));
-    std::sort(thisResultsList.begin(), thisResultsList.end(), comparator);
-
-    std::vector<std::pair<std::string, std::vector<std::string>>> otherResultsList;
-    std::copy(rt.resultsMap.begin(), rt.resultsMap.end(), std::back_inserter(otherResultsList));
-    std::sort(otherResultsList.begin(), otherResultsList.end(), comparator);
+    std::vector<std::pair<std::string, std::vector<std::string>>> thisResultsList
+        = getVectorFromResultsMap(this->resultsMap);
+    std::vector<std::pair<std::string, std::vector<std::string>>> otherResultsList
+        = getVectorFromResultsMap(rt.resultsMap);
 
     bool isResultsTheSame = true;
     size_t length = this->resultsMap.size();
@@ -347,7 +355,7 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
         }
     }
     return isResultsTheSame && this->declarations == rt.declarations && *(this->relationships) == *(rt.relationships)
-           && this->hasResult == rt.hasResult;
+           && this->hasResult == rt.hasResult && this->hasEvaluated == rt.hasEvaluated;
 }
 
 Boolean ResultsTable::hasResults() const
@@ -429,7 +437,21 @@ Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& re
         storeResultsOne(rfc1, res1);
     } else {
         queue.push(createEvaluatorTwo(this, rfc1.getValue(), res1, rfc2.getValue(), res2, tuples));
-        // this->relationships->insertRelationships(tuples, rfc1.getValue(), rfc2.getValue());
+    }
+}
+
+Void ResultsTable::storeResultsTwo(const Synonym& syn, const ClauseResult& resSyn, const Reference& ref,
+                                   const ClauseResult& resRef, const PairedResult& tuples)
+{
+    // short-circuit if tuples are empty
+    if (tuples.empty()) {
+        hasResult = false;
+        return;
+    } else if (ref.getReferenceType() != SynonymRefType) {
+        // ignore the reference
+        storeResultsOne(syn, resSyn);
+    } else {
+        queue.push(createEvaluatorTwo(this, syn, resSyn, ref.getValue(), resRef, tuples));
     }
 }
 

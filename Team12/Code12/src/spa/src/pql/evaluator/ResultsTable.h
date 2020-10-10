@@ -337,6 +337,23 @@ public:
      */
     Void storeResultsTwo(const Reference& rfc1, const ClauseResult& res1, const Reference& rfc2,
                          const ClauseResult& res2, const PairedResult& tuples);
+
+    /**
+     * Adds the result for two synonyms into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called. If any of the references are
+     * not synonyms, this method may call storeResultsOne
+     * instead.
+     *
+     * @param syn First synonym in the clause.
+     * @param resSyn Results for the synonym syn.
+     * @param ref Second reference in the clause.
+     * @param resRef Results for the reference ref.
+     * @param tuples Pairs of results for the first synonym
+     *               and the second reference.
+     */
+    Void storeResultsTwo(const Synonym& syn, const ClauseResult& resSyn, const Reference& ref,
+                         const ClauseResult& resRef, const PairedResult& tuples);
 };
 
 /*
