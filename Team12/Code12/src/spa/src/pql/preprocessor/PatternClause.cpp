@@ -89,10 +89,11 @@ Clause* PatternClause::processAssignPatternClause(Synonym patternSynonym, String
 Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, DesignEntityType synonymDesignEntityType,
                                                    StringVector constraints, DeclarationTable& declarationTable)
 {
-    assert(synonymDesignEntityType == IfType || synonymDesignEntityType == WhileType);
+    assert(synonymDesignEntityType == IfType
+           || synonymDesignEntityType == WhileType); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
-    if (constraints.size() != 3 && synonymDesignEntityType == IfType
-        || constraints.size() != 2 && synonymDesignEntityType == WhileType) {
+    if ((constraints.size() != 3 && synonymDesignEntityType == IfType)
+        || (constraints.size() != 2 && synonymDesignEntityType == WhileType)) {
         return Clause::invalidClause(PatternClauseType);
     }
 

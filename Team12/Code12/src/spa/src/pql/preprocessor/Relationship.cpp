@@ -121,7 +121,8 @@ Relationship Relationship::createRelationship(RelationshipReferenceType relRefTy
                                               Reference rightRef)
 {
 
-    assert(leftReferenceTypeValidationTable.find(relRefType) != leftReferenceTypeValidationTable.end());
+    assert(leftReferenceTypeValidationTable.find(relRefType)
+           != leftReferenceTypeValidationTable.end()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     // Validate semantics for relationships
     if (!validateRelationshipSemantics(relRefType, leftRef, rightRef)) {
