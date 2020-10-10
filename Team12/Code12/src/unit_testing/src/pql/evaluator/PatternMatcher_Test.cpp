@@ -26,10 +26,10 @@ TEST_CASE("Assignment statement patterns are evaluated correctly")
         PatternClause clause1("assign", AssignPatternType, Reference(SynonymRefType, "var"),
                               ExpressionSpec(createRefExpr("dist"), ExtendableLiteralExpressionType));
         evaluatePattern(&clause1, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.get("assign"), std::vector<std::string>({"13", "16", "21"}));
-        doVectorsHaveSameElementsVoid(resTable.get("var"), std::vector<std::string>({"depth", "x"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("assign"), std::vector<std::string>({"13", "16", "21"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("var"), std::vector<std::string>({"depth", "x"}));
         doVectorsHaveSameElementsVoid(
-            resTable.getRelationships("var", "assign"),
+            resTable.getResultsTwo("var", "assign"),
             std::vector<std::pair<std::string, std::string>>({{"x", "16"}, {"x", "21"}, {"depth", "13"}}));
     }
 
@@ -39,7 +39,7 @@ TEST_CASE("Assignment statement patterns are evaluated correctly")
                               ExpressionSpec(WildcardExpressionType));
         evaluatePattern(&clause1, &resTable);
         doVectorsHaveSameElementsVoid(
-            resTable.get("assign"),
+            resTable.getResultsOne("assign"),
             std::vector<std::string>({"4", "5", "9", "12", "13", "14", "15", "16", "17", "20", "21", "22", "23"}));
     }
 
@@ -48,7 +48,7 @@ TEST_CASE("Assignment statement patterns are evaluated correctly")
         PatternClause clause1("assign", AssignPatternType, Reference(WildcardRefType, "_"),
                               ExpressionSpec(createRefExpr("dist"), ExtendableLiteralExpressionType));
         evaluatePattern(&clause1, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.get("assign"), std::vector<std::string>({"13", "16", "21"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("assign"), std::vector<std::string>({"13", "16", "21"}));
     }
 
     SECTION("Assigned to variable is string literal")
@@ -56,7 +56,7 @@ TEST_CASE("Assignment statement patterns are evaluated correctly")
         PatternClause clause1("assign", AssignPatternType, Reference(LiteralRefType, "x"),
                               ExpressionSpec(createRefExpr("dist"), ExtendableLiteralExpressionType));
         evaluatePattern(&clause1, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.get("assign"), std::vector<std::string>({"16", "21"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("assign"), std::vector<std::string>({"16", "21"}));
     }
 
     SECTION("Numeral literal expression")
@@ -64,8 +64,8 @@ TEST_CASE("Assignment statement patterns are evaluated correctly")
         PatternClause clause1("assign", AssignPatternType, Reference(SynonymRefType, "var"),
                               ExpressionSpec(createRefExpr(19), ExtendableLiteralExpressionType));
         evaluatePattern(&clause1, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.get("assign"), std::vector<std::string>({"5"}));
-        doVectorsHaveSameElementsVoid(resTable.get("var"), std::vector<std::string>({"rd"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("assign"), std::vector<std::string>({"5"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("var"), std::vector<std::string>({"rd"}));
     }
 
     SECTION("Arithmetic expression")
@@ -76,9 +76,9 @@ TEST_CASE("Assignment statement patterns are evaluated correctly")
                 createPlusExpr(createRefExpr("ro"), createTimesExpr(createRefExpr("rd"), createRefExpr("depth"))),
                 LiteralExpressionType));
         evaluatePattern(&clause1, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.get("assign"), std::vector<std::string>({"9"}));
-        doVectorsHaveSameElementsVoid(resTable.get("var"), std::vector<std::string>({"po"}));
-        doVectorsHaveSameElementsVoid(resTable.getRelationships("var", "assign"),
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("assign"), std::vector<std::string>({"9"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsOne("var"), std::vector<std::string>({"po"}));
+        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("var", "assign"),
                                       std::vector<std::pair<std::string, std::string>>({{"po", "9"}}));
     }
 }
