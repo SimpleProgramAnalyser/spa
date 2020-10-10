@@ -128,24 +128,24 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
     }
     // find all edges with secondKey
     std::unordered_set<GraphEdge> firstKeyEdges = valuesTable[firstKey];
+    std::unordered_set<GraphEdge> edgesToDelete;
     for (GraphEdge potentialEdge : firstKeyEdges) {
         if (edgesTable[potentialEdge].find(secondKey) == edgesTable[potentialEdge].end()) {
-            // ignore this edge, as it does not involve secondKey
-            firstKeyEdges.erase(potentialEdge);
-        } else {
+            // transfer this edge to edgesToDelete
             valuesTable[firstKey].erase(potentialEdge);
             valuesTable[secondKey].erase(potentialEdge);
+            edgesToDelete.insert(potentialEdge);
         }
     }
     // delete edges
     std::unordered_set<PotentialValue, PotentialValueHasher> affectedValues;
-    for (GraphEdge edgeToDelete : firstKeyEdges) {
-        std::unordered_set<PotentialValue, PotentialValueHasher> currentEdgeValues = edgesTable[edgeToDelete];
+    for (GraphEdge edge : edgesToDelete) {
+        std::unordered_set<PotentialValue, PotentialValueHasher> currentEdgeValues = edgesTable[edge];
         for (const PotentialValue& otherValue : currentEdgeValues) {
-            valuesTable[otherValue].erase(edgeToDelete);
+            valuesTable[otherValue].erase(edge);
             affectedValues.insert(otherValue);
         }
-        edgesTable.erase(edgeToDelete);
+        edgesTable.erase(edge);
     }
     // ignore firstKey and secondKey
     affectedValues.erase(firstKey);
