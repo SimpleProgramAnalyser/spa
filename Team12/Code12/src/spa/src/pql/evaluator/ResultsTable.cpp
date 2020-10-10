@@ -153,7 +153,7 @@ struct ResultsRelationHasher {
 void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const ClauseResult& res1, const Synonym& s2,
                                     const ClauseResult& res2, const PairedResult& tuples)
 {
-    if (table->checkIfHaveRelationships(s1, s2)) {
+    if (table->hasRelationships(s1, s2)) {
         // past relations exist for s1 and s2
         std::unordered_set<ResultsRelation, ResultsRelationHasher> newRelationsSet;
         for (const std::pair<String, String>& newRelation : tuples) {
@@ -231,51 +231,7 @@ ClauseResult ResultsTable::get(const Synonym& syn)
     }
 }
 
-Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
-{
-    if (!hasResults()) {
-        // there are no results, so by the specification of
-        // this method, the synonym is restricted
-        return true;
-    } else {
-        return checkIfSynonymInMap(syn);
-    }
-}
-
 void ResultsTable::associateRelationships(Vector<Pair<String, String>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
-}
-
-void ResultsTable::associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
-}
-
-void ResultsTable::associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
-}
-
-void ResultsTable::associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Reference& leftRef,
                                           const Reference& rightRef)
 {
     // short-circuit if relationships are empty, or refs are not synonyms
@@ -363,7 +319,30 @@ Boolean ResultsTable::hasResults() const
     return hasResult;
 }
 
-Boolean ResultsTable::checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
+void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
+{
+    if (resultsMap.find(synonym) != resultsMap.end()) {
+        resultsMap[synonym].erase(value);
+    }
+}
+
+DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
+{
+    return declarations.getDesignEntityOfSynonym(syn).getType();
+}
+
+Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
+{
+    if (!hasResults()) {
+        // there are no results, so by the specification of
+        // this method, the synonym is restricted
+        return true;
+    } else {
+        return checkIfSynonymInMap(syn);
+    }
+}
+
+Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
 {
     if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
         return true;
@@ -381,22 +360,30 @@ Boolean ResultsTable::checkIfHaveRelationships(const Synonym& leftSynonym, const
     return false;
 }
 
-void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
-{
-    if (resultsMap.find(synonym) != resultsMap.end()) {
-        resultsMap[synonym].erase(value);
-    }
-}
-
-DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
-{
-    return declarations.getDesignEntityOfSynonym(syn).getType();
-}
-
 ClauseResult ResultsTable::getResultsOne(const Synonym& syn)
 {
     mergeResults();
     return this->get(syn);
+}
+
+PairedResult ResultsTable::getResultsTwo(const Synonym& syn1, const Synonym& syn2)
+{
+    mergeResults();
+    if (!hasResults()) {
+        // table is marked as having no results
+        return std::vector<std::pair<String, String>>();
+    } else if (hasRelationships(syn1, syn2)) {
+        return this->getRelationships(syn1, syn2);
+    } else {
+        std::vector<std::pair<String, String>> tuples;
+        // do a Cartesian product of both result lists
+        for (const String& res1 : this->get(syn1)) {
+            for (const String& res2 : this->get(syn2)) {
+                tuples.emplace_back(res1, res2);
+            }
+        }
+        return tuples;
+    }
 }
 
 Void ResultsTable::storeResultsOne(const Synonym& syn, const ClauseResult& res)
@@ -425,10 +412,9 @@ Void ResultsTable::storeResultsOne(const Reference& rfc, const ClauseResult& res
 Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& res1, const Reference& rfc2,
                                    const ClauseResult& res2, const PairedResult& tuples)
 {
-    // short-circuit if tuples are empty
     if (tuples.empty()) {
+        // short-circuit if tuples are empty
         hasResult = false;
-        return;
     } else if (rfc1.getReferenceType() != SynonymRefType) {
         // ignore reference 1
         storeResultsOne(rfc2, res2);
@@ -443,15 +429,25 @@ Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& re
 Void ResultsTable::storeResultsTwo(const Synonym& syn, const ClauseResult& resSyn, const Reference& ref,
                                    const ClauseResult& resRef, const PairedResult& tuples)
 {
-    // short-circuit if tuples are empty
     if (tuples.empty()) {
+        // short-circuit if tuples are empty
         hasResult = false;
-        return;
     } else if (ref.getReferenceType() != SynonymRefType) {
         // ignore the reference
         storeResultsOne(syn, resSyn);
     } else {
         queue.push(createEvaluatorTwo(this, syn, resSyn, ref.getValue(), resRef, tuples));
+    }
+}
+
+Void ResultsTable::storeResultsTwo(const Synonym& syn1, const ClauseResult& res1, const Synonym& syn2,
+                                   const ClauseResult& res2, const PairedResult& tuples)
+{
+    if (tuples.empty()) {
+        // short-circuit if tuples are empty
+        hasResult = false;
+    } else {
+        queue.push(createEvaluatorTwo(this, syn1, res1, syn2, res2, tuples));
     }
 }
 

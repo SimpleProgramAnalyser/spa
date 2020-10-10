@@ -23,12 +23,12 @@ TEST_CASE("ResultsTable stores empty results correctly")
     DesignEntity anyVar(VariableType);
     declTable.addDeclaration("efgh", anyVar);
     ResultsTable resTable(declTable);
-    resTable.filterTable("abcd", std::vector<std::string>());
+    resTable.storeResultsOne("abcd", std::vector<std::string>());
 
     REQUIRE(!resTable.hasResults());
-    REQUIRE(resTable.get("abcd").empty());
+    REQUIRE(resTable.getResultsOne("abcd").empty());
     // check if other synonyms also return empty
-    REQUIRE(resTable.get("efgh").empty());
+    REQUIRE(resTable.getResultsOne("efgh").empty());
 }
 
 TEST_CASE("ResultsTable stores results correctly")
@@ -46,11 +46,11 @@ TEST_CASE("ResultsTable stores results correctly")
     ResultsTable resTable(declTable);
     std::vector<std::string> expectedResultsAbcd{"7", "9", "3", "10", "143", "539"};
     std::vector<std::string> expectedResultsEfgh{"mercury", "venus", "earth", "mars"};
-    resTable.filterTable("abcd", expectedResultsAbcd);
+    resTable.storeResultsOne("abcd", expectedResultsAbcd);
 
     REQUIRE(resTable.hasResults());
-    doVectorsHaveSameElementsVoid(resTable.get("efgh"), expectedResultsEfgh);
-    doVectorsHaveSameElementsVoid(resTable.get("abcd"), expectedResultsAbcd);
+    doVectorsHaveSameElementsVoid(resTable.getResultsOne("efgh"), expectedResultsEfgh);
+    doVectorsHaveSameElementsVoid(resTable.getResultsOne("abcd"), expectedResultsAbcd);
 }
 
 TEST_CASE("ResultsTable filters results correctly")
@@ -59,10 +59,10 @@ TEST_CASE("ResultsTable filters results correctly")
     std::vector<std::string> originalResults{"1", "3", "7", "539", "23", "134", "143", "9"};
     std::vector<std::string> newResults{"112", "18397", "3", "0", "143", "539"};
     std::vector<std::string> expectedResults{"3", "143", "539"};
-    resTable.filterTable("abcd", originalResults);
-    resTable.filterTable("abcd", newResults);
+    resTable.storeResultsOne("abcd", originalResults);
+    resTable.storeResultsOne("abcd", newResults);
 
-    doVectorsHaveSameElementsVoid(resTable.get("abcd"), expectedResults);
+    doVectorsHaveSameElementsVoid(resTable.getResultsOne("abcd"), expectedResults);
 }
 
 TEST_CASE("ResultsTable filters results correctly for synonym reference")
@@ -72,10 +72,10 @@ TEST_CASE("ResultsTable filters results correctly for synonym reference")
                                              "enderdragon", "villager", "mooshroom"};
     std::vector<std::string> newResults{"pig", "mooshroom", "sheep", "enderman", "dolphin", "salmon"};
     std::vector<std::string> expectedResults{"mooshroom", "enderman", "dolphin"};
-    resTable.filterTable(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), originalResults);
-    resTable.filterTable(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), newResults);
+    resTable.storeResultsOne(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), originalResults);
+    resTable.storeResultsOne(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), newResults);
 
-    doVectorsHaveSameElementsVoid(resTable.get("abcd"), expectedResults);
+    doVectorsHaveSameElementsVoid(resTable.getResultsOne("abcd"), expectedResults);
 }
 
 TEST_CASE("ResultsTable does not filter any results for non-synonym reference")
@@ -86,14 +86,15 @@ TEST_CASE("ResultsTable does not filter any results for non-synonym reference")
     std::vector<std::string> newResults{"pig", "mooshroom", "sheep", "enderman", "dolphin", "salmon"};
     std::vector<std::string> moreResults{"enderdragon", "enderman", "shulker", "piglinbrute",
                                          "endermite",   "creeper",  "strider"};
-    resTable.filterTable(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), originalResults);
-    resTable.filterTable(Reference(WildcardRefType, "_"), newResults);
-    resTable.filterTable(Reference(IntegerRefType, "12"), moreResults);
+    resTable.storeResultsOne(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), originalResults);
+    resTable.storeResultsOne(Reference(WildcardRefType, "_"), newResults);
+    resTable.storeResultsOne(Reference(IntegerRefType, "12"), moreResults);
 
     ResultsTable resTable2(DeclarationTable{});
-    resTable2.filterTable(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), originalResults);
+    resTable2.storeResultsOne(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), originalResults);
+    resTable2.getResultsOne("abcd");
 
-    doVectorsHaveSameElementsVoid(resTable.get("abcd"), originalResults);
+    doVectorsHaveSameElementsVoid(resTable.getResultsOne("abcd"), originalResults);
     REQUIRE(resTable == resTable2);
 }
 
@@ -111,12 +112,12 @@ TEST_CASE("ResultsTable retrieves results from PKB correctly, if no elements fou
     DesignEntity anyStmt(StmtType);
     declTable.addDeclaration("abcd", anyStmt);
     ResultsTable resTable(declTable);
-    std::vector<std::string> abcdResults = resTable.get("abcd");
+    std::vector<std::string> abcdResults = resTable.getResultsOne("abcd");
 
     doVectorsHaveSameElementsVoid(abcdResults, std::vector<std::string>({"1", "2", "3", "4", "5"}));
 }
 
-TEST_CASE("checkIfSynonymHasConstraints returns false for synonym with no constraints, and returns true for synonym "
+TEST_CASE("doesSynonymHaveConstraints returns false for synonym with no constraints, and returns true for synonym "
           "with constraints")
 {
     ResultsTable resTable(DeclarationTable{});
@@ -124,12 +125,13 @@ TEST_CASE("checkIfSynonymHasConstraints returns false for synonym with no constr
     std::vector<std::string> newResults{"112", "18397", "3", "0", "143", "539"};
     std::vector<std::string> expectedResults{"3", "143", "539"};
 
-    REQUIRE_FALSE(resTable.checkIfSynonymHasConstraints("abcd"));
+    REQUIRE_FALSE(resTable.doesSynonymHaveConstraints("abcd"));
 
-    resTable.filterTable("abcd", originalResults);
-    resTable.filterTable("abcd", newResults);
+    resTable.storeResultsOne("abcd", originalResults);
+    resTable.storeResultsOne("abcd", newResults);
+    resTable.getResultsOne("abcd");
 
-    REQUIRE(resTable.checkIfSynonymHasConstraints("abcd"));
+    REQUIRE(resTable.doesSynonymHaveConstraints("abcd"));
 }
 
 TEST_CASE("getTypeOfSynonym gets the type stored in declarations table successfully")
@@ -182,12 +184,12 @@ TEST_CASE("eliminatePotentialValue updates the ResultsTable successfully for syn
 {
     ResultsTable resTable(DeclarationTable{});
     std::vector<std::string> originalResults{"1", "3", "7", "539", "23", "134", "143", "9"};
-    resTable.filterTable("abcd", originalResults);
+    resTable.storeResultsOne("abcd", originalResults);
     resTable.eliminatePotentialValue("abcd", "134");
 
     ResultsTable resTableExpected(DeclarationTable{});
     std::vector<std::string> expectedResults{"1", "3", "7", "539", "23", "143", "9"};
-    resTableExpected.filterTable("abcd", expectedResults);
+    resTableExpected.storeResultsOne("abcd", expectedResults);
 
     REQUIRE(resTable == resTableExpected);
 }
@@ -196,11 +198,11 @@ TEST_CASE("eliminatePotentialValue does not do anything for synonym not found")
 {
     ResultsTable resTable(DeclarationTable{});
     std::vector<std::string> originalResults{"1", "3", "7", "539", "23", "134", "143", "9"};
-    resTable.filterTable("abcd", originalResults);
+    resTable.storeResultsOne("abcd", originalResults);
     resTable.eliminatePotentialValue("efgh", "134");
 
     ResultsTable resTableExpected(DeclarationTable{});
-    resTableExpected.filterTable("abcd", originalResults);
+    resTableExpected.storeResultsOne("abcd", originalResults);
 
     REQUIRE(resTable == resTableExpected);
 }
@@ -241,34 +243,31 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
 
     std::vector<std::pair<std::string, std::string>> mudkipSwampertRelationships(
         {{"taylor", "swift"}, {"adele", "adkins"}});
-    std::vector<std::pair<int, std::string>> astPqlProcessorRelationships({{6, "terracotta"}, {3, "concrete"}});
-    std::vector<std::pair<std::string, int>> parserDesignExtractorRelationships(
-        {{"treintaytres", 33}, {"ochentaynueve", 89}, {"doce", 12}});
-    std::vector<std::pair<int, int>> astParserRelationships({{12, 34}});
+    std::vector<std::pair<std::string, std::string>> astPqlProcessorRelationships(
+        {{"6", "terracotta"}, {"3", "concrete"}});
+    std::vector<std::pair<std::string, std::string>> parserDesignExtractorRelationships(
+        {{"treintaytres", "33"}, {"ochentaynueve", "89"}, {"doce", "12"}});
+    std::vector<std::pair<std::string, std::string>> astParserRelationships({{"12", "34"}});
 
-    resTable.associateRelationships(mudkipSwampertRelationships,
-                                    Reference(SynonymRefType, "mudkip", DesignEntity(ProcedureType)),
-                                    Reference(SynonymRefType, "swampert", DesignEntity(VariableType)));
-    resTable.associateRelationships(astPqlProcessorRelationships,
-                                    Reference(SynonymRefType, "ast", DesignEntity(StmtType)),
-                                    Reference(SynonymRefType, "pqlprocessor", DesignEntity(ProcedureType)));
-    resTable.associateRelationships(parserDesignExtractorRelationships,
-                                    Reference(SynonymRefType, "designextractor", DesignEntity(VariableType)),
-                                    Reference(SynonymRefType, "parser", DesignEntity(StmtType)));
-    resTable.associateRelationships(astParserRelationships, Reference(SynonymRefType, "ast", DesignEntity(StmtType)),
-                                    Reference(SynonymRefType, "parser", DesignEntity(StmtType)));
+    resTable.storeResultsTwo("mudkip", {"taylor", "adele"}, "swampert", {"swift", "adkins"},
+                             mudkipSwampertRelationships);
+    resTable.storeResultsTwo("ast", {"6", "3"}, "pqlprocessor", {"terracotta", "concrete"},
+                             astPqlProcessorRelationships);
+    resTable.storeResultsTwo("parser", {"treintaytres", "ochentaynueve", "doce"}, "designextractor", {"33", "89", "12"},
+                             parserDesignExtractorRelationships);
+    resTable.storeResultsTwo("ast", {"12"}, "parser", {"34"}, astParserRelationships);
 
-    SECTION("checkIfHaveRelationships returns true for related synonyms, false for unrelated synonyms")
+    SECTION("hasRelationships returns true for related synonyms, false for unrelated synonyms")
     {
-        REQUIRE(resTable.checkIfHaveRelationships("ast", "parser"));
-        REQUIRE(resTable.checkIfHaveRelationships("ast", "pqlprocessor"));
-        REQUIRE(resTable.checkIfHaveRelationships("parser", "designextractor"));
-        REQUIRE(resTable.checkIfHaveRelationships("swampert", "mudkip"));
+        REQUIRE(resTable.hasRelationships("ast", "parser"));
+        REQUIRE(resTable.hasRelationships("ast", "pqlprocessor"));
+        REQUIRE(resTable.hasRelationships("parser", "designextractor"));
+        REQUIRE(resTable.hasRelationships("swampert", "mudkip"));
 
-        REQUIRE_FALSE(resTable.checkIfHaveRelationships("ast", "designextractor"));
-        REQUIRE_FALSE(resTable.checkIfHaveRelationships("swampert", "ast"));
-        REQUIRE_FALSE(resTable.checkIfHaveRelationships("mudkip", "parser"));
-        REQUIRE_FALSE(resTable.checkIfHaveRelationships("parser", "pqlprocessor"));
+        REQUIRE_FALSE(resTable.hasRelationships("ast", "designextractor"));
+        REQUIRE_FALSE(resTable.hasRelationships("swampert", "ast"));
+        REQUIRE_FALSE(resTable.hasRelationships("mudkip", "parser"));
+        REQUIRE_FALSE(resTable.hasRelationships("parser", "pqlprocessor"));
     }
 
     SECTION("getRelationships retrieves all relationships in table")
@@ -284,12 +283,12 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
         std::vector<std::pair<std::string, std::string>> swampertMudkipRelationshipsExpected(
             {{"swift", "taylor"}, {"adkins", "adele"}});
 
-        doVectorsHaveSameElementsVoid(resTable.getRelationships("ast", "parser"), astParserRelationshipsString);
-        doVectorsHaveSameElementsVoid(resTable.getRelationships("ast", "pqlprocessor"),
+        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("ast", "parser"), astParserRelationshipsString);
+        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("ast", "pqlprocessor"),
                                       astPqlProcessorRelationshipsString);
-        doVectorsHaveSameElementsVoid(resTable.getRelationships("parser", "designextractor"),
+        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("designextractor", "parser"),
                                       designExtractorParserRelationshipsExpected);
-        doVectorsHaveSameElementsVoid(resTable.getRelationships("swampert", "mudkip"),
+        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("swampert", "mudkip"),
                                       swampertMudkipRelationshipsExpected);
     }
 }

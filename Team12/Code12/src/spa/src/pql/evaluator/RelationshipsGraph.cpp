@@ -45,29 +45,27 @@ bool RelationshipsGraph::checkEqualIncludingCache(const RelationshipsGraph& rg) 
     return *this == rg && this->synonymRelationshipsCache == rg.synonymRelationshipsCache;
 }
 
-void RelationshipsGraph::insertRelationships(Vector<Pair<String, String>> valueRelationships,
+void RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valueRelationships,
                                              const Synonym& firstSynonym, const Synonym& secondSynonym)
 {
-    insert<String, String, stringId, stringId>(std::move(valueRelationships), firstSynonym, secondSynonym);
-}
-
-void RelationshipsGraph::insertRelationships(Vector<Pair<String, Integer>> valueRelationships,
-                                             const Synonym& firstSynonym, const Synonym& secondSynonym)
-{
-    insert<String, Integer, stringId, std::to_string>(std::move(valueRelationships), firstSynonym, secondSynonym);
-}
-
-void RelationshipsGraph::insertRelationships(Vector<Pair<Integer, String>> valueRelationships,
-                                             const Synonym& firstSynonym, const Synonym& secondSynonym)
-{
-    insert<Integer, String, std::to_string, stringId>(std::move(valueRelationships), firstSynonym, secondSynonym);
-}
-
-void RelationshipsGraph::insertRelationships(Vector<Pair<Integer, Integer>> valueRelationships,
-                                             const Synonym& firstSynonym, const Synonym& secondSynonym)
-{
-    insert<Integer, Integer, std::to_string, std::to_string>(std::move(valueRelationships), firstSynonym,
-                                                             secondSynonym);
+    for (const Pair<String, String>& value : valueRelationships) {
+        PotentialValue firstKey(firstSynonym, value.first);
+        PotentialValue secondKey(secondSynonym, value.second);
+        associate(firstKey, secondKey);
+    }
+    // store the relationships in cache
+    if (!valueRelationships.empty()) {
+        if (synonymRelationshipsCache.find(firstSynonym) == synonymRelationshipsCache.end()) {
+            synonymRelationshipsCache.insert(
+                std::pair<Synonym, std::unordered_set<Synonym>>(firstSynonym, std::unordered_set<Synonym>()));
+        }
+        synonymRelationshipsCache[firstSynonym].insert(secondSynonym);
+        if (synonymRelationshipsCache.find(secondSynonym) == synonymRelationshipsCache.end()) {
+            synonymRelationshipsCache.insert(
+                std::pair<Synonym, std::unordered_set<Synonym>>(secondSynonym, std::unordered_set<Synonym>()));
+        }
+        synonymRelationshipsCache[secondSynonym].insert(firstSynonym);
+    }
 }
 
 void RelationshipsGraph::deleteFromGraph(const PotentialValue& pv, ResultsTable* resultsTable)
