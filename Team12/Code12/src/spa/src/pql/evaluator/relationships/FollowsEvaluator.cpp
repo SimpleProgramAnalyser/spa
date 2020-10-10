@@ -79,9 +79,8 @@ Void FollowsEvaluator::evaluateRightKnown() const
 Void FollowsEvaluator::evaluateBothAny() const
 {
     // we can only get the DesignEntityType of both the left and right operands
-    StatementType leftRefStmtType = leftRef.isWildCard()
-                                        ? AnyStatement
-                                        : mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
+    StatementType leftRefStmtType
+        = leftRef.isWildCard() ? AnyStatement : mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
     StatementType rightRefStmtType = rightRef.isWildCard()
                                          ? AnyStatement
                                          : mapToStatementType(resultsTable->getTypeOfSynonym(rightRef.getValue()));
@@ -93,7 +92,7 @@ Void FollowsEvaluator::evaluateBothAny() const
         rightResults = convertToClauseResult(getAllAfterStatementsTypedStar(leftRefStmtType, rightRefStmtType));
         tuples = convertToPairedResult(getAllFollowsTupleStar(leftRefStmtType, rightRefStmtType));
     } else {
-        leftResults =  convertToClauseResult(getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType));
+        leftResults = convertToClauseResult(getAllBeforeStatementsTyped(leftRefStmtType, rightRefStmtType));
         rightResults = convertToClauseResult(getAllAfterStatementsTyped(leftRefStmtType, rightRefStmtType));
         tuples = convertToPairedResult(getAllFollowsTuple(leftRefStmtType, rightRefStmtType));
     }

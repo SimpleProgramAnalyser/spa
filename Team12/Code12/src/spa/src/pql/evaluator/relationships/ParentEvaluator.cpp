@@ -63,16 +63,14 @@ Void ParentEvaluator::evaluateRightKnown() const
     resultsTable->storeResultsOne(leftRef, convertToClauseResult(tempResult));
 }
 
-
 Void ParentEvaluator::evaluateBothAny() const
 {
     // we can only get the DesignEntityType of both the left and right operands
-    StatementType leftRefStmtType = leftRef.isWildCard()
-                                    ? AnyStatement
-                                    : mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
+    StatementType leftRefStmtType
+        = leftRef.isWildCard() ? AnyStatement : mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
     StatementType rightRefStmtType = rightRef.isWildCard()
-                                     ? AnyStatement
-                                     : mapToStatementType(resultsTable->getTypeOfSynonym(rightRef.getValue()));
+                                         ? AnyStatement
+                                         : mapToStatementType(resultsTable->getTypeOfSynonym(rightRef.getValue()));
     ClauseResult leftResults;
     ClauseResult rightResults;
     PairedResult tuples;
