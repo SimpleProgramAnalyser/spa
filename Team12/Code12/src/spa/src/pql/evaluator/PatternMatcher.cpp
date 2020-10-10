@@ -6,6 +6,7 @@
 #include "PatternMatcher.h"
 
 #include <algorithm>
+#include <iterator>
 #include <stdexcept>
 
 #include "pkb/PKB.h"

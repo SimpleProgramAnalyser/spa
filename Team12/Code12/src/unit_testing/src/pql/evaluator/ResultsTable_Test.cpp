@@ -229,9 +229,9 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
     DesignEntity mudkipDesignEntity(ProcedureType);
     DesignEntity pqlProcessorDesignEntity(ProcedureType);
     DesignEntity swampertDesignEntity(VariableType);
-    DesignEntity designExtractorDesignEntity(VariableType);
+    DesignEntity designExtractorDesignEntity(StmtType);
     DesignEntity astDesignEntity(StmtType);
-    DesignEntity parserDesignEntity(StmtType);
+    DesignEntity parserDesignEntity(VariableType);
     declTable.addDeclaration("mudkip", mudkipDesignEntity);
     declTable.addDeclaration("swampert", swampertDesignEntity);
     declTable.addDeclaration("ast", astDesignEntity);
@@ -248,13 +248,10 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
         {{"treintaytres", "33"}, {"ochentaynueve", "89"}, {"doce", "12"}});
     std::vector<std::pair<std::string, std::string>> astParserRelationships({{"12", "34"}});
 
-    resTable.storeResultsTwo("mudkip", {"taylor", "adele"}, "swampert", {"swift", "adkins"},
-                             mudkipSwampertRelationships);
-    resTable.storeResultsTwo("ast", {"6", "3"}, "pqlprocessor", {"terracotta", "concrete"},
-                             astPqlProcessorRelationships);
-    resTable.storeResultsTwo("parser", {"treintaytres", "ochentaynueve", "doce"}, "designextractor", {"33", "89", "12"},
-                             parserDesignExtractorRelationships);
-    resTable.storeResultsTwo("ast", {"12"}, "parser", {"34"}, astParserRelationships);
+    resTable.associateRelationships("mudkip", "swampert", mudkipSwampertRelationships);
+    resTable.associateRelationships("ast", "pqlprocessor", astPqlProcessorRelationships);
+    resTable.associateRelationships("parser", "designextractor", parserDesignExtractorRelationships);
+    resTable.associateRelationships("ast", "parser", astParserRelationships);
 
     SECTION("hasRelationships returns true for related synonyms, false for unrelated synonyms")
     {
@@ -269,7 +266,7 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
         REQUIRE_FALSE(resTable.hasRelationships("parser", "pqlprocessor"));
     }
 
-    SECTION("getRelationships retrieves all relationships in table")
+    SECTION("getResults retrieves all relationships in table")
     {
         std::vector<std::pair<std::string, std::string>> astPqlProcessorRelationshipsString(
             {{"6", "terracotta"}, {"3", "concrete"}});

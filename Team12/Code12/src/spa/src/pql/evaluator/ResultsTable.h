@@ -83,24 +83,6 @@ private:
     ClauseResult get(const Synonym& syn);
 
     /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms. ResultsTable assumes that these
-     * values already exist in the results table. If the values
-     * do not exist, the behaviour of other methods is undefined.
-     *
-     * If the references are not synonyms, do nothing.
-     *
-     * @param valueRelationships List of relationships between
-     *                           potential values.
-     * @param leftRef The reference that the first value
-     *                     corresponds to.
-     * @param rightRef The reference that the second
-     *                     value corresponds to.
-     */
-    void associateRelationships(const Vector<Pair<String, String>>& valueRelationships, const Reference& leftRef,
-                                const Reference& rightRef);
-
-    /**
      * Removes all relationships between the leftValue of synonym left
      * and the rightValue of synonym right.
      *
@@ -141,6 +123,10 @@ public:
      *                     the query.
      */
     explicit ResultsTable(DeclarationTable decls);
+    ResultsTable(const ResultsTable&) = delete;
+    ResultsTable& operator=(const ResultsTable&) = delete;
+    ResultsTable(ResultsTable&&) = delete;
+    ResultsTable& operator=(ResultsTable&&) = delete;
 
     /**
      * A method to compare two ResultsTable for testing purposes.
@@ -158,6 +144,24 @@ public:
      *         an empty result.
      */
     Boolean hasResults() const;
+
+    /**
+     * Adds a list of relationships between potential values
+     * of certain synonyms. ResultsTable assumes that these
+     * values already exist in the results table. If the values
+     * do not exist, the behaviour of other methods is undefined.
+     *
+     * If the references are not synonyms, do nothing.
+     *
+     * @param syn1 The reference that the first value
+     *             corresponds to.
+     * @param syn2 The reference that the second
+     *             value corresponds to.
+     * @param relationshipsPairs List of relationships between
+     *                           potential values.
+     */
+    void associateRelationships(const Synonym& syn1, const Synonym& syn2,
+                                const Vector<Pair<String, String>>& relationshipsPairs);
 
     /**
      * Disassociates a certain value from a synonym in

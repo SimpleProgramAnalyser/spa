@@ -37,19 +37,19 @@ RelationshipsGraph setUpTestingGraph()
     return graph;
 }
 
-ResultsTable setUpResultsTable()
+std::unique_ptr<ResultsTable> setUpResultsTable()
 {
-    ResultsTable results(DeclarationTable{});
-    results.storeResultsOne(
+    std::unique_ptr<ResultsTable> results = std::unique_ptr<ResultsTable>(new ResultsTable{DeclarationTable()});
+    results->storeResultsOne(
         "green", std::vector<std::string>({"ew1",  "ew2",  "ew3",  "ew4",  "ew5",  "ew6",  "ew7",  "ew8",  "ew9",
                                            "ew10", "ew11", "ew12", "ew13", "ew14", "ew15", "ew16", "ew17", "ew18",
                                            "ew19", "ew20", "ew21", "ew22", "ew23", "ew24", "ew25", "ew26", "ew27",
                                            "ew28", "ew29", "ew30", "ew31", "ew32", "ew33"}));
-    results.storeResultsOne(
+    results->storeResultsOne(
         "purple", std::vector<std::string>({"harbourfront", "outrampark", "chinatown", "clarkequay", "dhobyghaut",
                                             "littleindia", "farrerpark", "boonkeng", "potongpasir", "woodleigh",
                                             "serangoon", "kovan", "hougang", "buangkok", "sengkang", "punggol"}));
-    results.storeResultsOne(
+    results->storeResultsOne(
         "circle",
         std::vector<std::string>({"dhobyghaut",   "brasbasah",    "esplanade",      "promenade",   "nicollhighway",
                                   "stadium",      "mountbatten",  "dakota",         "payalebar",   "macpherson",
@@ -57,10 +57,11 @@ ResultsTable setUpResultsTable()
                                   "marymount",    "caldecott",    "botanicgardens", "farrerroad",  "hollandvillage",
                                   "buonavista",   "onenorth",     "kentridge",      "hawparvilla", "pasirpanjang",
                                   "labradorpark", "telokblangah", "harbourfront"}));
-    results.storeResultsOne("num", std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
-                                                             "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
-                                                             "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
-    return results;
+    results->storeResultsOne("num",
+                             std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
+                                                       "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                                                       "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
+    return std::move(results);
 }
 
 TEST_CASE("RelationshipsGraph stores PotentialValue relationships correctly")
@@ -99,28 +100,28 @@ TEST_CASE("RelationshipsGraph stores PotentialValue relationships correctly")
 TEST_CASE("RelationshipsGraph updates ResultTable when a potential value no longer has any relationships")
 {
     RelationshipsGraph graph = setUpTestingGraph();
-    ResultsTable results = setUpResultsTable();
+    std::unique_ptr<ResultsTable> results = setUpResultsTable();
     // force early evaluation
-    results.getResultsZero();
+    results->getResultsZero();
     // manual deletion of potential value
-    graph.deleteFromGraph(PotentialValue("red", "ns26"), &results);
+    graph.deleteFromGraph(PotentialValue("red", "ns26"), results.get());
     requireVectorsHaveSameElements(
-        results.getResultsOne("green"),
+        results->getResultsOne("green"),
         std::vector<std::string>({"ew1",  "ew2",  "ew3",  "ew4",  "ew5",  "ew6",  "ew7",  "ew8",
                                   "ew9",  "ew10", "ew11", "ew12", "ew13", "ew15", "ew16", "ew17",
                                   "ew18", "ew19", "ew20", "ew21", "ew22", "ew23", "ew24", "ew25",
                                   "ew26", "ew27", "ew28", "ew29", "ew30", "ew31", "ew32", "ew33"}));
 
-    graph.deleteFromGraph(PotentialValue("circle", "harbourfront"), &results);
+    graph.deleteFromGraph(PotentialValue("circle", "harbourfront"), results.get());
     requireVectorsHaveSameElements(
-        results.getResultsOne("purple"),
+        results->getResultsOne("purple"),
         std::vector<std::string>({"outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia", "farrerpark",
                                   "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang", "buangkok",
                                   "sengkang", "punggol"}));
     // deleting from relationships graph does not check if
     // potential value is already deleted from results graph
     requireVectorsHaveSameElements(
-        results.getResultsOne("circle"),
+        results->getResultsOne("circle"),
         std::vector<std::string>({"dhobyghaut",   "brasbasah",    "esplanade",      "promenade",   "nicollhighway",
                                   "stadium",      "mountbatten",  "dakota",         "payalebar",   "macpherson",
                                   "taiseng",      "bartley",      "serangoon",      "lorongchuan", "bishan",
@@ -132,20 +133,20 @@ TEST_CASE("RelationshipsGraph updates ResultTable when a potential value no long
 TEST_CASE("RelationshipsGraph removes multiple potential values from ResultTable")
 {
     RelationshipsGraph graph = setUpTestingGraph();
-    ResultsTable results = setUpResultsTable();
+    std::unique_ptr<ResultsTable> results = setUpResultsTable();
     // force early evaluation
-    results.getResultsZero();
+    results->getResultsZero();
     // manual deletion of potential value
-    graph.deleteFromGraph(PotentialValue("num", "16"), &results);
+    graph.deleteFromGraph(PotentialValue("num", "16"), results.get());
     // sengkang is gone from purple
     requireVectorsHaveSameElements(
-        results.getResultsOne("purple"),
+        results->getResultsOne("purple"),
         std::vector<std::string>({"harbourfront", "outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia",
                                   "farrerpark", "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang",
                                   "buangkok", "punggol"}));
     // marymount is gone from circle
     requireVectorsHaveSameElements(
-        results.getResultsOne("circle"),
+        results->getResultsOne("circle"),
         std::vector<std::string>({"dhobyghaut",   "brasbasah",      "esplanade",   "promenade",      "nicollhighway",
                                   "stadium",      "mountbatten",    "dakota",      "payalebar",      "macpherson",
                                   "taiseng",      "bartley",        "serangoon",   "lorongchuan",    "bishan",
@@ -157,25 +158,25 @@ TEST_CASE("RelationshipsGraph removes multiple potential values from ResultTable
 TEST_CASE("deleteFromGraph leaves other relationships untouched")
 {
     RelationshipsGraph graph = setUpTestingGraph();
-    ResultsTable results = setUpResultsTable();
-    graph.deleteFromGraph(PotentialValue("purple", "sengkang"), &results);
+    std::unique_ptr<ResultsTable> results = setUpResultsTable();
+    graph.deleteFromGraph(PotentialValue("purple", "sengkang"), results.get());
 
     // original is unmodified as the method assumes it will only be
     // called after original potential value is removed from results
     requireVectorsHaveSameElements(
-        results.getResultsOne("purple"),
+        results->getResultsOne("purple"),
         std::vector<std::string>({"harbourfront", "outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia",
                                   "farrerpark", "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang",
                                   "sengkang", "buangkok", "punggol"}));
     // num is unmodified as there is still a relationship
     // between 16 <--> marymount
-    requireVectorsHaveSameElements(results.getResultsOne("num"),
+    requireVectorsHaveSameElements(results->getResultsOne("num"),
                                    std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
                                                              "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
                                                              "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
     // same for circle
     requireVectorsHaveSameElements(
-        results.getResultsOne("circle"),
+        results->getResultsOne("circle"),
         std::vector<std::string>({"dhobyghaut",   "brasbasah",    "esplanade",      "promenade",   "nicollhighway",
                                   "stadium",      "mountbatten",  "dakota",         "payalebar",   "macpherson",
                                   "taiseng",      "bartley",      "serangoon",      "lorongchuan", "bishan",
@@ -187,11 +188,11 @@ TEST_CASE("deleteFromGraph leaves other relationships untouched")
 TEST_CASE("deleteFromGraph does nothing to ResultsTable if no relationships exist for that potential value")
 {
     RelationshipsGraph graph = setUpTestingGraph();
-    ResultsTable resultsActual = setUpResultsTable();
-    graph.deleteFromGraph(PotentialValue("blue", "ns26"), &resultsActual);
-    ResultsTable resultsExpected = setUpResultsTable();
+    std::unique_ptr<ResultsTable> resultsActual = setUpResultsTable();
+    graph.deleteFromGraph(PotentialValue("blue", "ns26"), resultsActual.get());
+    std::unique_ptr<ResultsTable> resultsExpected = setUpResultsTable();
 
-    REQUIRE(resultsActual == resultsExpected);
+    REQUIRE(*resultsActual == *resultsExpected);
 }
 
 TEST_CASE("RelationshipsGraph cache stores Synonym relationships correctly")
@@ -212,8 +213,8 @@ TEST_CASE("RelationshipsGraph cache stores Synonym relationships correctly")
 TEST_CASE("RelationshipsGraph cache is not affected by potential value not in graph")
 {
     RelationshipsGraph graphActual = setUpTestingGraph();
-    ResultsTable results = setUpResultsTable();
-    graphActual.deleteFromGraph(PotentialValue("blue", "ns26"), &results);
+    std::unique_ptr<ResultsTable> results = setUpResultsTable();
+    graphActual.deleteFromGraph(PotentialValue("blue", "ns26"), results.get());
     RelationshipsGraph graphExpected = setUpTestingGraph();
 
     REQUIRE(graphActual.checkEqualIncludingCache(graphExpected));
@@ -222,7 +223,7 @@ TEST_CASE("RelationshipsGraph cache is not affected by potential value not in gr
 TEST_CASE("RelationshipsGraph cache is cleared after relationships are modified")
 {
     RelationshipsGraph graph = setUpTestingGraph();
-    ResultsTable results = setUpResultsTable();
+    std::unique_ptr<ResultsTable> results = setUpResultsTable();
     REQUIRE(graph.checkCachedRelationships("red", "green"));
     REQUIRE(graph.checkCachedRelationships("num", "purple"));
     REQUIRE(graph.checkCachedRelationships("circle", "num"));
@@ -230,7 +231,7 @@ TEST_CASE("RelationshipsGraph cache is cleared after relationships are modified"
     REQUIRE(graph.checkCachedRelationships("purple", "circle"));
     REQUIRE(graph.checkCachedRelationships("interSynonym", "interSynonym"));
 
-    graph.deleteFromGraph(PotentialValue("purple", "dhobyghaut"), &results);
+    graph.deleteFromGraph(PotentialValue("purple", "dhobyghaut"), results.get());
     REQUIRE(graph.checkCachedRelationships("red", "green"));
     REQUIRE(graph.checkCachedRelationships("circle", "num"));
     REQUIRE(graph.checkCachedRelationships("DT", "CC"));

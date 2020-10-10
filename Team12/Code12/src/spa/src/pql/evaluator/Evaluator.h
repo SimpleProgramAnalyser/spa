@@ -25,7 +25,7 @@ public:
     /**
      * Constructor for a Evaluator for an abstract query.
      */
-    explicit Evaluator(const AbstractQuery& abstractQuery, ResultsTable resultsTable);
+    explicit Evaluator(const AbstractQuery& abstractQuery);
 
     /**
      * Evaluates the query stored in this Evaluator.

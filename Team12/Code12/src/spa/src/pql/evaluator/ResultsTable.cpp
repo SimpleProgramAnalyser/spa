@@ -206,17 +206,6 @@ ClauseResult ResultsTable::get(const Synonym& syn)
     }
 }
 
-void ResultsTable::associateRelationships(const Vector<Pair<String, String>>& valueRelationships,
-                                          const Reference& leftRef, const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(valueRelationships, leftRef.getValue(), rightRef.getValue());
-}
-
 void ResultsTable::disassociateRelationships(const Synonym& leftSyn, const String& leftValue, const Synonym& rightSyn,
                                              const String& rightValue)
 {
@@ -292,6 +281,12 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
 Boolean ResultsTable::hasResults() const
 {
     return hasResult;
+}
+
+void ResultsTable::associateRelationships(const Synonym& syn1, const Synonym& syn2,
+                                          const Vector<Pair<String, String>>& relationshipsPairs)
+{
+    this->relationships->insertRelationships(relationshipsPairs, syn1, syn2);
 }
 
 void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)

@@ -29,7 +29,8 @@ void requireVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vecto
 #include <iostream>
 
 template <>
-void doVectorsHaveSameElementsVoid<std::string>(std::vector<std::string> vector1, std::vector<std::string> vector2)
+inline void requireVectorsHaveSameElements<std::string>(std::vector<std::string> vector1,
+                                                        std::vector<std::string> vector2)
 {
     std::sort(vector1.begin(), vector1.end());
     std::sort(vector2.begin(), vector2.end());
@@ -43,7 +44,7 @@ void doVectorsHaveSameElementsVoid<std::string>(std::vector<std::string> vector1
 }
 
 template <>
-void requireVectorsHaveSameElements<std::pair<std::string, std::string>>(
+inline void requireVectorsHaveSameElements<std::pair<std::string, std::string>>(
     std::vector<std::pair<std::string, std::string>> vector1, std::vector<std::pair<std::string, std::string>> vector2)
 {
     std::sort(vector1.begin(), vector1.end());
