@@ -89,8 +89,8 @@ Clause* PatternClause::processAssignPatternClause(Synonym patternSynonym, String
 Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, DesignEntityType synonymDesignEntityType,
                                                    StringVector constraints, DeclarationTable& declarationTable)
 {
-    assert(synonymDesignEntityType == IfType
-           || synonymDesignEntityType == WhileType); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(synonymDesignEntityType == IfType // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+           || synonymDesignEntityType == WhileType);
 
     if ((constraints.size() != 3 && synonymDesignEntityType == IfType)
         || (constraints.size() != 2 && synonymDesignEntityType == WhileType)) {
