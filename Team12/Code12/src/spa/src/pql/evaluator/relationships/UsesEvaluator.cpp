@@ -21,7 +21,6 @@ private:
     // case where left is variable, right is known (string)
     Void evaluateRightKnown() const;
     // case where both are variable
-    Void evaluateBothAnyConstrained(Boolean isStatementLeft) const;
     Void evaluateBothAny() const;
     // case where both are known
     Void evaluateBothKnown() const;
@@ -45,96 +44,47 @@ Void UsesEvaluator::evaluateLeftKnown() const
     ClauseResult tempResult = leftRefType == IntegerRefType
                                   ? getUsesVariablesFromStatement(std::stoi(leftRef.getValue()))
                                   : getUsesVariablesFromProcedure(leftRef.getValue());
-    resultsTable->filterTable(rightRef, tempResult);
+    resultsTable->storeResultsOne(rightRef, tempResult);
 }
 
 Void UsesEvaluator::evaluateRightKnown() const
 {
     DesignEntityType leftType = resultsTable->getTypeOfSynonym(leftRef.getValue());
     if (isStatementDesignEntity(leftType)) {
-        resultsTable->filterTable(
+        resultsTable->storeResultsOne(
             leftRef, convertToClauseResult(getUsesStatements(rightRef.getValue(), mapToStatementType(leftType))));
     } else {
         // left ref is a procedure
-        resultsTable->filterTable(leftRef, getUsesProcedures(rightRef.getValue()));
+        resultsTable->storeResultsOne(leftRef, getUsesProcedures(rightRef.getValue()));
     }
-}
-
-Void UsesEvaluator::evaluateBothAnyConstrained(Boolean isStatementLeft) const
-{
-    std::vector<String> tempResultForLeft;
-    std::vector<String> tempResultForRight;
-    std::vector<std::pair<String, String>> tempResultForRelationships;
-    Boolean leftAndRightRelated = refsHaveRelationship(leftRef, rightRef, resultsTable);
-    // check if variables have relations determined by previous clauses
-    if (leftAndRightRelated) {
-        // refsHaveRelationship guarantees both left and right are synonyms
-        std::vector<std::pair<String, String>> relationsList
-            = resultsTable->getRelationships(leftRef.getValue(), rightRef.getValue());
-        for (const std::pair<String, String>& relation : relationsList) {
-            Boolean usesHolds;
-            if (isStatementLeft) {
-                usesHolds = checkIfStatementUses(std::stoi(relation.first), relation.second);
-            } else {
-                usesHolds = checkIfProcedureUses(relation.first, relation.second);
-            }
-            if (usesHolds) {
-                tempResultForLeft.push_back(relation.first);
-                tempResultForRight.push_back(relation.second);
-                tempResultForRelationships.push_back(relation);
-            }
-        }
-    } else {
-        ClauseResult previousResultsForLeft = resultsTable->get(leftRef.getValue());
-        ClauseResult previousResultsForRight = resultsTable->get(rightRef.getValue());
-        // do a Cartesian product of both result lists and check each pair
-        for (const String& strLeft : previousResultsForLeft) {
-            for (const String& strRight : previousResultsForRight) {
-                Boolean usesHolds;
-                if (isStatementLeft) {
-                    usesHolds = checkIfStatementUses(std::stoi(strLeft), strRight);
-                } else {
-                    usesHolds = checkIfProcedureUses(strLeft, strRight);
-                }
-                if (usesHolds) {
-                    tempResultForLeft.push_back(strLeft);
-                    tempResultForRight.push_back(strRight);
-                    tempResultForRelationships.emplace_back(strLeft, strRight);
-                }
-            }
-        }
-    }
-    resultsTable->filterTable(leftRef, tempResultForLeft);
-    resultsTable->filterTable(rightRef, tempResultForRight);
-    resultsTable->associateRelationships(tempResultForRelationships, leftRef, rightRef);
 }
 
 Void UsesEvaluator::evaluateBothAny() const
 {
     Boolean isStatementLeft
         = leftRefType == SynonymRefType && isStatementDesignEntity(resultsTable->getTypeOfSynonym(leftRef.getValue()));
-    Boolean leftHasConstraints = refHasConstraints(leftRef, resultsTable);
-    Boolean rightHasConstraints = refHasConstraints(rightRef, resultsTable);
-    if ((leftHasConstraints || rightHasConstraints)) {
-        evaluateBothAnyConstrained(isStatementLeft);
-    } else if (isStatementLeft) {
+    ClauseResult leftResults;
+    ClauseResult rightResults;
+    PairedResult tuples;
+    if (isStatementLeft) {
         StatementType leftStmtType = mapToStatementType(resultsTable->getTypeOfSynonym(leftRef.getValue()));
         // select stmt
-        resultsTable->filterTable(leftRef, convertToClauseResult(getAllUsesStatements(leftStmtType)));
+        leftResults = convertToClauseResult(getAllUsesStatements(leftStmtType));
         // select variable with statement
-        resultsTable->filterTable(rightRef, getAllUsesVariablesFromStatementType(leftStmtType));
+        rightResults = getAllUsesVariablesFromStatementType(leftStmtType);
         // select all tuples Uses(stmt, variable)
-        resultsTable->associateRelationships(getAllUsesStatementTuple(leftStmtType), leftRef, rightRef);
+        tuples = convertToPairedResult(getAllUsesStatementTuple(leftStmtType));
     } else if (leftRefType == SynonymRefType) {
         // select procedure
-        resultsTable->filterTable(leftRef, getAllUsesProcedures());
+        leftResults = getAllUsesProcedures();
         // select variable with procedure
-        resultsTable->filterTable(rightRef, getAllUsesVariablesFromProgram());
+        rightResults = getAllUsesVariablesFromProgram();
         // select all tuples Uses(procedure, variable)
-        resultsTable->associateRelationships(getAllUsesProcedureTuple(), leftRef, rightRef);
+        tuples = getAllUsesProcedureTuple();
     } else {
         throw std::runtime_error("Unknown case in UsesExtractor::evaluateBothAny");
     }
+    resultsTable->storeResultsTwo(leftRef, leftResults, rightRef, rightResults, tuples);
 }
 
 Void UsesEvaluator::evaluateBothKnown() const
@@ -146,13 +96,12 @@ Void UsesEvaluator::evaluateBothKnown() const
         // leftRefType == LiteralRefType
         usesHolds = checkIfProcedureUses(leftRef.getValue(), rightRef.getValue());
     }
+    std::vector<String> tempResult;
     if (usesHolds) {
-        std::vector<String> tempResult{"trueUses"};
-        resultsTable->filterTable(leftRef, tempResult);
-    } else {
-        // we store an empty list to denote a lack of results
-        resultsTable->filterTable(leftRef, std::vector<String>());
+        // we add a placeholder item to denote presence of results
+        tempResult.emplace_back("trueUses");
     }
+    resultsTable->storeResultsOne(leftRef, tempResult);
 }
 
 Void UsesEvaluator::evaluateUsesClause()

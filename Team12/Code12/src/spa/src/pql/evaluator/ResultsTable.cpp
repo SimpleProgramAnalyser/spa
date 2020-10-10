@@ -59,6 +59,7 @@ void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResul
         // synonym is not found in table, associate results with synonym
         std::unordered_set<String> resultsSet;
         std::copy(results.begin(), results.end(), std::inserter(resultsSet, resultsSet.end()));
+        hasResult = !resultsSet.empty();
         resultsMap.insert(std::make_pair(syn, resultsSet));
     }
 }
@@ -185,14 +186,11 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
 
 void ResultsTable::mergeResults()
 {
-    if (hasEvaluated) {
-        return;
-    }
-
-    while (!queue.empty()) {
+    while (!queue.empty() && !hasEvaluated && hasResult) {
         queue.front()();
         queue.pop();
     }
+    hasEvaluated = true;
 }
 
 void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)
@@ -395,8 +393,8 @@ ClauseResult ResultsTable::getResultsOne(const Synonym& syn)
 
 Void ResultsTable::storeResultsOne(const Synonym& syn, const ClauseResult& res)
 {
-    // if results are empty, invalidate the entire results table
     if (res.empty()) {
+        // if results are empty, invalidate the entire results table
         hasResult = false;
     } else {
         // store the synonym in the evaluator queue
