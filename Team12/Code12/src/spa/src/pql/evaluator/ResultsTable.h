@@ -121,6 +121,7 @@ public:
      *                     the query.
      */
     explicit ResultsTable(DeclarationTable decls);
+    ~ResultsTable() = default;
     ResultsTable(const ResultsTable&) = delete;
     ResultsTable& operator=(const ResultsTable&) = delete;
     ResultsTable(ResultsTable&&) = delete;
