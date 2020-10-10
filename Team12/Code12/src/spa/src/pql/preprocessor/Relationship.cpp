@@ -45,8 +45,10 @@ std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship:
      DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
     {ParentType, DesignEntityTypeSet{StmtType, WhileType, IfType, Prog_LineType}},
     {ParentStarType, DesignEntityTypeSet{StmtType, WhileType, IfType, Prog_LineType}},
-    {UsesType, DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
-    {ModifiesType, DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {UsesType,
+     DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType, ProcedureType}},
+    {ModifiesType,
+     DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, Prog_LineType, ProcedureType}},
 };
 
 std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship::rightReferenceSynonymValidationTable{
