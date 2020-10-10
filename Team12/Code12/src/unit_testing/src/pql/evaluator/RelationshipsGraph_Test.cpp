@@ -104,7 +104,7 @@ TEST_CASE("RelationshipsGraph updates ResultTable when a potential value no long
     // force early evaluation
     results->getResultsZero();
     // manual deletion of potential value
-    graph.deleteFromGraph(PotentialValue("red", "ns26"), results.get());
+    graph.deleteOne(PotentialValue("red", "ns26"), results.get());
     requireVectorsHaveSameElements(
         results->getResultsOne("green"),
         std::vector<std::string>({"ew1",  "ew2",  "ew3",  "ew4",  "ew5",  "ew6",  "ew7",  "ew8",
@@ -112,7 +112,7 @@ TEST_CASE("RelationshipsGraph updates ResultTable when a potential value no long
                                   "ew18", "ew19", "ew20", "ew21", "ew22", "ew23", "ew24", "ew25",
                                   "ew26", "ew27", "ew28", "ew29", "ew30", "ew31", "ew32", "ew33"}));
 
-    graph.deleteFromGraph(PotentialValue("circle", "harbourfront"), results.get());
+    graph.deleteOne(PotentialValue("circle", "harbourfront"), results.get());
     requireVectorsHaveSameElements(
         results->getResultsOne("purple"),
         std::vector<std::string>({"outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia", "farrerpark",
@@ -137,7 +137,7 @@ TEST_CASE("RelationshipsGraph removes multiple potential values from ResultTable
     // force early evaluation
     results->getResultsZero();
     // manual deletion of potential value
-    graph.deleteFromGraph(PotentialValue("num", "16"), results.get());
+    graph.deleteOne(PotentialValue("num", "16"), results.get());
     // sengkang is gone from purple
     requireVectorsHaveSameElements(
         results->getResultsOne("purple"),
@@ -155,11 +155,11 @@ TEST_CASE("RelationshipsGraph removes multiple potential values from ResultTable
                                   "telokblangah", "harbourfront"}));
 }
 
-TEST_CASE("deleteFromGraph leaves other relationships untouched")
+TEST_CASE("deleteOne leaves other relationships untouched")
 {
     RelationshipsGraph graph = setUpTestingGraph();
     std::unique_ptr<ResultsTable> results = setUpResultsTable();
-    graph.deleteFromGraph(PotentialValue("purple", "sengkang"), results.get());
+    graph.deleteOne(PotentialValue("purple", "sengkang"), results.get());
 
     // original is unmodified as the method assumes it will only be
     // called after original potential value is removed from results
@@ -185,11 +185,11 @@ TEST_CASE("deleteFromGraph leaves other relationships untouched")
                                   "labradorpark", "telokblangah", "harbourfront"}));
 }
 
-TEST_CASE("deleteFromGraph does nothing to ResultsTable if no relationships exist for that potential value")
+TEST_CASE("deleteOne does nothing to ResultsTable if no relationships exist for that potential value")
 {
     RelationshipsGraph graph = setUpTestingGraph();
     std::unique_ptr<ResultsTable> resultsActual = setUpResultsTable();
-    graph.deleteFromGraph(PotentialValue("blue", "ns26"), resultsActual.get());
+    graph.deleteOne(PotentialValue("blue", "ns26"), resultsActual.get());
     std::unique_ptr<ResultsTable> resultsExpected = setUpResultsTable();
 
     REQUIRE(*resultsActual == *resultsExpected);
@@ -214,7 +214,7 @@ TEST_CASE("RelationshipsGraph cache is not affected by potential value not in gr
 {
     RelationshipsGraph graphActual = setUpTestingGraph();
     std::unique_ptr<ResultsTable> results = setUpResultsTable();
-    graphActual.deleteFromGraph(PotentialValue("blue", "ns26"), results.get());
+    graphActual.deleteOne(PotentialValue("blue", "ns26"), results.get());
     RelationshipsGraph graphExpected = setUpTestingGraph();
 
     REQUIRE(graphActual.checkEqualIncludingCache(graphExpected));
@@ -231,7 +231,7 @@ TEST_CASE("RelationshipsGraph cache is cleared after relationships are modified"
     REQUIRE(graph.checkCachedRelationships("purple", "circle"));
     REQUIRE(graph.checkCachedRelationships("interSynonym", "interSynonym"));
 
-    graph.deleteFromGraph(PotentialValue("purple", "dhobyghaut"), results.get());
+    graph.deleteOne(PotentialValue("purple", "dhobyghaut"), results.get());
     REQUIRE(graph.checkCachedRelationships("red", "green"));
     REQUIRE(graph.checkCachedRelationships("circle", "num"));
     REQUIRE(graph.checkCachedRelationships("DT", "CC"));

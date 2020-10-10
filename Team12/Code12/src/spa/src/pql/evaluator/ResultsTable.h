@@ -318,6 +318,8 @@ inline String stringId(String str)
     return str;
 }
 
+typedef Integer GraphEdge;
+
 /**
  * A helper class for results table, the Relationships
  * Graph keeps track of relationships between possible
@@ -325,8 +327,9 @@ inline String stringId(String str)
  */
 class RelationshipsGraph {
 private:
-    std::unordered_map<PotentialValue, std::unordered_set<PotentialValue, PotentialValueHasher>, PotentialValueHasher>
-        relationshipsTable;
+    std::unordered_map<PotentialValue, std::unordered_set<GraphEdge>, PotentialValueHasher> valuesTable;
+    std::unordered_map<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>> edgesTable;
+    GraphEdge edgesIndex = 0;
     /**
      * If a relationship between two synonyms is found in the cache, then
      * it is certain that their potential values have some relationship
@@ -371,16 +374,19 @@ public:
      * @param resultsTable The results table to update, if related
      *                     synonyms can be removed as well
      */
-    void deleteFromGraph(const PotentialValue& pv, ResultsTable* resultsTable);
+    void deleteOne(const PotentialValue& pv, ResultsTable* resultsTable);
 
     /**
      * Deletes any relations stored that involves both
-     * the firstKey and secondKey.
+     * the firstKey and secondKey. This will also attempt
+     * to clear related values from a results table.
      *
      * @param firstKey First potential value in the relation.
      * @param secondKey Second potential value in the relation.
+     * @param resultsTable The results table to update, if related
+     *                     synonyms can be removed as well
      */
-    void deleteEdges(const PotentialValue& firstKey, const PotentialValue& secondKey);
+    void deleteTwo(const PotentialValue& firstKey, const PotentialValue& secondKey, ResultsTable* resultsTable);
 
     /**
      * Checks whether two synonyms have relationships in the

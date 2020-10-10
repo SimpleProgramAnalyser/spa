@@ -89,7 +89,7 @@ ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, cons
         if (newResultsSet.find(str) == newResultsSet.end()) {
             // element from old results is not in newResults
             // we try to remove relationships for this element
-            relationships->deleteFromGraph(PotentialValue(synonym, str), this);
+            relationships->deleteOne(PotentialValue(synonym, str), this);
         } else {
             // element is found in newResults!
             resultsFoundInBoth.insert(str);
@@ -100,7 +100,7 @@ ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, cons
     // elements left in newResultsSet will not be in the final results
     // ensure that relationships do not exist for them
     for (const String& rejectedNewResult : newResultsSet) {
-        relationships->deleteFromGraph(PotentialValue(synonym, rejectedNewResult), this);
+        relationships->deleteOne(PotentialValue(synonym, rejectedNewResult), this);
     }
     return resultsFoundInBoth;
 }
@@ -209,7 +209,7 @@ ClauseResult ResultsTable::get(const Synonym& syn)
 void ResultsTable::disassociateRelationships(const Synonym& leftSyn, const String& leftValue, const Synonym& rightSyn,
                                              const String& rightValue)
 {
-    relationships->deleteEdges(PotentialValue(leftSyn, leftValue), PotentialValue(rightSyn, rightValue));
+    relationships->deleteTwo(PotentialValue(leftSyn, leftValue), PotentialValue(rightSyn, rightValue), this);
 }
 
 PairedResult ResultsTable::getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
