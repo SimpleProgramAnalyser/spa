@@ -193,31 +193,6 @@ void ResultsTable::mergeResults()
     hasEvaluated = true;
 }
 
-void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)
-{
-    // if results are empty, invalidate the entire results table
-    if (results.empty()) {
-        hasResult = false;
-        return;
-    }
-    // check if reference is a synonym or not
-    if (ref.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    // else we get the synonym and store it in the table
-    filterAfterVerification(ref.getValue(), results);
-}
-
-void ResultsTable::filterTable(const Synonym& syn, const ClauseResult& results)
-{
-    // if results are empty, invalidate the entire results table
-    if (results.empty()) {
-        hasResult = false;
-        return;
-    }
-    filterAfterVerification(syn, results);
-}
-
 ClauseResult ResultsTable::get(const Synonym& syn)
 {
     if (!hasResults()) {
@@ -231,15 +206,15 @@ ClauseResult ResultsTable::get(const Synonym& syn)
     }
 }
 
-void ResultsTable::associateRelationships(Vector<Pair<String, String>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
+void ResultsTable::associateRelationships(const Vector<Pair<String, String>>& valueRelationships,
+                                          const Reference& leftRef, const Reference& rightRef)
 {
     // short-circuit if relationships are empty, or refs are not synonyms
     if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
         || rightRef.getReferenceType() != SynonymRefType) {
         return;
     }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
+    this->relationships->insertRelationships(valueRelationships, leftRef.getValue(), rightRef.getValue());
 }
 
 void ResultsTable::disassociateRelationships(const Synonym& leftSyn, const String& leftValue, const Synonym& rightSyn,
@@ -360,7 +335,8 @@ Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym
     return false;
 }
 
-Void ResultsTable::getResultsZero() {
+Void ResultsTable::getResultsZero()
+{
     mergeResults();
 }
 

@@ -72,42 +72,6 @@ private:
     void mergeResults();
 
     /**
-     * Associates some results with a synonym, if the synonym
-     * does not already exist in the table. If the synonym
-     * exists, and is mapped to some results, find the common
-     * results in the table list and the new list provided,
-     * and store the common results in the table list instead.
-     * This effectively removes those results that are not in
-     * both lists, from the association table.
-     *
-     * If the reference is not a synonym, do nothing (unless the
-     * result list is empty). If the result list is empty,
-     * invalidate the entire result table.
-     *
-     * @param ref Reference for a Design Entity to associate with.
-     * @param results New results for this reference. This list
-     *                can contain duplicates, but the duplicate
-     *                values will be removed eventually.
-     */
-    void filterTable(const Reference& ref, const ClauseResult& results);
-
-    /**
-     * Associates some results with a synonym, if the synonym
-     * does not already exist in the table. If the synonym
-     * exists, and is mapped to some results, find the common
-     * results in the table list and the new list provided,
-     * and store the common results in the table list instead.
-     * This effectively removes those results that are not in
-     * both lists, from the association table.
-     *
-     * @param ref Synonym for a Design Entity to associate with.
-     * @param results New results for this reference. This list
-     *                can contain duplicates, but the duplicate
-     *                values will be removed eventually.
-     */
-    void filterTable(const Synonym& syn, const ClauseResult& results);
-
-    /**
      * Retrieves the list of results in the table for
      * a certain synonym. If the synonym does not exist
      * in the table, retrieve all possible values for
@@ -133,7 +97,7 @@ private:
      * @param rightRef The reference that the second
      *                     value corresponds to.
      */
-    void associateRelationships(Vector<Pair<String, String>> valueRelationships, const Reference& leftRef,
+    void associateRelationships(const Vector<Pair<String, String>>& valueRelationships, const Reference& leftRef,
                                 const Reference& rightRef);
 
     /**
