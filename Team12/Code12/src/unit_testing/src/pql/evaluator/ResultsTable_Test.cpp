@@ -92,7 +92,7 @@ TEST_CASE("ResultsTable does not filter any results for non-synonym reference")
 
     ResultsTable resTable2(DeclarationTable{});
     resTable2.storeResultsOne(Reference(SynonymRefType, "abcd", DesignEntity(VariableType)), originalResults);
-    resTable2.getResultsOne("abcd");
+    resTable2.getResultsZero();
 
     doVectorsHaveSameElementsVoid(resTable.getResultsOne("abcd"), originalResults);
     REQUIRE(resTable == resTable2);
@@ -112,9 +112,8 @@ TEST_CASE("ResultsTable retrieves results from PKB correctly, if no elements fou
     DesignEntity anyStmt(StmtType);
     declTable.addDeclaration("abcd", anyStmt);
     ResultsTable resTable(declTable);
-    std::vector<std::string> abcdResults = resTable.getResultsOne("abcd");
 
-    doVectorsHaveSameElementsVoid(abcdResults, std::vector<std::string>({"1", "2", "3", "4", "5"}));
+    doVectorsHaveSameElementsVoid(resTable.getResultsOne("abcd"), std::vector<std::string>({"1", "2", "3", "4", "5"}));
 }
 
 TEST_CASE("doesSynonymHaveConstraints returns false for synonym with no constraints, and returns true for synonym "
@@ -129,7 +128,7 @@ TEST_CASE("doesSynonymHaveConstraints returns false for synonym with no constrai
 
     resTable.storeResultsOne("abcd", originalResults);
     resTable.storeResultsOne("abcd", newResults);
-    resTable.getResultsOne("abcd");
+    resTable.getResultsZero();
 
     REQUIRE(resTable.doesSynonymHaveConstraints("abcd"));
 }
@@ -272,7 +271,6 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
 
     SECTION("getRelationships retrieves all relationships in table")
     {
-
         std::vector<std::pair<std::string, std::string>> astPqlProcessorRelationshipsString(
             {{"6", "terracotta"}, {"3", "concrete"}});
         std::vector<std::pair<std::string, std::string>> astParserRelationshipsString({{"12", "34"}});

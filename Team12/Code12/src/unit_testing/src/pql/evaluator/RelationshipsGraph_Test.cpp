@@ -100,6 +100,9 @@ TEST_CASE("RelationshipsGraph updates ResultTable when a potential value no long
 {
     RelationshipsGraph graph = setUpTestingGraph();
     ResultsTable results = setUpResultsTable();
+    // force early evaluation
+    results.getResultsZero();
+    // manual deletion of potential value
     graph.deleteFromGraph(PotentialValue("red", "ns26"), &results);
     doVectorsHaveSameElementsVoid(
         results.getResultsOne("green"),
@@ -130,6 +133,9 @@ TEST_CASE("RelationshipsGraph removes multiple potential values from ResultTable
 {
     RelationshipsGraph graph = setUpTestingGraph();
     ResultsTable results = setUpResultsTable();
+    // force early evaluation
+    results.getResultsZero();
+    // manual deletion of potential value
     graph.deleteFromGraph(PotentialValue("num", "16"), &results);
     // sengkang is gone from purple
     doVectorsHaveSameElementsVoid(

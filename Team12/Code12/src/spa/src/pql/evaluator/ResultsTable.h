@@ -236,6 +236,11 @@ public:
     Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
 
     /**
+     * Forces the merging of the results queue.
+     */
+    Void getResultsZero();
+
+    /**
      * Initiates merging of the results queue, unless
      * a certain result in the queue was empty. Afterwards,
      * returns the results for the synonym specified.

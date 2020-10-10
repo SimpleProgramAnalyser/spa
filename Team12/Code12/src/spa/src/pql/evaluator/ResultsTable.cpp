@@ -360,6 +360,10 @@ Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym
     return false;
 }
 
+Void ResultsTable::getResultsZero() {
+    mergeResults();
+}
+
 ClauseResult ResultsTable::getResultsOne(const Synonym& syn)
 {
     mergeResults();
