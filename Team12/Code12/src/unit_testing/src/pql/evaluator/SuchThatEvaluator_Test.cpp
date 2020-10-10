@@ -31,10 +31,10 @@ TEST_CASE("Follows clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "s", DesignEntity(StmtType));
         Reference rightRef(SynonymRefType, "a", DesignEntity(AssignType));
         evaluateFollowsClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("s"), std::vector<std::string>({"4"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("a", "s"),
-                                      std::vector<std::pair<std::string, std::string>>({{"5", "4"}}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"), std::vector<std::string>({"4"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
+        requireVectorsHaveSameElements(resTable.getResultsTwo("a", "s"),
+                                       std::vector<std::pair<std::string, std::string>>({{"5", "4"}}));
     }
 
     SECTION("Both wildcards")
@@ -50,7 +50,8 @@ TEST_CASE("Follows clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "s", DesignEntity(StmtType));
         Reference rightRef(WildcardRefType, "_");
         evaluateFollowsClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("s"), std::vector<std::string>({"1", "2", "3", "4", "5", "6"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                       std::vector<std::string>({"1", "2", "3", "4", "5", "6"}));
     }
 
     SECTION("Left wildcard, right synonym")
@@ -58,7 +59,7 @@ TEST_CASE("Follows clauses are evaluated correctly")
         Reference leftRef(WildcardRefType, "_");
         Reference rightRef(SynonymRefType, "a", DesignEntity(AssignType));
         evaluateFollowsClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
     }
 
     SECTION("Left known, right variable")
@@ -74,7 +75,7 @@ TEST_CASE("Follows clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
         Reference rightRef(IntegerRefType, "6");
         evaluateFollowsClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
     }
 
     SECTION("Both known")
@@ -124,9 +125,9 @@ TEST_CASE("Follows star clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "s", DesignEntity(StmtType));
         Reference rightRef(SynonymRefType, "a", DesignEntity(AssignType));
         evaluateFollowsClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("s"), std::vector<std::string>({"1", "2", "3", "4"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
-        doVectorsHaveSameElementsVoid(
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"), std::vector<std::string>({"1", "2", "3", "4"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
+        requireVectorsHaveSameElements(
             resTable.getResultsTwo("a", "s"),
             std::vector<std::pair<std::string, std::string>>({{"5", "4"}, {"5", "3"}, {"5", "2"}, {"5", "1"}}));
     }
@@ -144,7 +145,8 @@ TEST_CASE("Follows star clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "s", DesignEntity(StmtType));
         Reference rightRef(WildcardRefType, "_");
         evaluateFollowsClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("s"), std::vector<std::string>({"1", "2", "3", "4", "5", "6"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                       std::vector<std::string>({"1", "2", "3", "4", "5", "6"}));
     }
 
     SECTION("Left wildcard, right synonym")
@@ -152,7 +154,7 @@ TEST_CASE("Follows star clauses are evaluated correctly")
         Reference leftRef(WildcardRefType, "_");
         Reference rightRef(SynonymRefType, "a", DesignEntity(AssignType));
         evaluateFollowsClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"5"}));
     }
 
     SECTION("Left known, right variable")
@@ -168,7 +170,7 @@ TEST_CASE("Follows star clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
         Reference rightRef(IntegerRefType, "6");
         evaluateFollowsClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"1", "5"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"1", "5"}));
     }
 
     SECTION("Both known")
@@ -203,10 +205,10 @@ TEST_CASE("Parent clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "s", DesignEntity(StmtType));
         Reference rightRef(SynonymRefType, "i", DesignEntity(AssignType));
         evaluateParentClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("s"), std::vector<std::string>({"4", "9"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("i"), std::vector<std::string>({"10", "7"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("i", "s"),
-                                      std::vector<std::pair<std::string, std::string>>({{"10", "9"}, {"7", "4"}}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"), std::vector<std::string>({"4", "9"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("i"), std::vector<std::string>({"10", "7"}));
+        requireVectorsHaveSameElements(resTable.getResultsTwo("i", "s"),
+                                       std::vector<std::pair<std::string, std::string>>({{"10", "9"}, {"7", "4"}}));
     }
 
     SECTION("Both wildcards")
@@ -222,7 +224,7 @@ TEST_CASE("Parent clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "s", DesignEntity(StmtType));
         Reference rightRef(WildcardRefType, "_");
         evaluateParentClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("s"), std::vector<std::string>({"1", "4", "9", "10"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"), std::vector<std::string>({"1", "4", "9", "10"}));
     }
 
     SECTION("Left wildcard, right synonym")
@@ -230,7 +232,7 @@ TEST_CASE("Parent clauses are evaluated correctly")
         Reference leftRef(WildcardRefType, "_");
         Reference rightRef(SynonymRefType, "i", DesignEntity(IfType));
         evaluateParentClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("i"), std::vector<std::string>({"10", "7"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("i"), std::vector<std::string>({"10", "7"}));
     }
 
     SECTION("Left known, right variable")
@@ -246,7 +248,7 @@ TEST_CASE("Parent clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "i", DesignEntity(IfType));
         Reference rightRef(IntegerRefType, "6");
         evaluateParentClause(leftRef, rightRef, false, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("i"), std::vector<std::string>({"4"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("i"), std::vector<std::string>({"4"}));
     }
 
     SECTION("Both known")
@@ -317,11 +319,11 @@ TEST_CASE("Parent star clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "i", DesignEntity(IfType));
         Reference rightRef(SynonymRefType, "a", DesignEntity(AssignType));
         evaluateParentClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("i"), std::vector<std::string>({"10", "16"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"14", "20", "22"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("i", "a"),
-                                      std::vector<std::pair<std::string, std::string>>(
-                                          {{"10", "14"}, {"10", "20"}, {"10", "22"}, {"16", "20"}, {"16", "22"}}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("i"), std::vector<std::string>({"10", "16"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"14", "20", "22"}));
+        requireVectorsHaveSameElements(resTable.getResultsTwo("i", "a"),
+                                       std::vector<std::pair<std::string, std::string>>(
+                                           {{"10", "14"}, {"10", "20"}, {"10", "22"}, {"16", "20"}, {"16", "22"}}));
     }
 
     SECTION("Both wildcards")
@@ -337,7 +339,7 @@ TEST_CASE("Parent star clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "w", DesignEntity(WhileType));
         Reference rightRef(WildcardRefType, "_");
         evaluateParentClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("w"), std::vector<std::string>({"1", "15", "21", "6"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("w"), std::vector<std::string>({"1", "15", "21", "6"}));
     }
 
     SECTION("Left wildcard, right synonym")
@@ -345,7 +347,7 @@ TEST_CASE("Parent star clauses are evaluated correctly")
         Reference leftRef(WildcardRefType, "_");
         Reference rightRef(SynonymRefType, "i", DesignEntity(IfType));
         evaluateParentClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("i"), std::vector<std::string>({"10", "16"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("i"), std::vector<std::string>({"10", "16"}));
     }
 
     SECTION("Left known, right variable")
@@ -361,7 +363,7 @@ TEST_CASE("Parent star clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "i", DesignEntity(IfType));
         Reference rightRef(IntegerRefType, "16");
         evaluateParentClause(leftRef, rightRef, true, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("i"), std::vector<std::string>({"10"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("i"), std::vector<std::string>({"10"}));
     }
 
     SECTION("Both known")
@@ -404,9 +406,10 @@ TEST_CASE("Modifies clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateModifiesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"), std::vector<std::string>({"x", "y", "z", "b", "c", "d"}));
-        doVectorsHaveSameElementsVoid(
+        requireVectorsHaveSameElements(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"),
+                                       std::vector<std::string>({"x", "y", "z", "b", "c", "d"}));
+        requireVectorsHaveSameElements(
             resTable.getResultsTwo("v", "p"),
             std::vector<std::pair<std::string, std::string>>(
                 {{"x", "proc1"}, {"y", "proc1"}, {"z", "proc1"}, {"d", "proc2"}, {"b", "proc2"}, {"c", "proc2"}}));
@@ -417,10 +420,10 @@ TEST_CASE("Modifies clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "w", DesignEntity(WhileType));
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateModifiesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("w"), std::vector<std::string>({"8"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"), std::vector<std::string>({"b", "d"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("w", "v"),
-                                      std::vector<std::pair<std::string, std::string>>({{"8", "b"}, {"8", "d"}}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("w"), std::vector<std::string>({"8"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"), std::vector<std::string>({"b", "d"}));
+        requireVectorsHaveSameElements(resTable.getResultsTwo("w", "v"),
+                                       std::vector<std::pair<std::string, std::string>>({{"8", "b"}, {"8", "d"}}));
     }
 
     SECTION("Left procedure synonym, right wildcard")
@@ -428,7 +431,7 @@ TEST_CASE("Modifies clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
         Reference rightRef(WildcardRefType, "_");
         evaluateModifiesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
     }
 
     SECTION("Left statement synonym, right wildcard")
@@ -436,7 +439,7 @@ TEST_CASE("Modifies clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "i", DesignEntity(IfType));
         Reference rightRef(WildcardRefType, "_");
         evaluateModifiesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("i"), std::vector<std::string>({"3"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("i"), std::vector<std::string>({"3"}));
     }
 
     SECTION("Left statement synonym, right known")
@@ -452,7 +455,7 @@ TEST_CASE("Modifies clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
         Reference rightRef(LiteralRefType, "b");
         evaluateModifiesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("p"), std::vector<std::string>({"proc2"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("p"), std::vector<std::string>({"proc2"}));
     }
 
     SECTION("Left statement known, right synonym")
@@ -460,7 +463,7 @@ TEST_CASE("Modifies clauses are evaluated correctly")
         Reference leftRef(IntegerRefType, "4");
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateModifiesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"), std::vector<std::string>({"z"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"), std::vector<std::string>({"z"}));
     }
 
     SECTION("Left procedure known, right synonym")
@@ -468,7 +471,7 @@ TEST_CASE("Modifies clauses are evaluated correctly")
         Reference leftRef(LiteralRefType, "proc1");
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateModifiesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"), std::vector<std::string>({"z", "x", "y"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"), std::vector<std::string>({"z", "x", "y"}));
     }
 
     SECTION("Both known (procedure)")
@@ -517,20 +520,20 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"),
-                                      std::vector<std::string>({"x", "y", "z", "b", "c", "d", "v", "u", "a", "f"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsTwo("v", "p"),
-                                      std::vector<std::pair<std::string, std::string>>({{"x", "proc1"},
-                                                                                        {"y", "proc1"},
-                                                                                        {"z", "proc1"},
-                                                                                        {"d", "proc2"},
-                                                                                        {"b", "proc2"},
-                                                                                        {"c", "proc2"},
-                                                                                        {"v", "proc1"},
-                                                                                        {"u", "proc1"},
-                                                                                        {"a", "proc2"},
-                                                                                        {"f", "proc2"}}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"),
+                                       std::vector<std::string>({"x", "y", "z", "b", "c", "d", "v", "u", "a", "f"}));
+        requireVectorsHaveSameElements(resTable.getResultsTwo("v", "p"),
+                                       std::vector<std::pair<std::string, std::string>>({{"x", "proc1"},
+                                                                                         {"y", "proc1"},
+                                                                                         {"z", "proc1"},
+                                                                                         {"d", "proc2"},
+                                                                                         {"b", "proc2"},
+                                                                                         {"c", "proc2"},
+                                                                                         {"v", "proc1"},
+                                                                                         {"u", "proc1"},
+                                                                                         {"a", "proc2"},
+                                                                                         {"f", "proc2"}}));
     }
 
     SECTION("Both variables (statement)")
@@ -538,9 +541,10 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"1", "4", "9"}));
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"), std::vector<std::string>({"b", "z", "v", "u", "a", "f", "x"}));
-        doVectorsHaveSameElementsVoid(
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"1", "4", "9"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"),
+                                       std::vector<std::string>({"b", "z", "v", "u", "a", "f", "x"}));
+        requireVectorsHaveSameElements(
             resTable.getResultsTwo("a", "v"),
             std::vector<std::pair<std::string, std::string>>(
                 {{"1", "x"}, {"4", "z"}, {"4", "v"}, {"4", "u"}, {"9", "b"}, {"9", "a"}, {"9", "f"}}));
@@ -551,7 +555,7 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
         Reference rightRef(WildcardRefType, "_");
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("p"), std::vector<std::string>({"proc1", "proc2"}));
     }
 
     SECTION("Left statement synonym, right wildcard")
@@ -559,7 +563,7 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
         Reference rightRef(WildcardRefType, "_");
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"1", "4", "9"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"1", "4", "9"}));
     }
 
     SECTION("Left statement synonym, right known")
@@ -567,7 +571,7 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "a", DesignEntity(AssignType));
         Reference rightRef(LiteralRefType, "b");
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("a"), std::vector<std::string>({"9"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("a"), std::vector<std::string>({"9"}));
     }
 
     SECTION("Left procedure synonym, right known")
@@ -575,7 +579,7 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(SynonymRefType, "p", DesignEntity(ProcedureType));
         Reference rightRef(LiteralRefType, "u");
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("p"), std::vector<std::string>({"proc1"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("p"), std::vector<std::string>({"proc1"}));
     }
 
     SECTION("Left statement known, right synonym")
@@ -583,7 +587,7 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(IntegerRefType, "4");
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"), std::vector<std::string>({"z", "v", "u"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"), std::vector<std::string>({"z", "v", "u"}));
     }
 
     SECTION("Left procedure known, right synonym")
@@ -591,7 +595,8 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference leftRef(LiteralRefType, "proc2");
         Reference rightRef(SynonymRefType, "v", DesignEntity(VariableType));
         evaluateUsesClause(leftRef, rightRef, &resTable);
-        doVectorsHaveSameElementsVoid(resTable.getResultsOne("v"), std::vector<std::string>({"b", "c", "d", "a", "f"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("v"),
+                                       std::vector<std::string>({"b", "c", "d", "a", "f"}));
     }
 
     SECTION("Both known (procedure)")

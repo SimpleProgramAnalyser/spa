@@ -104,7 +104,7 @@ TEST_CASE("RelationshipsGraph updates ResultTable when a potential value no long
     results.getResultsZero();
     // manual deletion of potential value
     graph.deleteFromGraph(PotentialValue("red", "ns26"), &results);
-    doVectorsHaveSameElementsVoid(
+    requireVectorsHaveSameElements(
         results.getResultsOne("green"),
         std::vector<std::string>({"ew1",  "ew2",  "ew3",  "ew4",  "ew5",  "ew6",  "ew7",  "ew8",
                                   "ew9",  "ew10", "ew11", "ew12", "ew13", "ew15", "ew16", "ew17",
@@ -112,14 +112,14 @@ TEST_CASE("RelationshipsGraph updates ResultTable when a potential value no long
                                   "ew26", "ew27", "ew28", "ew29", "ew30", "ew31", "ew32", "ew33"}));
 
     graph.deleteFromGraph(PotentialValue("circle", "harbourfront"), &results);
-    doVectorsHaveSameElementsVoid(
+    requireVectorsHaveSameElements(
         results.getResultsOne("purple"),
         std::vector<std::string>({"outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia", "farrerpark",
                                   "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang", "buangkok",
                                   "sengkang", "punggol"}));
     // deleting from relationships graph does not check if
     // potential value is already deleted from results graph
-    doVectorsHaveSameElementsVoid(
+    requireVectorsHaveSameElements(
         results.getResultsOne("circle"),
         std::vector<std::string>({"dhobyghaut",   "brasbasah",    "esplanade",      "promenade",   "nicollhighway",
                                   "stadium",      "mountbatten",  "dakota",         "payalebar",   "macpherson",
@@ -138,13 +138,13 @@ TEST_CASE("RelationshipsGraph removes multiple potential values from ResultTable
     // manual deletion of potential value
     graph.deleteFromGraph(PotentialValue("num", "16"), &results);
     // sengkang is gone from purple
-    doVectorsHaveSameElementsVoid(
+    requireVectorsHaveSameElements(
         results.getResultsOne("purple"),
         std::vector<std::string>({"harbourfront", "outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia",
                                   "farrerpark", "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang",
                                   "buangkok", "punggol"}));
     // marymount is gone from circle
-    doVectorsHaveSameElementsVoid(
+    requireVectorsHaveSameElements(
         results.getResultsOne("circle"),
         std::vector<std::string>({"dhobyghaut",   "brasbasah",      "esplanade",   "promenade",      "nicollhighway",
                                   "stadium",      "mountbatten",    "dakota",      "payalebar",      "macpherson",
@@ -162,19 +162,19 @@ TEST_CASE("deleteFromGraph leaves other relationships untouched")
 
     // original is unmodified as the method assumes it will only be
     // called after original potential value is removed from results
-    doVectorsHaveSameElementsVoid(
+    requireVectorsHaveSameElements(
         results.getResultsOne("purple"),
         std::vector<std::string>({"harbourfront", "outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia",
                                   "farrerpark", "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang",
                                   "sengkang", "buangkok", "punggol"}));
     // num is unmodified as there is still a relationship
     // between 16 <--> marymount
-    doVectorsHaveSameElementsVoid(results.getResultsOne("num"),
-                                  std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
-                                                            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
-                                                            "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
+    requireVectorsHaveSameElements(results.getResultsOne("num"),
+                                   std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
+                                                             "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                                                             "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
     // same for circle
-    doVectorsHaveSameElementsVoid(
+    requireVectorsHaveSameElements(
         results.getResultsOne("circle"),
         std::vector<std::string>({"dhobyghaut",   "brasbasah",    "esplanade",      "promenade",   "nicollhighway",
                                   "stadium",      "mountbatten",  "dakota",         "payalebar",   "macpherson",
