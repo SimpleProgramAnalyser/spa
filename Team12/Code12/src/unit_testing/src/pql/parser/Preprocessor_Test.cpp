@@ -58,8 +58,8 @@ TEST_CASE("Pattern a (_, \"x + y\")")
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
                                               .addSelectSynonym("a")
                                               .addDeclaration("a", "assign")
-                                              .addPatternClause("a", AssignPatternType, WildcardRefType, "_",
-                                                                NonExistentType, "x + y", LiteralExpressionType)
+                                              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_",
+                                                                      NonExistentType, "x + y", LiteralExpressionType)
                                               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -255,12 +255,12 @@ TEST_CASE("Such That Modifies Procedure")
 {
     AbstractQuery abstractQuery = processQuery("procedure p; Select p such that Modifies (p, _)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addSelectSynonym("p")
-              .addDeclaration("p", "procedure")
-              .addSuchThatClause(ModifiesProcedureType, SynonymRefType, "p", ProcedureType, WildcardRefType, "_", NonExistentType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addSelectSynonym("p")
+                                              .addDeclaration("p", "procedure")
+                                              .addSuchThatClause(ModifiesProcedureType, SynonymRefType, "p",
+                                                                 ProcedureType, WildcardRefType, "_", NonExistentType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -271,12 +271,12 @@ TEST_CASE("Such That Uses Procedure")
 {
     AbstractQuery abstractQuery = processQuery("procedure p; Select p such that Uses (p, _)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-            .addSelectSynonym("p")
-            .addDeclaration("p", "procedure")
-            .addSuchThatClause(UsesProcedureType, SynonymRefType, "p", ProcedureType, WildcardRefType, "_", NonExistentType)
-            .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addSelectSynonym("p")
+                                              .addDeclaration("p", "procedure")
+                                              .addSuchThatClause(UsesProcedureType, SynonymRefType, "p", ProcedureType,
+                                                                 WildcardRefType, "_", NonExistentType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -528,8 +528,8 @@ TEST_CASE("Pattern Clause Wildcard leftRef, Expression rightRef")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y * z + a % d",
-                                LiteralExpressionType)
+              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType,
+                                      "x + y * z + a % d", LiteralExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -544,8 +544,8 @@ TEST_CASE("Pattern Clause Wildcard leftRef, Wildcard rightRef")
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
                                               .addSelectSynonym("asdf")
                                               .addDeclaration("asdf", "assign")
-                                              .addPatternClause("asdf", AssignPatternType, WildcardRefType, "_",
-                                                                NonExistentType, "", WildcardExpressionType)
+                                              .addAssignPatternClause("asdf", AssignPatternType, WildcardRefType, "_",
+                                                                      NonExistentType, "", WildcardExpressionType)
                                               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -561,8 +561,8 @@ TEST_CASE("Pattern Clause Wildcard leftRef, Extendable Expression rightRef")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y * z + a % d",
-                                ExtendableLiteralExpressionType)
+              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType,
+                                      "x + y * z + a % d", ExtendableLiteralExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -578,8 +578,8 @@ TEST_CASE("Pattern Clause with Parentheses in Expression")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y * (z + a)",
-                                ExtendableLiteralExpressionType)
+              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y * (z + a)",
+                                      ExtendableLiteralExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -601,6 +601,160 @@ TEST_CASE("Pattern Left Reference is a ExtendableLiteralExpressionType")
     REQUIRE(abstractQuery.isInvalid());
 }
 
+TEST_CASE("If Pattern Left Reference is a variable")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, _, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("v")
+              .addDeclaration("ifs", "if")
+              .addDeclaration("v", "variable")
+              .addIfWhilePatternClause("ifs", IfPatternType, SynonymRefType, "v", VariableType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("If Pattern Left Reference is a wildcard")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; Select ifs pattern ifs (_, _, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("ifs")
+              .addDeclaration("ifs", "if")
+              .addIfWhilePatternClause("ifs", IfPatternType, WildcardRefType, "_", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("If Pattern Left Reference is a literal")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; Select ifs pattern ifs (\"x\", _, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("ifs")
+              .addDeclaration("ifs", "if")
+              .addIfWhilePatternClause("ifs", IfPatternType, LiteralRefType, "x", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("While Pattern Left Reference is a variable")
+{
+    AbstractQuery abstractQuery = processQuery("while w; variable v; Select v pattern w (v, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("v")
+              .addDeclaration("w", "while")
+              .addDeclaration("v", "variable")
+              .addIfWhilePatternClause("w", WhilePatternType, SynonymRefType, "v", VariableType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("While Pattern Left Reference is a wildcard")
+{
+    AbstractQuery abstractQuery = processQuery("while w; Select w pattern w (_, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("w")
+              .addDeclaration("w", "while")
+              .addIfWhilePatternClause("w", WhilePatternType, WildcardRefType, "_", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("While Pattern Left Reference is a literal")
+{
+    AbstractQuery abstractQuery = processQuery("while w; Select w pattern w (\"x\", _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("w")
+              .addDeclaration("w", "while")
+              .addIfWhilePatternClause("w", WhilePatternType, LiteralRefType, "x", NonExistentType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("If Pattern left Reference is a variable.varName")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v.varName, _, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("If Pattern second Reference is literal")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, \"x\", _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("If Pattern second Reference is integer")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, 5, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("If Pattern second Reference is synonym")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, v, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("If Pattern third Reference is literal")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, _, \"x\")");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("If Pattern third Reference is integer")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, _, 5)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("If Pattern third Reference is synonym")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, _, v)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("If Pattern all Reference are synonyms")
+{
+    AbstractQuery abstractQuery = processQuery("if ifs; variable v; Select v pattern ifs (v, v, v)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
 /************************************************************************************/
 /*  Two Clause | Such That + Pattern                                                */
 /************************************************************************************/
@@ -613,8 +767,8 @@ TEST_CASE("Pattern and Such That Clauses")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
-                                LiteralExpressionType)
+              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
+                                      LiteralExpressionType)
               .addSuchThatClause(UsesType, SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
               .build();
 
@@ -632,8 +786,8 @@ TEST_CASE("Such That and Pattern Clauses 1")
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
               .addSuchThatClause(UsesType, SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
-              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
-                                LiteralExpressionType)
+              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
+                                      LiteralExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -651,8 +805,8 @@ TEST_CASE("Such That and Pattern Clauses 2")
               .addDeclaration("a", "assign")
               .addDeclaration("s", "stmt")
               .addSuchThatClause(FollowsStarType, SynonymRefType, "s", StmtType, SynonymRefType, "a", AssignType)
-              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "_",
-                                WildcardExpressionType)
+              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "_",
+                                      WildcardExpressionType)
               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -690,10 +844,10 @@ TEST_CASE("Pattern and Pattern Statement")
                                               .addSelectSynonym("a1")
                                               .addDeclaration("a1", "assign")
                                               .addDeclaration("a2", "assign")
-                                              .addPatternClause("a1", AssignPatternType, WildcardRefType, "_",
-                                                                NonExistentType, "x + y", LiteralExpressionType)
-                                              .addPatternClause("a2", AssignPatternType, WildcardRefType, "_",
-                                                                NonExistentType, "z * z", LiteralExpressionType)
+                                              .addAssignPatternClause("a1", AssignPatternType, WildcardRefType, "_",
+                                                                      NonExistentType, "x + y", LiteralExpressionType)
+                                              .addAssignPatternClause("a2", AssignPatternType, WildcardRefType, "_",
+                                                                      NonExistentType, "z * z", LiteralExpressionType)
                                               .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
@@ -958,8 +1112,8 @@ TEST_CASE("No space between Clauses")
         = AbstractQueryBuilder::create()
               .addSelectSynonym("a")
               .addDeclaration("a", "assign")
-              .addPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
-                                LiteralExpressionType)
+              .addAssignPatternClause("a", AssignPatternType, WildcardRefType, "_", NonExistentType, "x + y",
+                                      LiteralExpressionType)
               .addSuchThatClause(UsesType, SynonymRefType, "a", AssignType, LiteralRefType, "z", NonExistentType)
               .build();
 
@@ -1054,7 +1208,6 @@ TEST_CASE("Select Tuple <s1, s2, v1, v2, w, ifs> such that Follows")
     REQUIRE(equal);
 }
 
-
 /************************************************************************************/
 /*  Select Attribute                                                                */
 /************************************************************************************/
@@ -1065,10 +1218,10 @@ TEST_CASE("Select stmt#")
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-            .addDeclaration("s", "stmt")
-            .addSelectSynonym("s", "stmt#", StmtType)
-            .addSuchThatClause(UsesType, SynonymRefType, "s", StmtType, LiteralRefType, "x", NonExistentType)
-            .build();
+              .addDeclaration("s", "stmt")
+              .addSelectSynonym("s", "stmt#", StmtType)
+              .addSuchThatClause(UsesType, SynonymRefType, "s", StmtType, LiteralRefType, "x", NonExistentType)
+              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1081,10 +1234,10 @@ TEST_CASE("Select procName")
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-            .addDeclaration("p", "procedure")
-            .addSelectSynonym("p", "procName", ProcedureType)
-            .addSuchThatClause(UsesType, SynonymRefType, "p", ProcedureType, LiteralRefType, "x", NonExistentType)
-            .build();
+              .addDeclaration("p", "procedure")
+              .addSelectSynonym("p", "procName", ProcedureType)
+              .addSuchThatClause(UsesType, SynonymRefType, "p", ProcedureType, LiteralRefType, "x", NonExistentType)
+              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1097,11 +1250,11 @@ TEST_CASE("Select varName")
 
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create()
-            .addDeclaration("s", "stmt")
-            .addDeclaration("v", "variable")
-            .addSelectSynonym("v", "varName", VariableType)
-            .addSuchThatClause(UsesType, SynonymRefType, "s", StmtType, SynonymRefType, "v", VariableType)
-            .build();
+              .addDeclaration("s", "stmt")
+              .addDeclaration("v", "variable")
+              .addSelectSynonym("v", "varName", VariableType)
+              .addSuchThatClause(UsesType, SynonymRefType, "s", StmtType, SynonymRefType, "v", VariableType)
+              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1112,11 +1265,10 @@ TEST_CASE("Select value")
 {
     AbstractQuery abstractQuery = processQuery("constant c; Select c.value");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-            .addDeclaration("c", "constant")
-            .addSelectSynonym("c", "value", ConstantType)
-            .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("c", "constant")
+                                              .addSelectSynonym("c", "value", ConstantType)
+                                              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1249,12 +1401,12 @@ TEST_CASE("Such that Affect between Integers")
 {
     AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects (1, 2)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addDeclaration("a1", "assign")
-              .addSelectSynonym("a1")
-              .addSuchThatClause(AffectsType, IntegerRefType, "1", NonExistentType, IntegerRefType, "2", NonExistentType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsType, IntegerRefType, "1", NonExistentType,
+                                                                 IntegerRefType, "2", NonExistentType)
+                                              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1281,12 +1433,12 @@ TEST_CASE("Such that Affect* between synonym stmt and Integer")
 {
     AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects* (a1, 4)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addDeclaration("a1", "assign")
-              .addSelectSynonym("a1")
-              .addSuchThatClause(AffectsStarType, SynonymRefType, "a1", AssignType, IntegerRefType, "4", NonExistentType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsStarType, SynonymRefType, "a1", AssignType,
+                                                                 IntegerRefType, "4", NonExistentType)
+                                              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1297,12 +1449,12 @@ TEST_CASE("Such that Affect* between Wildcard and Integer")
 {
     AbstractQuery abstractQuery = processQuery("assign a1; Select a1 such that Affects* (_, 4)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addDeclaration("a1", "assign")
-              .addSelectSynonym("a1")
-              .addSuchThatClause(AffectsStarType, WildcardRefType, "_", NonExistentType, IntegerRefType, "4", NonExistentType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("a1", "assign")
+                                              .addSelectSynonym("a1")
+                                              .addSuchThatClause(AffectsStarType, WildcardRefType, "_", NonExistentType,
+                                                                 IntegerRefType, "4", NonExistentType)
+                                              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1377,12 +1529,12 @@ TEST_CASE("Such that Next* between Wildcard and Integer")
 {
     AbstractQuery abstractQuery = processQuery("stmt s1; Select s1 such that Next* (_, 4)");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-              .addDeclaration("s1", "stmt")
-              .addSelectSynonym("s1")
-              .addSuchThatClause(NextStarType, WildcardRefType, "_", NonExistentType, IntegerRefType, "4", NonExistentType)
-              .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addDeclaration("s1", "stmt")
+                                              .addSelectSynonym("s1")
+                                              .addSuchThatClause(NextStarType, WildcardRefType, "_", NonExistentType,
+                                                                 IntegerRefType, "4", NonExistentType)
+                                              .build();
 
     bool equal = abstractQuery == expectedAbstractQuery;
 
@@ -1582,12 +1734,12 @@ TEST_CASE("With value and stmt#")
     AbstractQuery abstractQuery = processQuery("stmt s; constant c; Select s with c.value = s.stmt#");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-            .addSelectSynonym("s")
-            .addDeclaration("s", "stmt")
-            .addDeclaration("c", "constant")
-            .addWithClause(AttributeRefType, "c", ConstantType, ValueType,
-                           AttributeRefType, "s", StmtType, StmtNumberType)
-            .build();
+                                              .addSelectSynonym("s")
+                                              .addDeclaration("s", "stmt")
+                                              .addDeclaration("c", "constant")
+                                              .addWithClause(AttributeRefType, "c", ConstantType, ValueType,
+                                                             AttributeRefType, "s", StmtType, StmtNumberType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1599,12 +1751,12 @@ TEST_CASE("With stmt# and prog_line")
     AbstractQuery abstractQuery = processQuery("stmt s; prog_line pl; Select s with s.stmt# = pl");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("s")
-        .addDeclaration("s", "stmt")
-        .addDeclaration("pl", "prog_line")
-        .addWithClause(AttributeRefType, "s", StmtType, StmtNumberType,
-                       SynonymRefType, "pl", Prog_LineType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("s")
+                                              .addDeclaration("s", "stmt")
+                                              .addDeclaration("pl", "prog_line")
+                                              .addWithClause(AttributeRefType, "s", StmtType, StmtNumberType,
+                                                             SynonymRefType, "pl", Prog_LineType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1616,12 +1768,12 @@ TEST_CASE("With value and prog_line")
     AbstractQuery abstractQuery = processQuery("constant c; prog_line pl; Select c.value with c.value = pl");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("c", "value", ConstantType)
-        .addDeclaration("c", "constant")
-        .addDeclaration("pl", "prog_line")
-        .addWithClause(AttributeRefType, "c", ConstantType, ValueType,
-                       SynonymRefType, "pl", Prog_LineType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("c", "value", ConstantType)
+                                              .addDeclaration("c", "constant")
+                                              .addDeclaration("pl", "prog_line")
+                                              .addWithClause(AttributeRefType, "c", ConstantType, ValueType,
+                                                             SynonymRefType, "pl", Prog_LineType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1633,12 +1785,12 @@ TEST_CASE("With stmt# and integer")
     AbstractQuery abstractQuery = processQuery("stmt s; constant c; Select s with s.stmt# = 5");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("s")
-        .addDeclaration("s", "stmt")
-        .addDeclaration("c", "constant")
-        .addWithClause(AttributeRefType, "s", StmtType, StmtNumberType,
-                       IntegerRefType, "5", NonExistentType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("s")
+                                              .addDeclaration("s", "stmt")
+                                              .addDeclaration("c", "constant")
+                                              .addWithClause(AttributeRefType, "s", StmtType, StmtNumberType,
+                                                             IntegerRefType, "5", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1650,11 +1802,11 @@ TEST_CASE("With value and integer")
     AbstractQuery abstractQuery = processQuery("constant c; Select c with c.value = 5");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("c")
-        .addDeclaration("c", "constant")
-        .addWithClause(AttributeRefType, "c", ConstantType, ValueType,
-                       IntegerRefType, "5", NonExistentType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("c")
+                                              .addDeclaration("c", "constant")
+                                              .addWithClause(AttributeRefType, "c", ConstantType, ValueType,
+                                                             IntegerRefType, "5", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1666,11 +1818,11 @@ TEST_CASE("With prog_line and integer")
     AbstractQuery abstractQuery = processQuery("prog_line pl; Select pl with pl = 5");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("pl")
-        .addDeclaration("pl", "prog_line")
-        .addWithClause(SynonymRefType, "pl", Prog_LineType, NoAttributeType,
-                       IntegerRefType, "5", NonExistentType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("pl")
+                                              .addDeclaration("pl", "prog_line")
+                                              .addWithClause(SynonymRefType, "pl", Prog_LineType, NoAttributeType,
+                                                             IntegerRefType, "5", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1682,12 +1834,12 @@ TEST_CASE("With stmt# and stmt#")
     AbstractQuery abstractQuery = processQuery("stmt s1, s2; Select s1 with s1.stmt# = s2.stmt#");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("s1")
-        .addDeclaration("s1", "stmt")
-        .addDeclaration("s2", "stmt")
-        .addWithClause(AttributeRefType, "s1", StmtType, StmtNumberType,
-                       AttributeRefType, "s2", StmtType, StmtNumberType)
-        .build();
+                                              .addSelectSynonym("s1")
+                                              .addDeclaration("s1", "stmt")
+                                              .addDeclaration("s2", "stmt")
+                                              .addWithClause(AttributeRefType, "s1", StmtType, StmtNumberType,
+                                                             AttributeRefType, "s2", StmtType, StmtNumberType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1699,12 +1851,12 @@ TEST_CASE("With value and value")
     AbstractQuery abstractQuery = processQuery("constant c1, c2; Select c1 with c1.value = c2.value");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("c1")
-        .addDeclaration("c1", "constant")
-        .addDeclaration("c2", "constant")
-        .addWithClause(AttributeRefType, "c1", ConstantType, ValueType,
-                       AttributeRefType, "c2", ConstantType, ValueType)
-        .build();
+                                              .addSelectSynonym("c1")
+                                              .addDeclaration("c1", "constant")
+                                              .addDeclaration("c2", "constant")
+                                              .addWithClause(AttributeRefType, "c1", ConstantType, ValueType,
+                                                             AttributeRefType, "c2", ConstantType, ValueType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1716,12 +1868,12 @@ TEST_CASE("With prog_line and prog_line")
     AbstractQuery abstractQuery = processQuery("prog_line pl1, pl2; Select pl1 with pl1 = pl2");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("pl1")
-        .addDeclaration("pl1", "prog_line")
-        .addDeclaration("pl2", "prog_line")
-        .addWithClause(SynonymRefType, "pl1", Prog_LineType, NoAttributeType,
-                       SynonymRefType, "pl2", Prog_LineType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("pl1")
+                                              .addDeclaration("pl1", "prog_line")
+                                              .addDeclaration("pl2", "prog_line")
+                                              .addWithClause(SynonymRefType, "pl1", Prog_LineType, NoAttributeType,
+                                                             SynonymRefType, "pl2", Prog_LineType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1733,11 +1885,11 @@ TEST_CASE("With integer and integer")
     AbstractQuery abstractQuery = processQuery("stmt s; Select s with 5 = 5");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("s")
-        .addDeclaration("s", "stmt")
-        .addWithClause(IntegerRefType, "5", NonExistentType, NoAttributeType,
-                       IntegerRefType, "5", NonExistentType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("s")
+                                              .addDeclaration("s", "stmt")
+                                              .addWithClause(IntegerRefType, "5", NonExistentType, NoAttributeType,
+                                                             IntegerRefType, "5", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1777,12 +1929,12 @@ TEST_CASE("With procName and varName")
     AbstractQuery abstractQuery = processQuery("procedure p; variable v; Select p with p.procName = v.varName");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("p")
-        .addDeclaration("p", "procedure")
-        .addDeclaration("v", "variable")
-        .addWithClause(AttributeRefType, "p", ProcedureType, ProcNameType,
-                       AttributeRefType, "v", VariableType, VarNameType)
-        .build();
+                                              .addSelectSynonym("p")
+                                              .addDeclaration("p", "procedure")
+                                              .addDeclaration("v", "variable")
+                                              .addWithClause(AttributeRefType, "p", ProcedureType, ProcNameType,
+                                                             AttributeRefType, "v", VariableType, VarNameType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1794,11 +1946,11 @@ TEST_CASE("With procName and literal")
     AbstractQuery abstractQuery = processQuery("procedure p; Select p with p.procName = \"main\"");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("p")
-        .addDeclaration("p", "procedure")
-        .addWithClause(AttributeRefType, "p", ProcedureType, ProcNameType,
-                       LiteralRefType, "main", NonExistentType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("p")
+                                              .addDeclaration("p", "procedure")
+                                              .addWithClause(AttributeRefType, "p", ProcedureType, ProcNameType,
+                                                             LiteralRefType, "main", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1810,11 +1962,11 @@ TEST_CASE("With varName and literal")
     AbstractQuery abstractQuery = processQuery("variable v; Select v with v.varName = \"x\"");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("v")
-        .addDeclaration("v", "variable")
-        .addWithClause(AttributeRefType, "v", VariableType, VarNameType,
-                       LiteralRefType, "x", NonExistentType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("v")
+                                              .addDeclaration("v", "variable")
+                                              .addWithClause(AttributeRefType, "v", VariableType, VarNameType,
+                                                             LiteralRefType, "x", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1826,12 +1978,12 @@ TEST_CASE("With procName and procName")
     AbstractQuery abstractQuery = processQuery("procedure p1, p2; Select p1 with p1.procName = p2.procName");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("p1")
-        .addDeclaration("p1", "procedure")
-        .addDeclaration("p2", "procedure")
-        .addWithClause(AttributeRefType, "p1", ProcedureType, ProcNameType,
-                       AttributeRefType, "p2", ProcedureType, ProcNameType)
-        .build();
+                                              .addSelectSynonym("p1")
+                                              .addDeclaration("p1", "procedure")
+                                              .addDeclaration("p2", "procedure")
+                                              .addWithClause(AttributeRefType, "p1", ProcedureType, ProcNameType,
+                                                             AttributeRefType, "p2", ProcedureType, ProcNameType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1843,12 +1995,12 @@ TEST_CASE("With varName and varName")
     AbstractQuery abstractQuery = processQuery("variable v1, v2; Select v1 with v1.varName = v2.varName");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("v1")
-        .addDeclaration("v1", "variable")
-        .addDeclaration("v2", "variable")
-        .addWithClause(AttributeRefType, "v1", VariableType, VarNameType,
-                       AttributeRefType, "v2", VariableType, VarNameType)
-        .build();
+                                              .addSelectSynonym("v1")
+                                              .addDeclaration("v1", "variable")
+                                              .addDeclaration("v2", "variable")
+                                              .addWithClause(AttributeRefType, "v1", VariableType, VarNameType,
+                                                             AttributeRefType, "v2", VariableType, VarNameType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1860,11 +2012,11 @@ TEST_CASE("With literal and literal")
     AbstractQuery abstractQuery = processQuery("stmt s; Select s with \"main\" = \"main\"");
 
     AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
-        .addSelectSynonym("s")
-        .addDeclaration("s", "stmt")
-        .addWithClause(LiteralRefType, "main", NonExistentType, NoAttributeType,
-                       LiteralRefType, "main", NonExistentType, NoAttributeType)
-        .build();
+                                              .addSelectSynonym("s")
+                                              .addDeclaration("s", "stmt")
+                                              .addWithClause(LiteralRefType, "main", NonExistentType, NoAttributeType,
+                                                             LiteralRefType, "main", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
@@ -1883,4 +2035,81 @@ TEST_CASE("With procName and prog_line")
     AbstractQuery abstractQuery = processQuery("procedure p; prog_line pl; Select p with p.procName = pl");
 
     REQUIRE(abstractQuery.isInvalid());
+}
+
+/************************************************************************************/
+/*  Complex Queries                                                                 */
+/************************************************************************************/
+
+TEST_CASE("Complex Queries 1")
+{
+    AbstractQuery abstractQuery = processQuery(
+        R"(assign a1, a2; while w1, w2; Select a2 pattern a1 ("x", _) and a2 ("x",_"x"_) such that Affects (a1, a2) and Parent* (w2, a2) and Parent* (w1, w2))");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("a2")
+              .addDeclaration("a1", "assign")
+              .addDeclaration("a2", "assign")
+              .addDeclaration("w1", "while")
+              .addDeclaration("w2", "while")
+              .addAssignPatternClause("a1", AssignPatternType, LiteralRefType, "x", NonExistentType, "_",
+                                      WildcardExpressionType)
+              .addAssignPatternClause("a2", AssignPatternType, LiteralRefType, "x", NonExistentType, "x",
+                                      ExtendableLiteralExpressionType)
+              .addSuchThatClause(AffectsType, SynonymRefType, "a1", AssignType, SynonymRefType, "a2", AssignType)
+              .addSuchThatClause(ParentStarType, SynonymRefType, "w2", WhileType, SynonymRefType, "a2", AssignType)
+              .addSuchThatClause(ParentStarType, SynonymRefType, "w1", WhileType, SynonymRefType, "w2", WhileType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("Complex Queries 2")
+{
+    AbstractQuery abstractQuery
+        = processQuery(R"(while w1, w2, w3; Select <w1, w2, w3> such that Parent* (w1, w2) and Parent* (w2, w3))");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("w1")
+              .addSelectSynonym("w2")
+              .addSelectSynonym("w3")
+              .addDeclaration("w1", "while")
+              .addDeclaration("w2", "while")
+              .addDeclaration("w3", "while")
+              .addSuchThatClause(ParentStarType, SynonymRefType, "w1", WhileType, SynonymRefType, "w2", WhileType)
+              .addSuchThatClause(ParentStarType, SynonymRefType, "w2", WhileType, SynonymRefType, "w3", WhileType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
+TEST_CASE("Complex Queries 3")
+{
+    AbstractQuery abstractQuery = processQuery("assign a; while w; prog_line n; Select a such that Parent* (w, a) and "
+                                               "Next* (60, n) pattern a(\"x\", _) with a.stmt# = n");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("a")
+              .addDeclaration("a", "assign")
+              .addDeclaration("w", "while")
+              .addDeclaration("n", "prog_line")
+              .addSuchThatClause(ParentStarType, SynonymRefType, "w", WhileType, SynonymRefType, "a", AssignType)
+              .addSuchThatClause(NextStarType, IntegerRefType, "60", NonExistentType, SynonymRefType, "n",
+                                 Prog_LineType)
+              .addAssignPatternClause("a", AssignPatternType, LiteralRefType, "x", NonExistentType, "_",
+                                      WildcardExpressionType)
+              .addWithClause(AttributeRefType, "a", AssignType, StmtNumberType, SynonymRefType, "n", Prog_LineType,
+                             NoAttributeType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
 }

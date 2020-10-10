@@ -8,11 +8,12 @@ WithClause::WithClause(Reference& leftRef, Reference& rightRef):
     Clause{WithClauseType}, leftReference{leftRef}, rightReference{rightRef}
 {}
 
-/*&&&********************/
+/************************/
 /** Static Methods      */
 /************************/
 
-Clause* WithClause::createWithClause(const String& clauseConstraint, DeclarationTable& declarationTable) {
+Clause* WithClause::createWithClause(const String& clauseConstraint, DeclarationTable& declarationTable)
+{
     StringVector splitStringVector = splitByDelimiter(clauseConstraint, "=");
     if (splitStringVector.size() != 2) {
         return Clause::invalidClause(WithClauseType);

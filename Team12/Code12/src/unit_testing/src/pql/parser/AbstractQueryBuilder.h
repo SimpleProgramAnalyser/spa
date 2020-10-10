@@ -24,9 +24,13 @@ public:
                                             ReferenceValue leftRefValue, DesignEntityType leftDesignEntityType,
                                             ReferenceType rightRefType, ReferenceValue rightRefValue,
                                             DesignEntityType rightDesignEntityType);
-    AbstractQueryBuilder& addPatternClause(Synonym s, PatternStatementType patternStatementType, ReferenceType refType,
-                                           ReferenceValue refValue, DesignEntityType designEntityType,
-                                           const String& exprString, ExpressionSpecType exprSpecType);
+    AbstractQueryBuilder& addAssignPatternClause(Synonym s, PatternStatementType patternStatementType,
+                                                 ReferenceType refType, ReferenceValue refValue,
+                                                 DesignEntityType designEntityType, const String& exprString,
+                                                 ExpressionSpecType exprSpecType);
+    AbstractQueryBuilder& addIfWhilePatternClause(Synonym s, PatternStatementType patternStatementType,
+                                                  ReferenceType refType, ReferenceValue refValue,
+                                                  DesignEntityType designEntityType);
     AbstractQuery build();
 };
 

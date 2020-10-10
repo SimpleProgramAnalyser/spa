@@ -76,10 +76,11 @@ AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipRefere
     return *this;
 }
 
-AbstractQueryBuilder& AbstractQueryBuilder::addPatternClause(Synonym s, PatternStatementType patternStatementType,
-                                                             ReferenceType refType, ReferenceValue refValue,
-                                                             DesignEntityType designEntityType,
-                                                             const String& exprString, ExpressionSpecType exprSpecType)
+AbstractQueryBuilder& AbstractQueryBuilder::addAssignPatternClause(Synonym s, PatternStatementType patternStatementType,
+                                                                   ReferenceType refType, ReferenceValue refValue,
+                                                                   DesignEntityType designEntityType,
+                                                                   const String& exprString,
+                                                                   ExpressionSpecType exprSpecType)
 {
     Expression* expression = createExpression(exprString);
     ExpressionSpec expressionSpec{expression, exprSpecType};
@@ -87,6 +88,20 @@ AbstractQueryBuilder& AbstractQueryBuilder::addPatternClause(Synonym s, PatternS
     Reference reference{refType, std::move(refValue), designEntity};
 
     Clause* patternClause = new PatternClause(std::move(s), patternStatementType, reference, std::move(expressionSpec));
+    clauseVector.add(patternClause);
+
+    return *this;
+}
+
+AbstractQueryBuilder& AbstractQueryBuilder::addIfWhilePatternClause(Synonym s,
+                                                                    PatternStatementType patternStatementType,
+                                                                    ReferenceType refType, ReferenceValue refValue,
+                                                                    DesignEntityType designEntityType)
+{
+    DesignEntity designEntity{designEntityType};
+    Reference reference{refType, std::move(refValue), designEntity};
+
+    Clause* patternClause = new PatternClause(std::move(s), patternStatementType, reference);
     clauseVector.add(patternClause);
 
     return *this;

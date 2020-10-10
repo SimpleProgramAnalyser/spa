@@ -1,8 +1,8 @@
 #include "AqTypes.h"
 
-/********************/
-/** Static Members  */
-/********************/
+/************************/
+/** Static Members      */
+/************************/
 
 std::unordered_map<String, AttributeType> Attribute::attributeMap{
     {"procName", ProcNameType},
@@ -17,9 +17,9 @@ std::unordered_map<AttributeType, DesignEntityTypeSet> Attribute::attributeDesig
     {ValueType, {ConstantType}},
     {StmtNumberType, {StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType}}};
 
-/********************/
-/** Constructors    */
-/********************/
+/************************/
+/** Constructors        */
+/************************/
 
 Attribute::Attribute(): type{NoAttributeType} {}
 
@@ -35,9 +35,9 @@ Attribute::Attribute(String attributeTypeString)
     }
 }
 
-/********************/
-/** Static Methods  */
-/********************/
+/************************/
+/** Static Methods      */
+/************************/
 
 Boolean Attribute::validateDesignEntityAttributeSemantics(DesignEntityType designEntityType,
                                                           AttributeType attributeType)
@@ -52,9 +52,9 @@ Boolean Attribute::validateDesignEntityAttributeSemantics(DesignEntityType desig
     return gotDesignEntity != gotAttr->second.end();
 }
 
-/********************/
-/** Methods         */
-/********************/
+/************************/
+/** Instance Methods    */
+/************************/
 
 AttributeType Attribute::getType()
 {

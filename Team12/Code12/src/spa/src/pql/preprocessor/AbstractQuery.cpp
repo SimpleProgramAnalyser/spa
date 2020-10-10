@@ -17,7 +17,8 @@ Synonym AbstractQuery::getSelectSynonym() const
     return resultSynonyms.at(0).getSynonym();
 }
 
-Vector<ResultSynonym> AbstractQuery::getSynonyms() {
+Vector<ResultSynonym> AbstractQuery::getSynonyms()
+{
     return resultSynonyms;
 }
 
@@ -57,6 +58,5 @@ Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
         }
     }
 
-    return this->clauses == abstractQuery.clauses
-           && this->declarationTable == abstractQuery.declarationTable;
+    return this->clauses == abstractQuery.clauses && this->declarationTable == abstractQuery.declarationTable;
 }

@@ -30,7 +30,7 @@ Boolean Clause::operator==(Clause& clause)
 
     if (this->type == SuchThatClauseType) {
         return dynamic_cast<SuchThatClause&>(*this) == dynamic_cast<SuchThatClause&>(clause);
-    } else if (this->type == PatternClauseType){
+    } else if (this->type == PatternClauseType) {
         return dynamic_cast<PatternClause&>(*this) == dynamic_cast<PatternClause&>(clause);
     } else if (this->type == WithClauseType) {
         return dynamic_cast<WithClause&>(*this) == dynamic_cast<WithClause&>(clause);

@@ -58,6 +58,7 @@ private:
     static std::unordered_map<String, DesignEntityType> designEntityMap;
 
     DesignEntityType type;
+
 public:
     DesignEntity();
     explicit DesignEntity(DesignEntityType designEntityType);
@@ -287,10 +288,11 @@ public:
 };
 
 enum ExpressionSpecType : char {
-    WildcardExpressionType = 0,          // _
-    LiteralExpressionType = 1,           // "x + y"
-    ExtendableLiteralExpressionType = 2, // _"x + y"_
-    InvalidExpressionType = 4
+    WildcardExpressionType,          // _
+    LiteralExpressionType,           // "x + y"
+    ExtendableLiteralExpressionType, // _"x + y"_
+    NoExpressionType,
+    InvalidExpressionType
 };
 
 class ExpressionSpec {
@@ -310,26 +312,31 @@ public:
     Boolean operator==(const ExpressionSpec& expressionSpec);
 };
 
-enum PatternStatementType : char {
-    AssignPatternType = 0,
-    WhilePatternType = 1, // Advanced SPA
-    IfPatternType = 2     // Advanced SPA
-};
+enum PatternStatementType : char { AssignPatternType, WhilePatternType, IfPatternType };
 
 class PatternClause: public Clause {
 private:
+    static std::unordered_set<DesignEntityType> designEntityTypeValidationSet;
+    static Clause* processAssignPatternClause(Synonym patternSynonym, StringVector constraints,
+                                              DeclarationTable& declarationTable);
+    static Clause* processIfWhilePatternClause(Synonym patternSynonym, DesignEntityType synonymDesignEntityType,
+                                               StringVector constraints, DeclarationTable& declarationTable);
+    static Boolean isValidVariableEntityRef(Reference ref);
+
     Synonym patternSynonym;
     PatternStatementType patternStatementType;
     Reference entityReference;
     ExpressionSpec expressionSpec;
 
 public:
+    static Clause* createPatternClause(const String& clauseConstraint, DeclarationTable& declarationTable);
+
+    PatternClause(Synonym s, PatternStatementType statementType, Reference entRef);
     PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
     PatternStatementType getStatementType() const;
     Reference getEntRef() const;
     const ExpressionSpec& getExprSpec() const;
     Synonym getPatternSynonym() const;
-    static Clause* createPatternClause(String clauseConstraint, DeclarationTable& declarationTable);
     Boolean operator==(const PatternClause& patternClause);
 };
 

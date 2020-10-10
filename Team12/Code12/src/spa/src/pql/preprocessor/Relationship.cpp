@@ -72,11 +72,15 @@ std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship:
      DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
     {ParentType, DesignEntityTypeSet{StmtType, WhileType, IfType, Prog_LineType}},
     {ParentStarType, DesignEntityTypeSet{StmtType, WhileType, IfType, Prog_LineType}},
-    {UsesType, DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, ProcedureType, Prog_LineType}},
-    {UsesStatementType, DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {UsesType,
+     DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, ProcedureType, Prog_LineType}},
+    {UsesStatementType,
+     DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
     {UsesProcedureType, DesignEntityTypeSet{ProcedureType}},
-    {ModifiesType, DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, ProcedureType, Prog_LineType}},
-    {ModifiesStatementType, DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {ModifiesType,
+     DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, ProcedureType, Prog_LineType}},
+    {ModifiesStatementType,
+     DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
     {ModifiesProcedureType, DesignEntityTypeSet{ProcedureType}},
     {CallsType, DesignEntityTypeSet{ProcedureType}},
     {CallsStarType, DesignEntityTypeSet{ProcedureType}},
@@ -117,7 +121,7 @@ Relationship Relationship::createRelationship(RelationshipReferenceType relRefTy
                                               Reference rightRef)
 {
 
-    assert (leftReferenceTypeValidationTable.find(relRefType) != leftReferenceTypeValidationTable.end());
+    assert(leftReferenceTypeValidationTable.find(relRefType) != leftReferenceTypeValidationTable.end());
 
     // Validate semantics for relationships
     if (!validateRelationshipSemantics(relRefType, leftRef, rightRef)) {

@@ -5,9 +5,10 @@
 /************************/
 
 std::unordered_map<String, DesignEntityType> DesignEntity::designEntityMap{
-    {"stmt", StmtType},   {"read", ReadType}, {"print", PrintType},   {"call", CallType},
-    {"while", WhileType}, {"if", IfType},     {"assign", AssignType}, {"variable", VariableType},
-    {"constant", ConstantType}, {"procedure", ProcedureType}, {"prog_line", Prog_LineType}};
+    {"stmt", StmtType},           {"read", ReadType},          {"print", PrintType},
+    {"call", CallType},           {"while", WhileType},        {"if", IfType},
+    {"assign", AssignType},       {"variable", VariableType},  {"constant", ConstantType},
+    {"procedure", ProcedureType}, {"prog_line", Prog_LineType}};
 
 /************************/
 /** Instance Members    */
