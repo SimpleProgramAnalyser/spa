@@ -130,7 +130,7 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
     std::unordered_set<GraphEdge> firstKeyEdges = valuesTable[firstKey];
     std::unordered_set<GraphEdge> edgesToDelete;
     for (GraphEdge potentialEdge : firstKeyEdges) {
-        if (edgesTable[potentialEdge].find(secondKey) == edgesTable[potentialEdge].end()) {
+        if (edgesTable[potentialEdge].find(secondKey) != edgesTable[potentialEdge].end()) {
             // transfer this edge to edgesToDelete
             valuesTable[firstKey].erase(potentialEdge);
             valuesTable[secondKey].erase(potentialEdge);
