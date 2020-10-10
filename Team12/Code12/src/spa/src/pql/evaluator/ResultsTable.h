@@ -427,6 +427,16 @@ public:
     Boolean checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym);
 
     /**
+     * Checks if a synonym has any potential values
+     * in the relationships graph.
+     *
+     * @param syn The synonym to be checked.
+     * @return True, if synonym has some potential values.
+     *         Otherwise, false.
+     */
+    Boolean checkIfSynonymInRelationshipsGraph(const Synonym& syn);
+
+    /**
      * Checks if two potential values are related in the
      * relationships table.
      *

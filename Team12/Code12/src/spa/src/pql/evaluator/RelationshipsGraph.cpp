@@ -306,6 +306,24 @@ Boolean RelationshipsGraph::checkCachedRelationships(const Synonym& firstSynonym
     }
 }
 
+Boolean RelationshipsGraph::checkIfSynonymInRelationshipsGraph(const Synonym& syn)
+{
+    if (valuesTable.empty()) {
+        return false;
+    } else if (synonymRelationshipsCache.find(syn) != synonymRelationshipsCache.end()) {
+        return true;
+    } else {
+        Boolean hasPotentialValue = false;
+        for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>>& entry : valuesTable) {
+            if (entry.first.synonym == syn) {
+                hasPotentialValue = true;
+                break;
+            }
+        }
+        return hasPotentialValue;
+    }
+}
+
 Boolean RelationshipsGraph::checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv)
 {
     if (valuesTable.find(firstPv) != valuesTable.end()) {

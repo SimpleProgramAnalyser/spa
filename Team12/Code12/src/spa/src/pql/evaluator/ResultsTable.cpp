@@ -175,13 +175,17 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
         table->filterAfterVerification(s1, syn1Results);
         table->filterAfterVerification(s2, syn2Results);
     } else {
-        Boolean s1IsNew = !table->checkIfSynonymInMap(s1);
-        Boolean s2IsNew = !table->checkIfSynonymInMap(s2);
+        Boolean s1IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s1);
+        Boolean s2IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s2);
         // load relationships first, to see which relationships were successfully added
         Pair<Vector<String>, Vector<String>> successfulValues
             = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
-        table->filterAfterVerification(s1, successfulValues.first);
-        table->filterAfterVerification(s2, successfulValues.second);
+        if (successfulValues.first.empty() || successfulValues.second.empty()) {
+            table->hasResult = false;
+        } else {
+            table->filterAfterVerification(s1, successfulValues.first);
+            table->filterAfterVerification(s2, successfulValues.second);
+        }
     }
 }
 
