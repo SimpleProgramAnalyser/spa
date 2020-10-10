@@ -222,8 +222,7 @@ Void evaluateAssignPattern(PatternClause* pnClause, ResultsTable* resultsTable)
     }
     // store results in ResultTable
     resultsTable->storeResultsTwo(pnClause->getPatternSynonym(), allResults.getAssignStatements(),
-                                  pnClause->getEntRef(), allResults.getVariables(),
-                                  convertToPairedResult(allResults.getRelationships()));
+                                  pnClause->getEntRef(), convertToPairedResult(allResults.getRelationships()));
 }
 
 Void evaluatePattern(PatternClause* pnClause, ResultsTable* resultsTable)

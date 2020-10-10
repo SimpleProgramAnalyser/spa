@@ -113,12 +113,11 @@ std::function<void()> ResultsTable::createEvaluatorOne(ResultsTable* table, cons
     };
 }
 
-std::function<void()> ResultsTable::createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const ClauseResult& res1,
-                                                       const Synonym& s2, const ClauseResult& res2,
+std::function<void()> ResultsTable::createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const Synonym& s2,
                                                        const PairedResult& tuples)
 {
-    return [table, s1, res1, s2, res2, tuples]() {
-        mergeTwoSynonyms(table, s1, res1, s2, res2, tuples);
+    return [table, s1, s2, tuples]() {
+        mergeTwoSynonyms(table, s1, s2, tuples);
     };
 }
 
@@ -150,11 +149,11 @@ struct ResultsRelationHasher {
     }
 };
 
-void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const ClauseResult& res1, const Synonym& s2,
-                                    const ClauseResult& res2, const PairedResult& tuples)
+void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const Synonym& s2,
+                                    const PairedResult& tuples)
 {
     if (table->hasRelationships(s1, s2)) {
-        // past relations exist for s1 and s2
+        // past relations exist for s1 and s2 (inner join)
         std::unordered_set<ResultsRelation, ResultsRelationHasher> newRelationsSet;
         for (const std::pair<String, String>& newRelation : tuples) {
             newRelationsSet.insert(ResultsRelation(newRelation.first, newRelation.second));
@@ -178,11 +177,11 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
     } else {
         Boolean s1IsNew = !table->checkIfSynonymInMap(s1);
         Boolean s2IsNew = !table->checkIfSynonymInMap(s2);
-        // not necessary to check previous results to do the filtering
-        // load relationships first, as filtering will remove unwanted relationships
-        table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
-        table->filterAfterVerification(s1, res1);
-        table->filterAfterVerification(s2, res2);
+        // load relationships first, to see which relationships were successfully added
+        Pair<Vector<String>, Vector<String>> successfulValues
+            = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
+        table->filterAfterVerification(s1, successfulValues.first);
+        table->filterAfterVerification(s2, successfulValues.second);
     }
 }
 
@@ -399,12 +398,12 @@ Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& re
         // ignore reference 2
         storeResultsOne(rfc1, res1);
     } else {
-        queue.push(createEvaluatorTwo(this, rfc1.getValue(), res1, rfc2.getValue(), res2, tuples));
+        queue.push(createEvaluatorTwo(this, rfc1.getValue(), rfc2.getValue(), tuples));
     }
 }
 
 Void ResultsTable::storeResultsTwo(const Synonym& syn, const ClauseResult& resSyn, const Reference& ref,
-                                   const ClauseResult& resRef, const PairedResult& tuples)
+                                   const PairedResult& tuples)
 {
     if (tuples.empty()) {
         // short-circuit if tuples are empty
@@ -413,18 +412,17 @@ Void ResultsTable::storeResultsTwo(const Synonym& syn, const ClauseResult& resSy
         // ignore the reference
         storeResultsOne(syn, resSyn);
     } else {
-        queue.push(createEvaluatorTwo(this, syn, resSyn, ref.getValue(), resRef, tuples));
+        queue.push(createEvaluatorTwo(this, syn, ref.getValue(), tuples));
     }
 }
 
-Void ResultsTable::storeResultsTwo(const Synonym& syn1, const ClauseResult& res1, const Synonym& syn2,
-                                   const ClauseResult& res2, const PairedResult& tuples)
+Void ResultsTable::storeResultsTwo(const Synonym& syn1, const Synonym& syn2, const PairedResult& tuples)
 {
     if (tuples.empty()) {
         // short-circuit if tuples are empty
         hasResult = false;
     } else {
-        queue.push(createEvaluatorTwo(this, syn1, res1, syn2, res2, tuples));
+        queue.push(createEvaluatorTwo(this, syn1, syn2, tuples));
     }
 }
 

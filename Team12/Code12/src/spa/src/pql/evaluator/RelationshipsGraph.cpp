@@ -9,18 +9,21 @@
 /**
  * Associates two values of synonyms that already exist
  * in the graph, but have not been linked with each other.
+ * A cross join will be performed in this case.
  *
  * @param graph The RelationshipsGraph.
  * @param firstKey The first value to be added.
  * @param secondKey The second value to be added.
+ *
+ * @returns True, if the association was successful. Otherwise, false.
  */
-void RelationshipsGraph::associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+bool RelationshipsGraph::associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
                                               const PotentialValue& secondKey)
 {
     if (graph->valuesTable.find(firstKey) == graph->valuesTable.end()
         || graph->valuesTable.find(secondKey) == graph->valuesTable.end()) {
-        // one of the values do not exist, or have been deleted from the graph
-        return;
+        // one of the values does not exist, or was deleted from the graph
+        return false;
     }
     std::unordered_set<GraphEdge> edgesFirst = graph->valuesTable[firstKey];
     std::unordered_set<GraphEdge> edgesSecond = graph->valuesTable[secondKey];
@@ -52,17 +55,20 @@ void RelationshipsGraph::associateTwoExisting(RelationshipsGraph* graph, const P
         }
         graph->edgesTable.erase(e2);
     }
+    return true;
 }
 
 /**
- * Associates two values where one's synonym
- * exists in the graph, the other does not.
+ * Associates two values where one's synonym exists in the graph
+ * but the other does not. This corresponds to an (left) outer join.
  *
  * @param graph The RelationshipsGraph.
  * @param existingKey The value whose synonym exists in the graph.
  * @param newKey The value whose synonym does not exist in the graph.
+ *
+ * @returns True, if the association was successful. Otherwise, false.
  */
-void RelationshipsGraph::associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
+bool RelationshipsGraph::associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
                                               const PotentialValue& newKey)
 {
     if (graph->valuesTable.find(existingKey) != graph->valuesTable.end()) {
@@ -74,22 +80,28 @@ void RelationshipsGraph::associateOneExisting(RelationshipsGraph* graph, const P
             graph->edgesTable[e].insert(newKey);
             graph->valuesTable[newKey].insert(e);
         }
+        return true;
+    } else {
+        return false;
     }
 }
 
 /**
  * Associates two values where one's synonym exists in the graph,
  * the other does not. The arguments are swapped as compared to
- * the similar function associateOneExisting.
+ * the similar function associateOneExisting, so this would
+ * correspond to a right outer join.
  *
  * @param graph The RelationshipsGraph.
  * @param newKey The value whose synonym does not exist in the graph.
  * @param existingKey The value whose synonym exists in the graph.
+ *
+ * @returns True, if the association was successful. Otherwise, false.
  */
-void RelationshipsGraph::associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
+bool RelationshipsGraph::associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
                                                      const PotentialValue& existingKey)
 {
-    associateOneExisting(graph, existingKey, newKey);
+    return associateOneExisting(graph, existingKey, newKey);
 }
 
 /**
@@ -99,8 +111,10 @@ void RelationshipsGraph::associateOneExistingSwapped(RelationshipsGraph* graph, 
  * @param graph The RelationshipsGraph.
  * @param firstKey The first value to be added.
  * @param secondKey The second value to be added.
+ *
+ * @returns Always returns true.
  */
-void RelationshipsGraph::associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+bool RelationshipsGraph::associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
                                                const PotentialValue& secondKey)
 {
     GraphEdge currentEdge = graph->edgesIndex;
@@ -124,6 +138,7 @@ void RelationshipsGraph::associateZeroExisting(RelationshipsGraph* graph, const 
 
     // increment edges index for next use
     graph->edgesIndex++;
+    return true;
 }
 
 Boolean RelationshipsGraph::checkIfPotentialValueHasRelationships(const PotentialValue& pv)
@@ -148,17 +163,24 @@ bool RelationshipsGraph::checkEqualIncludingCache(const RelationshipsGraph& rg) 
     return *this == rg && this->synonymRelationshipsCache == rg.synonymRelationshipsCache;
 }
 
-void RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valueRelationships,
-                                             const Synonym& firstSynonym, bool firstIsNew, const Synonym& secondSynonym,
-                                             bool secondIsNew)
+Pair<Vector<String>, Vector<String>>
+RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valueRelationships,
+                                        const Synonym& firstSynonym, bool firstIsNew, const Synonym& secondSynonym,
+                                        bool secondIsNew)
 {
-    void (*associate)(RelationshipsGraph*, const PotentialValue&, const PotentialValue&)
+    std::unordered_set<String> firstSynonymResults;
+    std::unordered_set<String> secondSynonymResults;
+    bool (*associate)(RelationshipsGraph*, const PotentialValue&, const PotentialValue&)
         = firstIsNew ? (secondIsNew ? associateZeroExisting : associateOneExistingSwapped)
                      : (secondIsNew ? associateOneExisting : associateTwoExisting);
     for (const Pair<String, String>& value : valueRelationships) {
         PotentialValue firstKey(firstSynonym, value.first);
         PotentialValue secondKey(secondSynonym, value.second);
-        associate(this, firstKey, secondKey);
+        if (associate(this, firstKey, secondKey)) {
+            // successful association
+            firstSynonymResults.insert(value.first);
+            secondSynonymResults.insert(value.second);
+        }
     }
     // store the relationships in cache
     if (!valueRelationships.empty()) {
@@ -173,6 +195,9 @@ void RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>&
         }
         synonymRelationshipsCache[secondSynonym].insert(firstSynonym);
     }
+    return Pair<Vector<String>, Vector<String>>(
+        Vector<String>(firstSynonymResults.begin(), firstSynonymResults.end()),
+        Vector<String>(secondSynonymResults.begin(), secondSynonymResults.end()));
 }
 
 void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resultsTable)

@@ -49,8 +49,7 @@ private:
      *
      * @return The evaluation closure.
      */
-    static std::function<void()> createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const ClauseResult& res1,
-                                                    const Synonym& s2, const ClauseResult& res2,
+    static std::function<void()> createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const Synonym& s2,
                                                     const PairedResult& tuples);
 
     /**
@@ -63,8 +62,7 @@ private:
      * Merges the results for two synonyms for the ResultsTable provided.
      * This method assumes both results are not empty.
      */
-    static void mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const ClauseResult& res1, const Synonym& s2,
-                                 const ClauseResult& res2, const PairedResult& tuples);
+    static void mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const Synonym& s2, const PairedResult& tuples);
 
     /**
      * Initiates merging of the results, if not yet merged.
@@ -277,12 +275,11 @@ public:
      * @param syn First synonym in the clause.
      * @param resSyn Results for the synonym syn.
      * @param ref Second reference in the clause.
-     * @param resRef Results for the reference ref.
      * @param tuples Pairs of results for the first synonym
      *               and the second reference.
      */
     Void storeResultsTwo(const Synonym& syn, const ClauseResult& resSyn, const Reference& ref,
-                         const ClauseResult& resRef, const PairedResult& tuples);
+                         const PairedResult& tuples);
 
     /**
      * Adds the result for two synonyms into a queue.
@@ -290,14 +287,11 @@ public:
      * getResults is called.
      *
      * @param syn1 First synonym in the clause.
-     * @param res1 Results for the synonym syn1.
      * @param syn2 Second synonym in the clause.
-     * @param res2 Results for the synonym syn2.
      * @param tuples Pairs of results for the first synonym
      *               and the second synonym.
      */
-    Void storeResultsTwo(const Synonym& syn1, const ClauseResult& res1, const Synonym& syn2, const ClauseResult& res2,
-                         const PairedResult& tuples);
+    Void storeResultsTwo(const Synonym& syn1, const Synonym& syn2, const PairedResult& tuples);
 };
 
 /*
@@ -338,13 +332,13 @@ private:
      */
     std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
 
-    static void associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+    static bool associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
                                      const PotentialValue& secondKey);
-    static void associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
+    static bool associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
                                      const PotentialValue& newKey);
-    static void associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
+    static bool associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
                                             const PotentialValue& existingKey);
-    static void associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+    static bool associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
                                       const PotentialValue& secondKey);
     Boolean checkIfPotentialValueHasRelationships(const PotentialValue& pv);
 
@@ -366,6 +360,9 @@ public:
      * of certain synonyms. This method assumes that the
      * synonyms are not related (checkIfRelated returns false).
      *
+     * Doing this insertion may cause certain values to be discarded
+     * from the ResultsTable.
+     *
      * @param valueRelationships The pairs representing relationships
      *                           between values of the first synonym
      *                           and values of the second synonym.
@@ -377,9 +374,12 @@ public:
      *                      element of the pairs in valueRelationships.
      * @param secondIsNew Whether the second synonym has results in
      *                    the ResultsTable already.
+     *
+     * @return A pair of valid values for synonym 1 and synonym 2.
      */
-    void insertRelationships(const Vector<Pair<String, String>>& valueRelationships, const Synonym& firstSynonym,
-                             bool firstIsNew, const Synonym& secondSynonym, bool secondIsNew);
+    Pair<Vector<String>, Vector<String>> insertRelationships(const Vector<Pair<String, String>>& valueRelationships,
+                                                             const Synonym& firstSynonym, bool firstIsNew,
+                                                             const Synonym& secondSynonym, bool secondIsNew);
 
     /**
      * Deletes a potential value from the graph, as well as
