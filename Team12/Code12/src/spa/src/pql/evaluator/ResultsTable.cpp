@@ -176,9 +176,11 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
         table->filterAfterVerification(s1, syn1Results);
         table->filterAfterVerification(s2, syn2Results);
     } else {
+        Boolean s1IsNew = !table->checkIfSynonymInMap(s1);
+        Boolean s2IsNew = !table->checkIfSynonymInMap(s2);
         // not necessary to check previous results to do the filtering
         // load relationships first, as filtering will remove unwanted relationships
-        table->relationships->insertRelationships(tuples, s1, s2);
+        table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
         table->filterAfterVerification(s1, res1);
         table->filterAfterVerification(s2, res2);
     }
@@ -286,7 +288,7 @@ Boolean ResultsTable::hasResults() const
 void ResultsTable::associateRelationships(const Synonym& syn1, const Synonym& syn2,
                                           const Vector<Pair<String, String>>& relationshipsPairs)
 {
-    this->relationships->insertRelationships(relationshipsPairs, syn1, syn2);
+    this->relationships->insertRelationships(relationshipsPairs, syn1, true, syn2, true);
 }
 
 void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)

@@ -147,9 +147,9 @@ public:
 
     /**
      * Adds a list of relationships between potential values
-     * of certain synonyms. ResultsTable assumes that these
-     * values already exist in the results table. If the values
-     * do not exist, the behaviour of other methods is undefined.
+     * of certain synonyms. This method assumes the values are
+     * new to the table and do not have any existing relations
+     * in the relationships graph.
      *
      * If the references are not synonyms, do nothing.
      *
@@ -338,7 +338,14 @@ private:
      */
     std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
 
-    void associate(const PotentialValue& firstKey, const PotentialValue& secondKey);
+    static void associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+                                     const PotentialValue& secondKey);
+    static void associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
+                                     const PotentialValue& newKey);
+    static void associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
+                                            const PotentialValue& existingKey);
+    static void associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+                                      const PotentialValue& secondKey);
     Boolean checkIfPotentialValueHasRelationships(const PotentialValue& pv);
 
 public:
@@ -356,10 +363,23 @@ public:
 
     /**
      * Adds a list of relationships between potential values
-     * of certain synonyms.
+     * of certain synonyms. This method assumes that the
+     * synonyms are not related (checkIfRelated returns false).
+     *
+     * @param valueRelationships The pairs representing relationships
+     *                           between values of the first synonym
+     *                           and values of the second synonym.
+     * @param firstSynonym The synonym whose results are the first
+     *                     element of the pairs in valueRelationships.
+     * @param firstIsNew Whether the first synonym has results in
+     *                   the ResultsTable already.
+     * @param secondSynonym The synonym whose results are the second
+     *                      element of the pairs in valueRelationships.
+     * @param secondIsNew Whether the second synonym has results in
+     *                    the ResultsTable already.
      */
     void insertRelationships(const Vector<Pair<String, String>>& valueRelationships, const Synonym& firstSynonym,
-                             const Synonym& secondSynonym);
+                             bool firstIsNew, const Synonym& secondSynonym, bool secondIsNew);
 
     /**
      * Deletes a potential value from the graph, as well as

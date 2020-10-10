@@ -6,31 +6,124 @@
 
 #include "ResultsTable.h"
 
-void RelationshipsGraph::associate(const PotentialValue& firstKey, const PotentialValue& secondKey)
+/**
+ * Associates two values of synonyms that already exist
+ * in the graph, but have not been linked with each other.
+ *
+ * @param graph The RelationshipsGraph.
+ * @param firstKey The first value to be added.
+ * @param secondKey The second value to be added.
+ */
+void RelationshipsGraph::associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+                                              const PotentialValue& secondKey)
 {
-    GraphEdge currentEdge = edgesIndex;
+    if (graph->valuesTable.find(firstKey) == graph->valuesTable.end()
+        || graph->valuesTable.find(secondKey) == graph->valuesTable.end()) {
+        // one of the values do not exist, or have been deleted from the graph
+        return;
+    }
+    std::unordered_set<GraphEdge> edgesFirst = graph->valuesTable[firstKey];
+    std::unordered_set<GraphEdge> edgesSecond = graph->valuesTable[secondKey];
+    // form the Cartesian product of the edges and add each as a new edge
+    for (GraphEdge e1 : edgesFirst) {
+        for (GraphEdge e2 : edgesSecond) {
+            GraphEdge newEdge = graph->edgesIndex;
+            std::unordered_set<PotentialValue, PotentialValueHasher> edgeValues;
+            edgeValues.insert(graph->edgesTable[e1].begin(), graph->edgesTable[e1].end());
+            edgeValues.insert(graph->edgesTable[e2].begin(), graph->edgesTable[e2].end());
+            graph->edgesTable.insert(
+                std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(newEdge, edgeValues));
+            for (const PotentialValue& pv : edgeValues) {
+                graph->valuesTable[pv].insert(newEdge);
+            }
+            graph->edgesIndex++;
+        }
+    }
+    // remove the old edges
+    for (GraphEdge e1 : edgesFirst) {
+        for (const PotentialValue& pv1 : graph->edgesTable[e1]) {
+            graph->valuesTable[pv1].erase(e1);
+        }
+        graph->edgesTable.erase(e1);
+    }
+    for (GraphEdge e2 : edgesSecond) {
+        for (const PotentialValue& pv2 : graph->edgesTable[e2]) {
+            graph->valuesTable[pv2].erase(e2);
+        }
+        graph->edgesTable.erase(e2);
+    }
+}
+
+/**
+ * Associates two values where one's synonym
+ * exists in the graph, the other does not.
+ *
+ * @param graph The RelationshipsGraph.
+ * @param existingKey The value whose synonym exists in the graph.
+ * @param newKey The value whose synonym does not exist in the graph.
+ */
+void RelationshipsGraph::associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
+                                              const PotentialValue& newKey)
+{
+    if (graph->valuesTable.find(existingKey) != graph->valuesTable.end()) {
+        // add new value to all the existing edges
+        std::unordered_set<GraphEdge> existingEdges = graph->valuesTable[existingKey];
+        graph->valuesTable.insert(
+            std::pair<PotentialValue, std::unordered_set<GraphEdge>>(newKey, std::unordered_set<GraphEdge>()));
+        for (GraphEdge e : existingEdges) {
+            graph->edgesTable[e].insert(newKey);
+            graph->valuesTable[newKey].insert(e);
+        }
+    }
+}
+
+/**
+ * Associates two values where one's synonym exists in the graph,
+ * the other does not. The arguments are swapped as compared to
+ * the similar function associateOneExisting.
+ *
+ * @param graph The RelationshipsGraph.
+ * @param newKey The value whose synonym does not exist in the graph.
+ * @param existingKey The value whose synonym exists in the graph.
+ */
+void RelationshipsGraph::associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
+                                                     const PotentialValue& existingKey)
+{
+    associateOneExisting(graph, existingKey, newKey);
+}
+
+/**
+ * Associates two values of synonyms that do not
+ * already exist in the graph.
+ *
+ * @param graph The RelationshipsGraph.
+ * @param firstKey The first value to be added.
+ * @param secondKey The second value to be added.
+ */
+void RelationshipsGraph::associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+                                               const PotentialValue& secondKey)
+{
+    GraphEdge currentEdge = graph->edgesIndex;
     // add first -> edge, second -> edge
-    if (valuesTable.find(firstKey) == valuesTable.end()) {
-        valuesTable.insert(
+    if (graph->valuesTable.find(firstKey) == graph->valuesTable.end()) {
+        graph->valuesTable.insert(
             std::pair<PotentialValue, std::unordered_set<GraphEdge>>(firstKey, std::unordered_set<GraphEdge>()));
     }
-    if (valuesTable.find(secondKey) == valuesTable.end()) {
-        valuesTable.insert(
+    if (graph->valuesTable.find(secondKey) == graph->valuesTable.end()) {
+        graph->valuesTable.insert(
             std::pair<PotentialValue, std::unordered_set<GraphEdge>>(secondKey, std::unordered_set<GraphEdge>()));
     }
-    valuesTable[firstKey].insert(currentEdge);
-    valuesTable[secondKey].insert(currentEdge);
+    graph->valuesTable[firstKey].insert(currentEdge);
+    graph->valuesTable[secondKey].insert(currentEdge);
 
     // add edge -> (first, second)
-    if (edgesTable.find(currentEdge) == edgesTable.end()) {
-        edgesTable.insert(std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(
-            currentEdge, std::unordered_set<PotentialValue, PotentialValueHasher>()));
-    }
-    edgesTable[currentEdge].insert(firstKey);
-    edgesTable[currentEdge].insert(secondKey);
+    graph->edgesTable.insert(std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(
+        currentEdge, std::unordered_set<PotentialValue, PotentialValueHasher>()));
+    graph->edgesTable[currentEdge].insert(firstKey);
+    graph->edgesTable[currentEdge].insert(secondKey);
 
     // increment edges index for next use
-    edgesIndex++;
+    graph->edgesIndex++;
 }
 
 Boolean RelationshipsGraph::checkIfPotentialValueHasRelationships(const PotentialValue& pv)
@@ -56,12 +149,16 @@ bool RelationshipsGraph::checkEqualIncludingCache(const RelationshipsGraph& rg) 
 }
 
 void RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valueRelationships,
-                                             const Synonym& firstSynonym, const Synonym& secondSynonym)
+                                             const Synonym& firstSynonym, bool firstIsNew, const Synonym& secondSynonym,
+                                             bool secondIsNew)
 {
+    void (*associate)(RelationshipsGraph*, const PotentialValue&, const PotentialValue&)
+        = firstIsNew ? (secondIsNew ? associateZeroExisting : associateOneExistingSwapped)
+                     : (secondIsNew ? associateOneExisting : associateTwoExisting);
     for (const Pair<String, String>& value : valueRelationships) {
         PotentialValue firstKey(firstSynonym, value.first);
         PotentialValue secondKey(secondSynonym, value.second);
-        associate(firstKey, secondKey);
+        associate(this, firstKey, secondKey);
     }
     // store the relationships in cache
     if (!valueRelationships.empty()) {

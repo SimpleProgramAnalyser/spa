@@ -28,12 +28,12 @@ RelationshipsGraph setUpTestingGraph()
         {{"271", "271"}, {"559", "52"}, {"52", "271"}});
 
     RelationshipsGraph graph;
-    graph.insertRelationships(redGreenRelationships, "red", "green");
-    graph.insertRelationships(numPurpleRelationships, "num", "purple");
-    graph.insertRelationships(circleNumRelationships, "circle", "num");
-    graph.insertRelationships(ccDtRelationships, "CC", "DT");
-    graph.insertRelationships(circlePurpleRelationships, "circle", "purple");
-    graph.insertRelationships(interSynonymRelationships, "interSynonym", "interSynonym");
+    graph.insertRelationships(redGreenRelationships, "red", true, "green", true);
+    graph.insertRelationships(numPurpleRelationships, "num", true, "purple", true);
+    graph.insertRelationships(circleNumRelationships, "circle", true, "num", true);
+    graph.insertRelationships(ccDtRelationships, "CC", true, "DT", true);
+    graph.insertRelationships(circlePurpleRelationships, "circle", true, "purple", true);
+    graph.insertRelationships(interSynonymRelationships, "interSynonym", true, "interSynonym", true);
     return graph;
 }
 
