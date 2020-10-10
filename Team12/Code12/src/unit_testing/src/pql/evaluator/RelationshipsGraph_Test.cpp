@@ -79,6 +79,7 @@ TEST_CASE("RelationshipsGraph stores PotentialValue relationships correctly")
     REQUIRE(graph.checkIfRelated(PotentialValue("interSynonym", "271"), PotentialValue("interSynonym", "271")));
     REQUIRE(graph.checkIfRelated(PotentialValue("interSynonym", "52"), PotentialValue("interSynonym", "559")));
     REQUIRE(graph.checkIfRelated(PotentialValue("interSynonym", "271"), PotentialValue("interSynonym", "52")));
+    REQUIRE(graph.checkIfRelated(PotentialValue("interSynonym", "52"), PotentialValue("interSynonym", "52")));
 
     REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("red", "ns26"), PotentialValue("green", "ew13")));
     REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("red", "ns25"), PotentialValue("green", "ew4")));
@@ -93,7 +94,6 @@ TEST_CASE("RelationshipsGraph stores PotentialValue relationships correctly")
     REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("DT", "15"), PotentialValue("DT", "9")));
     REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("NE", "6"), PotentialValue("CC", "1")));
     REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("DT", "15"), PotentialValue("CE", "1")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("interSynonym", "52"), PotentialValue("interSynonym", "52")));
     REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("interSynonym", "271"), PotentialValue("interSynonym", "559")));
 }
 
