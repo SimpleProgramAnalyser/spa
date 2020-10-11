@@ -314,6 +314,8 @@ inline String stringId(String str)
 }
 
 typedef Integer GraphEdge;
+class TableUpdate;
+class UpdatesQueue;
 
 /**
  * A helper class for results table, the Relationships
@@ -335,18 +337,34 @@ private:
     // Allow ValuesTablesUpdates to access the valuesTable
     friend class ValuesTableDelete;
     friend class ValuesTableInsert;
+    friend class ValuesTableInsertNewest;
+    friend class ValuesTableNewSet;
+    friend class EdgesTableDelete;
+    friend class EdgesTableDeleteEdge;
+    friend class EdgesTableInsert;
+    friend class EdgesTableInsertToNewest;
+    friend class EdgesTableNewSet;
 
-    static bool associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
-                                     const PotentialValue& secondKey);
-    static bool associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
-                                     const PotentialValue& newKey);
-    static bool associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
-                                            const PotentialValue& existingKey);
-    static bool associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
-                                      const PotentialValue& secondKey);
+    static bool associateTwoExisting(const RelationshipsGraph& graph, const PotentialValue& firstKey,
+                                     const PotentialValue& secondKey, UpdatesQueue& updates);
+    static bool associateOneExisting(const RelationshipsGraph& graph, const PotentialValue& existingKey,
+                                     const PotentialValue& newKey, UpdatesQueue& updates);
+    static bool associateOneExistingSwapped(const RelationshipsGraph& graph, const PotentialValue& newKey,
+                                            const PotentialValue& existingKey, UpdatesQueue& updates);
+    static bool associateZeroExisting(const RelationshipsGraph& graph, const PotentialValue& firstKey,
+                                      const PotentialValue& secondKey, UpdatesQueue& updates);
     Boolean checkIfPotentialValueHasRelationships(const PotentialValue& pv);
 
 public:
+    RelationshipsGraph() = default;
+
+    /**
+     * Constructs RelationshipsGraph with a predefined set of edges,
+     * and a value for the edgeIndex counter. Used for unit testing.
+     */
+    explicit RelationshipsGraph(const std::vector<std::pair<GraphEdge, std::vector<PotentialValue>>>& edges,
+                                GraphEdge currentEdgeIndex);
+
     /**
      * A method to compare two RelationshipsGraph for testing purposes.
      * This method ignores differences in the synonym cache.

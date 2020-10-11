@@ -2,118 +2,303 @@
  * Implementation of Relationships Graph for
  * Query Evaluator's Result Table.
  */
+#include <stdexcept>
 #include <utility>
 
 #include "ResultsTable.h"
 
+//========================================================================
+// HELPER CLASSES FOR RELATIONSHIPS GRAPH
+//========================================================================
 /**
- * A class that holds a instruction to update the values table.
- * This is used by the associate methods because in-place
- * updating could result in edges that are incorrect.
+ * A class that holds a instruction to update the values table
+ * or edges table. This is used by the associate methods because
+ * in-place updating could result in edges that are incorrect.
  */
-class ValuesTableUpdates {
+class TableUpdate {
 protected:
     PotentialValue value;
     GraphEdge edge;
-    ValuesTableUpdates(PotentialValue valueToUpdate, GraphEdge edgeToUpdate):
+
+    TableUpdate(PotentialValue valueToUpdate, GraphEdge edgeToUpdate):
         value(std::move(valueToUpdate)), edge(edgeToUpdate)
     {}
 
 public:
+    virtual ~TableUpdate() = default;
+    TableUpdate(const TableUpdate&) = default;
+    TableUpdate& operator=(const TableUpdate&) = default;
+    TableUpdate(TableUpdate&&) = default;
+    TableUpdate& operator=(TableUpdate&&) = default;
+
     /**
-     * Executes the update to valuesTable of the relationships graph.
+     * Executes the update to valuesTable or edgesTable of the relationships graph.
      */
-    virtual void operator()(RelationshipsGraph* graph) const = 0;
+    virtual void operator()(RelationshipsGraph& graph) const = 0;
 };
 
-class ValuesTableDelete: public ValuesTableUpdates {
+class ValuesTableDelete: public TableUpdate {
 public:
     /**
-     * Constructs a ValuesTableUpdates representing an
+     * Constructs a TableUpdate representing an
      * instruction to delete an edge from valuesTable
      * for a given potential value.
      *
      * @param valueToUpdate The PotentialValue to update.
-     * @param edgeToUpdate The edge to delete from PotentialValue.
+     * @param edgeToUpdate The edge to delete from valuesTable.
      */
     ValuesTableDelete(PotentialValue valueToUpdate, GraphEdge edgeToUpdate):
-        ValuesTableUpdates(std::move(valueToUpdate), edgeToUpdate)
+        TableUpdate(std::move(valueToUpdate), edgeToUpdate)
     {}
 
-    void operator()(RelationshipsGraph* graph) const override
+    void operator()(RelationshipsGraph& graph) const override
     {
-        graph->valuesTable[value].erase(edge);
+        graph.valuesTable[value].erase(edge);
     }
 };
 
-class ValuesTableInsert: public ValuesTableUpdates {
+class ValuesTableInsert: public TableUpdate {
 public:
     /**
-     * Constructs a ValuesTableUpdates representing an
+     * Constructs a TableUpdate representing an
      * instruction to insert an edge into valuesTable
      * for a given potential value.
      *
      * @param valueToUpdate The PotentialValue to update.
-     * @param edgeToUpdate The edge to insert into PotentialValue.
+     * @param edgeToUpdate The edge to insert into valuesTable.
      */
     ValuesTableInsert(PotentialValue valueToUpdate, GraphEdge edgeToUpdate):
-        ValuesTableUpdates(std::move(valueToUpdate), edgeToUpdate)
+        TableUpdate(std::move(valueToUpdate), edgeToUpdate)
     {}
 
-    void operator()(RelationshipsGraph* graph) const override
+    void operator()(RelationshipsGraph& graph) const override
     {
-        graph->valuesTable[value].insert(edge);
+        graph.valuesTable[value].insert(edge);
     }
 };
+
+class ValuesTableInsertNewest: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to insert the latest edge into
+     * valuesTable for a given potential value.
+     * The latest edge created is retrieved by taking
+     * the current edgeIndex and decreasing it by one.
+     *
+     * @param valueToUpdate The PotentialValue to update.
+     */
+    explicit ValuesTableInsertNewest(PotentialValue valueToUpdate): TableUpdate(std::move(valueToUpdate), -1) {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        graph.valuesTable[value].insert(graph.edgesIndex - 1);
+    }
+};
+
+class ValuesTableNewSet: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to create a new set in valuesTable
+     * for a given potential value.
+     *
+     * @param valueToUpdate The PotentialValue to update.
+     */
+    explicit ValuesTableNewSet(PotentialValue valueToUpdate): TableUpdate(std::move(valueToUpdate), -1) {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        graph.valuesTable.insert(
+            std::pair<PotentialValue, std::unordered_set<GraphEdge>>(value, std::unordered_set<GraphEdge>()));
+    }
+};
+
+class EdgesTableDelete: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to delete a value from edgesTable
+     * for a given edge number.
+     *
+     * @param edgeToUpdate The edge to update.
+     * @param valueToUpdate The PotentialValue to
+     *                      delete from edgesTable.
+     */
+    EdgesTableDelete(GraphEdge edgeToUpdate, PotentialValue valueToUpdate):
+        TableUpdate(std::move(valueToUpdate), edgeToUpdate)
+    {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        graph.edgesTable[edge].erase(value);
+    }
+};
+
+class EdgesTableDeleteEdge: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to delete an entire edge from
+     * edgesTable, given the edge number.
+     *
+     * @param edgeToUpdate The edge to delete
+     *                     from edgesTable
+     */
+    explicit EdgesTableDeleteEdge(GraphEdge edgeToUpdate): TableUpdate(PotentialValue("", ""), edgeToUpdate) {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        graph.edgesTable.erase(edge);
+    }
+};
+
+class EdgesTableInsert: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to insert a value into edgesTable
+     * for a given edge number.
+     *
+     * @param edgeToUpdate The edge to update.
+     * @param valueToUpdate The PotentialValue to
+     *                      insert into edgesTable.
+     */
+    EdgesTableInsert(GraphEdge edgeToUpdate, PotentialValue valueToUpdate):
+        TableUpdate(std::move(valueToUpdate), edgeToUpdate)
+    {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        graph.edgesTable[edge].insert(value);
+    }
+};
+
+class EdgesTableInsertToNewest: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to insert a value into edgesTable
+     * for the latest edge created. The latest edge
+     * created is retrieved by taking the current
+     * edgeIndex and decreasing it by one.
+     *
+     * @param valueToUpdate The PotentialValue to
+     *                      insert into edgesTable.
+     */
+    explicit EdgesTableInsertToNewest(PotentialValue valueToUpdate): TableUpdate(std::move(valueToUpdate), -1) {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        graph.edgesTable[graph.edgesIndex - 1].insert(value);
+    }
+};
+
+class EdgesTableNewSet: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to create a new set in edgesTable.
+     * The number of the edge used will be the current
+     * value of edgesIndex, and edgesIndex will be
+     * incremented after the new set is added.
+     *
+     * @param valueToUpdate The PotentialValue to update.
+     */
+    EdgesTableNewSet(): TableUpdate(PotentialValue("", ""), -1) {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        graph.edgesTable.insert(std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(
+            graph.edgesIndex, std::unordered_set<PotentialValue, PotentialValueHasher>()));
+        graph.edgesIndex++;
+    }
+};
+
+/**
+ * A class that holds a queue of TableUpdate instructions.
+ */
+class UpdatesQueue {
+public:
+    std::queue<std::unique_ptr<TableUpdate>> queue;
+
+    template <class T>
+    void push(const T& instr)
+    {
+        queue.push(std::unique_ptr<T>(new T(instr)));
+    }
+
+    bool empty() const
+    {
+        return queue.empty();
+    }
+
+    const std::unique_ptr<TableUpdate>& front() const
+    {
+        return std::move(queue.front());
+    }
+
+    void pop()
+    {
+        queue.pop();
+    }
+};
+
+//========================================================================
+// RELATIONSHIPS GRAPH INTERNAL METHODS
+//========================================================================
 
 /**
  * Associates two values of synonyms that already exist
  * in the graph, but have not been linked with each other.
  * A cross join will be performed in this case.
  *
- * @param graph The RelationshipsGraph.
+ * @param graph The RelationshipsGraph to look up.
  * @param firstKey The first value to be added.
  * @param secondKey The second value to be added.
+ * @param updates Queue that stores the required
+ *                updates to the valuesTable.
  *
  * @returns True, if the association was successful. Otherwise, false.
  */
-bool RelationshipsGraph::associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
-                                              const PotentialValue& secondKey)
+bool RelationshipsGraph::associateTwoExisting(const RelationshipsGraph& graph, const PotentialValue& firstKey,
+                                              const PotentialValue& secondKey, UpdatesQueue& updates)
 {
-    if (graph->valuesTable.find(firstKey) == graph->valuesTable.end()
-        || graph->valuesTable.find(secondKey) == graph->valuesTable.end()) {
+    if (graph.valuesTable.find(firstKey) == graph.valuesTable.end()
+        || graph.valuesTable.find(secondKey) == graph.valuesTable.end()) {
         // one of the values does not exist, or was deleted from the graph
         return false;
     }
-    std::unordered_set<GraphEdge> edgesFirst = graph->valuesTable[firstKey];
-    std::unordered_set<GraphEdge> edgesSecond = graph->valuesTable[secondKey];
+    std::unordered_set<GraphEdge> edgesFirst = graph.valuesTable.at(firstKey);
+    std::unordered_set<GraphEdge> edgesSecond = graph.valuesTable.at(secondKey);
     // form the Cartesian product of the edges and add each as a new edge
     for (GraphEdge e1 : edgesFirst) {
         for (GraphEdge e2 : edgesSecond) {
-            GraphEdge newEdge = graph->edgesIndex;
+            updates.push(EdgesTableNewSet());
             std::unordered_set<PotentialValue, PotentialValueHasher> edgeValues;
-            edgeValues.insert(graph->edgesTable[e1].begin(), graph->edgesTable[e1].end());
-            edgeValues.insert(graph->edgesTable[e2].begin(), graph->edgesTable[e2].end());
-            graph->edgesTable.insert(
-                std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(newEdge, edgeValues));
-            for (const PotentialValue& pv : edgeValues) {
-                graph->valuesTable[pv].insert(newEdge);
+            for (const PotentialValue& pv : graph.edgesTable.at(e1)) {
+                updates.push(EdgesTableInsertToNewest(pv));
             }
-            graph->edgesIndex++;
+            for (const PotentialValue& pv : graph.edgesTable.at(e2)) {
+                updates.push(EdgesTableInsertToNewest(pv));
+            }
+            for (const PotentialValue& pv : edgeValues) {
+                updates.push(ValuesTableInsertNewest(pv));
+            }
         }
     }
     // remove the old edges
     for (GraphEdge e1 : edgesFirst) {
-        for (const PotentialValue& pv1 : graph->edgesTable[e1]) {
-            graph->valuesTable[pv1].erase(e1);
+        for (const PotentialValue& pv1 : graph.edgesTable.at(e1)) {
+            updates.push(ValuesTableDelete(pv1, e1));
         }
-        graph->edgesTable.erase(e1);
+        updates.push(EdgesTableDeleteEdge(e1));
     }
     for (GraphEdge e2 : edgesSecond) {
-        for (const PotentialValue& pv2 : graph->edgesTable[e2]) {
-            graph->valuesTable[pv2].erase(e2);
+        for (const PotentialValue& pv2 : graph.edgesTable.at(e2)) {
+            updates.push(ValuesTableDelete(pv2, e2));
         }
-        graph->edgesTable.erase(e2);
+        updates.push(EdgesTableDeleteEdge(e2));
     }
     return true;
 }
@@ -122,28 +307,31 @@ bool RelationshipsGraph::associateTwoExisting(RelationshipsGraph* graph, const P
  * Associates two values where one's synonym exists in the graph
  * but the other does not. This corresponds to an (left) outer join.
  *
- * @param graph The RelationshipsGraph.
+ * @param graph The RelationshipsGraph to look up.
  * @param existingKey The value whose synonym exists in the graph.
  * @param newKey The value whose synonym does not exist in the graph.
+ * @param updates Queue that stores the required
+ *                updates to the valuesTable.
  *
  * @returns True, if the association was successful. Otherwise, false.
  */
-bool RelationshipsGraph::associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
-                                              const PotentialValue& newKey)
+bool RelationshipsGraph::associateOneExisting(const RelationshipsGraph& graph, const PotentialValue& existingKey,
+                                              const PotentialValue& newKey, UpdatesQueue& updates)
 {
-    if (graph->valuesTable.find(existingKey) != graph->valuesTable.end()) {
-        // add new value to all the existing edges
-        std::unordered_set<GraphEdge> existingEdges = graph->valuesTable[existingKey];
-        graph->valuesTable.insert(
-            std::pair<PotentialValue, std::unordered_set<GraphEdge>>(newKey, std::unordered_set<GraphEdge>()));
-        for (GraphEdge e : existingEdges) {
-            graph->edgesTable[e].insert(newKey);
-            graph->valuesTable[newKey].insert(e);
-        }
-        return true;
-    } else {
-        return false;
-    }
+    //    if (graph.valuesTable.find(existingKey) != graph.valuesTable.end()) {
+    //        // add new value to all the existing edges
+    //        std::unordered_set<GraphEdge> existingEdges = graph.valuesTable[existingKey];
+    //        graph.valuesTable.insert(
+    //            std::pair<PotentialValue, std::unordered_set<GraphEdge>>(newKey, std::unordered_set<GraphEdge>()));
+    //        for (GraphEdge e : existingEdges) {
+    //            graph.edgesTable[e].insert(newKey);
+    //            graph.valuesTable[newKey].insert(e);
+    //        }
+    //        return true;
+    //    } else {
+    //        return false;
+    //    }
+    return false;
 }
 
 /**
@@ -152,52 +340,50 @@ bool RelationshipsGraph::associateOneExisting(RelationshipsGraph* graph, const P
  * the similar function associateOneExisting, so this would
  * correspond to a right outer join.
  *
- * @param graph The RelationshipsGraph.
+ * @param graph The RelationshipsGraph to look up.
  * @param newKey The value whose synonym does not exist in the graph.
  * @param existingKey The value whose synonym exists in the graph.
+ * @param updates Queue that stores the required
+ *                updates to the valuesTable.
  *
  * @returns True, if the association was successful. Otherwise, false.
  */
-bool RelationshipsGraph::associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
-                                                     const PotentialValue& existingKey)
+bool RelationshipsGraph::associateOneExistingSwapped(const RelationshipsGraph& graph, const PotentialValue& newKey,
+                                                     const PotentialValue& existingKey, UpdatesQueue& updates)
 {
-    return associateOneExisting(graph, existingKey, newKey);
+    return associateOneExisting(graph, existingKey, newKey, updates);
 }
 
 /**
  * Associates two values of synonyms that do not
  * already exist in the graph.
  *
- * @param graph The RelationshipsGraph.
+ * @param graph The RelationshipsGraph to look up.
  * @param firstKey The first value to be added.
  * @param secondKey The second value to be added.
+ * @param updates Queue that stores the required
+ *                updates to the valuesTable.
  *
  * @returns Always returns true.
  */
-bool RelationshipsGraph::associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
-                                               const PotentialValue& secondKey)
+bool RelationshipsGraph::associateZeroExisting(const RelationshipsGraph& graph, const PotentialValue& firstKey,
+                                               const PotentialValue& secondKey, UpdatesQueue& updates)
 {
-    GraphEdge currentEdge = graph->edgesIndex;
+    GraphEdge currentEdge = graph.edgesIndex;
     // add first -> edge, second -> edge
-    if (graph->valuesTable.find(firstKey) == graph->valuesTable.end()) {
-        graph->valuesTable.insert(
-            std::pair<PotentialValue, std::unordered_set<GraphEdge>>(firstKey, std::unordered_set<GraphEdge>()));
+    if (graph.valuesTable.find(firstKey) == graph.valuesTable.end()) {
+        updates.push(ValuesTableNewSet(firstKey));
     }
-    if (graph->valuesTable.find(secondKey) == graph->valuesTable.end()) {
-        graph->valuesTable.insert(
-            std::pair<PotentialValue, std::unordered_set<GraphEdge>>(secondKey, std::unordered_set<GraphEdge>()));
+    if (graph.valuesTable.find(secondKey) == graph.valuesTable.end()) {
+        updates.push(ValuesTableNewSet(secondKey));
     }
-    graph->valuesTable[firstKey].insert(currentEdge);
-    graph->valuesTable[secondKey].insert(currentEdge);
+    updates.push(ValuesTableInsert(firstKey, currentEdge));
+    updates.push(ValuesTableInsert(secondKey, currentEdge));
 
     // add edge -> (first, second)
-    graph->edgesTable.insert(std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(
-        currentEdge, std::unordered_set<PotentialValue, PotentialValueHasher>()));
-    graph->edgesTable[currentEdge].insert(firstKey);
-    graph->edgesTable[currentEdge].insert(secondKey);
-
-    // increment edges index for next use
-    graph->edgesIndex++;
+    updates.push(EdgesTableNewSet());
+    updates.push(EdgesTableInsertToNewest(firstKey));
+    updates.push(EdgesTableInsertToNewest(secondKey));
     return true;
 }
 
@@ -208,6 +394,23 @@ Boolean RelationshipsGraph::checkIfPotentialValueHasRelationships(const Potentia
     } else {
         // synonym is not in table, it possibly exists independently of others
         return true;
+    }
+}
+
+RelationshipsGraph::RelationshipsGraph(const std::vector<std::pair<GraphEdge, std::vector<PotentialValue>>>& edges,
+                                       GraphEdge currentEdgeIndex):
+    edgesIndex(currentEdgeIndex)
+{
+    for (const std::pair<GraphEdge, std::vector<PotentialValue>>& edge : edges) {
+        edgesTable.insert(std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(
+            edge.first, std::unordered_set<PotentialValue, PotentialValueHasher>()));
+        for (const PotentialValue& pv : edge.second) {
+            edgesTable[edge.first].insert(pv);
+            if (valuesTable.find(pv) != valuesTable.end()) {
+                valuesTable.insert({pv, {}});
+            }
+            valuesTable[pv].insert(edge.first);
+        }
     }
 }
 
@@ -230,17 +433,23 @@ RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valu
 {
     std::unordered_set<String> firstSynonymResults;
     std::unordered_set<String> secondSynonymResults;
-    bool (*associate)(RelationshipsGraph*, const PotentialValue&, const PotentialValue&)
+    bool (*associate)(const RelationshipsGraph&, const PotentialValue&, const PotentialValue&, UpdatesQueue&)
         = firstIsNew ? (secondIsNew ? associateZeroExisting : associateOneExistingSwapped)
                      : (secondIsNew ? associateOneExisting : associateTwoExisting);
+    UpdatesQueue updatesToValuesTable;
     for (const Pair<String, String>& value : valueRelationships) {
         PotentialValue firstKey(firstSynonym, value.first);
         PotentialValue secondKey(secondSynonym, value.second);
-        if (associate(this, firstKey, secondKey)) {
+        if (associate(*this, firstKey, secondKey, updatesToValuesTable)) {
             // successful association
             firstSynonymResults.insert(value.first);
             secondSynonymResults.insert(value.second);
         }
+    }
+    // process the updates to actually apply the changes (this will mutate the table)
+    while (!updatesToValuesTable.empty()) {
+        (*updatesToValuesTable.front())(*this);
+        updatesToValuesTable.pop();
     }
     // store the relationships in cache
     if (!valueRelationships.empty()) {
