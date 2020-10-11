@@ -12,7 +12,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer/Lexer.cpp
 
-
     # ast library
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/AstTypes.cpp
@@ -49,7 +48,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
 
-
     # pkb
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
@@ -80,6 +78,9 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Attribute.cpp
 
     # pql/evaluator
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
@@ -115,8 +116,7 @@ add_library(spa
 
     # pql manager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp)
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
