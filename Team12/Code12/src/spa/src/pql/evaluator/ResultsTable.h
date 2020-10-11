@@ -338,6 +338,7 @@ private:
     friend class ValuesTableDelete;
     friend class ValuesTableInsert;
     friend class ValuesTableInsertNewest;
+    friend class ValuesTableForceInsertNewest;
     friend class ValuesTableNewSet;
     friend class EdgesTableDelete;
     friend class EdgesTableDeleteEdge;

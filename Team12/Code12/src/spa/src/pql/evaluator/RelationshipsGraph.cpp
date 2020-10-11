@@ -44,6 +44,10 @@ public:
      * instruction to delete an edge from valuesTable
      * for a given potential value.
      *
+     * This deletion can be performed on non-existent
+     * edges and it will not cause any runtime errors.
+     * However, the value must exist.
+     *
      * @param valueToUpdate The PotentialValue to update.
      * @param edgeToUpdate The edge to delete from valuesTable.
      */
@@ -96,6 +100,33 @@ public:
     }
 };
 
+class ValuesTableForceInsertNewest: public TableUpdate {
+public:
+    /**
+     * Constructs a TableUpdate representing an
+     * instruction to insert the latest edge into
+     * valuesTable for a given potential value.
+     * The latest edge created is retrieved by taking
+     * the current edgeIndex and decreasing it by one.
+     *
+     * If the value does not already exist in the valuesTable,
+     * a new set is created first (equivalent to ValuesTableNewSet
+     * followed by ValuesTableInsertNewest).
+     *
+     * @param valueToUpdate The PotentialValue to update.
+     */
+    explicit ValuesTableForceInsertNewest(PotentialValue valueToUpdate): TableUpdate(std::move(valueToUpdate), -1) {}
+
+    void operator()(RelationshipsGraph& graph) const override
+    {
+        if (graph.valuesTable.find(value) == graph.valuesTable.end()) {
+            graph.valuesTable.insert(
+                std::pair<PotentialValue, std::unordered_set<GraphEdge>>(value, std::unordered_set<GraphEdge>()));
+        }
+        graph.valuesTable[value].insert(graph.edgesIndex - 1);
+    }
+};
+
 class ValuesTableNewSet: public TableUpdate {
 public:
     /**
@@ -121,6 +152,10 @@ public:
      * instruction to delete a value from edgesTable
      * for a given edge number.
      *
+     * This deletion can be performed on non-existent
+     * values and it will not cause any runtime errors.
+     * However, the edge must exist.
+     *
      * @param edgeToUpdate The edge to update.
      * @param valueToUpdate The PotentialValue to
      *                      delete from edgesTable.
@@ -141,6 +176,9 @@ public:
      * Constructs a TableUpdate representing an
      * instruction to delete an entire edge from
      * edgesTable, given the edge number.
+     *
+     * This deletion can be performed on non-existent
+     * edges and it will not cause any runtime errors.
      *
      * @param edgeToUpdate The edge to delete
      *                     from edgesTable
@@ -318,20 +356,32 @@ bool RelationshipsGraph::associateTwoExisting(const RelationshipsGraph& graph, c
 bool RelationshipsGraph::associateOneExisting(const RelationshipsGraph& graph, const PotentialValue& existingKey,
                                               const PotentialValue& newKey, UpdatesQueue& updates)
 {
-    //    if (graph.valuesTable.find(existingKey) != graph.valuesTable.end()) {
-    //        // add new value to all the existing edges
-    //        std::unordered_set<GraphEdge> existingEdges = graph.valuesTable[existingKey];
-    //        graph.valuesTable.insert(
-    //            std::pair<PotentialValue, std::unordered_set<GraphEdge>>(newKey, std::unordered_set<GraphEdge>()));
-    //        for (GraphEdge e : existingEdges) {
-    //            graph.edgesTable[e].insert(newKey);
-    //            graph.valuesTable[newKey].insert(e);
-    //        }
-    //        return true;
-    //    } else {
-    //        return false;
-    //    }
-    return false;
+    if (graph.valuesTable.find(existingKey) != graph.valuesTable.end()) {
+        // add new value to all the existing edges
+        std::unordered_set<GraphEdge> existingEdges = graph.valuesTable.at(existingKey);
+        updates.push(ValuesTableNewSet(newKey));
+        for (GraphEdge e : existingEdges) {
+            updates.push(EdgesTableNewSet());
+            // duplicate the edge
+            for (const PotentialValue& pv : graph.edgesTable.at(e)) {
+                updates.push(EdgesTableInsertToNewest(pv));
+                updates.push(ValuesTableInsertNewest(pv));
+            }
+            // add newKey to the edge
+            updates.push(EdgesTableInsertToNewest(newKey));
+            updates.push(ValuesTableInsertNewest(newKey));
+        }
+        // remove the old edges
+        for (GraphEdge e : existingEdges) {
+            for (const PotentialValue& pv : graph.edgesTable.at(e)) {
+                updates.push(ValuesTableDelete(pv, e));
+            }
+            updates.push(EdgesTableDeleteEdge(e));
+        }
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -358,7 +408,6 @@ bool RelationshipsGraph::associateOneExistingSwapped(const RelationshipsGraph& g
  * Associates two values of synonyms that do not
  * already exist in the graph.
  *
- * @param graph The RelationshipsGraph to look up.
  * @param firstKey The first value to be added.
  * @param secondKey The second value to be added.
  * @param updates Queue that stores the required
@@ -366,24 +415,16 @@ bool RelationshipsGraph::associateOneExistingSwapped(const RelationshipsGraph& g
  *
  * @returns Always returns true.
  */
-bool RelationshipsGraph::associateZeroExisting(const RelationshipsGraph& graph, const PotentialValue& firstKey,
+bool RelationshipsGraph::associateZeroExisting(const RelationshipsGraph& /* unused */, const PotentialValue& firstKey,
                                                const PotentialValue& secondKey, UpdatesQueue& updates)
 {
-    GraphEdge currentEdge = graph.edgesIndex;
-    // add first -> edge, second -> edge
-    if (graph.valuesTable.find(firstKey) == graph.valuesTable.end()) {
-        updates.push(ValuesTableNewSet(firstKey));
-    }
-    if (graph.valuesTable.find(secondKey) == graph.valuesTable.end()) {
-        updates.push(ValuesTableNewSet(secondKey));
-    }
-    updates.push(ValuesTableInsert(firstKey, currentEdge));
-    updates.push(ValuesTableInsert(secondKey, currentEdge));
-
     // add edge -> (first, second)
     updates.push(EdgesTableNewSet());
     updates.push(EdgesTableInsertToNewest(firstKey));
     updates.push(EdgesTableInsertToNewest(secondKey));
+    // add first -> edge, second -> edge
+    updates.push(ValuesTableForceInsertNewest(firstKey));
+    updates.push(ValuesTableForceInsertNewest(secondKey));
     return true;
 }
 
