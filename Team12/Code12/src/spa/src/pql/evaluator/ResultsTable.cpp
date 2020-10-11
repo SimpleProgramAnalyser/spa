@@ -16,6 +16,22 @@
 #include "pkb/PKB.h"
 
 /**
+ * A method to compare two vectors, to see whether
+ * they have the same elements regardless of order.
+ *
+ * @tparam T Type of elements in the vector. Elements
+ *           must implement the method
+ *           bool cmp(const T&, const T&).
+ */
+template <typename T>
+bool doVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vector2)
+{
+    std::sort(vector1.begin(), vector1.end());
+    std::sort(vector2.begin(), vector2.end());
+    return vector1 == vector2;
+}
+
+/**
  * Checks if a synonym exists in the results table.
  *
  * @param syn The synonym to be checked.
@@ -41,7 +57,10 @@ void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResul
         resultsMap[syn] = findCommonElements(results, syn);
     } else {
         // synonym is not found in table, associate results with synonym
-        resultsMap.insert(std::make_pair(syn, removeDuplicates(results)));
+        std::unordered_set<String> resultsSet;
+        std::copy(results.begin(), results.end(), std::inserter(resultsSet, resultsSet.end()));
+        hasResult = !resultsSet.empty();
+        resultsMap.insert(std::make_pair(syn, resultsSet));
     }
 }
 
@@ -56,9 +75,9 @@ void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResul
  *
  * @param newResults The first clause result.
  * @param syn The synonym for the result.
- * @return A single list of results.
+ * @return The final set of common results.
  */
-ClauseResult ResultsTable::findCommonElements(const ClauseResult& newResults, const Synonym& synonym)
+ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, const Synonym& synonym)
 {
     // initiate set of elements from first list
     std::unordered_set<String> newResultsSet;
@@ -70,35 +89,166 @@ ClauseResult ResultsTable::findCommonElements(const ClauseResult& newResults, co
         if (newResultsSet.find(str) == newResultsSet.end()) {
             // element from old results is not in newResults
             // we try to remove relationships for this element
-            relationships->deleteFromGraph(PotentialValue(synonym, str), this);
+            relationships->deleteOne(PotentialValue(synonym, str), this);
         } else {
             // element is found in newResults!
             resultsFoundInBoth.insert(str);
+            // remove this element from the newResultsSet
+            newResultsSet.erase(str);
         }
     }
-    return std::vector<String>(resultsFoundInBoth.begin(), resultsFoundInBoth.end());
+    // elements left in newResultsSet will not be in the final results
+    // ensure that relationships do not exist for them
+    for (const String& rejectedNewResult : newResultsSet) {
+        relationships->deleteOne(PotentialValue(synonym, rejectedNewResult), this);
+    }
+    return resultsFoundInBoth;
+}
+
+std::function<void()> ResultsTable::createEvaluatorOne(ResultsTable* table, const Synonym& syn,
+                                                       const ClauseResult& results)
+{
+    return [table, syn, results]() {
+        mergeOneSynonym(table, syn, results);
+    };
+}
+
+std::function<void()> ResultsTable::createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const Synonym& s2,
+                                                       const PairedResult& tuples)
+{
+    return [table, s1, s2, tuples]() {
+        mergeTwoSynonyms(table, s1, s2, tuples);
+    };
+}
+
+void ResultsTable::mergeOneSynonym(ResultsTable* table, const Synonym& syn, const ClauseResult& results)
+{
+    table->filterAfterVerification(syn, results);
+}
+
+// Helper class to merge pairs of strings
+class ResultsRelation {
+public:
+    String value1;
+    String value2;
+
+    ResultsRelation(String v1, String v2): value1(std::move(v1)), value2(std::move(v2)) {}
+    bool operator==(const ResultsRelation& rr) const
+    {
+        return this->value1 == rr.value1 && this->value2 == rr.value2;
+    }
+};
+
+// Hash function for ResultsRelation
+struct ResultsRelationHasher {
+    std::size_t operator()(const ResultsRelation& rr) const
+    {
+        std::hash<std::string> stringHasher;
+        std::size_t hashedA = stringHasher(rr.value1);
+        return (hashedA ^ (stringHasher(rr.value2) + uint32_t(2654435769) + (hashedA * 64) + (hashedA / 4)));
+    }
+};
+
+void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const Synonym& s2,
+                                    const PairedResult& tuples)
+{
+    if (table->hasRelationships(s1, s2)) {
+        // past relations exist for s1 and s2 (inner join)
+        std::unordered_set<ResultsRelation, ResultsRelationHasher> newRelationsSet;
+        for (const std::pair<String, String>& newRelation : tuples) {
+            newRelationsSet.insert(ResultsRelation(newRelation.first, newRelation.second));
+        }
+        ClauseResult syn1Results;
+        ClauseResult syn2Results;
+        std::vector<std::pair<String, String>> pastRelationsList = table->getRelationships(s1, s2);
+        for (const std::pair<String, String>& pastRelationPair : pastRelationsList) {
+            ResultsRelation pastRelation(pastRelationPair.first, pastRelationPair.second);
+            // check if pastRelation is in newRelationsSet
+            if (newRelationsSet.find(pastRelation) == newRelationsSet.end()) {
+                // past relation does not exist, remove it from graph
+                table->disassociateRelationships(s1, pastRelation.value1, s2, pastRelation.value2);
+            } else {
+                syn1Results.push_back(pastRelationPair.first);
+                syn2Results.push_back(pastRelationPair.second);
+            }
+        }
+        table->filterAfterVerification(s1, syn1Results);
+        table->filterAfterVerification(s2, syn2Results);
+    } else {
+        Boolean s1IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s1);
+        Boolean s2IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s2);
+        // load relationships first, to see which relationships were successfully added
+        Pair<Vector<String>, Vector<String>> successfulValues
+            = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
+        if (successfulValues.first.empty() || successfulValues.second.empty()) {
+            table->hasResult = false;
+        } else {
+            table->filterAfterVerification(s1, successfulValues.first);
+            table->filterAfterVerification(s2, successfulValues.second);
+        }
+    }
+}
+
+void ResultsTable::mergeResults()
+{
+    while (!queue.empty() && !hasEvaluated && hasResult) {
+        queue.front()();
+        queue.pop();
+    }
+    hasEvaluated = true;
+}
+
+ClauseResult ResultsTable::get(const Synonym& syn)
+{
+    if (!hasResults()) {
+        // table is marked as having no results
+        return std::vector<String>();
+    } else if (checkIfSynonymInMap(syn)) {
+        ResultsSet resultsSet = resultsMap[syn];
+        return std::vector<String>(resultsSet.begin(), resultsSet.end());
+    } else {
+        return retrieveAllMatching(getTypeOfSynonym(syn));
+    }
+}
+
+void ResultsTable::disassociateRelationships(const Synonym& leftSyn, const String& leftValue, const Synonym& rightSyn,
+                                             const String& rightValue)
+{
+    relationships->deleteTwo(PotentialValue(leftSyn, leftValue), PotentialValue(rightSyn, rightValue), this);
+}
+
+PairedResult ResultsTable::getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
+{
+    ClauseResult resultsForLeft = get(leftSynonym);
+    std::vector<std::pair<String, String>> relationshipsList;
+    for (const String& value : resultsForLeft) {
+        std::vector<PotentialValue> relatedValues
+            = relationships->retrieveRelationships(PotentialValue(leftSynonym, value));
+        for (const PotentialValue& pv : relatedValues) {
+            if (pv.synonym == rightSynonym) {
+                relationshipsList.emplace_back(value, pv.value);
+            }
+            // if pv is not for right synonym, ignore
+        }
+    }
+    return relationshipsList;
 }
 
 // set hasResult to true at the start, since no clauses have been evaluated
 ResultsTable::ResultsTable(DeclarationTable decls):
     declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
-    hasResult(true)
+    hasResult(true), hasEvaluated(false)
 {}
 
-/**
- * A method to compare two vectors, to see whether
- * they have the same elements regardless of order.
- *
- * @tparam T Type of elements in the vector. Elements
- *           must implement the method
- *           bool cmp(const T&, const T&).
- */
-template <typename T>
-bool doVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vector2)
+std::vector<std::pair<std::string, std::vector<std::string>>>
+getVectorFromResultsMap(const std::unordered_map<Synonym, ResultsSet>& resultsMap)
 {
-    std::sort(vector1.begin(), vector1.end());
-    std::sort(vector2.begin(), vector2.end());
-    return vector1 == vector2;
+    std::vector<std::pair<std::string, std::vector<std::string>>> resultsVector;
+    for (const std::pair<Synonym, ResultsSet> entry : resultsMap) {
+        std::vector<std::string> resultForEntry = std::vector<String>(entry.second.begin(), entry.second.end());
+        resultsVector.emplace_back(entry.first, resultForEntry);
+    }
+    return resultsVector;
 }
 
 bool ResultsTable::operator==(const ResultsTable& rt) const
@@ -114,13 +264,10 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
             return pair1.first < pair2.first;
         };
 
-    std::vector<std::pair<std::string, std::vector<std::string>>> thisResultsList;
-    std::copy(this->resultsMap.begin(), this->resultsMap.end(), std::back_inserter(thisResultsList));
-    std::sort(thisResultsList.begin(), thisResultsList.end(), comparator);
-
-    std::vector<std::pair<std::string, std::vector<std::string>>> otherResultsList;
-    std::copy(rt.resultsMap.begin(), rt.resultsMap.end(), std::back_inserter(otherResultsList));
-    std::sort(otherResultsList.begin(), otherResultsList.end(), comparator);
+    std::vector<std::pair<std::string, std::vector<std::string>>> thisResultsList
+        = getVectorFromResultsMap(this->resultsMap);
+    std::vector<std::pair<std::string, std::vector<std::string>>> otherResultsList
+        = getVectorFromResultsMap(rt.resultsMap);
 
     bool isResultsTheSame = true;
     size_t length = this->resultsMap.size();
@@ -133,43 +280,24 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
         }
     }
     return isResultsTheSame && this->declarations == rt.declarations && *(this->relationships) == *(rt.relationships)
-           && this->hasResult == rt.hasResult;
+           && this->hasResult == rt.hasResult && this->hasEvaluated == rt.hasEvaluated;
 }
 
-void ResultsTable::filterTable(const Reference& ref, const ClauseResult& results)
+Boolean ResultsTable::hasResults() const
 {
-    // if results are empty, invalidate the entire results table
-    if (results.empty()) {
-        hasResult = false;
-        return;
-    }
-    // check if reference is a synonym or not
-    if (ref.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    // else we get the synonym and store it in the table
-    filterAfterVerification(ref.getValue(), results);
+    return hasResult;
 }
 
-void ResultsTable::filterTable(const Synonym& syn, const ClauseResult& results)
+void ResultsTable::associateRelationships(const Synonym& syn1, const Synonym& syn2,
+                                          const Vector<Pair<String, String>>& relationshipsPairs)
 {
-    // if results are empty, invalidate the entire results table
-    if (results.empty()) {
-        hasResult = false;
-        return;
-    }
-    filterAfterVerification(syn, results);
+    this->relationships->insertRelationships(relationshipsPairs, syn1, true, syn2, true);
 }
 
-ClauseResult ResultsTable::get(const Synonym& syn)
+void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
 {
-    if (!hasResults()) {
-        // table is marked as having no results
-        return std::vector<String>();
-    } else if (checkIfSynonymInMap(syn)) {
-        return resultsMap[syn];
-    } else {
-        return retrieveAllMatching(getTypeOfSynonym(syn));
+    if (resultsMap.find(synonym) != resultsMap.end()) {
+        resultsMap[synonym].erase(value);
     }
 }
 
@@ -178,12 +306,7 @@ DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
     return declarations.getDesignEntityOfSynonym(syn).getType();
 }
 
-Boolean ResultsTable::hasResults() const
-{
-    return hasResult;
-}
-
-Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
+Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
 {
     if (!hasResults()) {
         // there are no results, so by the specification of
@@ -194,62 +317,7 @@ Boolean ResultsTable::checkIfSynonymHasConstraints(const Synonym& syn)
     }
 }
 
-void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
-{
-    if (resultsMap.find(synonym) != resultsMap.end()) {
-        ClauseResult& rawResultsForSynonym = resultsMap[synonym];
-        auto position = std::find(rawResultsForSynonym.begin(), rawResultsForSynonym.end(), value);
-        if (position != rawResultsForSynonym.end()) {
-            rawResultsForSynonym.erase(position);
-        }
-    }
-}
-
-void ResultsTable::associateRelationships(Vector<Pair<String, String>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
-}
-
-void ResultsTable::associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
-}
-
-void ResultsTable::associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
-}
-
-void ResultsTable::associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Reference& leftRef,
-                                          const Reference& rightRef)
-{
-    // short-circuit if relationships are empty, or refs are not synonyms
-    if (valueRelationships.empty() || leftRef.getReferenceType() != SynonymRefType
-        || rightRef.getReferenceType() != SynonymRefType) {
-        return;
-    }
-    this->relationships->insertRelationships(std::move(valueRelationships), leftRef.getValue(), rightRef.getValue());
-}
-
-Boolean ResultsTable::checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
+Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
 {
     if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
         return true;
@@ -267,24 +335,102 @@ Boolean ResultsTable::checkIfHaveRelationships(const Synonym& leftSynonym, const
     return false;
 }
 
-std::vector<std::pair<String, String>> ResultsTable::getRelationships(const Synonym& leftSynonym,
-                                                                      const Synonym& rightSynonym)
+Void ResultsTable::getResultsZero()
 {
-    ClauseResult resultsForLeft = get(leftSynonym);
-    std::vector<std::pair<String, String>> relationshipsList;
-    for (const String& value : resultsForLeft) {
-        std::vector<PotentialValue> relatedValues
-            = relationships->retrieveRelationships(PotentialValue(leftSynonym, value));
-        for (const PotentialValue& pv : relatedValues) {
-            if (pv.synonym == rightSynonym) {
-                relationshipsList.emplace_back(value, pv.value);
-            }
-            // if pv is not for right synonym, ignore
-        }
-    }
-    return relationshipsList;
+    mergeResults();
 }
 
+ClauseResult ResultsTable::getResultsOne(const Synonym& syn)
+{
+    mergeResults();
+    return this->get(syn);
+}
+
+PairedResult ResultsTable::getResultsTwo(const Synonym& syn1, const Synonym& syn2)
+{
+    mergeResults();
+    if (!hasResults()) {
+        // table is marked as having no results
+        return std::vector<std::pair<String, String>>();
+    } else if (hasRelationships(syn1, syn2)) {
+        return this->getRelationships(syn1, syn2);
+    } else {
+        std::vector<std::pair<String, String>> tuples;
+        // do a Cartesian product of both result lists
+        for (const String& res1 : this->get(syn1)) {
+            for (const String& res2 : this->get(syn2)) {
+                tuples.emplace_back(res1, res2);
+            }
+        }
+        return tuples;
+    }
+}
+
+Void ResultsTable::storeResultsOne(const Synonym& syn, const ClauseResult& res)
+{
+    if (res.empty()) {
+        // if results are empty, invalidate the entire results table
+        hasResult = false;
+    } else {
+        // store the synonym in the evaluator queue
+        queue.push(createEvaluatorOne(this, syn, res));
+    }
+}
+
+Void ResultsTable::storeResultsOne(const Reference& rfc, const ClauseResult& res)
+{
+    // check if reference is a synonym or not
+    if (rfc.getReferenceType() == SynonymRefType) {
+        // we get the synonym
+        storeResultsOne(rfc.getValue(), res);
+    } else if (res.empty()) {
+        // if not synonym, just check empty or not
+        hasResult = false;
+    }
+}
+
+Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& res1, const Reference& rfc2,
+                                   const ClauseResult& res2, const PairedResult& tuples)
+{
+    if (tuples.empty()) {
+        // short-circuit if tuples are empty
+        hasResult = false;
+    } else if (rfc1.getReferenceType() != SynonymRefType) {
+        // ignore reference 1
+        storeResultsOne(rfc2, res2);
+    } else if (rfc2.getReferenceType() != SynonymRefType) {
+        // ignore reference 2
+        storeResultsOne(rfc1, res1);
+    } else {
+        queue.push(createEvaluatorTwo(this, rfc1.getValue(), rfc2.getValue(), tuples));
+    }
+}
+
+Void ResultsTable::storeResultsTwo(const Synonym& syn, const ClauseResult& resSyn, const Reference& ref,
+                                   const PairedResult& tuples)
+{
+    if (tuples.empty()) {
+        // short-circuit if tuples are empty
+        hasResult = false;
+    } else if (ref.getReferenceType() != SynonymRefType) {
+        // ignore the reference
+        storeResultsOne(syn, resSyn);
+    } else {
+        queue.push(createEvaluatorTwo(this, syn, ref.getValue(), tuples));
+    }
+}
+
+Void ResultsTable::storeResultsTwo(const Synonym& syn1, const Synonym& syn2, const PairedResult& tuples)
+{
+    if (tuples.empty()) {
+        // short-circuit if tuples are empty
+        hasResult = false;
+    } else {
+        queue.push(createEvaluatorTwo(this, syn1, syn2, tuples));
+    }
+}
+
+// TODO: Hash table
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym)
 {
     ClauseResult results;

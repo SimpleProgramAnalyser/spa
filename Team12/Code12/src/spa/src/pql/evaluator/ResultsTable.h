@@ -10,24 +10,101 @@
 #ifndef SPA_PQL_RESULTS_TABLE_H
 #define SPA_PQL_RESULTS_TABLE_H
 
+#include <functional>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 
 #include "EvaluatorUtils.h"
+
+typedef std::queue<std::function<void()>> EvaluationQueue;
+typedef std::unordered_set<String> ResultsSet;
 
 // Forward declaration of RelationshipsGraph
 class RelationshipsGraph;
 
 class ResultsTable {
 private:
-    std::unordered_map<Synonym, ClauseResult> resultsMap;
+    std::unordered_map<Synonym, ResultsSet> resultsMap;
     DeclarationTable declarations;
     std::unique_ptr<RelationshipsGraph> relationships;
+    EvaluationQueue queue;
     Boolean hasResult;
+    Boolean hasEvaluated;
 
     Boolean checkIfSynonymInMap(const Synonym& syn);
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
-    ClauseResult findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
+    ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
+
+    /**
+     * Creates a evaluation closure for one synonym's results.
+     *
+     * @return The evaluation closure.
+     */
+    static std::function<void()> createEvaluatorOne(ResultsTable* table, const Synonym& syn,
+                                                    const ClauseResult& results);
+
+    /**
+     * Creates a evaluation closure for two linked synonym's results.
+     *
+     * @return The evaluation closure.
+     */
+    static std::function<void()> createEvaluatorTwo(ResultsTable* table, const Synonym& s1, const Synonym& s2,
+                                                    const PairedResult& tuples);
+
+    /**
+     * Merges the results for one synonym for the ResultsTable provided.
+     * This method assumes that the results are not empty.
+     */
+    static void mergeOneSynonym(ResultsTable* table, const Synonym& syn, const ClauseResult& results);
+
+    /**
+     * Merges the results for two synonyms for the ResultsTable provided.
+     * This method assumes both results are not empty.
+     */
+    static void mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const Synonym& s2, const PairedResult& tuples);
+
+    /**
+     * Initiates merging of the results, if not yet merged.
+     */
+    void mergeResults();
+
+    /**
+     * Retrieves the list of results in the table for
+     * a certain synonym. If the synonym does not exist
+     * in the table, retrieve all possible values for
+     * the synonym from the Program Knowledge Base.
+     *
+     * @param syn The synonym to look up.
+     * @return List of results for the synonym.
+     */
+    ClauseResult get(const Synonym& syn);
+
+    /**
+     * Removes all relationships between the leftValue of synonym left
+     * and the rightValue of synonym right.
+     *
+     * @param leftSyn The first synonym.
+     * @param leftValue Value of the first synonym.
+     * @param rightSyn The second synonym.
+     * @param rightValue Value of the second synonym.
+     */
+    void disassociateRelationships(const Synonym& leftSyn, const String& leftValue, const Synonym& rightSyn,
+                                   const String& rightValue);
+
+    /**
+     * Gets all registered relationships between two synonyms
+     * in the relationships table. Note that if no such
+     * relationships exist, there may be a runtime error!
+     * Use hasRelationships to determine whether the
+     * relationships exist before calling this method.
+     *
+     * @param leftSynonym Left synonym of the relationship.
+     * @param rightSynonym Right synonym of the relationship.
+     * @return Pairs of the possible (left, right) values in
+     *         the relationships table.
+     */
+    PairedResult getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
 
 public:
     /**
@@ -44,68 +121,16 @@ public:
      *                     the query.
      */
     explicit ResultsTable(DeclarationTable decls);
+    ~ResultsTable() = default;
+    ResultsTable(const ResultsTable&) = delete;
+    ResultsTable& operator=(const ResultsTable&) = delete;
+    ResultsTable(ResultsTable&&) = delete;
+    ResultsTable& operator=(ResultsTable&&) = delete;
 
     /**
      * A method to compare two ResultsTable for testing purposes.
      */
     bool operator==(const ResultsTable& rt) const;
-
-    /**
-     * Associates some results with a synonym, if the synonym
-     * does not already exist in the table. If the synonym
-     * exists, and is mapped to some results, find the common
-     * results in the table list and the new list provided,
-     * and store the common results in the table list instead.
-     * This effectively removes those results that are not in
-     * both lists, from the association table.
-     *
-     * If the reference is not a synonym, do nothing (unless the
-     * result list is empty). If the result list is empty,
-     * invalidate the entire result table.
-     *
-     * @param ref Reference for a Design Entity to associate with.
-     * @param results New results for this reference. This list
-     *                can contain duplicates, but the duplicate
-     *                values will be removed eventually.
-     */
-    void filterTable(const Reference& ref, const ClauseResult& results);
-
-    /**
-     * Associates some results with a synonym, if the synonym
-     * does not already exist in the table. If the synonym
-     * exists, and is mapped to some results, find the common
-     * results in the table list and the new list provided,
-     * and store the common results in the table list instead.
-     * This effectively removes those results that are not in
-     * both lists, from the association table.
-     *
-     * @param ref Synonym for a Design Entity to associate with.
-     * @param results New results for this reference. This list
-     *                can contain duplicates, but the duplicate
-     *                values will be removed eventually.
-     */
-    void filterTable(const Synonym& syn, const ClauseResult& results);
-
-    /**
-     * Retrieves the list of results in the table for
-     * a certain synonym. If the synonym does not exist
-     * in the table, retrieve all possible values for
-     * the synonym from the Program Knowledge Base.
-     *
-     * @param syn The synonym to look up.
-     * @return List of results for the synonym.
-     */
-    ClauseResult get(const Synonym& syn);
-
-    /**
-     * Retrieves the type of synonym from the
-     * declarations table.
-     *
-     * @param syn Synonym to look up.
-     * @return The type of the synonym. If the synonym is
-     *         not in the table, return NonExistentType.
-     */
-    DesignEntityType getTypeOfSynonym(const Synonym& syn);
 
     /**
      * Returns true if the result table is marked as having
@@ -120,13 +145,22 @@ public:
     Boolean hasResults() const;
 
     /**
-     * Checks if a synonym has been restricted to only match a
-     * subset of all possible values due to another clause's
-     * results that were previously stored in the table.
+     * Adds a list of relationships between potential values
+     * of certain synonyms. This method assumes the values are
+     * new to the table and do not have any existing relations
+     * in the relationships graph.
      *
-     * @return True, if synonym has been restricted.
+     * If the references are not synonyms, do nothing.
+     *
+     * @param syn1 The reference that the first value
+     *             corresponds to.
+     * @param syn2 The reference that the second
+     *             value corresponds to.
+     * @param relationshipsPairs List of relationships between
+     *                           potential values.
      */
-    Boolean checkIfSynonymHasConstraints(const Synonym& syn);
+    void associateRelationships(const Synonym& syn1, const Synonym& syn2,
+                                const Vector<Pair<String, String>>& relationshipsPairs);
 
     /**
      * Disassociates a certain value from a synonym in
@@ -138,76 +172,23 @@ public:
     void eliminatePotentialValue(const Synonym& synonym, const String& value);
 
     /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms. ResultsTable assumes that these
-     * values already exist in the results table. If the values
-     * do not exist, the behaviour of other methods is undefined.
+     * Retrieves the type of synonym from the
+     * declarations table.
      *
-     * If the references are not synonyms, do nothing.
-     *
-     * @param valueRelationships List of relationships between
-     *                           potential values.
-     * @param leftRef The reference that the first value
-     *                     corresponds to.
-     * @param rightRef The reference that the second
-     *                     value corresponds to.
+     * @param syn Synonym to look up.
+     * @return The type of the synonym. If the synonym is
+     *         not in the table, return NonExistentType.
      */
-    void associateRelationships(Vector<Pair<String, String>> valueRelationships, const Reference& leftRef,
-                                const Reference& rightRef);
+    DesignEntityType getTypeOfSynonym(const Synonym& syn);
 
     /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms. ResultsTable assumes that these
-     * values already exist in the results table. If the values
-     * do not exist, the behaviour of other methods is undefined.
+     * Checks if a synonym has been restricted to only match a
+     * subset of all possible values due to another clause's
+     * results that were previously stored in the table.
      *
-     * If the references are not synonyms, do nothing.
-     *
-     * @param valueRelationships List of relationships between
-     *                           potential values.
-     * @param leftRef The reference that the first value
-     *                     corresponds to.
-     * @param rightRef The reference that the second
-     *                     value corresponds to.
+     * @return True, if synonym has been restricted.
      */
-    void associateRelationships(Vector<Pair<Integer, String>> valueRelationships, const Reference& leftRef,
-                                const Reference& rightRef);
-
-    /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms. ResultsTable assumes that these
-     * values already exist in the results table. If the values
-     * do not exist, the behaviour of other methods is undefined.
-     *
-     * If the references are not synonyms, do nothing.
-     *
-     * @param valueRelationships List of relationships between
-     *                           potential values.
-     * @param leftRef The reference that the first value
-     *                     corresponds to.
-     * @param rightRef The reference that the second
-     *                     value corresponds to.
-     */
-    void associateRelationships(Vector<Pair<String, Integer>> valueRelationships, const Reference& leftRef,
-                                const Reference& rightRef);
-
-    /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms. ResultsTable assumes that these
-     * values already exist in the results table. If the values
-     * do not exist, the behaviour of other methods is undefined.
-     *
-     * If the references are not synonyms, do nothing.
-     *
-     * @param valueRelationships List of relationships between
-     *                           potential values.
-     * @param leftRef The reference that the first value
-     *                     corresponds to.
-     * @param rightRef The reference that the second
-     *                     value corresponds to.
-     */
-    void associateRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Reference& leftRef,
-                                const Reference& rightRef);
+    Boolean doesSynonymHaveConstraints(const Synonym& syn);
 
     /**
      * Checks the relationship table for two synonyms, to
@@ -219,21 +200,99 @@ public:
      * @return True, if some clause has restricted the
      *         left and right to certain relationships.
      */
-    Boolean checkIfHaveRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+    Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
 
     /**
-     * Gets all registered relationships between two synonyms
-     * in the relationships table. Note that if no such
-     * relationships exist, there may be a runtime error!
-     * Use checkIfHaveRelationships to determine whether
-     * the relationships exist before calling this method.
-     *
-     * @param leftSynonym Left synonym of the relationship.
-     * @param rightSynonym Right synonym of the relationship.
-     * @return Pairs of the possible (left, right) values in
-     *         the relationships table.
+     * Forces the merging of the results queue.
      */
-    std::vector<std::pair<String, String>> getRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+    Void getResultsZero();
+
+    /**
+     * Initiates merging of the results queue, unless
+     * a certain result in the queue was empty. Afterwards,
+     * returns the results for the synonym specified.
+     *
+     * @param syn The synonym to retrieve the results for.
+     * @return The results for syn.
+     */
+    ClauseResult getResultsOne(const Synonym& syn);
+
+    /**
+     * Initiates merging of the results queue, unless a certain
+     * result in the queue was empty. Afterwards, returns the
+     * pairs of results for the two synonyms specified.
+     *
+     * @param syn1 First synonym to retrieve the results for.
+     * @param syn2 Second synonym to retrieve the results for.
+     * @return The result pairs for (syn1, syn2).
+     */
+    PairedResult getResultsTwo(const Synonym& syn1, const Synonym& syn2);
+
+    /**
+     * Adds the result for a single synonym into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called.
+     *
+     * @param syn The synonym that the results belong to.
+     * @param res Results for the synonym syn.
+     */
+    Void storeResultsOne(const Synonym& syn, const ClauseResult& res);
+
+    /**
+     * Adds the result for a single synonym into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called.
+     *
+     * @param rfc The reference that the results were evaluated
+     *            for. If this reference is not a synonym, the
+     *            results will just be checked for emptiness.
+     * @param res Results for the reference rfc.
+     */
+    Void storeResultsOne(const Reference& rfc, const ClauseResult& res);
+
+    /**
+     * Adds the result for two synonyms into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called. If any of the references are
+     * not synonyms, this method may call storeResultsOne
+     * instead.
+     *
+     * @param rfc1 First reference in the clause.
+     * @param res1 Results for the reference rfc1.
+     * @param rfc2 Second reference in the clause.
+     * @param res2 Results for the reference rfc2.
+     * @param tuples Pairs of results for the first reference
+     *               and the second reference.
+     */
+    Void storeResultsTwo(const Reference& rfc1, const ClauseResult& res1, const Reference& rfc2,
+                         const ClauseResult& res2, const PairedResult& tuples);
+
+    /**
+     * Adds the result for two synonyms into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called. If the reference is not of synonym
+     * type, this method may call storeResultsOne instead.
+     *
+     * @param syn First synonym in the clause.
+     * @param resSyn Results for the synonym syn.
+     * @param ref Second reference in the clause.
+     * @param tuples Pairs of results for the first synonym
+     *               and the second reference.
+     */
+    Void storeResultsTwo(const Synonym& syn, const ClauseResult& resSyn, const Reference& ref,
+                         const PairedResult& tuples);
+
+    /**
+     * Adds the result for two synonyms into a queue.
+     * The results in the queue will not be evaluated until
+     * getResults is called.
+     *
+     * @param syn1 First synonym in the clause.
+     * @param syn2 Second synonym in the clause.
+     * @param tuples Pairs of results for the first synonym
+     *               and the second synonym.
+     */
+    Void storeResultsTwo(const Synonym& syn1, const Synonym& syn2, const PairedResult& tuples);
 };
 
 /*
@@ -254,6 +313,8 @@ inline String stringId(String str)
     return str;
 }
 
+typedef Integer GraphEdge;
+
 /**
  * A helper class for results table, the Relationships
  * Graph keeps track of relationships between possible
@@ -261,8 +322,9 @@ inline String stringId(String str)
  */
 class RelationshipsGraph {
 private:
-    std::unordered_map<PotentialValue, std::unordered_set<PotentialValue, PotentialValueHasher>, PotentialValueHasher>
-        relationshipsTable;
+    std::unordered_map<PotentialValue, std::unordered_set<GraphEdge>, PotentialValueHasher> valuesTable;
+    std::unordered_map<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>> edgesTable;
+    GraphEdge edgesIndex = 0;
     /**
      * If a relationship between two synonyms is found in the cache, then
      * it is certain that their potential values have some relationship
@@ -271,32 +333,15 @@ private:
      */
     std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
 
-    void associate(const PotentialValue& firstKey, const PotentialValue& secondKey);
-    void deleteEdge(const PotentialValue& firstKey, const PotentialValue& secondKey);
+    static bool associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+                                     const PotentialValue& secondKey);
+    static bool associateOneExisting(RelationshipsGraph* graph, const PotentialValue& existingKey,
+                                     const PotentialValue& newKey);
+    static bool associateOneExistingSwapped(RelationshipsGraph* graph, const PotentialValue& newKey,
+                                            const PotentialValue& existingKey);
+    static bool associateZeroExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
+                                      const PotentialValue& secondKey);
     Boolean checkIfPotentialValueHasRelationships(const PotentialValue& pv);
-
-    template <typename T, typename U, Value (*firstToString)(T), Value (*secondToString)(U)>
-    void insert(Vector<Pair<T, U>> valueRelationships, const Synonym& firstSynonym, const Synonym& secondSynonym)
-    {
-        for (Pair<T, U> value : valueRelationships) {
-            PotentialValue firstKey(firstSynonym, firstToString(value.first));
-            PotentialValue secondKey(secondSynonym, secondToString(value.second));
-            associate(firstKey, secondKey);
-        }
-        // store the relationships in cache
-        if (!valueRelationships.empty()) {
-            if (synonymRelationshipsCache.find(firstSynonym) == synonymRelationshipsCache.end()) {
-                synonymRelationshipsCache.insert(
-                    std::pair<Synonym, std::unordered_set<Synonym>>(firstSynonym, std::unordered_set<Synonym>()));
-            }
-            synonymRelationshipsCache[firstSynonym].insert(secondSynonym);
-            if (synonymRelationshipsCache.find(secondSynonym) == synonymRelationshipsCache.end()) {
-                synonymRelationshipsCache.insert(
-                    std::pair<Synonym, std::unordered_set<Synonym>>(secondSynonym, std::unordered_set<Synonym>()));
-            }
-            synonymRelationshipsCache[secondSynonym].insert(firstSynonym);
-        }
-    }
 
 public:
     /**
@@ -313,31 +358,29 @@ public:
 
     /**
      * Adds a list of relationships between potential values
-     * of certain synonyms.
+     * of certain synonyms. This method assumes that the
+     * synonyms are not related (checkIfRelated returns false).
+     *
+     * Doing this insertion may cause certain values to be discarded
+     * from the ResultsTable.
+     *
+     * @param valueRelationships The pairs representing relationships
+     *                           between values of the first synonym
+     *                           and values of the second synonym.
+     * @param firstSynonym The synonym whose results are the first
+     *                     element of the pairs in valueRelationships.
+     * @param firstIsNew Whether the first synonym has results in
+     *                   the ResultsTable already.
+     * @param secondSynonym The synonym whose results are the second
+     *                      element of the pairs in valueRelationships.
+     * @param secondIsNew Whether the second synonym has results in
+     *                    the ResultsTable already.
+     *
+     * @return A pair of valid values for synonym 1 and synonym 2.
      */
-    void insertRelationships(Vector<Pair<String, String>> valueRelationships, const Synonym& firstSynonym,
-                             const Synonym& secondSynonym);
-
-    /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms.
-     */
-    void insertRelationships(Vector<Pair<String, Integer>> valueRelationships, const Synonym& firstSynonym,
-                             const Synonym& secondSynonym);
-
-    /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms.
-     */
-    void insertRelationships(Vector<Pair<Integer, String>> valueRelationships, const Synonym& firstSynonym,
-                             const Synonym& secondSynonym);
-
-    /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms.
-     */
-    void insertRelationships(Vector<Pair<Integer, Integer>> valueRelationships, const Synonym& firstSynonym,
-                             const Synonym& secondSynonym);
+    Pair<Vector<String>, Vector<String>> insertRelationships(const Vector<Pair<String, String>>& valueRelationships,
+                                                             const Synonym& firstSynonym, bool firstIsNew,
+                                                             const Synonym& secondSynonym, bool secondIsNew);
 
     /**
      * Deletes a potential value from the graph, as well as
@@ -352,7 +395,19 @@ public:
      * @param resultsTable The results table to update, if related
      *                     synonyms can be removed as well
      */
-    void deleteFromGraph(const PotentialValue& pv, ResultsTable* resultsTable);
+    void deleteOne(const PotentialValue& pv, ResultsTable* resultsTable);
+
+    /**
+     * Deletes any relations stored that involves both
+     * the firstKey and secondKey. This will also attempt
+     * to clear related values from a results table.
+     *
+     * @param firstKey First potential value in the relation.
+     * @param secondKey Second potential value in the relation.
+     * @param resultsTable The results table to update, if related
+     *                     synonyms can be removed as well
+     */
+    void deleteTwo(const PotentialValue& firstKey, const PotentialValue& secondKey, ResultsTable* resultsTable);
 
     /**
      * Checks whether two synonyms have relationships in the
@@ -371,6 +426,16 @@ public:
      *         If it is uncertain, but not impossible, false.
      */
     Boolean checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym);
+
+    /**
+     * Checks if a synonym has any potential values
+     * in the relationships graph.
+     *
+     * @param syn The synonym to be checked.
+     * @return True, if synonym has some potential values.
+     *         Otherwise, false.
+     */
+    Boolean checkIfSynonymInRelationshipsGraph(const Synonym& syn);
 
     /**
      * Checks if two potential values are related in the

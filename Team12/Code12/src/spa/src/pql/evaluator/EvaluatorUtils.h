@@ -15,6 +15,9 @@ template <typename T, typename U>
 using Pair = std::pair<T, U>;
 
 typedef std::string Value;
+
+typedef Vector<Pair<String, String>> PairedResult;
+
 /**
  * A class implementing a tuple of synonym and string,
  * to associate a synonym with some potential value.
@@ -52,6 +55,39 @@ struct PotentialValueHasher {
  * @return The converted vector of strings, or ClauseResult.
  */
 ClauseResult convertToClauseResult(const Vector<Integer>& intList);
+
+/*
+ * An utility method to convert pairs of integers to pairs of strings.
+ * Pairs of strings are used to represent relationships between result
+ * values of two different synonyms.
+ *
+ * @param intPairsList An integer pair vector to convert.
+ *
+ * @return The converted vector of pairs of strings, or PairedResult.
+ */
+PairedResult convertToPairedResult(const Vector<Pair<Integer, Integer>>& intPairsList);
+
+/*
+ * An utility method to convert pairs of string and integer to pairs
+ * of two strings. Pairs of strings are used to represent relationships
+ * between result values of two different synonyms.
+ *
+ * @param intPairsList An string/integer pair vector to convert.
+ *
+ * @return The converted vector of pairs of strings, or PairedResult.
+ */
+PairedResult convertToPairedResult(const Vector<Pair<String, Integer>>& intPairsList);
+
+/*
+ * An utility method to convert pairs of integer and string to pairs
+ * of two strings. Pairs of strings are used to represent relationships
+ * between result values of two different synonyms.
+ *
+ * @param intPairsList An integer/string pair vector to convert.
+ *
+ * @return The converted vector of pairs of strings, or PairedResult.
+ */
+PairedResult convertToPairedResult(const Vector<Pair<Integer, String>>& intPairsList);
 
 /*
  * Given a DesignEntityType, this function maps it to

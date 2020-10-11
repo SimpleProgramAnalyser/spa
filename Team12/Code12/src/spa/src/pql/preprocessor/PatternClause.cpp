@@ -47,7 +47,6 @@ Clause* PatternClause::createPatternClause(const String& clauseConstraint, Decla
     if (isValidDesignEntityType) {
         return Clause::invalidClause(PatternClauseType);
     }
-    size_t length = pair.second.size();
     String constraintVariablesString
         = pair.second.substr(0, pair.second.size() - 1); // remove the last char which is a close parentheses
     StringVector constraintVariables = splitByDelimiter(constraintVariablesString, ",");
