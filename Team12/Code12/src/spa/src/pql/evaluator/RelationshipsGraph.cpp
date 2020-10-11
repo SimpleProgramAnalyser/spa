@@ -202,14 +202,16 @@ RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valu
 
 void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resultsTable)
 {
-    if (valuesTable.find(pv) == valuesTable.end() || valuesTable[pv].empty()) {
-        // if not present, do nothing as potential value has no relationships
+    if (valuesTable.find(pv) == valuesTable.end()) {
+        // if not present, do nothing
+        return;
+    } else if (valuesTable[pv].empty()) {
+        // if no relationships, trivial deletion
+        valuesTable.erase(pv);
         return;
     }
     // synonym is present in table, delete all edges
     std::unordered_set<GraphEdge> affectedEdges = valuesTable[pv];
-    // empty entry for pv, signifying no relationships
-    valuesTable[pv].clear();
     std::unordered_set<PotentialValue, PotentialValueHasher> affectedValues;
     for (GraphEdge ge : affectedEdges) {
         std::unordered_set<PotentialValue, PotentialValueHasher> currentEdgeValues = edgesTable[ge];
@@ -219,8 +221,9 @@ void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resul
         }
         edgesTable.erase(ge);
     }
-    // ignore pv
+    // empty entry for pv, signifying no relationships
     affectedValues.erase(pv);
+    valuesTable.erase(pv);
     // check related values to see if they are empty as well
     for (const PotentialValue& affected : affectedValues) {
         if (!checkIfPotentialValueHasRelationships(affected)) {
@@ -244,10 +247,23 @@ void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resul
 void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const PotentialValue& secondKey,
                                    ResultsTable* resultsTable)
 {
-    if (valuesTable.find(firstKey) == valuesTable.end() || valuesTable[firstKey].empty()
-        || valuesTable.find(secondKey) == valuesTable.end() || valuesTable[secondKey].empty()) {
+    if (valuesTable.find(firstKey) == valuesTable.end() || valuesTable.find(secondKey) == valuesTable.end()) {
         return;
     }
+    // short-circuit if either values are empty
+    bool doShortCircuit;
+    if (valuesTable[firstKey].empty()) {
+        doShortCircuit = true;
+        valuesTable.erase(firstKey);
+    }
+    if (valuesTable[secondKey].empty()) {
+        doShortCircuit = true;
+        valuesTable.erase(secondKey);
+    }
+    if (doShortCircuit) {
+        return;
+    }
+
     // find all edges with secondKey
     std::unordered_set<GraphEdge> firstKeyEdges = valuesTable[firstKey];
     std::unordered_set<GraphEdge> edgesToDelete;
@@ -268,6 +284,15 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
             affectedValues.insert(otherValue);
         }
         edgesTable.erase(edge);
+    }
+    // check firstKey and secondKey whether empty or not
+    if (!checkIfPotentialValueHasRelationships(firstKey)) {
+        resultsTable->eliminatePotentialValue(firstKey.synonym, firstKey.value);
+        valuesTable.erase(firstKey);
+    }
+    if (!checkIfPotentialValueHasRelationships(secondKey)) {
+        resultsTable->eliminatePotentialValue(secondKey.synonym, secondKey.value);
+        valuesTable.erase(secondKey);
     }
     // ignore firstKey and secondKey
     affectedValues.erase(firstKey);
