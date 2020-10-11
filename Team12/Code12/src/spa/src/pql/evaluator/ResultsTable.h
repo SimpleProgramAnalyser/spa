@@ -332,6 +332,9 @@ private:
      * relationshipsTable is required.
      */
     std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
+    // Allow ValuesTablesUpdates to access the valuesTable
+    friend class ValuesTableDelete;
+    friend class ValuesTableInsert;
 
     static bool associateTwoExisting(RelationshipsGraph* graph, const PotentialValue& firstKey,
                                      const PotentialValue& secondKey);

@@ -7,6 +7,66 @@
 #include "ResultsTable.h"
 
 /**
+ * A class that holds a instruction to update the values table.
+ * This is used by the associate methods because in-place
+ * updating could result in edges that are incorrect.
+ */
+class ValuesTableUpdates {
+protected:
+    PotentialValue value;
+    GraphEdge edge;
+    ValuesTableUpdates(PotentialValue valueToUpdate, GraphEdge edgeToUpdate):
+        value(std::move(valueToUpdate)), edge(edgeToUpdate)
+    {}
+
+public:
+    /**
+     * Executes the update to valuesTable of the relationships graph.
+     */
+    virtual void operator()(RelationshipsGraph* graph) const = 0;
+};
+
+class ValuesTableDelete: public ValuesTableUpdates {
+public:
+    /**
+     * Constructs a ValuesTableUpdates representing an
+     * instruction to delete an edge from valuesTable
+     * for a given potential value.
+     *
+     * @param valueToUpdate The PotentialValue to update.
+     * @param edgeToUpdate The edge to delete from PotentialValue.
+     */
+    ValuesTableDelete(PotentialValue valueToUpdate, GraphEdge edgeToUpdate):
+        ValuesTableUpdates(std::move(valueToUpdate), edgeToUpdate)
+    {}
+
+    void operator()(RelationshipsGraph* graph) const override
+    {
+        graph->valuesTable[value].erase(edge);
+    }
+};
+
+class ValuesTableInsert: public ValuesTableUpdates {
+public:
+    /**
+     * Constructs a ValuesTableUpdates representing an
+     * instruction to insert an edge into valuesTable
+     * for a given potential value.
+     *
+     * @param valueToUpdate The PotentialValue to update.
+     * @param edgeToUpdate The edge to insert into PotentialValue.
+     */
+    ValuesTableInsert(PotentialValue valueToUpdate, GraphEdge edgeToUpdate):
+        ValuesTableUpdates(std::move(valueToUpdate), edgeToUpdate)
+    {}
+
+    void operator()(RelationshipsGraph* graph) const override
+    {
+        graph->valuesTable[value].insert(edge);
+    }
+};
+
+/**
  * Associates two values of synonyms that already exist
  * in the graph, but have not been linked with each other.
  * A cross join will be performed in this case.
