@@ -46,7 +46,7 @@ TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> vacuously true PQL q
               .addSelectSynonym("s")
               .addDeclaration("s", "stmt")
               .addDeclaration("awman", "stmt")
-              .addSuchThatClause("Modifies", SynonymRefType, "awman", StmtType, WildcardRefType, "_", NonExistentType)
+              .addSuchThatClause(ModifiesType, SynonymRefType, "awman", StmtType, WildcardRefType, "_", NonExistentType)
               .build();
     std::vector<std::string> expectedResults = {"23", "24", "29"};
 
@@ -89,9 +89,10 @@ TEST_CASE(
               .addDeclaration("diamond", "stmt")
               .addDeclaration("netherite", "assign")
               .addDeclaration("diamond", "stmt")
-              .addSuchThatClause("Parent", SynonymRefType, "diamond", StmtType, SynonymRefType, "netherite", AssignType)
-              .addPatternClause("netherite", AssignPatternType, WildcardRefType, "_", NonExistentType, "dist",
-                                ExtendableLiteralExpressionType)
+              .addSuchThatClause(ParentType, SynonymRefType, "diamond", StmtType, SynonymRefType, "netherite",
+                                 AssignType)
+              .addAssignPatternClause("netherite", AssignPatternType, WildcardRefType, "_", NonExistentType, "dist",
+                                      ExtendableLiteralExpressionType)
               .build();
     // reverse the order of the clauses
     AbstractQuery reverseAbstractQuery
@@ -100,9 +101,9 @@ TEST_CASE(
               .addDeclaration("diamond", "stmt")
               .addDeclaration("netherite", "assign")
               .addDeclaration("diamond", "stmt")
-              .addPatternClause("netherite", AssignPatternType, WildcardRefType, "_", NonExistentType, "dist",
-                                ExtendableLiteralExpressionType)
-              .addSuchThatClause("Parent", SynonymRefType, "diamond", StmtType, SynonymRefType, "netherite", AssignType)
+              .addAssignPatternClause("netherite", AssignPatternType, WildcardRefType, "_", NonExistentType, "dist",
+                                      ExtendableLiteralExpressionType)
+              .addSuchThatClause(ParentType, SynonymRefType, "diamond", StmtType, SynonymRefType, "netherite", AssignType)
               .build();
     std::vector<std::string> expectedResults = {"123", "124", "129"};
 

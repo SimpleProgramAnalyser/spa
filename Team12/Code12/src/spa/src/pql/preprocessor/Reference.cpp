@@ -1,71 +1,31 @@
 #include "AqTypes.h"
 
-Reference::Reference(): designEntity{}, hasError{false}
-{
-    referenceType = InvalidRefType;
-}
+/************************/
+/** Constructors        */
+/************************/
 
-Reference::Reference(Boolean hasError): referenceType{InvalidRefType}, hasError{hasError} {}
+Reference::Reference(): referenceType{InvalidRefType}, designEntity{}, attribute{NoAttributeType}, hasError{false} {}
+
+Reference::Reference(Boolean hasError): referenceType{InvalidRefType}, attribute{NoAttributeType}, hasError{hasError} {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, hasError{false}
+    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, attribute{NoAttributeType}, hasError{
+                                                                                                                 false}
 {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt):
-    referenceType{refType}, referenceValue{refValue}, designEntity{designEnt}, hasError{false}
+    referenceType{refType}, referenceValue{std::move(refValue)},
+    designEntity{designEnt}, attribute{NoAttributeType}, hasError{false}
 {}
 
-Boolean Reference::isInvalid() const
-{
-    return hasError;
-}
+Reference::Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute attr):
+    referenceType{AttributeRefType}, referenceValue{std::move(refValue)},
+    designEntity{designEnt}, attribute{attr}, hasError{false}
+{}
 
-Boolean Reference::isValidEntityRef()
-{
-    return referenceType == LiteralRefType || referenceType == SynonymRefType || referenceType == WildcardRefType;
-}
-
-Boolean Reference::isValidStatementRef()
-{
-    return referenceType == IntegerRefType || referenceType == SynonymRefType || referenceType == WildcardRefType;
-}
-
-Boolean Reference::isProcedure()
-{
-    return designEntity.getType() == ProcedureType;
-}
-
-Boolean Reference::isNonStatementSynonym()
-{
-    DesignEntityType designEntityType = designEntity.getType();
-    return designEntityType == ProcedureType || designEntityType == VariableType || designEntityType == ConstantType;
-}
-
-Boolean Reference::isWildCard() const // TODO: phase out
-{
-    return referenceType == WildcardRefType;
-}
-
-ReferenceType Reference::getReferenceType() const
-{
-    return referenceType;
-}
-
-ReferenceValue Reference::getValue() const
-{
-    return referenceValue;
-}
-
-DesignEntity Reference::getDesignEntity()
-{
-    return designEntity;
-}
-
-Boolean Reference::operator==(const Reference& reference)
-{
-    return this->referenceType == reference.referenceType && this->referenceValue == reference.referenceValue
-           && this->designEntity == reference.designEntity;
-}
+/************************/
+/** Static Methods      */
+/************************/
 
 /**
  * Creates a Reference using the given ref String. It will
@@ -88,7 +48,7 @@ Reference Reference::createReference(String ref, DeclarationTable& declarationTa
 
     if (util::isPossibleConstant(ref)) {
         // An Integer as a reference will always be of StmtType
-        Reference reference(IntegerRefType, ref, DesignEntity(StmtType));
+        Reference reference(IntegerRefType, ref);
         return reference;
     }
 
@@ -98,10 +58,112 @@ Reference Reference::createReference(String ref, DeclarationTable& declarationTa
         return reference;
     }
 
-    if (declarationTable.hasSynonym(ref)) {
-        Reference reference(SynonymRefType, ref, declarationTable.getDesignEntityOfSynonym(ref));
+    size_t fullStopPosition = ref.find('.');
+
+    // Synonym with no Attribute
+    if (fullStopPosition == String::npos) {
+        DesignEntity designEnt = declarationTable.getDesignEntityOfSynonym(ref);
+        if (designEnt.getType() == NonExistentType) {
+            return Reference(true);
+        }
+
+        Reference reference(SynonymRefType, ref, designEnt);
         return reference;
     }
 
-    return Reference(true);
+    // Synonym Attribute
+    StringVector splitRefString = splitByDelimiter(ref, ".");
+    if (splitRefString.size() != 2) {
+        return Reference(true);
+    }
+
+    Synonym synonym = splitRefString.at(0);
+    String attributeString = splitRefString.at(1);
+    DesignEntity designEnt = declarationTable.getDesignEntityOfSynonym(synonym);
+    if (designEnt.getType() == NonExistentType) {
+        return Reference(true);
+    }
+
+    Attribute attribute(attributeString);
+    if (attribute.getType() == InvalidAttributeType) {
+        return Reference(true);
+    }
+
+    if (!Attribute::validateDesignEntityAttributeSemantics(designEnt.getType(), attribute.getType())) {
+        return Reference(true);
+    }
+
+    Reference reference(synonym, designEnt, attribute);
+    return reference;
+}
+
+/************************/
+/** Instance Methods    */
+/************************/
+
+Boolean Reference::isInvalid() const
+{
+    return hasError;
+}
+
+Boolean Reference::isValidEntityRef()
+{
+    return referenceType == LiteralRefType || referenceType == SynonymRefType || referenceType == WildcardRefType;
+}
+
+Boolean Reference::isProcedure()
+{
+    return designEntity.getType() == ProcedureType;
+}
+
+Boolean Reference::isWildCard() const // TODO: phase out
+{
+    return referenceType == WildcardRefType;
+}
+
+ReferenceType Reference::getReferenceType() const
+{
+    return referenceType;
+}
+
+ReferenceValue Reference::getValue() const
+{
+    return referenceValue;
+}
+
+DesignEntity Reference::getDesignEntity()
+{
+    return designEntity;
+}
+
+Attribute Reference::getAttribute()
+{
+    return attribute;
+}
+
+AttributeValueType Reference::getAttributeValueType()
+{
+    if (referenceType == IntegerRefType || designEntity.getType() == Prog_LineType) {
+        return IntegerValueType;
+    }
+
+    if (referenceType == LiteralRefType) {
+        return NameValueType;
+    }
+
+    if (referenceType != AttributeRefType) {
+        return InvalidValueType;
+    }
+
+    if (attribute.getType() == StmtNumberType || attribute.getType() == ValueType) {
+        return IntegerValueType;
+    }
+
+    return NameValueType;
+}
+
+Boolean Reference::operator==(const Reference& reference)
+{
+    return this->referenceType == reference.referenceType && this->referenceValue == reference.referenceValue
+           && this->designEntity == reference.designEntity;
 }

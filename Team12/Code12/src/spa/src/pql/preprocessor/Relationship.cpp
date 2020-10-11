@@ -5,38 +5,65 @@ Boolean isValidInTable(std::unordered_map<RelationshipReferenceType, std::unorde
                        RelationshipReferenceType relRefType, T type);
 
 std::unordered_map<String, RelationshipReferenceType> Relationship::relationshipReferenceTypeMap{
-    {"Follows", FollowsType}, {"Follows*", FollowsStarType}, {"Parent", ParentType}, {"Parent*", ParentStarType},
-    {"Uses", UsesType},       {"Modifies", ModifiesType}};
+    {"Follows", FollowsType}, {"Follows*", FollowsStarType}, {"Parent", ParentType},   {"Parent*", ParentStarType},
+    {"Uses", UsesType},       {"Modifies", ModifiesType},    {"Calls", CallsType},     {"Calls*", CallsStarType},
+    {"Next", NextType},       {"Next*", NextStarType},       {"Affects", AffectsType}, {"Affects*", AffectsStarType}};
 
 // Hash function for RelationshipReferenceType
 template <>
 struct std::hash<RelationshipReferenceType> {
-    std::size_t operator()(const RelationshipReferenceType& pv) const
+    std::size_t operator()(const RelationshipReferenceType& rrt) const
     {
         // NOLINTNEXTLINE
-        return std::hash<char>()(static_cast<const char&>(pv));
-    }
-};
-
-// Hash function for DesignEntityType
-template <>
-struct std::hash<DesignEntityType> {
-    std::size_t operator()(const DesignEntityType& pv) const
-    {
-        // NOLINTNEXTLINE
-        return std::hash<char>()(static_cast<const char&>(pv));
+        return std::hash<char>()(static_cast<const char&>(rrt));
     }
 };
 
 // Hash function for ReferenceType
 template <>
 struct std::hash<ReferenceType> {
-    std::size_t operator()(const ReferenceType& pv) const
+    std::size_t operator()(const ReferenceType& rt) const
     {
         // NOLINTNEXTLINE
-        return std::hash<char>()(static_cast<const char&>(pv));
+        return std::hash<char>()(static_cast<const char&>(rt));
     }
 };
+
+std::unordered_map<RelationshipReferenceType, ReferenceTypeSet> Relationship::leftReferenceTypeValidationTable{
+    {FollowsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {FollowsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {ParentType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {ParentStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {UsesType, ReferenceTypeSet{SynonymRefType, LiteralRefType, IntegerRefType}},
+    {UsesStatementType, ReferenceTypeSet{SynonymRefType, IntegerRefType}},
+    {UsesProcedureType, ReferenceTypeSet{SynonymRefType, LiteralRefType}},
+    {ModifiesType, ReferenceTypeSet{SynonymRefType, LiteralRefType, IntegerRefType}},
+    {ModifiesStatementType, ReferenceTypeSet{SynonymRefType, IntegerRefType}},
+    {ModifiesProcedureType, ReferenceTypeSet{SynonymRefType, LiteralRefType}},
+    {CallsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {CallsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {NextType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {NextStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}}};
+
+std::unordered_map<RelationshipReferenceType, ReferenceTypeSet> Relationship::rightReferenceTypeValidationTable{
+    {FollowsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {FollowsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {ParentType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {ParentStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {UsesType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {UsesStatementType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {UsesProcedureType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {ModifiesType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {ModifiesStatementType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {ModifiesProcedureType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {CallsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {CallsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
+    {NextType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {NextStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}}};
 
 std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship::leftReferenceSynonymValidationTable{
     {FollowsType,
@@ -46,10 +73,23 @@ std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship:
     {ParentType, DesignEntityTypeSet{StmtType, WhileType, IfType, Prog_LineType}},
     {ParentStarType, DesignEntityTypeSet{StmtType, WhileType, IfType, Prog_LineType}},
     {UsesType,
-     DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType, ProcedureType}},
+     DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, ProcedureType, Prog_LineType}},
+    {UsesStatementType,
+     DesignEntityTypeSet{StmtType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {UsesProcedureType, DesignEntityTypeSet{ProcedureType}},
     {ModifiesType,
-     DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, Prog_LineType, ProcedureType}},
-};
+     DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, ProcedureType, Prog_LineType}},
+    {ModifiesStatementType,
+     DesignEntityTypeSet{StmtType, ReadType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {ModifiesProcedureType, DesignEntityTypeSet{ProcedureType}},
+    {CallsType, DesignEntityTypeSet{ProcedureType}},
+    {CallsStarType, DesignEntityTypeSet{ProcedureType}},
+    {NextType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {NextStarType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {AffectsType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
+    {AffectsStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}}};
 
 std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship::rightReferenceSynonymValidationTable{
     {FollowsType,
@@ -62,25 +102,14 @@ std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship:
      DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
     {UsesType, DesignEntityTypeSet{VariableType}},
     {ModifiesType, DesignEntityTypeSet{VariableType}},
-};
-
-std::unordered_map<RelationshipReferenceType, ReferenceTypeSet> Relationship::leftReferenceTypeValidationTable{
-    {FollowsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {FollowsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {ParentType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {ParentStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {UsesType, ReferenceTypeSet{SynonymRefType, LiteralRefType, IntegerRefType}},
-    {ModifiesType, ReferenceTypeSet{SynonymRefType, LiteralRefType, IntegerRefType}},
-};
-
-std::unordered_map<RelationshipReferenceType, ReferenceTypeSet> Relationship::rightReferenceTypeValidationTable{
-    {FollowsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {FollowsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {ParentType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {ParentStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {UsesType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
-    {ModifiesType, ReferenceTypeSet{SynonymRefType, WildcardRefType, LiteralRefType}},
-};
+    {CallsType, DesignEntityTypeSet{ProcedureType}},
+    {CallsStarType, DesignEntityTypeSet{ProcedureType}},
+    {NextType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {NextStarType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {AffectsType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
+    {AffectsStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}}};
 
 Relationship::Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef):
     relationshipReferenceType(relRefType), leftReference(leftRef), rightReference(rightRef), hasError(false)
@@ -88,37 +117,33 @@ Relationship::Relationship(RelationshipReferenceType relRefType, Reference leftR
 
 Relationship::Relationship(Boolean hasError): relationshipReferenceType{InvalidRelationshipType}, hasError{hasError} {}
 
-Relationship Relationship::createRelationship(String relationshipRef, Reference leftRef, Reference rightRef)
+Relationship Relationship::createRelationship(RelationshipReferenceType relRefType, Reference leftRef,
+                                              Reference rightRef)
 {
-    // Validate relationship reference type
-    RelationshipReferenceType relationshipReferenceType = getRelRefType(std::move(relationshipRef));
-    if (relationshipReferenceType == InvalidRelationshipType) {
-        return Relationship(true);
-    }
+
+    assert( // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        leftReferenceTypeValidationTable.find(relRefType) != leftReferenceTypeValidationTable.end());
 
     // Validate semantics for relationships
-    if (!validateRelationshipSemantics(relationshipReferenceType, leftRef, rightRef)) {
+    if (!validateRelationshipSemantics(relRefType, leftRef, rightRef)) {
         return Relationship(true);
     }
 
     // Split Statement and Procedure type for Uses and Modifies
-    if (relationshipReferenceType == UsesType || relationshipReferenceType == ModifiesType) {
+    if (relRefType == UsesType || relRefType == ModifiesType) {
         if (leftRef.isProcedure() || util::isLiteralIdent(leftRef.getValue())) {
-            relationshipReferenceType
-                = relationshipReferenceType == UsesType ? UsesProcedureType : ModifiesProcedureType;
+            relRefType = relRefType == UsesType ? UsesProcedureType : ModifiesProcedureType;
         } else {
-            relationshipReferenceType
-                = relationshipReferenceType == UsesType ? UsesStatementType : ModifiesStatementType;
+            relRefType = relRefType == UsesType ? UsesStatementType : ModifiesStatementType;
         }
     }
 
-    return Relationship(relationshipReferenceType, leftRef, rightRef);
+    return Relationship(relRefType, leftRef, rightRef);
 }
 
 RelationshipReferenceType Relationship::getRelRefType(String relRef)
 {
-    std::unordered_map<String, RelationshipReferenceType>::const_iterator got
-        = relationshipReferenceTypeMap.find(relRef);
+    auto got = relationshipReferenceTypeMap.find(relRef);
 
     if (got == relationshipReferenceTypeMap.end()) {
         return InvalidRelationshipType;

@@ -27,7 +27,9 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
     StringPair pair = util::splitByFirstDelimiter(clauseConstraint, '(');
 
     String relRef = pair.first;
-    if (!util::isRelationshipReference(relRef)) {
+
+    RelationshipReferenceType relRefType = Relationship::getRelRefType(relRef);
+    if (relRefType == InvalidRelationshipType) {
         return Clause::invalidClause(SuchThatClauseType);
     }
 
@@ -44,7 +46,7 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
         return Clause::invalidClause(SuchThatClauseType);
     }
 
-    Relationship relationship = Relationship::createRelationship(relRef, leftReference, rightReference);
+    Relationship relationship = Relationship::createRelationship(relRefType, leftReference, rightReference);
     if (relationship.isInvalid()) {
         return Clause::invalidClause(SuchThatClauseType);
     }
