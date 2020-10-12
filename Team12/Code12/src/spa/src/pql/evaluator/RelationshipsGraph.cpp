@@ -609,7 +609,9 @@ Boolean RelationshipsGraph::checkIfRelated(const PotentialValue& firstPv, const 
     if (valuesTable.find(firstPv) != valuesTable.end()) {
         bool isRelated = false;
         for (GraphEdge ge : valuesTable[firstPv]) {
-            if (edgesTable[ge].find(secondPv.asSwv()) != edgesTable[ge].end()) {
+            std::unordered_set<SynonymWithValue, SynonymWithValueHasher>::iterator element
+                = edgesTable[ge].find(secondPv.asSwv());
+            if (element != edgesTable[ge].end() && element->value == secondPv.value) {
                 isRelated = true;
                 break;
             }
