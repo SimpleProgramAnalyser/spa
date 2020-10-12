@@ -325,7 +325,7 @@ class UpdatesQueue;
 class RelationshipsGraph {
 private:
     std::unordered_map<PotentialValue, std::unordered_set<GraphEdge>, PotentialValueHasher> valuesTable;
-    std::unordered_map<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>> edgesTable;
+    std::unordered_map<GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>> edgesTable;
     GraphEdge edgesIndex = 0;
     /**
      * A set that keeps track of synonyms that were put into the graph.
@@ -476,6 +476,17 @@ public:
      *         Otherwise, false.
      */
     Boolean checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv);
+
+    /**
+     * For one potential value, checks whether it has an edge
+     * with any potential values of a synonym.
+     *
+     * @param pv The potential value.
+     * @param syn The synonym to be checked.
+     * @return True, if pv has an edge to some
+     *         potential value of synonym syn.
+     */
+    Boolean isValueRelated(const PotentialValue& pv, const Synonym& syn);
 
     /**
      * Retrieves all values related to a potential value

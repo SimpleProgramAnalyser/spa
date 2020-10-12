@@ -321,20 +321,12 @@ Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym
 {
     if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)) {
         return false;
-    } else if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
-        return true;
     }
     ClauseResult resultsForLeft = get(leftSynonym);
-    ClauseResult resultsForRight = get(rightSynonym);
-    for (const String& leftResult : resultsForLeft) {
-        for (const String& rightResult : resultsForRight) {
-            if (relationships->checkIfRelated(PotentialValue(leftSynonym, leftResult),
-                                              PotentialValue(rightSynonym, rightResult))) {
-                return true;
-            }
-        }
-    }
-    return false;
+    // just check one potential value, as the synonym results are guaranteed
+    // to be in RelationshipsGraph if both synonyms are inside the graph
+    return !resultsForLeft.empty()
+           && relationships->isValueRelated(PotentialValue(leftSynonym, resultsForLeft[0]), rightSynonym);
 }
 
 Void ResultsTable::getResultsZero()

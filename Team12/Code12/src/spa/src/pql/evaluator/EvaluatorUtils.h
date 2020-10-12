@@ -18,6 +18,9 @@ typedef std::string Value;
 
 typedef Vector<Pair<String, String>> PairedResult;
 
+// Foreward declaration of SynonymWithValue
+class SynonymWithValue;
+
 /**
  * A class implementing a tuple of synonym and string,
  * to associate a synonym with some potential value.
@@ -27,23 +30,51 @@ public:
     Synonym synonym;
     String value;
 
-    PotentialValue(Synonym synonym, String value): synonym(std::move(synonym)), value(std::move(value)) {}
+    PotentialValue(Synonym synonym, String value);
+    /**
+     * Constructor for PotentialValue using a SynonymWithValue.
+     */
+    explicit PotentialValue(const SynonymWithValue& swv);
+    explicit operator SynonymWithValue() const;
+    bool operator==(const PotentialValue& pv) const;
 
-    bool operator==(const PotentialValue& pv) const
-    {
-        return this->synonym == pv.synonym && this->value == pv.value;
-    }
+    // Convert to SynonymWithValue.
+    SynonymWithValue asSwv() const;
 };
 
 // A hash function for PotentialValue
 struct PotentialValueHasher {
-    std::size_t operator()(const PotentialValue& pv) const
-    {
-        std::hash<std::string> stringHasher;
-        std::size_t hashedSynonym = stringHasher(pv.synonym);
-        return (hashedSynonym
-                ^ (stringHasher(pv.value) + uint32_t(2654435769) + (hashedSynonym * 64) + (hashedSynonym / 4)));
-    }
+    std::size_t operator()(const PotentialValue& pv) const;
+};
+
+/**
+ * A synonym with an attached value, that behaves like the synonym
+ * by itself in its hash function and equality operators.
+ *
+ * Very similar to PotentialValue, but two SynonymWithValue with the
+ * same synonym and possibly different values will always appear
+ * to be the same object when the value is not checked directly.
+ */
+class SynonymWithValue {
+public:
+    Synonym synonym;
+    String value;
+
+    SynonymWithValue(Synonym synonym, String value);
+    /**
+     * Constructor with a PotentialValue.
+     */
+    explicit SynonymWithValue(const PotentialValue& pv): synonym(pv.synonym), value(pv.value) {}
+    explicit operator PotentialValue() const;
+    bool operator==(const SynonymWithValue& swv) const;
+
+    // Convert to PotentialValue.
+    PotentialValue asPv() const;
+};
+
+// A hash function for SynonymWithValue
+struct SynonymWithValueHasher {
+    std::size_t operator()(const SynonymWithValue& swv) const;
 };
 
 /*
