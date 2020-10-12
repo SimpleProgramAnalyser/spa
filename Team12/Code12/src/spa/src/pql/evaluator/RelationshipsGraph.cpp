@@ -609,7 +609,9 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
     std::unordered_set<GraphEdge> firstKeyEdges = valuesTable[firstKey];
     std::unordered_set<GraphEdge> edgesToDelete;
     for (GraphEdge potentialEdge : firstKeyEdges) {
-        if (edgesTable[potentialEdge].find(secondKey.asSwv()) != edgesTable[potentialEdge].end()) {
+        auto entry = edgesTable[potentialEdge].find(secondKey.asSwv());
+        // check the true value of the SynonymWithValue for that edge
+        if (entry != edgesTable[potentialEdge].end() && entry->value == secondKey.value) {
             // transfer this edge to edgesToDelete
             valuesTable[firstKey].erase(potentialEdge);
             valuesTable[secondKey].erase(potentialEdge);
@@ -660,8 +662,9 @@ Boolean RelationshipsGraph::areValuesRelated(const PotentialValue& firstPv, cons
     if (valuesTable.find(firstPv) != valuesTable.end()) {
         bool isRelated = false;
         for (GraphEdge ge : valuesTable[firstPv]) {
-            auto element = edgesTable[ge].find(secondPv.asSwv());
-            if (element != edgesTable[ge].end() && element->value == secondPv.value) {
+            auto entry = edgesTable[ge].find(secondPv.asSwv());
+            // check the true value of the SynonymWithValue for that edge
+            if (entry != edgesTable[ge].end() && entry->value == secondPv.value) {
                 isRelated = true;
                 break;
             }
