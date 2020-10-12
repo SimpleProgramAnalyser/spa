@@ -333,13 +333,6 @@ private:
      * the RelationshipsGraph (synonyms will never be removed).
      */
     std::unordered_set<Synonym> synonymSet;
-    /**
-     * If a relationship between two synonyms is found in the cache, then
-     * it is certain that their potential values have some relationship
-     * within relationshipsTable. If it is not found, a manual search of
-     * relationshipsTable is required.
-     */
-    std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
     // Allow ValuesTablesUpdates to access the valuesTable
     friend class ValuesTableDelete;
     friend class ValuesTableInsert;
@@ -377,12 +370,6 @@ public:
      * This method ignores differences in the synonym cache.
      */
     bool operator==(const RelationshipsGraph& rg) const;
-
-    /**
-     * A method to compare two RelationshipsGraph for testing purposes.
-     * This method compares the synonym cache of the graph as well.
-     */
-    bool checkEqualIncludingCache(const RelationshipsGraph& rg) const;
 
     /**
      * Adds a list of relationships between potential values
@@ -436,24 +423,6 @@ public:
      *                     synonyms can be removed as well
      */
     void deleteTwo(const PotentialValue& firstKey, const PotentialValue& secondKey, ResultsTable* resultsTable);
-
-    /**
-     * Checks whether two synonyms have relationships in the
-     * relationships table cache. If this returns false, the
-     * two synonyms could still have a relationship, but it
-     * would require iterating over the entire relationship
-     * table to determine. If this returns true, then it is
-     * certain that firstSynonym and secondSynonym have some
-     * potential values that affect each other.
-     *
-     * @param firstSynonym The first synonym to be checked.
-     * @param secondSynonym The second synonym to be checked.
-     *
-     * @return True, if it is certain that firstSynonym and
-     *         secondSynonym has relationships in the graph.
-     *         If it is uncertain, but not impossible, false.
-     */
-    Boolean checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym);
 
     /**
      * Checks if a synonym has existed in the relationship

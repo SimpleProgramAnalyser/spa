@@ -449,6 +449,7 @@ RelationshipsGraph::RelationshipsGraph(const std::vector<std::pair<GraphEdge, st
             edgesTable[edge.first].insert(pv.asSwv());
             if (valuesTable.find(pv) != valuesTable.end()) {
                 valuesTable.insert({pv, {}});
+                synonymSet.insert(pv.synonym);
             }
             valuesTable[pv].insert(edge.first);
         }
@@ -457,14 +458,8 @@ RelationshipsGraph::RelationshipsGraph(const std::vector<std::pair<GraphEdge, st
 
 bool RelationshipsGraph::operator==(const RelationshipsGraph& rg) const
 {
-    return this->valuesTable == rg.valuesTable && this->edgesTable == rg.edgesTable;
-    // cache is not checked because the exact values may be different,
-    // depending on order of addition to the relationships graph
-}
-
-bool RelationshipsGraph::checkEqualIncludingCache(const RelationshipsGraph& rg) const
-{
-    return *this == rg && this->synonymRelationshipsCache == rg.synonymRelationshipsCache;
+    return this->valuesTable == rg.valuesTable && this->edgesTable == rg.edgesTable && this->synonymSet == rg.synonymSet
+           && this->edgesIndex == rg.edgesIndex;
 }
 
 Pair<Vector<String>, Vector<String>>
@@ -491,19 +486,6 @@ RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valu
     while (!updatesToValuesTable.empty()) {
         (*updatesToValuesTable.front())(*this);
         updatesToValuesTable.pop();
-    }
-    // store the relationships in cache
-    if (!valueRelationships.empty()) {
-        if (synonymRelationshipsCache.find(firstSynonym) == synonymRelationshipsCache.end()) {
-            synonymRelationshipsCache.insert(
-                std::pair<Synonym, std::unordered_set<Synonym>>(firstSynonym, std::unordered_set<Synonym>()));
-        }
-        synonymRelationshipsCache[firstSynonym].insert(secondSynonym);
-        if (synonymRelationshipsCache.find(secondSynonym) == synonymRelationshipsCache.end()) {
-            synonymRelationshipsCache.insert(
-                std::pair<Synonym, std::unordered_set<Synonym>>(secondSynonym, std::unordered_set<Synonym>()));
-        }
-        synonymRelationshipsCache[secondSynonym].insert(firstSynonym);
     }
     return Pair<Vector<String>, Vector<String>>(
         Vector<String>(firstSynonymResults.begin(), firstSynonymResults.end()),
@@ -542,16 +524,7 @@ void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resul
             resultsTable->eliminatePotentialValue(affected.synonym, affected.value);
             deleteOne(affected, resultsTable);
         }
-        // clear synonyms relationship from cache
-        if (synonymRelationshipsCache.find(affected.synonym) != synonymRelationshipsCache.end()) {
-            // delete the cached relationship between synonyms, even if there could
-            // still be relationships between them for other potential values
-            synonymRelationshipsCache[affected.synonym].erase(pv.synonym);
-        }
     }
-    // clear synonym from cache, even though the synonym may still
-    // have other potential values with relationships
-    synonymRelationshipsCache.erase(pv.synonym);
 }
 
 void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const PotentialValue& secondKey,
@@ -616,28 +589,6 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
             // clear the value from relationships graph
             deleteOne(affected, resultsTable);
         }
-        // clear synonyms relationship from cache
-        if (synonymRelationshipsCache.find(affected.synonym) != synonymRelationshipsCache.end()) {
-            // clear cache for affected synonym -> first synonym and second synonym
-            synonymRelationshipsCache[affected.synonym].erase(firstKey.synonym);
-            synonymRelationshipsCache[affected.synonym].erase(secondKey.synonym);
-        }
-    }
-    // clear cache for first synonym and second synonym
-    synonymRelationshipsCache.erase(firstKey.synonym);
-    synonymRelationshipsCache.erase(secondKey.synonym);
-}
-
-Boolean RelationshipsGraph::checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym)
-{
-    if (synonymRelationshipsCache.find(firstSynonym) != synonymRelationshipsCache.end()) {
-        return synonymRelationshipsCache[firstSynonym].find(secondSynonym)
-               != synonymRelationshipsCache[firstSynonym].end();
-    } else if (synonymRelationshipsCache.find(secondSynonym) != synonymRelationshipsCache.end()) {
-        return synonymRelationshipsCache[secondSynonym].find(firstSynonym)
-               != synonymRelationshipsCache[secondSynonym].end();
-    } else {
-        return false;
     }
 }
 
