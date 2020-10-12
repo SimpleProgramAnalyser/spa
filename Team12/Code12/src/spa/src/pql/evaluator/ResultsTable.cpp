@@ -175,8 +175,8 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
         table->filterAfterVerification(s1, syn1Results);
         table->filterAfterVerification(s2, syn2Results);
     } else {
-        Boolean s1IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s1);
-        Boolean s2IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s2);
+        Boolean s1IsNew = !table->relationships->hasSeenBefore(s1);
+        Boolean s2IsNew = !table->relationships->hasSeenBefore(s2);
         // load relationships first, to see which relationships were successfully added
         Pair<Vector<String>, Vector<String>> successfulValues
             = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
@@ -319,7 +319,9 @@ Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
 
 Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
 {
-    if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
+    if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)) {
+        return false;
+    } else if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
         return true;
     }
     ClauseResult resultsForLeft = get(leftSynonym);

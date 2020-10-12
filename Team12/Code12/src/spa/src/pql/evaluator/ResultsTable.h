@@ -328,6 +328,12 @@ private:
     std::unordered_map<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>> edgesTable;
     GraphEdge edgesIndex = 0;
     /**
+     * A set that keeps track of synonyms that were put into the graph.
+     * This set will never decrease in size for the entire lifetime of
+     * the RelationshipsGraph (synonyms will never be removed).
+     */
+    std::unordered_set<Synonym> synonymSet;
+    /**
      * If a relationship between two synonyms is found in the cache, then
      * it is certain that their potential values have some relationship
      * within relationshipsTable. If it is not found, a manual search of
@@ -450,14 +456,14 @@ public:
     Boolean checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym);
 
     /**
-     * Checks if a synonym has any potential values
-     * in the relationships graph.
+     * Checks if a synonym has existed in the relationship
+     * graph before (may not exist currently, however).
      *
      * @param syn The synonym to be checked.
-     * @return True, if synonym has some potential values.
-     *         Otherwise, false.
+     * @return True, if synonym has been entered into the
+     *         graph before. Otherwise, false.
      */
-    Boolean checkIfSynonymInRelationshipsGraph(const Synonym& syn);
+    Boolean hasSeenBefore(const Synonym& syn);
 
     /**
      * Checks if two potential values are related in the
