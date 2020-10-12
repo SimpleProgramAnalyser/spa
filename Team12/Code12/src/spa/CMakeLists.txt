@@ -38,15 +38,15 @@ add_library(spa
 
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
 
-    # frontend manager
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
+        # frontend manager
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
 
         # pkb
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
@@ -59,6 +59,8 @@ add_library(spa
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
@@ -69,16 +71,16 @@ add_library(spa
         # pql/preprocessor
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp

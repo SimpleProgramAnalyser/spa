@@ -10,7 +10,8 @@
  * @param entry
  * @param set
  */
-void deduplicatedAdd(StatementNumber value, Vector<StatementNumber>& entry, HashSet<StatementNumber>& set)
+template <typename T>
+void deduplicatedAdd(T value, Vector<T>& entry, HashSet<T>& set)
 {
     if (set.find(value) == set.end()) {
         set.insert(value);
