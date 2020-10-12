@@ -28,70 +28,70 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/FollowsExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ParentExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.cpp
 
-        # frontend/parser
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+    # frontend/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
 
-        # frontend manager
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
+    # frontend manager
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
 
-        # pkb
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.cpp
+    # pkb
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.cpp
 
-        # pql/preprocessor
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Attribute.cpp
+    # pql/preprocessor
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Attribute.cpp
 
-        # pql/evaluator
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.h
+    # pql/evaluator
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.cpp
