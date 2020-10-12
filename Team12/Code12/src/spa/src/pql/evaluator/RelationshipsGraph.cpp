@@ -692,6 +692,8 @@ std::vector<PotentialValue> RelationshipsGraph::retrieveRelationships(const Pote
                 resultsSet.insert(static_cast<PotentialValue>(edgeVal));
             }
         }
+        // remove the original potential value
+        resultsSet.erase(value);
         return std::vector<PotentialValue>(resultsSet.begin(), resultsSet.end());
     } else {
         return std::vector<PotentialValue>();

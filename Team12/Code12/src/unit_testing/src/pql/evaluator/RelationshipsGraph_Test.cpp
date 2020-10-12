@@ -158,3 +158,13 @@ TEST_CASE("deleteOne does nothing to ResultsTable if synonym does not exist")
     std::unique_ptr<ResultsTable> resultsExpected = setUpResultsTable();
     REQUIRE(*resultsActual == *resultsExpected);
 }
+
+TEST_CASE("retrieveRelationships returns relationships stored in graph")
+{
+    RelationshipsGraph graph = setUpTestingGraph();
+    requireVectorsHaveSameElements(
+        graph.retrieveRelationships(PotentialValue("num", "16")),
+        std::vector<PotentialValue>({PotentialValue("red", "ns1"), PotentialValue("green", "ew24"),
+                                     PotentialValue("purple", "sengkang"), PotentialValue("purple", "outrampark"),
+                                     PotentialValue("circle", "marymount")}));
+}
