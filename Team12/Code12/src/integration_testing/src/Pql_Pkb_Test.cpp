@@ -1208,8 +1208,8 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand proce
     String procName1 = "proc1";
     String procName2 = "proc2";
 
-    insertIntoProcedureTable(procName1);
-    insertIntoProcedureTable(procName2);
+    insertIntoProcedureTable(procName1, 1, 2);
+    insertIntoProcedureTable(procName2, 3, 4);
 
     Vector<String> varNames;
 
@@ -1482,8 +1482,8 @@ TEST_CASE(
     String procName1 = "proc1";
     String procName2 = "proc2";
 
-    insertIntoProcedureTable(procName1);
-    insertIntoProcedureTable(procName2);
+    insertIntoProcedureTable(procName1, 1, 2);
+    insertIntoProcedureTable(procName2, 3, 4);
 
     Vector<String> varNames;
 

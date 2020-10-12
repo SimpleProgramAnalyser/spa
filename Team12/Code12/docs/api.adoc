@@ -332,7 +332,7 @@ of their own, hence they are also known as "container statements".
 [#getProcedureCalled]
 `*PROCEDURE_LIST* getProcedureCalled(*INTEGER* stmtNum);`
 
-*Description*: Returns the *PROCEDURE* called by the statement with `stmtNum`. If the statement is
+*Description*: Returns the *PROCEDURE* called by the statement with `stmtNum`.If the statement is
 not a *Call Statement*, an empty list is returned.
 
 '''
@@ -340,7 +340,7 @@ not a *Call Statement*, an empty list is returned.
 [#getAllCallStatementsByProcedure]
 `*STATEMENT_LIST* getAllCallStatementsByProcedure(*PROCEDURE* proc);`
 
-*Description*: Returns a *STATEMENT_LIST* of statements that called `proc`. If `proc` is not a valid
+*Description*: Returns a *STATEMENT_LIST* of statements that called `proc`.If `proc` is not a valid
 *PROCEDURE* or is not called by any *Call Statement*, returns an empty list.
 
 '''
@@ -348,18 +348,26 @@ not a *Call Statement*, an empty list is returned.
 [#getAllProceduresCalled]
 `*PROCEDURE_LIST* getAllProceduresCalled();`
 
-*Description*: Returns a *PROCEDURE_LIST* of procedures called by any *Call Statements*. An empty list
-is returned if there are no *Call Statements* in the SIMPLE program.
+*Description*: Returns a *PROCEDURE_LIST* of procedures called by any *Call Statements*.
+An empty list is returned if there are no *Call Statements* in the SIMPLE program.
 
 '''
 
 [#insertIntoStatementTable]
 `*VOID* insertIntoStatementTable(*INTEGER* stmtNum, *STATEMENT_TYPE* type);`
 
-*Requires*: `type` cannot be `AnyStatement` type.
+*Requires*: `type` cannot be `AnyStatement` or `CallStatement` type.
 
 *Description*: Inserts a statement with `stmtNum` with its corresponding *STATEMENT_TYPE* into the Statement Table.
 If a same `stmtNum` already exists in the table, the old record will be overwritten without confirmation.
+
+'''
+
+`*VOID* insertIntoStatementTable(*INTEGER* stmtNum, *PROCEDURE_NAME* procName);`
+
+*Description*: This is the insertion method for *Calls Statements* only.
+Inserts a *Call Statement* with `stmtNum` with the name of the *Procedure* it calls into the Statement Table.
+If a same `stmtNum` already exists in the table, any attributes associated with that statement will be overwritten.
 
 === Variable Table API
 
@@ -397,7 +405,7 @@ If a `var` with the same name already exist in the Variable Table, then no chang
 
 * <<getAllProcedures>>
 * <<isProcedureInProgram>>
-* <<getAllStatementsInProcedure>>
+* <<getStatementRangeByProcedure>>
 * <<getContainingProcedure>>
 * <<insertIntoProcedureTable>>
 
@@ -417,19 +425,18 @@ If a `var` with the same name already exist in the Variable Table, then no chang
 
 '''
 
-[#getAllStatementsInProcedure]
-`*STATEMENT_LIST* getAllStatementsInProcedure(*PROCEDURE* proc);`
+[#getStatementRangeByProcedure]
+`*STATEMENT_RANGE* getStatementRangeByProcedure(*PROCEDURE* proc);`
 
-*Description*: Returns a *STATEMENT_LIST* of all statements within the `proc`. If `proc` is not
-found in Procedure Table, returns an empty *STATEMENT_LIST*.
+*Description*: Returns a *STATEMENT_RANGE* within the `proc`.
+If `proc` is not found in Procedure Table, returns the statement range `(0,0)`.
 
 '''
 
 [#getContainingProcedure]
 `*PROCEDURE_LIST* getContainingProcedure(*STATEMENT* stmt);`
 
-*Description*: Returns a *PROCEDURE_LIST* containing the procedure in which `stmt` is found,
-otherwise an empty *PROCEDURE_LIST* is returned.
+*Description*: Returns a *PROCEDURE_LIST* containing the procedure in which `stmt` is found, otherwise an empty *PROCEDURE_LIST* is returned.
 
 '''
 
@@ -1034,9 +1041,10 @@ with `nextStmtType` into the Next Table.
 '''
 
 [#getAllNextStatements]
-`*STATEMENT_LIST* getAllNextStatements(*INTEGER* previous);`
+`*STATEMENT_LIST* getAllNextStatements(*INTEGER* previous, *STATEMENT_TYPE* nextType);`
 
-*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT* of `previous`.
+*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT*s of `previous` that are of
+`nextType`.
 *STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
 
 '''
@@ -1051,9 +1059,10 @@ holds and are of STATEMENT_TYPE `stmtType`.
 '''
 
 [#getAllPreviousStatements]
-`*STATEMENT_LIST* getPreviousStatement(*INTEGER* next);`
+`*STATEMENT_LIST* getPreviousStatement(*INTEGER* next, *STATEMENT_TYPE* previousType);`
 
-*Description*: Returns a *STATEMENT_LIST* containing the previous *STATEMENT* of `next`.
+*Description*: Returns a *STATEMENT_LIST* containing the previous *STATEMENT* of `next` that are of
+`previousType`.
 *STATEMENT_LIST* returned is empty if there is no such relationship for `next`.
 
 '''
@@ -1179,7 +1188,7 @@ between them.
 `*VOID* resetPKB()`
 
 *Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
-PKB from memory. This is an irreversible action.
+PKB from memory.This is an irreversible action.
 
 '''
 
@@ -1198,14 +1207,14 @@ PKB from memory. This is an irreversible action.
 '''
 
 [#setCFG]
-`*VOID* storeCFG(*CFG* rootNode, *PROCEDURE* proc)`
+`*VOID* storeCFG(*CFG* cfg, *PROCEDURE* proc)`
 
-*Description*: Store `CFG` as the *CFG* for the *PROCEDURE* `proc` in PKB.
+*Description*: Store `cfg` as the *CFG* for the *PROCEDURE* `proc` in PKB.
 
 '''
 
 [#getCFG]
-`*CFG* getCFG()`
+`*CFG* getCFG(*PROCEDURE* proc)`
 
 *Description*: Retrieves the *CFG* for `proc` stored in PKB.
 If <<setCFG>> was never called for the `proc` given, a *NULL_POINTER* will be returned.

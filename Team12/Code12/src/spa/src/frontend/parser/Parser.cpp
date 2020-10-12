@@ -956,7 +956,9 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
     if (isSyntaxError) {
         return getSyntaxError<ProcedureNode>();
     } else {
-        insertIntoProcedureTable(procedureName);
+        StatementNumber first = statementListNode->statementList.begin()->get()->getStatementNumber();
+        StatementNumber last = (statementListNode->statementList.end() - 1)->get()->getStatementNumber();
+        insertIntoProcedureTable(procedureName, first, last);
         return ParserReturnType<std::unique_ptr<ProcedureNode>>(
             std::unique_ptr<ProcedureNode>(createProcedureNode(procedureName, statementListNode)), nextUnparsed);
     }

@@ -5,18 +5,24 @@
 #ifndef SPA_TABLES_H
 #define SPA_TABLES_H
 
+#include <map>
+
 #include "ast/AstTypes.h"
 #include "pkb/PkbTypes.h"
 
 class ProcedureTable {
 public:
-    void insertIntoProcedureTable(const String& procName);
+    void insertIntoProcedureTable(const String& procName, StatementNumber firstStmtNum, StatementNumber lastStmtNum);
     Vector<String> getAllProcedures();
     Boolean isProcedureInProgram(const String& procName);
+    StatementNumberRange getStatementRangeByProcedure(const ProcedureName& procedureName);
+    Vector<ProcedureName> getContainingProcedure(StatementNumber statementNumber);
 
 private:
-    HashSet<String> setOfProceduresNames; // getAllProc
-    Vector<String> listOfProcedureNames;  // IsProcInProgram
+    HashSet<String> setOfProceduresNames;                       // getAllProc
+    Vector<String> listOfProcedureNames;                        // IsProcInProgram
+    HashMap<String, StatementNumberRange> procNameStmtRangeMap; // store stmts in proc
+    std::map<StatementNumber, String> firstStmtToProc;          // for binary search
 };
 
 class VariableTable {
@@ -35,10 +41,22 @@ public:
     void insertIntoStatementTable(Integer stmtNum, StatementType stmtType);
     Boolean isStatementInProgram(Integer stmtNum);
     Vector<Integer> getAllStatements(StatementType stmtType);
+    // Iteration 2
+    void insertIntoStatementTable(Integer stmtNum, const ProcedureName& procName);
+    Vector<String> getProcedureCalled(Integer callStmtNum);
+    Vector<Integer> getAllCallStatementsByProcedure(const String& procName);
+    Vector<String> getAllProceduresCalled();
 
 private:
-    StatementNumVectorsByType listOfAllStatement; // getAllStmt
-    HashSet<Integer> setOfStatements;             // isStatementInProgram
+    StatementNumVectorsByType listOfAllStatement;       // getAllStmt
+    StatementNumSetsByType setOfAllStatement;           // getAllStmt
+    HashSet<Integer> setOfStatements;                   // isStatementInProgram
+    HashMap<StatementNumber, ProcedureName> procCalled; // getProcedureCalled
+    Vector<ProcedureName> allProcCalled;                // getAllProc
+    HashSet<ProcedureName> allProcCalledSet;            // de-duplication
+
+    HashMap<ProcedureName, Vector<StatementNumber>> stmtsCalling;     // getAllCallStatementsByProcedure
+    HashMap<ProcedureName, HashSet<StatementNumber>> stmtsCallingSet; // de-duplication
 };
 
 class ConstantTable {

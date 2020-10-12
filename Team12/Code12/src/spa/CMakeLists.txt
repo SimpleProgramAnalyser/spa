@@ -57,11 +57,17 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.cpp
 
     # pql/preprocessor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
