@@ -427,7 +427,7 @@ bool RelationshipsGraph::associateZeroExisting(const RelationshipsGraph& /* unus
     return true;
 }
 
-Boolean RelationshipsGraph::checkIfPotentialValueHasRelationships(const PotentialValue& pv)
+bool RelationshipsGraph::hasRelationships(const PotentialValue& pv)
 {
     if (valuesTable.find(pv) != valuesTable.end()) {
         return !valuesTable[pv].empty();
@@ -576,7 +576,7 @@ void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resul
     valuesTable.erase(pv);
     // check related values to see if they are empty as well
     for (const PotentialValue& affected : affectedValues) {
-        if (!checkIfPotentialValueHasRelationships(affected)) {
+        if (!hasRelationships(affected)) {
             // this related value no longer has any relationships
             // we update the results table
             resultsTable->eliminatePotentialValue(affected.synonym, affected.value);
@@ -627,11 +627,11 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
         edgesTable.erase(edge);
     }
     // check firstKey and secondKey whether empty or not
-    if (!checkIfPotentialValueHasRelationships(firstKey)) {
+    if (!hasRelationships(firstKey)) {
         resultsTable->eliminatePotentialValue(firstKey.synonym, firstKey.value);
         valuesTable.erase(firstKey);
     }
-    if (!checkIfPotentialValueHasRelationships(secondKey)) {
+    if (!hasRelationships(secondKey)) {
         resultsTable->eliminatePotentialValue(secondKey.synonym, secondKey.value);
         valuesTable.erase(secondKey);
     }
@@ -640,7 +640,7 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
     affectedValues.erase(secondKey);
     // check related values to see if they are empty as well
     for (const PotentialValue& affected : affectedValues) {
-        if (!checkIfPotentialValueHasRelationships(affected)) {
+        if (!hasRelationships(affected)) {
             // this related value no longer has any relationships
             // we update the results table
             resultsTable->eliminatePotentialValue(affected.synonym, affected.value);
@@ -655,7 +655,7 @@ Boolean RelationshipsGraph::hasSeenBefore(const Synonym& syn)
     return synonymSet.find(syn) != synonymSet.end();
 }
 
-Boolean RelationshipsGraph::checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv)
+Boolean RelationshipsGraph::areValuesRelated(const PotentialValue& firstPv, const PotentialValue& secondPv)
 {
     if (valuesTable.find(firstPv) != valuesTable.end()) {
         bool isRelated = false;

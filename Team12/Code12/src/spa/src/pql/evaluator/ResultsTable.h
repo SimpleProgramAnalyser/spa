@@ -361,7 +361,7 @@ private:
                                             const PotentialValue& existingKey, UpdatesQueue& updates);
     static bool associateZeroExisting(const RelationshipsGraph& graph, const PotentialValue& firstKey,
                                       const PotentialValue& secondKey, UpdatesQueue& updates);
-    Boolean checkIfPotentialValueHasRelationships(const PotentialValue& pv);
+    bool hasRelationships(const PotentialValue& pv);
 
 public:
     RelationshipsGraph() = default;
@@ -394,7 +394,7 @@ public:
     /**
      * Adds a list of relationships between potential values
      * of certain synonyms. This method assumes that the
-     * synonyms are not related (checkIfRelated returns false).
+     * synonyms are not related (areValuesRelated returns false).
      *
      * Doing this insertion may cause certain values to be discarded
      * from the ResultsTable.
@@ -466,7 +466,7 @@ public:
      *         there is a relationship between them.
      *         Otherwise, false.
      */
-    Boolean checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv);
+    Boolean areValuesRelated(const PotentialValue& firstPv, const PotentialValue& secondPv);
 
     /**
      * For one potential value, checks whether it has an edge

@@ -8,37 +8,37 @@
 #include "EvaluatorTestingUtils.h"
 #include "catch.hpp"
 
-TEST_CASE("checkIfRelated verifies PotentialValue relationships correctly")
+TEST_CASE("areValuesRelated verifies PotentialValue relationships correctly")
 {
     RelationshipsGraph graph = setUpTestingGraph();
-    REQUIRE(graph.checkIfRelated(PotentialValue("red", "ns1"), PotentialValue("green", "ew24")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("num", "3"), PotentialValue("purple", "outrampark")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("num", "16"), PotentialValue("purple", "sengkang")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("num", "16"), PotentialValue("purple", "outrampark")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("circle", "marymount"), PotentialValue("num", "16")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("circle", "marymount"), PotentialValue("purple", "outrampark")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("purple", "sengkang"), PotentialValue("circle", "marymount")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("num", "3"), PotentialValue("red", "ns25")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("green", "ew13"), PotentialValue("purple", "outrampark")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("green", "ew24"), PotentialValue("purple", "outrampark")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("CC", "4"), PotentialValue("DT", "15")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("DT", "9"), PotentialValue("CC", "19")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("DT", "26"), PotentialValue("CC", "10")));
-    REQUIRE(graph.checkIfRelated(PotentialValue("CC", "E1"), PotentialValue("DT", "16")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("red", "ns1"), PotentialValue("green", "ew24")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("num", "3"), PotentialValue("purple", "outrampark")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("num", "16"), PotentialValue("purple", "sengkang")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("num", "16"), PotentialValue("purple", "outrampark")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("circle", "marymount"), PotentialValue("num", "16")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("circle", "marymount"), PotentialValue("purple", "outrampark")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("purple", "sengkang"), PotentialValue("circle", "marymount")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("num", "3"), PotentialValue("red", "ns25")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("green", "ew13"), PotentialValue("purple", "outrampark")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("green", "ew24"), PotentialValue("purple", "outrampark")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("CC", "4"), PotentialValue("DT", "15")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("DT", "9"), PotentialValue("CC", "19")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("DT", "26"), PotentialValue("CC", "10")));
+    REQUIRE(graph.areValuesRelated(PotentialValue("CC", "E1"), PotentialValue("DT", "16")));
 
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("red", "ns26"), PotentialValue("green", "ew14")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("red", "ns26"), PotentialValue("green", "ew13")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("red", "ns25"), PotentialValue("green", "ew4")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("num", "6"), PotentialValue("purple", "outrampark")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("num", "2"), PotentialValue("purple", "sengkang")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("num", "12"), PotentialValue("purple", "serangoon")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("num", "6"), PotentialValue("circle", "dhobyghaut")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("circle", "onenorth"), PotentialValue("num", "23")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("CC", "4"), PotentialValue("CC", "19")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("CC", "4"), PotentialValue("DT", "16")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("DT", "15"), PotentialValue("DT", "9")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("NE", "6"), PotentialValue("CC", "1")));
-    REQUIRE_FALSE(graph.checkIfRelated(PotentialValue("DT", "15"), PotentialValue("CE", "1")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("red", "ns26"), PotentialValue("green", "ew14")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("red", "ns26"), PotentialValue("green", "ew13")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("red", "ns25"), PotentialValue("green", "ew4")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("num", "6"), PotentialValue("purple", "outrampark")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("num", "2"), PotentialValue("purple", "sengkang")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("num", "12"), PotentialValue("purple", "serangoon")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("num", "6"), PotentialValue("circle", "dhobyghaut")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("circle", "onenorth"), PotentialValue("num", "23")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("CC", "4"), PotentialValue("CC", "19")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("CC", "4"), PotentialValue("DT", "16")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("DT", "15"), PotentialValue("DT", "9")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("NE", "6"), PotentialValue("CC", "1")));
+    REQUIRE_FALSE(graph.areValuesRelated(PotentialValue("DT", "15"), PotentialValue("CE", "1")));
 }
 
 TEST_CASE("deleteOne updates ResultTable when a potential value no longer has any relationships")
