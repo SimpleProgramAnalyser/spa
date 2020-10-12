@@ -154,8 +154,9 @@ SCENARIO("Iteration 1 Tables Test")
         }
         WHEN("procedures are added")
         {
-            for (const auto& procedure : procedures)
-                procedureTable.insertIntoProcedureTable(procedure);
+            procedureTable.insertIntoProcedureTable("main", 1, 3);
+            procedureTable.insertIntoProcedureTable("raymarch", 4, 14);
+            procedureTable.insertIntoProcedureTable("spheresdf", 4, 23);
 
             THEN("correct procedures can be found")
             {

@@ -2,8 +2,10 @@
 #define PKB_H
 
 #include <pkb/PkbTypes.h>
+#include <pkb/relationships/Calls.h>
 #include <pkb/relationships/Follows.h>
 #include <pkb/relationships/Modifies.h>
+#include <pkb/relationships/Next.h>
 #include <pkb/relationships/Parent.h>
 #include <pkb/relationships/Uses.h>
 #include <pkb/tables/Tables.h>
@@ -77,20 +79,47 @@ Vector<Integer> getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore, S
 Vector<Pair<Integer, Integer>> getAllFollowsTuple(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 Vector<Pair<Integer, Integer>> getAllFollowsTupleStar(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter);
 
+// Next
+void addNextRelationships(StatementNumber prev, StatementType prevType, StatementNumber next, StatementType nextType);
+Boolean checkIfNextHolds(StatementNumber prev, StatementNumber next);
+Vector<StatementNumber> getAllNextStatements(StatementNumber prev, StatementType nextType);
+Vector<StatementNumber> getAllPreviousStatements(StatementNumber next, StatementType prevType);
+Vector<StatementNumber> getAllNextStatementsTyped(StatementType prevType, StatementType nextType);
+Vector<StatementNumber> getAllPreviousStatementsTyped(StatementType prevType, StatementType nextType);
+Vector<Pair<StatementNumber, StatementNumber>> getAllNextTuples(StatementType prevType, StatementType nextType);
+
+// Calls
+void addCallerRelationships(const ProcedureName& caller, const ProcedureName& callee);
+void addCallerRelationshipsStar(const ProcedureName& caller, const ProcedureName& callee);
+Boolean checkIfCallsHolds(const ProcedureName& caller, const ProcedureName& callee);
+Boolean checkIfCallsHoldsStar(const ProcedureName& caller, const ProcedureName& callee);
+Vector<ProcedureName> getAllCallers(const ProcedureName& callee);
+Vector<ProcedureName> getAllCallersStar(const ProcedureName& callee);
+Vector<ProcedureName> getAllCallees(const ProcedureName& caller);
+Vector<ProcedureName> getAllCalleesStar(const ProcedureName& caller);
+Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTuple();
+Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTupleStar();
+
 // Procedure
-void insertIntoProcedureTable(const String& procName);
-Boolean isProcedureInProgram(String procName);
+void insertIntoProcedureTable(const String& procName, StatementNumber firstStmtNum, StatementNumber lastStmtNum);
+Boolean isProcedureInProgram(const String& procName);
 Vector<String> getAllProcedures();
+StatementNumberRange getStatementRangeByProcedure(const ProcedureName& procedureName);
+Vector<ProcedureName> getContainingProcedure(StatementNumber statementNumber);
 
 // Variable
 void insertIntoVariableTable(const String& varName);
-Boolean isVariableInProgram(String varName);
+Boolean isVariableInProgram(const String& varName);
 Vector<String> getAllVariables();
 
 // Statement
 void insertIntoStatementTable(Integer stmtNum, StatementType stmtType);
 Boolean isStatementInProgram(Integer stmtNum);
 Vector<Integer> getAllStatements(StatementType stmtType);
+void insertIntoStatementTable(Integer stmtNum, const ProcedureName& procName);
+Vector<String> getProcedureCalled(Integer callStmtNum);
+Vector<Integer> getAllCallStatementsByProcedure(const String& procName);
+Vector<String> getAllProceduresCalled();
 
 // Constant
 void insertIntoConstantTable(Integer constant);
@@ -115,6 +144,8 @@ public:
     UsesTable usesTable;
     ModifiesTable modifiesTable;
     ConstantTable constantTable;
+    NextTable nextTable;
+    CallsTable callsTable;
 };
 
 #endif // PKB_H

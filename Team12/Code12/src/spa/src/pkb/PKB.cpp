@@ -245,9 +245,9 @@ Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfPar
 }
 
 // Procedure
-void insertIntoProcedureTable(const String& procName)
+void insertIntoProcedureTable(const String& procName, StatementNumber firstStmtNum, StatementNumber lastStmtNum)
 {
-    pkb.procedureTable.insertIntoProcedureTable(procName);
+    pkb.procedureTable.insertIntoProcedureTable(procName, firstStmtNum, lastStmtNum);
 }
 Boolean isProcedureInProgram(const String& procName)
 {
@@ -256,6 +256,14 @@ Boolean isProcedureInProgram(const String& procName)
 Vector<String> getAllProcedures()
 {
     return pkb.procedureTable.getAllProcedures();
+}
+StatementNumberRange getStatementRangeByProcedure(const ProcedureName& procedureName)
+{
+    return pkb.procedureTable.getStatementRangeByProcedure(procedureName);
+}
+Vector<ProcedureName> getContainingProcedure(StatementNumber statementNumber)
+{
+    return pkb.procedureTable.getContainingProcedure(statementNumber);
 }
 
 // Variable
@@ -285,17 +293,34 @@ Vector<Integer> getAllStatements(StatementType stmtType)
 {
     return pkb.statementTable.getAllStatements(stmtType);
 }
+void insertIntoStatementTable(Integer stmtNum, const ProcedureName& procName)
+{
+    return pkb.statementTable.insertIntoStatementTable(stmtNum, procName);
+}
+Vector<String> getProcedureCalled(Integer callStmtNum)
+{
+    return pkb.statementTable.getProcedureCalled(callStmtNum);
+}
+Vector<Integer> getAllCallStatementsByProcedure(const String& procName)
+{
+    return pkb.statementTable.getAllCallStatementsByProcedure(procName);
+}
+Vector<String> getAllProceduresCalled()
+{
+    return pkb.statementTable.getAllProceduresCalled();
+}
 
 // RootNode
 void assignRootNode(ProgramNode* rootNodeToAssign)
 {
     pkb.rootNode = rootNodeToAssign;
 }
-
 ProgramNode* getRootNode()
 {
     return pkb.rootNode;
 }
+
+// Constant
 void insertIntoConstantTable(Integer constant)
 {
     pkb.constantTable.insertIntoConstantTable(constant);
@@ -307,4 +332,76 @@ Boolean isConstantInProgram(Integer constant)
 Vector<Integer> getAllConstants()
 {
     return pkb.constantTable.getAllConstants();
+}
+
+// Next
+void addNextRelationships(StatementNumber prev, StatementType prevType, StatementNumber next, StatementType nextType)
+{
+    return pkb.nextTable.addNextRelationships(prev, prevType, next, nextType);
+}
+Boolean checkIfNextHolds(StatementNumber prev, StatementNumber next)
+{
+    return pkb.nextTable.checkIfNextHolds(prev, next);
+}
+Vector<StatementNumber> getAllNextStatements(StatementNumber prev, StatementType nextType)
+{
+    return pkb.nextTable.getAllNextStatements(prev, nextType);
+}
+Vector<StatementNumber> getAllPreviousStatements(StatementNumber next, StatementType prevType)
+{
+    return pkb.nextTable.getAllPreviousStatements(next, prevType);
+}
+Vector<StatementNumber> getAllNextStatementsTyped(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextTable.getAllNextStatementsTyped(prevType, nextType);
+}
+Vector<StatementNumber> getAllPreviousStatementsTyped(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextTable.getAllPreviousStatementsTyped(prevType, nextType);
+}
+Vector<Pair<StatementNumber, StatementNumber>> getAllNextTuples(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextTable.getAllNextTuples(prevType, nextType);
+}
+
+// Calls
+void addCallerRelationships(const ProcedureName& caller, const ProcedureName& callee)
+{
+    return pkb.callsTable.addCallerRelationships(caller, callee);
+}
+void addCallerRelationshipsStar(const ProcedureName& caller, const ProcedureName& callee)
+{
+    return pkb.callsTable.addCallerRelationshipsStar(caller, callee);
+}
+Boolean checkIfCallsHolds(const ProcedureName& caller, const ProcedureName& callee)
+{
+    return pkb.callsTable.checkIfCallsHolds(caller, callee);
+}
+Boolean checkIfCallsHoldsStar(const ProcedureName& caller, const ProcedureName& callee)
+{
+    return pkb.callsTable.checkIfCallsHoldsStar(caller, callee);
+}
+Vector<ProcedureName> getAllCallers(const ProcedureName& callee)
+{
+    return pkb.callsTable.getAllCallers(callee);
+}
+Vector<ProcedureName> getAllCallersStar(const ProcedureName& callee)
+{
+    return pkb.callsTable.getAllCallersStar(callee);
+}
+Vector<ProcedureName> getAllCallees(const ProcedureName& caller)
+{
+    return pkb.callsTable.getAllCallees(caller);
+}
+Vector<ProcedureName> getAllCalleesStar(const ProcedureName& caller)
+{
+    return pkb.callsTable.getAllCalleesStar(caller);
+}
+Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTuple()
+{
+    return pkb.callsTable.getAllCallsTuple();
+}
+Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTupleStar()
+{
+    return pkb.callsTable.getAllCallsTupleStar();
 }

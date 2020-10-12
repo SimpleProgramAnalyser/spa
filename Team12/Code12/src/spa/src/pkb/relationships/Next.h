@@ -14,7 +14,7 @@ public:
     // Section 2: Table and inverse table methods
     Boolean checkIfNextHolds(StatementNumber prev, StatementNumber next);
     Vector<StatementNumber> getAllNextStatements(StatementNumber prev, StatementType nextType);
-    Vector<StatementNumber> getAllPreviousStatements(StatementNumber prev, StatementType nextType);
+    Vector<StatementNumber> getAllPreviousStatements(StatementNumber next, StatementType prevType);
 
     // Section 3: Collection table methods
     Vector<StatementNumber> getAllNextStatementsTyped(StatementType prevType, StatementType nextType);
