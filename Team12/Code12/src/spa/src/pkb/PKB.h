@@ -130,6 +130,10 @@ Vector<Integer> getAllConstants();
 void assignRootNode(ProgramNode* rootNodeToAssign);
 ProgramNode* getRootNode();
 
+// CFG
+void storeCFG(void* cfg, ProcedureName procedureName);
+void* getCFG(ProcedureName procedureName);
+
 // Others
 void resetPKB();
 
@@ -146,6 +150,7 @@ public:
     ConstantTable constantTable;
     NextTable nextTable;
     CallsTable callsTable;
+    HashMap<ProcedureName, void*> cfgByProcedure;
 };
 
 #endif // PKB_H

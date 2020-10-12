@@ -405,3 +405,17 @@ Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTupleStar()
 {
     return pkb.callsTable.getAllCallsTupleStar();
 }
+
+// CFG
+void storeCFG(void* cfg, ProcedureName procedureName)
+{
+    pkb.cfgByProcedure[procedureName] = cfg;
+}
+void* getCFG(ProcedureName procedureName)
+{
+    if (pkb.cfgByProcedure.find(procedureName) == pkb.cfgByProcedure.end()) {
+        return nullptr;
+    } else {
+        return pkb.cfgByProcedure[procedureName];
+    }
+}

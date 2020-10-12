@@ -156,7 +156,7 @@ SCENARIO("Iteration 1 Tables Test")
         {
             procedureTable.insertIntoProcedureTable("main", 1, 3);
             procedureTable.insertIntoProcedureTable("raymarch", 4, 14);
-            procedureTable.insertIntoProcedureTable("spheresdf", 4, 23);
+            procedureTable.insertIntoProcedureTable("spheresdf", 14, 23);
 
             THEN("correct procedures can be found")
             {
