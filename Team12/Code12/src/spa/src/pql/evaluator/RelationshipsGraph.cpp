@@ -487,6 +487,13 @@ RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valu
         (*updatesToValuesTable.front())(*this);
         updatesToValuesTable.pop();
     }
+    // update synonym set
+    if (firstIsNew) {
+        synonymSet.insert(firstSynonym);
+    }
+    if (secondIsNew) {
+        synonymSet.insert(secondSynonym);
+    }
     return Pair<Vector<String>, Vector<String>>(
         Vector<String>(firstSynonymResults.begin(), firstSynonymResults.end()),
         Vector<String>(secondSynonymResults.begin(), secondSynonymResults.end()));
