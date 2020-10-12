@@ -472,10 +472,10 @@ bool RelationshipsGraph::compareStructure(const RelationshipsGraph& rg) const
     // compare values
     std::vector<PotentialValue> thisValues;
     std::vector<PotentialValue> rgValues;
-    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>> value : this->valuesTable) {
+    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>>& value : this->valuesTable) {
         thisValues.push_back(value.first);
     }
-    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>> value : rg.valuesTable) {
+    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>>& value : rg.valuesTable) {
         rgValues.push_back(value.first);
     }
     std::sort(thisValues.begin(), thisValues.end());

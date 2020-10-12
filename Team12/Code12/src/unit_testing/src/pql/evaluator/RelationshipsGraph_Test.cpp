@@ -49,11 +49,10 @@ TEST_CASE("deleteOne updates ResultTable when a potential value no longer has an
     results->getResultsZero();
     // manual deletion of potential value
     graph.deleteOne(PotentialValue("red", "ns25"), results.get());
-    requireVectorsHaveSameElements(
-        results->getResultsOne("red"),
-        std::vector<std::string>({"ns1",  "ns2",  "ns3",  "ns4",  "ns5",  "ns7",  "ns8",  "ns9",  "ns10",
-                                  "ns11", "ns12", "ns13", "ns14", "ns15", "ns16", "ns17", "ns18", "ns19",
-                                  "ns20", "ns21", "ns22", "ns23", "ns24", "ns26", "ns27", "ns28"}));
+    // red is not updated, since deleteOne is called only when a
+    // value is removed from the ResultsTable in the first place
+    //
+    // it is the caller's responsibility to delete it from ResultsTable
     requireVectorsHaveSameElements(
         results->getResultsOne("green"),
         std::vector<std::string>({"ew1",  "ew2",  "ew3",  "ew4",  "ew5",  "ew6",  "ew7",  "ew8",
@@ -112,19 +111,13 @@ TEST_CASE("deleteOne leaves other relationships untouched")
     RelationshipsGraph graph = setUpTestingGraph();
     std::unique_ptr<ResultsTable> results = setUpResultsTable();
     graph.deleteOne(PotentialValue("purple", "sengkang"), results.get());
-
-    // purple is modified
-    requireVectorsHaveSameElements(
-        results->getResultsOne("purple"),
-        std::vector<std::string>({"harbourfront", "outrampark", "chinatown", "clarkequay", "dhobyghaut", "littleindia",
-                                  "farrerpark", "boonkeng", "potongpasir", "woodleigh", "serangoon", "kovan", "hougang",
-                                  "buangkok", "punggol"}));
     // num, circle, green, red unmodified as there is still a relationship
     // between 16 <--> marymount <--> ew24 <--> ns1
-    requireVectorsHaveSameElements(results->getResultsOne("num"),
-                                   std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10",
-                                                             "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
-                                                             "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
+    requireVectorsHaveSameElements(
+        results->getResultsOne("num"),
+        std::vector<std::string>({"1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "10", "11", "12",
+                                  "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24",
+                                  "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35"}));
     requireVectorsHaveSameElements(
         results->getResultsOne("circle"),
         std::vector<std::string>({"dhobyghaut",   "brasbasah",    "esplanade",      "promenade",   "nicollhighway",
@@ -132,7 +125,7 @@ TEST_CASE("deleteOne leaves other relationships untouched")
                                   "taiseng",      "bartley",      "serangoon",      "lorongchuan", "bishan",
                                   "marymount",    "caldecott",    "botanicgardens", "farrerroad",  "hollandvillage",
                                   "buonavista",   "onenorth",     "kentridge",      "hawparvilla", "pasirpanjang",
-                                  "labradorpark", "telokblangah", "harbourfront"}));
+                                  "labradorpark", "telokblangah", "harbourfront",   "bayfront",    "marinabay"}));
     requireVectorsHaveSameElements(
         results->getResultsOne("green"),
         std::vector<std::string>({"ew1",  "ew2",  "ew3",  "ew4",  "ew5",  "ew6",  "ew7",  "ew8",  "ew9",

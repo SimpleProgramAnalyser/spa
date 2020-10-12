@@ -416,8 +416,10 @@ public:
      * table if other potential values can no longer exist.
      *
      * This method is to be called whenever a potential value
-     * is filtered out from the results table, to automatically
-     * delete related values as well (if possible).
+     * is deleted from the results table, to automatically
+     * delete related values as well (if possible). Because
+     * of this, deleteOne assumes pv no longer exists in
+     * the resultsTable, and will not attempt to delete it.
      *
      * @param pv The potential value to delete.
      * @param resultsTable The results table to update, if related
