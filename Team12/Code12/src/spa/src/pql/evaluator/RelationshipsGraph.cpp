@@ -314,15 +314,13 @@ bool RelationshipsGraph::associateTwoExisting(const RelationshipsGraph& graph, c
     for (GraphEdge e1 : edgesFirst) {
         for (GraphEdge e2 : edgesSecond) {
             updates.push(EdgesTableNewSet());
-            std::unordered_set<PotentialValue, PotentialValueHasher> edgeValues;
             for (const SynonymWithValue& swv1 : graph.edgesTable.at(e1)) {
                 updates.push(EdgesTableInsertToNewest(swv1.asPv()));
+                updates.push(ValuesTableInsertNewest(swv1.asPv()));
             }
             for (const SynonymWithValue& swv2 : graph.edgesTable.at(e2)) {
                 updates.push(EdgesTableInsertToNewest(swv2.asPv()));
-            }
-            for (const PotentialValue& pv : edgeValues) {
-                updates.push(ValuesTableInsertNewest(pv));
+                updates.push(ValuesTableInsertNewest(swv2.asPv()));
             }
         }
     }

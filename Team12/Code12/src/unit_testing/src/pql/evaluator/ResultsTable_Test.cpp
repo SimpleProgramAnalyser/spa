@@ -218,7 +218,6 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
     resTable.storeResultsOne("pqlprocessor", procedures);
     resTable.storeResultsOne("designextractor", statements);
     resTable.storeResultsOne("parser", variables);
-    resTable.getResultsZero();
 
     std::vector<std::pair<std::string, std::string>> mudkipSwampertRelationships(
         {{"taylor", "swift"}, {"adele", "adkins"}});
@@ -226,12 +225,13 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
         {{"6", "terracotta"}, {"3", "concrete"}});
     std::vector<std::pair<std::string, std::string>> parserDesignExtractorRelationships(
         {{"treintaytres", "33"}, {"ochentaynueve", "89"}, {"doce", "12"}});
-    std::vector<std::pair<std::string, std::string>> astParserRelationships({{"12", "34"}});
+    std::vector<std::pair<std::string, std::string>> astDesignExtractorRelationships({{"6", "33"}});
 
-    resTable.associateRelationships("mudkip", "swampert", mudkipSwampertRelationships);
-    resTable.associateRelationships("ast", "pqlprocessor", astPqlProcessorRelationships);
-    resTable.associateRelationships("parser", "designextractor", parserDesignExtractorRelationships);
-    resTable.associateRelationships("ast", "parser", astParserRelationships);
+    resTable.storeResultsTwo("mudkip", "swampert", mudkipSwampertRelationships);
+    resTable.storeResultsTwo("ast", "pqlprocessor", astPqlProcessorRelationships);
+    resTable.storeResultsTwo("parser", "designextractor", parserDesignExtractorRelationships);
+    resTable.storeResultsTwo("ast", "designextractor", astDesignExtractorRelationships);
+    resTable.getResultsZero();
 
     SECTION("hasRelationships returns true for related synonyms, false for unrelated synonyms")
     {
@@ -239,21 +239,20 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
         REQUIRE(resTable.hasRelationships("ast", "pqlprocessor"));
         REQUIRE(resTable.hasRelationships("parser", "designextractor"));
         REQUIRE(resTable.hasRelationships("swampert", "mudkip"));
+        REQUIRE(resTable.hasRelationships("ast", "designextractor"));
+        REQUIRE(resTable.hasRelationships("parser", "pqlprocessor"));
 
-        REQUIRE_FALSE(resTable.hasRelationships("ast", "designextractor"));
         REQUIRE_FALSE(resTable.hasRelationships("swampert", "ast"));
         REQUIRE_FALSE(resTable.hasRelationships("mudkip", "parser"));
-        REQUIRE_FALSE(resTable.hasRelationships("parser", "pqlprocessor"));
     }
 
     SECTION("getResults retrieves all relationships in table")
     {
-        std::vector<std::pair<std::string, std::string>> astPqlProcessorRelationshipsString(
-            {{"6", "terracotta"}, {"3", "concrete"}});
-        std::vector<std::pair<std::string, std::string>> astParserRelationshipsString({{"12", "34"}});
+        std::vector<std::pair<std::string, std::string>> astPqlProcessorRelationshipsString({{"6", "terracotta"}});
+        std::vector<std::pair<std::string, std::string>> astParserRelationshipsString({{"6", "treintaytres"}});
         // "parser" and "designextractor" are swapped
         std::vector<std::pair<std::string, std::string>> designExtractorParserRelationshipsExpected(
-            {{"33", "treintaytres"}, {"89", "ochentaynueve"}, {"12", "doce"}});
+            {{"33", "treintaytres"}});
         // "swampert" and "mudkip" are swapped
         std::vector<std::pair<std::string, std::string>> swampertMudkipRelationshipsExpected(
             {{"swift", "taylor"}, {"adkins", "adele"}});
@@ -322,4 +321,79 @@ TEST_CASE("Results of two synonyms merges to give empty results")
     table.storeResultsTwo("circle", "purple", circlePurpleRelationships);
     table.getResultsZero();
     REQUIRE_FALSE(table.hasResults());
+}
+
+TEST_CASE("getResultsTwo returns expected relationships")
+{
+    std::vector<std::pair<std::string, std::string>> redGreenRelationships(
+        {{"ns25", "ew13"}, {"ns26", "ew14"}, {"ns1", "ew24"}});
+    std::vector<std::pair<std::string, std::string>> numPurpleRelationships(
+        {{"6", "dhobyghaut"}, {"3", "outrampark"}, {"16", "sengkang"}, {"stc", "sengkang"}, {"16", "outrampark"}});
+    std::vector<std::pair<std::string, std::string>> circleNumRelationships({{"onenorth", "23"},
+                                                                             {"harbourfront", "29"},
+                                                                             {"bartley", "12"},
+                                                                             {"hollandvillage", "21"},
+                                                                             {"marymount", "16"},
+                                                                             {"dhobyghaut", "1"},
+                                                                             {"esplanade", "3"}});
+    std::vector<std::pair<std::string, std::string>> ccDtRelationships(
+        {{"4", "15"}, {"19", "9"}, {"10", "26"}, {"E1", "16"}});
+    std::vector<std::pair<std::string, std::string>> circleRedRelationships(
+        {{"esplanade", "ns25"}, {"marymount", "ns1"}, {"marinabay", "ns27"}});
+
+    ResultsTable table(DeclarationTable{});
+    table.storeResultsTwo("red", "green", redGreenRelationships);
+    table.storeResultsTwo("num", "purple", numPurpleRelationships);
+    table.storeResultsTwo("circle", "num", circleNumRelationships);
+    table.storeResultsTwo("CC", "DT", ccDtRelationships);
+    table.storeResultsTwo("circle", "red", circleRedRelationships);
+
+    SECTION("getResultsTwo returns correct relationships for related synonyms")
+    {
+        requireVectorsHaveSameElements(table.getResultsTwo("red", "green"), {{"ns1", "ew24"}, {"ns25", "ew13"}});
+        requireVectorsHaveSameElements(table.getResultsTwo("num", "circle"), {{"16", "marymount"}, {"3", "esplanade"}});
+        requireVectorsHaveSameElements(table.getResultsTwo("purple", "green"),
+                                       {{"sengkang", "ew24"}, {"outrampark", "ew24"}, {"outrampark", "ew13"}});
+        requireVectorsHaveSameElements(table.getResultsTwo("DT", "CC"),
+                                       {{"15", "4"}, {"9", "19"}, {"26", "10"}, {"16", "E1"}});
+    }
+
+    SECTION("getResultsTwo returns cross-product for unrelated synonyms")
+    {
+        requireVectorsHaveSameElements(table.getResultsTwo("red", "DT"), {{"ns1", "15"},
+                                                                          {"ns25", "15"},
+                                                                          {"ns1", "9"},
+                                                                          {"ns25", "9"},
+                                                                          {"ns1", "26"},
+                                                                          {"ns25", "26"},
+                                                                          {"ns1", "16"},
+                                                                          {"ns25", "16"}});
+        requireVectorsHaveSameElements(
+            table.getResultsTwo("num", "CC"),
+            {{"16", "4"}, {"3", "4"}, {"16", "19"}, {"3", "19"}, {"16", "10"}, {"3", "10"}, {"16", "E1"}, {"3", "E1"}});
+        requireVectorsHaveSameElements(table.getResultsTwo("CC", "purple"), {{"4", "sengkang"},
+                                                                             {"4", "outrampark"},
+                                                                             {"19", "sengkang"},
+                                                                             {"19", "outrampark"},
+                                                                             {"10", "sengkang"},
+                                                                             {"10", "outrampark"},
+                                                                             {"E1", "sengkang"},
+                                                                             {"E1", "outrampark"}});
+        requireVectorsHaveSameElements(table.getResultsTwo("DT", "circle"), {{"15", "marymount"},
+                                                                             {"15", "esplanade"},
+                                                                             {"9", "marymount"},
+                                                                             {"9", "esplanade"},
+                                                                             {"26", "marymount"},
+                                                                             {"26", "esplanade"},
+                                                                             {"16", "marymount"},
+                                                                             {"16", "esplanade"}});
+        requireVectorsHaveSameElements(table.getResultsTwo("green", "CC"), {{"ew24", "4"},
+                                                                            {"ew13", "4"},
+                                                                            {"ew24", "19"},
+                                                                            {"ew13", "19"},
+                                                                            {"ew24", "10"},
+                                                                            {"ew13", "10"},
+                                                                            {"ew24", "E1"},
+                                                                            {"ew13", "E1"}});
+    }
 }
