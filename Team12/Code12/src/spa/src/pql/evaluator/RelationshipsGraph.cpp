@@ -508,6 +508,11 @@ bool RelationshipsGraph::compareStructure(const RelationshipsGraph& rg) const
     return thisEdges == rgEdges;
 }
 
+void RelationshipsGraph::addToSynonymSet(const Synonym& syn)
+{
+    synonymSet.insert(syn);
+}
+
 Pair<Vector<String>, Vector<String>>
 RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valueRelationships,
                                         const Synonym& firstSynonym, bool firstIsNew, const Synonym& secondSynonym,

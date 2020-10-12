@@ -385,6 +385,13 @@ public:
     bool compareStructure(const RelationshipsGraph& rg) const;
 
     /**
+     * A method to add a synonym to the synonyms set, that keeps
+     * track of which synonyms have already been encountered by
+     * the RelationshipsGraph. Used for unit testing.
+     */
+    void addToSynonymSet(const Synonym& syn);
+
+    /**
      * Adds a list of relationships between potential values
      * of certain synonyms. This method assumes that the
      * synonyms are not related (checkIfRelated returns false).

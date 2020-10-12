@@ -89,6 +89,7 @@ TEST_CASE("ValuesTableNewSet, ValuesTableInsert, EdgesTableInsert puts a new val
     (*instruction1)(graph);
     (*instruction2)(graph);
     (*instruction3)(graph);
+    graph.addToSynonymSet("myNewVal");
     REQUIRE(graph
             == RelationshipsGraph({{1, {Pv("var1", "x"), Pv("var2", "y"), Pv("myNewVal", "12345")}},
                                    {2, {Pv("var1", "x"), Pv("var2", "d")}},
@@ -113,6 +114,8 @@ TEST_CASE("ValuesTableForceInsertNewest, EdgesTableInsertToNewest puts a new val
     (*instruction3)(graph);
     (*instruction4)(graph);
     (*instruction5)(graph);
+    graph.addToSynonymSet("myNewVal");
+    graph.addToSynonymSet("myNewVal2");
     REQUIRE(graph
             == RelationshipsGraph({{1, {Pv("var1", "x"), Pv("var2", "y")}},
                                    {2, {Pv("var1", "x"), Pv("var2", "d")}},
