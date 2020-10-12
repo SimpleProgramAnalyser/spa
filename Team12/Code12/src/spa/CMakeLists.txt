@@ -48,24 +48,27 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.cpp
 
-    # pkb
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
+        # pkb
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Follows.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Parent.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Modifies.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.h
 
-    # pql/preprocessor
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
+        # pql/preprocessor
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
