@@ -153,24 +153,6 @@ public:
     Boolean hasResults() const;
 
     /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms. This method assumes the values are
-     * new to the table and do not have any existing relations
-     * in the relationships graph.
-     *
-     * If the references are not synonyms, do nothing.
-     *
-     * @param syn1 The reference that the first value
-     *             corresponds to.
-     * @param syn2 The reference that the second
-     *             value corresponds to.
-     * @param relationshipsPairs List of relationships between
-     *                           potential values.
-     */
-    void associateRelationships(const Synonym& syn1, const Synonym& syn2,
-                                const Vector<Pair<String, String>>& relationshipsPairs);
-
-    /**
      * Disassociates a certain value from a synonym in
      * the results table, if that value exists.
      *
@@ -314,12 +296,6 @@ public:
  *         the vacuously true statement.
  */
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
-
-// Identity function for strings
-inline String stringId(String str)
-{
-    return str;
-}
 
 typedef Integer GraphEdge;
 class TableUpdate;

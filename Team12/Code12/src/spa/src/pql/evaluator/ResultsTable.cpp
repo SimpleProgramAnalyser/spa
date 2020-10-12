@@ -293,12 +293,6 @@ Boolean ResultsTable::hasResults() const
     return hasResult;
 }
 
-void ResultsTable::associateRelationships(const Synonym& syn1, const Synonym& syn2,
-                                          const Vector<Pair<String, String>>& relationshipsPairs)
-{
-    this->relationships->insertRelationships(relationshipsPairs, syn1, true, syn2, true);
-}
-
 void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
 {
     if (resultsMap.find(synonym) != resultsMap.end()) {
