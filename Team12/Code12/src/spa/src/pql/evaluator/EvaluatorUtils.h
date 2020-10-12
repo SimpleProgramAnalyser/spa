@@ -37,6 +37,7 @@ public:
     explicit PotentialValue(const SynonymWithValue& swv);
     explicit operator SynonymWithValue() const;
     bool operator==(const PotentialValue& pv) const;
+    bool operator<(const PotentialValue& pv) const;
 
     // Convert to SynonymWithValue.
     SynonymWithValue asSwv() const;

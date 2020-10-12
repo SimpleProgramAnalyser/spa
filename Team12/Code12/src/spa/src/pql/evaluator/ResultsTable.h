@@ -133,6 +133,14 @@ public:
     bool operator==(const ResultsTable& rt) const;
 
     /**
+     * A method to get the RelationshipsGraph stored inside
+     * the ResultsTable, for testing purposes.
+     *
+     * @return The RelationshipsGraph stored inside.
+     */
+    RelationshipsGraph getRelationshipsGraph() const;
+
+    /**
      * Returns true if the result table is marked as having
      * no results at all, which happens if a clause returns
      * no results. This would ensure that the entire program
@@ -367,9 +375,14 @@ public:
 
     /**
      * A method to compare two RelationshipsGraph for testing purposes.
-     * This method ignores differences in the synonym cache.
      */
     bool operator==(const RelationshipsGraph& rg) const;
+
+    /**
+     * A method to compare the structure of two RelationshipsGraphs.
+     * This method ignores specific edge numbers.
+     */
+    bool compareStructure(const RelationshipsGraph& rg) const;
 
     /**
      * Adds a list of relationships between potential values

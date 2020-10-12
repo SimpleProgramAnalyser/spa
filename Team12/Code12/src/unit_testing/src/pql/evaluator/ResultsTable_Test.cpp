@@ -8,7 +8,6 @@
 #include "EvaluatorTestingUtils.h"
 #include "catch.hpp"
 #include "pkb/PKB.h"
-#include "pql/evaluator/ResultsTable.h"
 
 TEST_CASE("ResultsTable stores empty results correctly")
 {
@@ -267,4 +266,60 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
         requireVectorsHaveSameElements(resTable.getResultsTwo("swampert", "mudkip"),
                                        swampertMudkipRelationshipsExpected);
     }
+}
+
+TEST_CASE("Results of two synonyms merges to give expected relationships")
+{
+    std::vector<std::pair<std::string, std::string>> redGreenRelationships(
+        {{"ns25", "ew13"}, {"ns26", "ew14"}, {"ns1", "ew24"}});
+    std::vector<std::pair<std::string, std::string>> numPurpleRelationships(
+        {{"6", "dhobyghaut"}, {"3", "outrampark"}, {"16", "sengkang"}, {"stc", "sengkang"}, {"16", "outrampark"}});
+    std::vector<std::pair<std::string, std::string>> circleNumRelationships({{"onenorth", "23"},
+                                                                             {"harbourfront", "29"},
+                                                                             {"bartley", "12"},
+                                                                             {"hollandvillage", "21"},
+                                                                             {"marymount", "16"},
+                                                                             {"dhobyghaut", "1"},
+                                                                             {"esplanade", "3"}});
+    std::vector<std::pair<std::string, std::string>> ccDtRelationships(
+        {{"4", "15"}, {"19", "9"}, {"10", "26"}, {"E1", "16"}});
+    std::vector<std::pair<std::string, std::string>> circleRedRelationships(
+        {{"esplanade", "ns25"}, {"marymount", "ns1"}, {"marinabay", "ns27"}});
+
+    ResultsTable table(DeclarationTable{});
+    table.storeResultsTwo("red", "green", redGreenRelationships);
+    table.storeResultsTwo("num", "purple", numPurpleRelationships);
+    table.storeResultsTwo("circle", "num", circleNumRelationships);
+    table.storeResultsTwo("CC", "DT", ccDtRelationships);
+    table.storeResultsTwo("circle", "red", circleRedRelationships);
+    table.getResultsZero();
+    REQUIRE(table.getRelationshipsGraph().compareStructure(setUpTestingGraph()));
+}
+
+TEST_CASE("Results of two synonyms merges to give empty results")
+{
+    std::vector<std::pair<std::string, std::string>> redGreenRelationships(
+        {{"ns25", "ew13"}, {"ns26", "ew14"}, {"ns1", "ew24"}});
+    std::vector<std::pair<std::string, std::string>> numPurpleRelationships(
+        {{"6", "dhobyghaut"}, {"3", "outrampark"}, {"16", "sengkang"}, {"stc", "sengkang"}, {"16", "outrampark"}});
+    std::vector<std::pair<std::string, std::string>> circleNumRelationships({{"onenorth", "23"},
+                                                                             {"harbourfront", "29"},
+                                                                             {"bartley", "12"},
+                                                                             {"hollandvillage", "21"},
+                                                                             {"marymount", "16"},
+                                                                             {"dhobyghaut", "1"},
+                                                                             {"esplanade", "3"}});
+    std::vector<std::pair<std::string, std::string>> ccDtRelationships(
+        {{"4", "15"}, {"19", "9"}, {"10", "26"}, {"E1", "16"}});
+    std::vector<std::pair<std::string, std::string>> circlePurpleRelationships(
+        {{"esplanade", "sengkang"}, {"marymount", "potongpasir"}, {"marinabay", "outrampark"}});
+
+    ResultsTable table(DeclarationTable{});
+    table.storeResultsTwo("red", "green", redGreenRelationships);
+    table.storeResultsTwo("num", "purple", numPurpleRelationships);
+    table.storeResultsTwo("circle", "num", circleNumRelationships);
+    table.storeResultsTwo("CC", "DT", ccDtRelationships);
+    table.storeResultsTwo("circle", "purple", circlePurpleRelationships);
+    table.getResultsZero();
+    REQUIRE_FALSE(table.hasResults());
 }

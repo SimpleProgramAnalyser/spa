@@ -152,14 +152,14 @@ struct ResultsRelationHasher {
 void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const Synonym& s2,
                                     const PairedResult& tuples)
 {
+    ClauseResult syn1Results;
+    ClauseResult syn2Results;
     if (table->hasRelationships(s1, s2)) {
         // past relations exist for s1 and s2 (inner join)
         std::unordered_set<ResultsRelation, ResultsRelationHasher> newRelationsSet;
         for (const std::pair<String, String>& newRelation : tuples) {
             newRelationsSet.insert(ResultsRelation(newRelation.first, newRelation.second));
         }
-        ClauseResult syn1Results;
-        ClauseResult syn2Results;
         std::vector<std::pair<String, String>> pastRelationsList = table->getRelationships(s1, s2);
         for (const std::pair<String, String>& pastRelationPair : pastRelationsList) {
             ResultsRelation pastRelation(pastRelationPair.first, pastRelationPair.second);
@@ -172,20 +172,20 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
                 syn2Results.push_back(pastRelationPair.second);
             }
         }
-        table->filterAfterVerification(s1, syn1Results);
-        table->filterAfterVerification(s2, syn2Results);
     } else {
         Boolean s1IsNew = !table->relationships->hasSeenBefore(s1);
         Boolean s2IsNew = !table->relationships->hasSeenBefore(s2);
         // load relationships first, to see which relationships were successfully added
         Pair<Vector<String>, Vector<String>> successfulValues
             = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
-        if (successfulValues.first.empty() || successfulValues.second.empty()) {
-            table->hasResult = false;
-        } else {
-            table->filterAfterVerification(s1, successfulValues.first);
-            table->filterAfterVerification(s2, successfulValues.second);
-        }
+        syn1Results = successfulValues.first;
+        syn2Results = successfulValues.second;
+    }
+    if (syn1Results.empty() || syn2Results.empty()) {
+        table->hasResult = false;
+    } else {
+        table->filterAfterVerification(s1, syn1Results);
+        table->filterAfterVerification(s2, syn2Results);
     }
 }
 
@@ -281,6 +281,11 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
     }
     return isResultsTheSame && this->declarations == rt.declarations && *(this->relationships) == *(rt.relationships)
            && this->hasResult == rt.hasResult && this->hasEvaluated == rt.hasEvaluated;
+}
+
+RelationshipsGraph ResultsTable::getRelationshipsGraph() const
+{
+    return *relationships;
 }
 
 Boolean ResultsTable::hasResults() const

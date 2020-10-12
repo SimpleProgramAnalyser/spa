@@ -2,6 +2,7 @@
  * Implementation of Relationships Graph for
  * Query Evaluator's Result Table.
  */
+#include <algorithm>
 #include <stdexcept>
 #include <utility>
 
@@ -447,7 +448,7 @@ RelationshipsGraph::RelationshipsGraph(const std::vector<std::pair<GraphEdge, st
             edge.first, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>()));
         for (const PotentialValue& pv : edge.second) {
             edgesTable[edge.first].insert(pv.asSwv());
-            if (valuesTable.find(pv) != valuesTable.end()) {
+            if (valuesTable.find(pv) == valuesTable.end()) {
                 valuesTable.insert({pv, {}});
                 synonymSet.insert(pv.synonym);
             }
@@ -460,6 +461,53 @@ bool RelationshipsGraph::operator==(const RelationshipsGraph& rg) const
 {
     return this->valuesTable == rg.valuesTable && this->edgesTable == rg.edgesTable && this->synonymSet == rg.synonymSet
            && this->edgesIndex == rg.edgesIndex;
+}
+
+bool RelationshipsGraph::compareStructure(const RelationshipsGraph& rg) const
+{
+    if (this->synonymSet != rg.synonymSet) {
+        return false;
+    }
+
+    // compare values
+    std::vector<PotentialValue> thisValues;
+    std::vector<PotentialValue> rgValues;
+    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>> value : this->valuesTable) {
+        thisValues.push_back(value.first);
+    }
+    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>> value : rg.valuesTable) {
+        rgValues.push_back(value.first);
+    }
+    std::sort(thisValues.begin(), thisValues.end());
+    std::sort(rgValues.begin(), rgValues.end());
+    if (thisValues != rgValues) {
+        return false;
+    }
+
+    // compare edges
+    std::vector<std::vector<PotentialValue>> thisEdges;
+    std::vector<std::vector<PotentialValue>> rgEdges;
+    for (const std::pair<const GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>>& edge :
+         this->edgesTable) {
+        std::vector<PotentialValue> pvList;
+        for (const SynonymWithValue& sve : edge.second) {
+            pvList.push_back(sve.asPv());
+        }
+        std::sort(pvList.begin(), pvList.end());
+        thisEdges.push_back(pvList);
+    }
+    for (const std::pair<const GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>>& edge :
+         rg.edgesTable) {
+        std::vector<PotentialValue> pvList;
+        for (const SynonymWithValue& sve : edge.second) {
+            pvList.push_back(sve.asPv());
+        }
+        std::sort(pvList.begin(), pvList.end());
+        rgEdges.push_back(pvList);
+    }
+    std::sort(thisEdges.begin(), thisEdges.end());
+    std::sort(rgEdges.begin(), rgEdges.end());
+    return thisEdges == rgEdges;
 }
 
 Pair<Vector<String>, Vector<String>>
@@ -541,7 +589,7 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
         return;
     }
     // short-circuit if either values are empty
-    bool doShortCircuit;
+    bool doShortCircuit = false;
     if (valuesTable[firstKey].empty()) {
         doShortCircuit = true;
         valuesTable.erase(firstKey);
@@ -609,8 +657,7 @@ Boolean RelationshipsGraph::checkIfRelated(const PotentialValue& firstPv, const 
     if (valuesTable.find(firstPv) != valuesTable.end()) {
         bool isRelated = false;
         for (GraphEdge ge : valuesTable[firstPv]) {
-            std::unordered_set<SynonymWithValue, SynonymWithValueHasher>::iterator element
-                = edgesTable[ge].find(secondPv.asSwv());
+            auto element = edgesTable[ge].find(secondPv.asSwv());
             if (element != edgesTable[ge].end() && element->value == secondPv.value) {
                 isRelated = true;
                 break;

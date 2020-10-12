@@ -22,6 +22,14 @@ bool PotentialValue::operator==(const PotentialValue& pv) const
     return this->synonym == pv.synonym && this->value == pv.value;
 }
 
+bool PotentialValue::operator<(const PotentialValue& pv) const
+{
+    if (this->synonym == pv.synonym) {
+        return this->value < pv.value;
+    }
+    return this->synonym < pv.synonym;
+}
+
 SynonymWithValue PotentialValue::asSwv() const
 {
     return SynonymWithValue(*this);
