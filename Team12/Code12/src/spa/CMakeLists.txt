@@ -128,6 +128,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/WhileMatcher.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/WhileMatcher.cpp
 
+    # pql/evaluator/attribute
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.cpp
+
     # pql/projector
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
