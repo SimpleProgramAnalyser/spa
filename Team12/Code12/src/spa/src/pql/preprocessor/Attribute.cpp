@@ -12,8 +12,8 @@ std::unordered_map<String, AttributeType> Attribute::attributeMap{
 };
 
 std::unordered_map<AttributeType, DesignEntityTypeSet> Attribute::attributeDesignEntityMap{
-    {ProcNameType, {ProcedureType, CallType}},
-    {VarNameType, {ReadType, VariableType, PrintType}},
+    {ProcNameType, {ProcedureType, CallType, StmtType}},
+    {VarNameType, {ReadType, VariableType, PrintType, StmtType}},
     {ValueType, {ConstantType}},
     {StmtNumberType, {StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType}}};
 
