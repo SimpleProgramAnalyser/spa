@@ -8,6 +8,8 @@
 #include "ParentExtractor.h"
 #include "SemanticErrorsValidator.h"
 #include "UsesExtractor.h"
+#include "../src/cfg/CfgBuilder.h"
+
 
 Void extractDesign(ProgramNode& rootNode)
 {
@@ -23,4 +25,13 @@ Void extractDesign(ProgramNode& rootNode)
     extractParent(rootNode);
     extractUses(rootNode, seValidator);
     extractModifies(rootNode, seValidator);
+
+    // Build Cfg for each procedure    
+    const List<ProcedureNode>* procedureList = &(rootNode.procedureList);
+    for (size_t i = 0; i < procedureList->size(); i++) {
+        Name procName = procedureList->at(i)->procedureName;
+        const StmtlstNode* const stmtListNode = procedureList->at(i)->statementListNode;
+        CfgNode* cfgRootNode = buildCfg(stmtListNode);
+        // Insert Cfg root node into PKB
+    }
 }

@@ -23,6 +23,13 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
 
+    
+    # error library
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.cpp
+
     # design extractor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp

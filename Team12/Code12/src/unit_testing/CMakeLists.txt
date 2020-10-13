@@ -20,7 +20,10 @@ file(GLOB_RECURSE pql
 file(GLOB_RECURSE pkb
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/*.cpp")
+file(GLOB_RECURSE cfg
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/*.h")
 
-add_executable(unit_testing ${srcs} ${headers} ${pql} ${frontend} ${pkb})
+add_executable(unit_testing ${srcs} ${headers} ${pql} ${frontend} ${pkb} ${cfg})
 
 target_link_libraries(unit_testing spa)
