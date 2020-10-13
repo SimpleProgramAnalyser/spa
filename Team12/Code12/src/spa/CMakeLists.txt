@@ -95,8 +95,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/SuchThatEvaluator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/SuchThatEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/RelationshipsGraph.cpp
 
     # pql/evaluator/relationships
@@ -113,6 +111,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/SuchThatEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/SuchThatEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.cpp
 
