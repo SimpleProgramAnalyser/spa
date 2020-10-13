@@ -8,6 +8,64 @@
 #include <unordered_map>
 #include <unordered_set>
 
+PotentialValue::PotentialValue(Synonym synonym, String value): synonym(std::move(synonym)), value(std::move(value)) {}
+
+PotentialValue::PotentialValue(const SynonymWithValue& swv): synonym(swv.synonym), value(swv.value) {}
+
+PotentialValue::operator SynonymWithValue() const
+{
+    return SynonymWithValue(synonym, value);
+}
+
+bool PotentialValue::operator==(const PotentialValue& pv) const
+{
+    return this->synonym == pv.synonym && this->value == pv.value;
+}
+
+bool PotentialValue::operator<(const PotentialValue& pv) const
+{
+    if (this->synonym == pv.synonym) {
+        return this->value < pv.value;
+    }
+    return this->synonym < pv.synonym;
+}
+
+SynonymWithValue PotentialValue::asSwv() const
+{
+    return SynonymWithValue(*this);
+}
+
+std::size_t PotentialValueHasher::operator()(const PotentialValue& pv) const
+{
+    std::hash<std::string> stringHasher;
+    std::size_t hashedSynonym = stringHasher(pv.synonym);
+    return (hashedSynonym
+            ^ (stringHasher(pv.value) + uint32_t(2654435769) + (hashedSynonym * 64) + (hashedSynonym / 4)));
+}
+
+SynonymWithValue::SynonymWithValue(Synonym synonym, String value): synonym(std::move(synonym)), value(std::move(value))
+{}
+
+SynonymWithValue::operator PotentialValue() const
+{
+    return PotentialValue(synonym, value);
+}
+
+bool SynonymWithValue::operator==(const SynonymWithValue& swv) const
+{
+    return this->synonym == swv.synonym;
+}
+
+PotentialValue SynonymWithValue::asPv() const
+{
+    return PotentialValue(*this);
+}
+
+std::size_t SynonymWithValueHasher::operator()(const SynonymWithValue& swv) const
+{
+    return std::hash<std::string>()(swv.synonym);
+}
+
 ClauseResult convertToClauseResult(const Vector<Integer>& intList)
 {
     ClauseResult strList;
@@ -17,14 +75,32 @@ ClauseResult convertToClauseResult(const Vector<Integer>& intList)
     return strList;
 }
 
-template <>
-struct std::hash<DesignEntityType> {
-    std::size_t operator()(const DesignEntityType& pv) const
-    {
-        // NOLINTNEXTLINE
-        return std::hash<char>()(static_cast<const char&>(pv));
+PairedResult convertToPairedResult(const Vector<Pair<Integer, Integer>>& intPairsList)
+{
+    PairedResult strPairsList;
+    for (const Pair<Integer, Integer>& p : intPairsList) {
+        strPairsList.push_back(std::make_pair(std::to_string(p.first), std::to_string(p.second)));
     }
-};
+    return strPairsList;
+}
+
+PairedResult convertToPairedResult(const Vector<Pair<String, Integer>>& intPairsList)
+{
+    PairedResult strPairsList;
+    for (const Pair<String, Integer>& p : intPairsList) {
+        strPairsList.push_back(std::make_pair(p.first, std::to_string(p.second)));
+    }
+    return strPairsList;
+}
+
+PairedResult convertToPairedResult(const Vector<Pair<Integer, String>>& intPairsList)
+{
+    PairedResult strPairsList;
+    for (const Pair<Integer, String>& p : intPairsList) {
+        strPairsList.push_back(std::make_pair(std::to_string(p.first), p.second));
+    }
+    return strPairsList;
+}
 
 std::unordered_map<DesignEntityType, StatementType> getStatementTypesMap()
 {

@@ -42,4 +42,11 @@ typedef Pair<Integer, StatementType> StatementNumWithType;
 template <typename K, typename V>
 using ArrayArrayTupleList
     = std::array<std::array<std::vector<std::pair<K, V>>, STATEMENT_TYPE_COUNT>, STATEMENT_TYPE_COUNT>;
+
+typedef String ProcedureName;
+
+typedef struct {
+    Integer first;
+    Integer last;
+} StatementNumberRange;
 #endif // SPA_PKB_TYPES_H

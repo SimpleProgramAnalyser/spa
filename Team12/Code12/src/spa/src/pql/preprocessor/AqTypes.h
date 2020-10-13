@@ -19,7 +19,20 @@
 #include "frontend/parser/Parser.h"
 #include "lexer/Lexer.h"
 
-typedef String Synonym;
+class Error {
+private:
+    Boolean hasError = false;
+
+public:
+    Boolean isInvalid() const
+    {
+        return hasError;
+    }
+    void setError(Boolean error)
+    {
+        hasError = error;
+    }
+};
 
 enum DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
@@ -42,6 +55,8 @@ typedef std::unordered_set<DesignEntityType> DesignEntityTypeSet;
 
 class DesignEntity {
 private:
+    static std::unordered_map<String, DesignEntityType> designEntityMap;
+
     DesignEntityType type;
 
 public:
@@ -52,21 +67,87 @@ public:
     Boolean operator==(const DesignEntity& designEntity);
 };
 
-class DeclarationTable {
+// Hash function for DesignEntityType
+template <>
+struct std::hash<DesignEntityType> {
+    std::size_t operator()(const DesignEntityType& de) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(de));
+    }
+};
+
+typedef String Synonym;
+
+enum AttributeType : char {
+    ProcNameType,
+    VarNameType,
+    ValueType,
+    StmtNumberType,
+    NoAttributeType,
+    InvalidAttributeType
+};
+enum AttributeValueType : char { IntegerValueType, NameValueType, InvalidValueType };
+
+// Hash function for Attribute
+template <>
+struct std::hash<AttributeType> {
+    std::size_t operator()(const AttributeType& attributeType) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(attributeType));
+    }
+};
+
+class Attribute {
 private:
-    std::unordered_map<Synonym, DesignEntity> table;
-    bool hasError = false;
+    AttributeType type;
 
 public:
-    Void addDeclaration(Synonym s, DesignEntity& designEntity);
+    static std::unordered_map<String, AttributeType> attributeMap;
+    static std::unordered_map<AttributeType, DesignEntityTypeSet> attributeDesignEntityMap;
+
+    static Boolean validateDesignEntityAttributeSemantics(DesignEntityType designEntityType,
+                                                          AttributeType attributeType);
+
+    Attribute();
+    explicit Attribute(AttributeType attributeType);
+    explicit Attribute(String attributeTypeString);
+    AttributeType getType();
+    Boolean operator==(const Attribute& attribute);
+    Boolean operator!=(const Attribute& attribute);
+};
+
+class ResultSynonym: public Error {
+private:
+    Synonym synonym;
+    Attribute attribute;
+
+    static std::unordered_map<AttributeType, DesignEntityTypeSet> attributeDesignEntityTypeValidationMap;
+
+public:
+    explicit ResultSynonym(Boolean hasError);
+    explicit ResultSynonym(Synonym syn);
+    ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity);
+    Synonym getSynonym() const;
+    Attribute getAttribute();
+    Boolean operator==(const ResultSynonym& resultSynonym);
+    Boolean operator!=(const ResultSynonym& resultSynonym);
+};
+
+class DeclarationTable: public Error {
+private:
+    std::unordered_map<Synonym, DesignEntity> table;
+
+public:
+    Void addDeclaration(const Synonym& s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s) const;
-    Boolean isInvalid();
     Boolean hasSynonym(Synonym s);
     static DeclarationTable invalidDeclarationTable();
     Boolean operator==(const DeclarationTable& declarationTable) const;
 };
 
-enum ClauseType : char { SuchThatClauseType = 0, PatternClauseType = 1, NonExistentClauseType = 2 };
+enum ClauseType : char { SuchThatClauseType, PatternClauseType, WithClauseType, NonExistentClauseType };
 
 class Clause {
 protected:
@@ -78,6 +159,7 @@ public:
     static Clause* invalidClause(ClauseType clauseType);
     ClauseType getType();
     Boolean isInvalid();
+    // The rest of the methods are required to allow virtual operator==
     Clause(const Clause&) = default;
     Clause operator=(const Clause&) = delete;
     Clause(Clause&&) = default;
@@ -87,11 +169,12 @@ public:
 };
 
 enum ReferenceType : char {
-    SynonymRefType = 0,
-    WildcardRefType = 1,
-    LiteralRefType = 2,
-    IntegerRefType = 4,
-    InvalidRefType = 8
+    SynonymRefType,
+    WildcardRefType,
+    LiteralRefType,
+    IntegerRefType,
+    AttributeRefType,
+    InvalidRefType
 };
 
 typedef std::unordered_set<ReferenceType> ReferenceTypeSet;
@@ -103,38 +186,49 @@ protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
     DesignEntity designEntity;
+    Attribute attribute;
     Boolean hasError;
 
 public:
+    static Reference createReference(String ref, DeclarationTable& declarationTable);
+
+    Reference();
     explicit Reference(Boolean hasError);
     Reference(ReferenceType refType, ReferenceValue refValue);
-    Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt);
+    Reference(ReferenceType refType, ReferenceValue refValue,
+              DesignEntity
+                  designEnt); // TODO: Refactor to remove refType parameter (not needed, will always be SynonymRefType)
+    Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute attr);
     ReferenceType getReferenceType() const;
     DesignEntity getDesignEntity();
     ReferenceValue getValue() const;
+    Attribute getAttribute();
+    AttributeValueType getAttributeValueType();
     Boolean isValidEntityRef();
-    Boolean isValidStatementRef();
     Boolean isInvalid() const;
     Boolean isProcedure();
     Boolean isWildCard() const;
-    Boolean isNonStatementSynonym();
-    static Reference createReference(String ref, DeclarationTable& declarationTable);
     Boolean operator==(const Reference& reference);
-    Reference();
 };
 
 enum RelationshipReferenceType : uint16_t {
-    FollowsType = 0,
-    FollowsStarType = 1,
-    ParentType = 2,
-    ParentStarType = 4,
-    UsesType = 8, // placeholder type for UsesStatement and UsesProcedure
-    UsesStatementType = 16,
-    UsesProcedureType = 32,
-    ModifiesType = 64, // placeholder type for ModifiesStatement and ModifiesProcedure
-    ModifiesStatementType = 128,
-    ModifiesProcedureType = 256,
-    InvalidRelationshipType = 512
+    FollowsType,
+    FollowsStarType,
+    ParentType,
+    ParentStarType,
+    UsesType, // placeholder type for UsesStatement and UsesProcedure
+    UsesStatementType,
+    UsesProcedureType,
+    ModifiesType, // placeholder type for ModifiesStatement and ModifiesProcedure
+    ModifiesStatementType,
+    ModifiesProcedureType,
+    CallsType,
+    CallsStarType,
+    NextType,
+    NextStarType,
+    AffectsType,
+    AffectsStarType,
+    InvalidRelationshipType
 };
 
 class Relationship {
@@ -163,9 +257,23 @@ public:
     Reference getLeftRef();
     Reference getRightRef();
     Boolean isInvalid() const;
-    static Relationship createRelationship(String relationshipRef, Reference leftRef, Reference rightRef);
+    static Relationship createRelationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
     static RelationshipReferenceType getRelRefType(String relRef);
     Boolean operator==(const Relationship& relationship);
+};
+
+class WithClause: public Clause {
+private:
+    Reference leftReference;
+    Reference rightReference;
+
+public:
+    static Clause* createWithClause(const String& clauseConstraint, DeclarationTable& declarationTable);
+
+    WithClause(Reference& leftRef, Reference& rightRef);
+    Reference getLeftReference();
+    Reference getRightReference();
+    Boolean operator==(const WithClause& withClause);
 };
 
 class SuchThatClause: public Clause {
@@ -180,10 +288,11 @@ public:
 };
 
 enum ExpressionSpecType : char {
-    WildcardExpressionType = 0,          // _
-    LiteralExpressionType = 1,           // "x + y"
-    ExtendableLiteralExpressionType = 2, // _"x + y"_
-    InvalidExpressionType = 4
+    WildcardExpressionType,          // _
+    LiteralExpressionType,           // "x + y"
+    ExtendableLiteralExpressionType, // _"x + y"_
+    NoExpressionType,
+    InvalidExpressionType
 };
 
 class ExpressionSpec {
@@ -203,26 +312,31 @@ public:
     Boolean operator==(const ExpressionSpec& expressionSpec);
 };
 
-enum PatternStatementType : char {
-    AssignPatternType = 0,
-    WhilePatternType = 1, // Advanced SPA
-    IfPatternType = 2     // Advanced SPA
-};
+enum PatternStatementType : char { AssignPatternType, WhilePatternType, IfPatternType };
 
 class PatternClause: public Clause {
 private:
+    static std::unordered_set<DesignEntityType> designEntityTypeValidationSet;
+    static Clause* processAssignPatternClause(Synonym patternSynonym, StringVector constraints,
+                                              DeclarationTable& declarationTable);
+    static Clause* processIfWhilePatternClause(Synonym patternSynonym, DesignEntityType synonymDesignEntityType,
+                                               StringVector constraints, DeclarationTable& declarationTable);
+    static Boolean isValidVariableEntityRef(Reference ref);
+
     Synonym patternSynonym;
     PatternStatementType patternStatementType;
     Reference entityReference;
     ExpressionSpec expressionSpec;
 
 public:
+    static Clause* createPatternClause(const String& clauseConstraint, DeclarationTable& declarationTable);
+
+    PatternClause(Synonym s, PatternStatementType statementType, Reference entRef);
     PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec);
     PatternStatementType getStatementType() const;
     Reference getEntRef() const;
     const ExpressionSpec& getExprSpec() const;
     Synonym getPatternSynonym() const;
-    static Clause* createPatternClause(String clauseConstraint, DeclarationTable& declarationTable);
     Boolean operator==(const PatternClause& patternClause);
 };
 
@@ -250,17 +364,18 @@ public:
 
 class AbstractQuery {
 private:
-    Synonym selectSynonym;
+    Vector<ResultSynonym> resultSynonyms; // Empty Vector but valid Abstract Query => Select BOOLEAN
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean hasError;
 
 public:
     explicit AbstractQuery(Boolean hasError);
-    AbstractQuery(Synonym synonym, DeclarationTable& declarations);
-    AbstractQuery(Synonym synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
+    AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations);
+    AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
     Synonym getSelectSynonym() const;
+    Vector<ResultSynonym> getSynonyms();
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;
     Boolean isInvalid() const;

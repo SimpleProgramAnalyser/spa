@@ -16,7 +16,8 @@ file(GLOB_RECURSE pql
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser*.cpp")
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/parser*.h")
 file(GLOB_RECURSE pkb
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/*.cpp")

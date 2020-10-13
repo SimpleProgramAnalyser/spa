@@ -1,14 +1,10 @@
 #include "AqTypes.h"
 
-Void DeclarationTable::addDeclaration(Synonym s, DesignEntity& designEntity)
+Void DeclarationTable::addDeclaration(const Synonym& s, DesignEntity& designEntity)
 {
     table.insert({s, designEntity});
 }
 
-Boolean DeclarationTable::isInvalid()
-{
-    return hasError;
-}
 Boolean DeclarationTable::hasSynonym(Synonym s)
 {
     std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
@@ -33,7 +29,7 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s) const
 DeclarationTable DeclarationTable::invalidDeclarationTable()
 {
     DeclarationTable dT;
-    dT.hasError = true;
+    dT.setError(true);
     return dT;
 }
 

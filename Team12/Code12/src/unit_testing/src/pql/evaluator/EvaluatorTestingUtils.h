@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "catch.hpp"
+#include "pql/evaluator/ResultsTable.h"
 
 /**
  * A method to compare two vectors, to see whether
@@ -18,7 +19,7 @@
  *           bool cmp(const T&, const T&).
  */
 template <typename T>
-void doVectorsHaveSameElementsVoid(std::vector<T> vector1, std::vector<T> vector2)
+void requireVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vector2)
 {
     std::sort(vector1.begin(), vector1.end());
     std::sort(vector2.begin(), vector2.end());
@@ -29,7 +30,8 @@ void doVectorsHaveSameElementsVoid(std::vector<T> vector1, std::vector<T> vector
 #include <iostream>
 
 template <>
-void doVectorsHaveSameElementsVoid<std::string>(std::vector<std::string> vector1, std::vector<std::string> vector2)
+inline void requireVectorsHaveSameElements<std::string>(std::vector<std::string> vector1,
+                                                        std::vector<std::string> vector2)
 {
     std::sort(vector1.begin(), vector1.end());
     std::sort(vector2.begin(), vector2.end());
@@ -43,7 +45,7 @@ void doVectorsHaveSameElementsVoid<std::string>(std::vector<std::string> vector1
 }
 
 template <>
-void doVectorsHaveSameElementsVoid<std::pair<std::string, std::string>>(
+inline void requireVectorsHaveSameElements<std::pair<std::string, std::string>>(
     std::vector<std::pair<std::string, std::string>> vector1, std::vector<std::pair<std::string, std::string>> vector2)
 {
     std::sort(vector1.begin(), vector1.end());
@@ -57,5 +59,9 @@ void doVectorsHaveSameElementsVoid<std::pair<std::string, std::string>>(
     REQUIRE(vector1 == vector2);
 }
 */
+
+RelationshipsGraph setUpTestingGraph();
+
+std::unique_ptr<ResultsTable> setUpResultsTable();
 
 #endif // UNIT_TESTING_EVALUATOR_TESTING_UTILS_H

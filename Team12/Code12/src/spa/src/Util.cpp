@@ -21,11 +21,6 @@ Boolean util::isPossibleConstant(const String& str)
     return isMatchingRegex(str, "\\d+");
 }
 
-Boolean util::isRelationshipReference(const String& str)
-{
-    return isMatchingRegex(str, "^(Follows|Follows\\*|Parent|Parent\\*|Uses|Modifies)$");
-}
-
 Boolean util::isLiteralIdent(const String& str)
 {
     if (str.size() > 2 && str[0] == '"' && str[str.size() - 1] == '"') {

@@ -12,12 +12,12 @@
 
 RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
 {
-    Evaluator evaluator(abstractQuery, ResultsTable(abstractQuery.getDeclarationTable()));
+    Evaluator evaluator(abstractQuery);
     return evaluator.evaluateQuery();
 }
 
-Evaluator::Evaluator(const AbstractQuery& abstractQuery, ResultsTable resultsTable):
-    query(abstractQuery), resultsTable(std::move(resultsTable))
+Evaluator::Evaluator(const AbstractQuery& abstractQuery):
+    query(abstractQuery), resultsTable{abstractQuery.getDeclarationTable()}
 {}
 
 RawQueryResult Evaluator::evaluateQuery()
@@ -58,7 +58,7 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
         }
     }
     // call the result table to return the final result
-    return RawQueryResult(resultsTable.get(query.getSelectSynonym()));
+    return RawQueryResult(resultsTable.getResultsOne(query.getSelectSynonym()));
 }
 
 /*
