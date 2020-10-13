@@ -6,12 +6,34 @@
 #include "SuchThatEvaluator.h"
 
 #include <stdexcept>
-#include <typeindex>
 
+#include "relationships/AffectsEvaluator.h"
+#include "relationships/CallsEvaluator.h"
 #include "relationships/FollowsEvaluator.h"
 #include "relationships/ModifiesEvaluator.h"
+#include "relationships/NextEvaluator.h"
 #include "relationships/ParentEvaluator.h"
 #include "relationships/UsesEvaluator.h"
+
+void evaluateAffectsNormal(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getAffectsEvaluator()->evaluateAffectsClause(leftRef, rightRef);
+}
+
+void evaluateAffectsTransitive(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getAffectsEvaluator()->evaluateAffectsStarClause(leftRef, rightRef);
+}
+
+void evaluateCallsNormal(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    evaluateCallsClause(leftRef, rightRef, false, resultsTable);
+}
+
+void evaluateCallsTransitive(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    evaluateCallsClause(leftRef, rightRef, true, resultsTable);
+}
 
 void evaluateFollowsNormal(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
 {
@@ -33,12 +55,26 @@ void evaluateParentTransitive(const Reference& leftRef, const Reference& rightRe
     evaluateParentClause(leftRef, rightRef, true, resultsTable);
 }
 
+void evaluateNextNormal(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getNextEvaluator()->evaluateNextClause(leftRef, rightRef);
+}
+
+void evaluateNextTransitive(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getNextEvaluator()->evaluateNextStarClause(leftRef, rightRef);
+}
+
 std::unordered_map<RelationshipReferenceType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>
 getEvaluatorMap()
 {
     return std::unordered_map<RelationshipReferenceType,
                               auto (*)(const Reference&, const Reference&, ResultsTable*)->void>(
-        {{FollowsType, evaluateFollowsNormal},
+        {{AffectsType, evaluateAffectsNormal},
+         {AffectsStarType, evaluateAffectsTransitive},
+         {CallsType, evaluateCallsNormal},
+         {CallsStarType, evaluateCallsTransitive},
+         {FollowsType, evaluateFollowsNormal},
          {FollowsStarType, evaluateFollowsTransitive},
          {ParentType, evaluateParentNormal},
          {ParentStarType, evaluateParentTransitive},
@@ -47,7 +83,9 @@ getEvaluatorMap()
          {UsesStatementType, evaluateUsesClause},
          {ModifiesType, evaluateModifiesClause},
          {ModifiesStatementType, evaluateModifiesClause},
-         {ModifiesProcedureType, evaluateModifiesClause}});
+         {ModifiesProcedureType, evaluateModifiesClause},
+         {NextType, evaluateNextNormal},
+         {NextStarType, evaluateNextTransitive}});
 }
 
 Void evaluateSuchThat(SuchThatClause* stClause, ResultsTable* resultsTable)
