@@ -6,6 +6,8 @@
 
 #include "PatternMatcher.h"
 
+#include <stdexcept>
+
 #include "AssignMatcher.h"
 #include "IfMatcher.h"
 #include "WhileMatcher.h"

@@ -4,6 +4,8 @@
 
 #include "PatternMatcherUtil.h"
 
+#include <iterator>
+
 Void PatternMatcherTuple::addAssignStatement(Integer assignStatementNumber, const String& variable)
 {
     assignStatementResults.push_back(std::to_string(assignStatementNumber));
