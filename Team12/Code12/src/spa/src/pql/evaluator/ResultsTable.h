@@ -35,8 +35,8 @@ private:
     Boolean hasResult;
     Boolean hasEvaluated;
     // cache results for Next, Affects
-    std::unique_ptr<AffectsEvaluator> affectsEvaluator;
-    std::unique_ptr<NextEvaluator> nextEvaluator;
+    AffectsEvaluator* affectsEvaluator;
+    NextEvaluator* nextEvaluator;
 
     Boolean checkIfSynonymInMap(const Synonym& syn);
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
@@ -127,7 +127,7 @@ public:
      *                     the query.
      */
     explicit ResultsTable(DeclarationTable decls);
-    ~ResultsTable() = default;
+    ~ResultsTable();
     ResultsTable(const ResultsTable&) = delete;
     ResultsTable& operator=(const ResultsTable&) = delete;
     ResultsTable(ResultsTable&&) = delete;
@@ -168,8 +168,8 @@ public:
 
     /**
      * Associates an AffectsEvaluator with this ResultsTable.
-     * AffectsEvaluator will cache results for Affects, Affects*
-     * and provide methods for the evaluation of Affects/*.
+     * AffectsEvaluator will cache results for Affects, Affects* and
+     * provide methods for the evaluation of Affects or Affects*.
      *
      * This evaluator should only persist for a single query,
      * similar to the ResultsTable, in order to make the SPA

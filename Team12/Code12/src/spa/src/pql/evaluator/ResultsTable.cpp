@@ -14,6 +14,8 @@
 #include <utility>
 
 #include "pkb/PKB.h"
+#include "relationships/AffectsEvaluator.h"
+#include "relationships/NextEvaluator.h"
 
 /**
  * A method to compare two vectors, to see whether
@@ -240,6 +242,12 @@ ResultsTable::ResultsTable(DeclarationTable decls):
     hasResult(true), hasEvaluated(false), affectsEvaluator(nullptr), nextEvaluator(nullptr)
 {}
 
+ResultsTable::~ResultsTable()
+{
+    delete affectsEvaluator;
+    delete nextEvaluator;
+}
+
 std::vector<std::pair<std::string, std::vector<std::string>>>
 getVectorFromResultsMap(const std::unordered_map<Synonym, ResultsSet>& resultsMap)
 {
@@ -295,22 +303,22 @@ Boolean ResultsTable::hasResults() const
 
 AffectsEvaluator* ResultsTable::getAffectsEvaluator() const
 {
-    return affectsEvaluator.get();
+    return affectsEvaluator;
 }
 
 NextEvaluator* ResultsTable::getNextEvaluator() const
 {
-    return nextEvaluator.get();
+    return nextEvaluator;
 }
 
 Void ResultsTable::manageEvaluator(AffectsEvaluator* affectsEval)
 {
-    affectsEvaluator = std::unique_ptr<AffectsEvaluator>(affectsEval);
+    affectsEvaluator = affectsEval;
 }
 
 Void ResultsTable::manageEvaluator(NextEvaluator* nextEval)
 {
-    nextEvaluator = std::unique_ptr<NextEvaluator>(nextEval);
+    nextEvaluator = nextEval;
 }
 
 Void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)

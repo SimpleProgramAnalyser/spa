@@ -15,7 +15,7 @@ private:
     // case where left is variable, right is known (integer)
     Void evaluateRightKnown(const Reference& leftRef, Integer rightRefVal) const;
     // case where both are variable
-    Void evaluateBothAny(const Reference& leftRef, const Reference& rightRef) const;                                                                                    tRef) const;
+    Void evaluateBothAny(const Reference& leftRef, const Reference& rightRef) const;
     // case where both are known
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
 
