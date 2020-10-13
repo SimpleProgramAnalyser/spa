@@ -168,6 +168,16 @@ public:
     virtual Boolean operator==(Clause& clause);
 };
 
+// Hash function for ClauseType
+template <>
+struct std::hash<ClauseType> {
+    std::size_t operator()(const ClauseType& clauseType) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(clauseType));
+    }
+};
+
 enum ReferenceType : char {
     SynonymRefType,
     WildcardRefType,
