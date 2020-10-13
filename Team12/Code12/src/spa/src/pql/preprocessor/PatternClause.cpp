@@ -43,10 +43,11 @@ Clause* PatternClause::createPatternClause(const String& clauseConstraint, Decla
     Synonym patternSynonym = pair.first;
     DesignEntityType synonymDesignEntityType = declarationTable.getDesignEntityOfSynonym(patternSynonym).getType();
     Boolean isValidDesignEntityType
-        = designEntityTypeValidationSet.find(synonymDesignEntityType) == designEntityTypeValidationSet.end();
-    if (isValidDesignEntityType) {
+        = designEntityTypeValidationSet.find(synonymDesignEntityType) != designEntityTypeValidationSet.end();
+    if (!isValidDesignEntityType) {
         return Clause::invalidClause(PatternClauseType);
     }
+
     String constraintVariablesString
         = pair.second.substr(0, pair.second.size() - 1); // remove the last char which is a close parentheses
     StringVector constraintVariables = splitByDelimiter(constraintVariablesString, ",");

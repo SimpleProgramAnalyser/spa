@@ -2113,3 +2113,26 @@ TEST_CASE("Complex Queries 3")
 
     REQUIRE(equals);
 }
+
+TEST_CASE("Complex Queries 4")
+{
+    AbstractQuery abstractQuery = processQuery(
+        "while w; assign a; print p; variable v; Select a such that Uses(a, v) and Uses(p, v) pattern a(v, _)");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+              .addSelectSynonym("a")
+              .addDeclaration("a", "assign")
+              .addDeclaration("w", "while")
+              .addDeclaration("p", "print")
+              .addDeclaration("v", "variable")
+              .addSuchThatClause(UsesType, SynonymRefType, "a", AssignType, SynonymRefType, "v", VariableType)
+              .addSuchThatClause(UsesType, SynonymRefType, "p", PrintType, SynonymRefType, "v", VariableType)
+              .addAssignPatternClause("a", AssignPatternType, SynonymRefType, "v", VariableType, "_",
+                                      WildcardExpressionType)
+              .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
