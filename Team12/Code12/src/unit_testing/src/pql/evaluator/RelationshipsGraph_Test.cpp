@@ -11,6 +11,7 @@
 
 RelationshipsGraph setUpTestingGraph()
 {
+
     std::vector<std::pair<std::string, std::string>> redGreenRelationships(
         {{"ns25", "ew13"}, {"ns26", "ew14"}, {"ns1", "ew24"}});
     std::vector<std::pair<std::string, std::string>> numPurpleRelationships(
