@@ -253,7 +253,7 @@ private:
 public:
     Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
     explicit Relationship(Boolean hasError);
-    RelationshipReferenceType getRelationship();
+    RelationshipReferenceType getType();
     Reference getLeftRef();
     Reference getRightRef();
     Boolean isInvalid() const;
