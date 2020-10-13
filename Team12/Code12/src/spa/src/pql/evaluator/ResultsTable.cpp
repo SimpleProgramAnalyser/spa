@@ -237,7 +237,7 @@ PairedResult ResultsTable::getRelationships(const Synonym& leftSynonym, const Sy
 // set hasResult to true at the start, since no clauses have been evaluated
 ResultsTable::ResultsTable(DeclarationTable decls):
     declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
-    hasResult(true), hasEvaluated(false)
+    hasResult(true), hasEvaluated(false), affectsEvaluator(nullptr), nextEvaluator(nullptr)
 {}
 
 std::vector<std::pair<std::string, std::vector<std::string>>>
@@ -293,7 +293,27 @@ Boolean ResultsTable::hasResults() const
     return hasResult;
 }
 
-void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
+AffectsEvaluator* ResultsTable::getAffectsEvaluator() const
+{
+    return affectsEvaluator.get();
+}
+
+NextEvaluator* ResultsTable::getNextEvaluator() const
+{
+    return nextEvaluator.get();
+}
+
+Void ResultsTable::manageEvaluator(AffectsEvaluator* affectsEval)
+{
+    affectsEvaluator = std::unique_ptr<AffectsEvaluator>(affectsEval);
+}
+
+Void ResultsTable::manageEvaluator(NextEvaluator* nextEval)
+{
+    nextEvaluator = std::unique_ptr<NextEvaluator>(nextEval);
+}
+
+Void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
 {
     if (resultsMap.find(synonym) != resultsMap.end()) {
         resultsMap[synonym].erase(value);
