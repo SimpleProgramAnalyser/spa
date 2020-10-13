@@ -103,10 +103,16 @@ add_library(spa
 
     # pql/evaluator/relationships
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/AffectsEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/AffectsEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CallsEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CallsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ModifiesEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ModifiesEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/NextEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/NextEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.h
