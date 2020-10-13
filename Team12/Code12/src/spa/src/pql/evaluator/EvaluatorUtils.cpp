@@ -105,9 +105,9 @@ PairedResult convertToPairedResult(const Vector<Pair<Integer, String>>& intPairs
 std::unordered_map<DesignEntityType, StatementType> getStatementTypesMap()
 {
     std::unordered_map<DesignEntityType, StatementType> queryPkbTypesMap
-        = {{StmtType, AnyStatement},         {ReadType, ReadStatement},   {PrintType, PrintStatement},
-           {CallType, CallStatement},        {WhileType, WhileStatement}, {IfType, IfStatement},
-           {AssignType, AssignmentStatement}};
+        = {{StmtType, AnyStatement},          {ReadType, ReadStatement},    {PrintType, PrintStatement},
+           {CallType, CallStatement},         {WhileType, WhileStatement},  {IfType, IfStatement},
+           {AssignType, AssignmentStatement}, {Prog_LineType, AnyStatement}};
     return queryPkbTypesMap;
 }
 
