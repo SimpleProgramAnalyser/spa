@@ -21,7 +21,7 @@ TEST_CASE("syntatically invalid query")
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);

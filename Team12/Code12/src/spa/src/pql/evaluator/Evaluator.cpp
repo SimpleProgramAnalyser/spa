@@ -9,6 +9,8 @@
 
 #include "attribute/WithQualifier.h"
 #include "pattern/PatternMatcher.h"
+#include "relationships/AffectsEvaluator.h"
+#include "relationships/NextEvaluator.h"
 #include "relationships/SuchThatEvaluator.h"
 
 RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
@@ -43,6 +45,9 @@ RawQueryResult Evaluator::evaluateQuery()
  */
 RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 {
+    // initiate Affects and Next evaluators
+    resultsTable.manageEvaluator(new NextEvaluator(resultsTable));
+    resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable));
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);
