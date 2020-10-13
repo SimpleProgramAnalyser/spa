@@ -22,6 +22,9 @@ typedef std::unordered_set<String> ResultsSet;
 
 // Forward declaration of RelationshipsGraph
 class RelationshipsGraph;
+// Forward declaration of Evaluators
+class AffectsEvaluator;
+class NextEvaluator;
 
 class ResultsTable {
 private:
@@ -31,6 +34,9 @@ private:
     EvaluationQueue queue;
     Boolean hasResult;
     Boolean hasEvaluated;
+    // cache results for Next, Affects
+    AffectsEvaluator* affectsEvaluator;
+    NextEvaluator* nextEvaluator;
 
     Boolean checkIfSynonymInMap(const Synonym& syn);
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
@@ -121,7 +127,7 @@ public:
      *                     the query.
      */
     explicit ResultsTable(DeclarationTable decls);
-    ~ResultsTable() = default;
+    ~ResultsTable();
     ResultsTable(const ResultsTable&) = delete;
     ResultsTable& operator=(const ResultsTable&) = delete;
     ResultsTable(ResultsTable&&) = delete;
@@ -139,6 +145,58 @@ public:
      * @return The RelationshipsGraph stored inside.
      */
     RelationshipsGraph getRelationshipsGraph() const;
+
+    /**
+     * Returns the AffectsEvaluator stored within this ResultsTable.
+     * This method may return a nullptr, if no AffectsEvaluator exists.
+     *
+     * @return The AffectsEvaluator storing cached results for
+     *         Affects and Affects* specifically for the query
+     *         that this ResultsTable is storing results for.
+     */
+    AffectsEvaluator* getAffectsEvaluator() const;
+
+    /**
+     * Returns the NextEvaluator stored within this ResultsTable.
+     * This method may return a nullptr, if no NextEvaluator exists.
+     *
+     * @return The NextEvaluator storing cached results for
+     *         Next* specifically for the query that this
+     *         ResultsTable is storing results for.
+     */
+    NextEvaluator* getNextEvaluator() const;
+
+    /**
+     * Associates an AffectsEvaluator with this ResultsTable.
+     * AffectsEvaluator will cache results for Affects, Affects* and
+     * provide methods for the evaluation of Affects or Affects*.
+     *
+     * This evaluator should only persist for a single query,
+     * similar to the ResultsTable, in order to make the SPA
+     * scalable and compute Affects, Affects* on demand.
+     *
+     * The ResultsTable will handle deletion of the
+     * AffectsEvaluator, once this method is called.
+     *
+     * @param affectsEval The AffectsEvaluator to manage.
+     */
+    Void manageEvaluator(AffectsEvaluator* affectsEval);
+
+    /**
+     * Associates a NextEvaluator with this ResultsTable.
+     * NextEvaluator will cache results for Next* and
+     * provide methods for the evaluation of Next, Next*.
+     *
+     * This evaluator should only persist for a single query,
+     * similar to the ResultsTable, in order to make the SPA
+     * scalable and compute Next* on demand.
+     *
+     * The ResultsTable will handle deletion of the
+     * NextEvaluator, once this method is called.
+     *
+     * @param nextEval The NextEvaluator to manage.
+     */
+    Void manageEvaluator(NextEvaluator* nextEval);
 
     /**
      * Returns true if the result table is marked as having
@@ -159,7 +217,7 @@ public:
      * @param synonym The synonym in the query.
      * @param value The result to eliminate.
      */
-    void eliminatePotentialValue(const Synonym& synonym, const String& value);
+    Void eliminatePotentialValue(const Synonym& synonym, const String& value);
 
     /**
      * Retrieves the type of synonym from the

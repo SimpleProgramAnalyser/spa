@@ -14,6 +14,8 @@
 #include <utility>
 
 #include "pkb/PKB.h"
+#include "relationships/AffectsEvaluator.h"
+#include "relationships/NextEvaluator.h"
 
 /**
  * A method to compare two vectors, to see whether
@@ -237,8 +239,14 @@ PairedResult ResultsTable::getRelationships(const Synonym& leftSynonym, const Sy
 // set hasResult to true at the start, since no clauses have been evaluated
 ResultsTable::ResultsTable(DeclarationTable decls):
     declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
-    hasResult(true), hasEvaluated(false)
+    hasResult(true), hasEvaluated(false), affectsEvaluator(nullptr), nextEvaluator(nullptr)
 {}
+
+ResultsTable::~ResultsTable()
+{
+    delete affectsEvaluator;
+    delete nextEvaluator;
+}
 
 std::vector<std::pair<std::string, std::vector<std::string>>>
 getVectorFromResultsMap(const std::unordered_map<Synonym, ResultsSet>& resultsMap)
@@ -293,7 +301,27 @@ Boolean ResultsTable::hasResults() const
     return hasResult;
 }
 
-void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
+AffectsEvaluator* ResultsTable::getAffectsEvaluator() const
+{
+    return affectsEvaluator;
+}
+
+NextEvaluator* ResultsTable::getNextEvaluator() const
+{
+    return nextEvaluator;
+}
+
+Void ResultsTable::manageEvaluator(AffectsEvaluator* affectsEval)
+{
+    affectsEvaluator = affectsEval;
+}
+
+Void ResultsTable::manageEvaluator(NextEvaluator* nextEval)
+{
+    nextEvaluator = nextEval;
+}
+
+Void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
 {
     if (resultsMap.find(synonym) != resultsMap.end()) {
         resultsMap[synonym].erase(value);

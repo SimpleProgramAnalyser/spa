@@ -5,6 +5,7 @@
 #include "PqlManager.h"
 
 #include "pql/evaluator/Evaluator.h"
+#include "pql/optimiser/Optimiser.h"
 #include "pql/preprocessor/Preprocessor.h"
 #include "pql/projector/Projector.h"
 
@@ -20,10 +21,13 @@
  * valid but yields no result, an empty FormattedQueryResult
  * would be returned).
  */
-FormattedQueryResult PqlManager::executeQuery(String query, QueryResultFormatType format)
+FormattedQueryResult PqlManager::executeQuery(const String& query, QueryResultFormatType format)
 {
     // Call the Preprocessor to parse the query
     AbstractQuery abstractQuery = Preprocessor::processQuery(query);
+
+    // Optimise the query
+    optimiseQuery(abstractQuery);
 
     /*
      * Pass the parsed query (AbstractQuery) to the PQL

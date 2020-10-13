@@ -157,7 +157,7 @@ Boolean Relationship::isInvalid() const
     return hasError;
 }
 
-RelationshipReferenceType Relationship::getRelationship()
+RelationshipReferenceType Relationship::getType()
 {
     return relationshipReferenceType;
 }

@@ -30,7 +30,7 @@ public:
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), isStar(isStar), resultsTable(resultsTable),
         pkbBothKnownFunction(isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)
     {}
-    Void evaluateFollowsClause();
+    Void evaluateFollowsClause() const;
 };
 
 Void evaluateFollowsClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
@@ -115,7 +115,7 @@ Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal
     resultsTable->storeResultsOne(leftRef, tempResult);
 }
 
-Void FollowsEvaluator::evaluateFollowsClause()
+Void FollowsEvaluator::evaluateFollowsClause() const
 {
     ReferenceType leftRefType = leftRef.getReferenceType();
     ReferenceType rightRefType = rightRef.getReferenceType();

@@ -8,7 +8,7 @@
 #include "ast/AstLibrary.h"
 #include "catch.hpp"
 #include "pkb/PKB.h"
-#include "pql/evaluator/PatternMatcher.h"
+#include "pql/evaluator/pattern/PatternMatcher.h"
 
 TEST_CASE("Assignment statement patterns are evaluated correctly")
 {
