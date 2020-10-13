@@ -93,8 +93,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/PatternMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/ResultsTable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/SuchThatEvaluator.h
@@ -102,7 +100,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/RelationshipsGraph.cpp
 
     # pql/evaluator/relationships
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/AffectsEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/AffectsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CallsEvaluator.h
@@ -115,11 +112,25 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/NextEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
+
+    # pql/evaluator/pattern
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/AssignMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/AssignMatcher.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/IfMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/IfMatcher.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/PatternMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/PatternMatcher.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/PatternMatcherUtil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/PatternMatcherUtil.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/WhileMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/WhileMatcher.cpp
 
     # pql/projector
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/Projector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/RawQueryResult.h

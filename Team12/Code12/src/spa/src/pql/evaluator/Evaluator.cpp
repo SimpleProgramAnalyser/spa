@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <utility>
 
-#include "PatternMatcher.h"
 #include "SuchThatEvaluator.h"
+#include "pql/evaluator/pattern/PatternMatcher.h"
 
 RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
 {
