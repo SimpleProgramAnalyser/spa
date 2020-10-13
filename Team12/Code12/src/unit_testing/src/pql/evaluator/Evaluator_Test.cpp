@@ -103,7 +103,8 @@ TEST_CASE(
               .addDeclaration("diamond", "stmt")
               .addAssignPatternClause("netherite", AssignPatternType, WildcardRefType, "_", NonExistentType, "dist",
                                       ExtendableLiteralExpressionType)
-              .addSuchThatClause(ParentType, SynonymRefType, "diamond", StmtType, SynonymRefType, "netherite", AssignType)
+              .addSuchThatClause(ParentType, SynonymRefType, "diamond", StmtType, SynonymRefType, "netherite",
+                                 AssignType)
               .build();
     std::vector<std::string> expectedResults = {"123", "124", "129"};
 

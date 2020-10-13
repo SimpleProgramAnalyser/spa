@@ -32,7 +32,7 @@ public:
 };
 
 Void evaluateCallsClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
-                           ResultsTable* resultsTable)
+                         ResultsTable* resultsTable)
 {
     CallsEvaluator evaluator(leftRef, rightRef, isStar, resultsTable);
     evaluator.evaluateCallsClause();

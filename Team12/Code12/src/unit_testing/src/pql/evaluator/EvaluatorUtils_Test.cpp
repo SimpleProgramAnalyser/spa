@@ -124,7 +124,8 @@ TEST_CASE("PotentialValue and SynonymWithValue")
         REQUIRE(swv15 == swv16);
     }
 
-    SECTION("std::unordered_set of PotentialValue allows one synonym with multiple values") {
+    SECTION("std::unordered_set of PotentialValue allows one synonym with multiple values")
+    {
         std::unordered_set<PotentialValue, PotentialValueHasher> set;
         set.insert(pv1);
         set.insert(static_cast<PotentialValue>(swv2));
@@ -145,7 +146,8 @@ TEST_CASE("PotentialValue and SynonymWithValue")
         REQUIRE(set.size() == 15);
     }
 
-    SECTION("std::unordered_set of SynonymWithValue only allows one synonym") {
+    SECTION("std::unordered_set of SynonymWithValue only allows one synonym")
+    {
         std::unordered_set<SynonymWithValue, SynonymWithValueHasher> set;
         set.insert(static_cast<SynonymWithValue>(pv1));
         set.insert(swv2);
