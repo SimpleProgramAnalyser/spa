@@ -2,6 +2,7 @@
  * Implementation of Relationships Graph for
  * Query Evaluator's Result Table.
  */
+#include <algorithm>
 #include <stdexcept>
 #include <utility>
 
@@ -166,7 +167,7 @@ public:
 
     void operator()(RelationshipsGraph& graph) const override
     {
-        graph.edgesTable[edge].erase(value);
+        graph.edgesTable[edge].erase(value.asSwv());
     }
 };
 
@@ -208,7 +209,7 @@ public:
 
     void operator()(RelationshipsGraph& graph) const override
     {
-        graph.edgesTable[edge].insert(value);
+        graph.edgesTable[edge].insert(value.asSwv());
     }
 };
 
@@ -228,7 +229,7 @@ public:
 
     void operator()(RelationshipsGraph& graph) const override
     {
-        graph.edgesTable[graph.edgesIndex - 1].insert(value);
+        graph.edgesTable[graph.edgesIndex - 1].insert(value.asSwv());
     }
 };
 
@@ -247,8 +248,8 @@ public:
 
     void operator()(RelationshipsGraph& graph) const override
     {
-        graph.edgesTable.insert(std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(
-            graph.edgesIndex, std::unordered_set<PotentialValue, PotentialValueHasher>()));
+        graph.edgesTable.insert(std::pair<GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>>(
+            graph.edgesIndex, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>()));
         graph.edgesIndex++;
     }
 };
@@ -313,28 +314,26 @@ bool RelationshipsGraph::associateTwoExisting(const RelationshipsGraph& graph, c
     for (GraphEdge e1 : edgesFirst) {
         for (GraphEdge e2 : edgesSecond) {
             updates.push(EdgesTableNewSet());
-            std::unordered_set<PotentialValue, PotentialValueHasher> edgeValues;
-            for (const PotentialValue& pv : graph.edgesTable.at(e1)) {
-                updates.push(EdgesTableInsertToNewest(pv));
+            for (const SynonymWithValue& swv1 : graph.edgesTable.at(e1)) {
+                updates.push(EdgesTableInsertToNewest(swv1.asPv()));
+                updates.push(ValuesTableInsertNewest(swv1.asPv()));
             }
-            for (const PotentialValue& pv : graph.edgesTable.at(e2)) {
-                updates.push(EdgesTableInsertToNewest(pv));
-            }
-            for (const PotentialValue& pv : edgeValues) {
-                updates.push(ValuesTableInsertNewest(pv));
+            for (const SynonymWithValue& swv2 : graph.edgesTable.at(e2)) {
+                updates.push(EdgesTableInsertToNewest(swv2.asPv()));
+                updates.push(ValuesTableInsertNewest(swv2.asPv()));
             }
         }
     }
     // remove the old edges
     for (GraphEdge e1 : edgesFirst) {
-        for (const PotentialValue& pv1 : graph.edgesTable.at(e1)) {
-            updates.push(ValuesTableDelete(pv1, e1));
+        for (const SynonymWithValue& swv1 : graph.edgesTable.at(e1)) {
+            updates.push(ValuesTableDelete(swv1.asPv(), e1));
         }
         updates.push(EdgesTableDeleteEdge(e1));
     }
     for (GraphEdge e2 : edgesSecond) {
-        for (const PotentialValue& pv2 : graph.edgesTable.at(e2)) {
-            updates.push(ValuesTableDelete(pv2, e2));
+        for (const SynonymWithValue& swv2 : graph.edgesTable.at(e2)) {
+            updates.push(ValuesTableDelete(swv2.asPv(), e2));
         }
         updates.push(EdgesTableDeleteEdge(e2));
     }
@@ -363,9 +362,9 @@ bool RelationshipsGraph::associateOneExisting(const RelationshipsGraph& graph, c
         for (GraphEdge e : existingEdges) {
             updates.push(EdgesTableNewSet());
             // duplicate the edge
-            for (const PotentialValue& pv : graph.edgesTable.at(e)) {
-                updates.push(EdgesTableInsertToNewest(pv));
-                updates.push(ValuesTableInsertNewest(pv));
+            for (const SynonymWithValue& swv : graph.edgesTable.at(e)) {
+                updates.push(EdgesTableInsertToNewest(swv.asPv()));
+                updates.push(ValuesTableInsertNewest(swv.asPv()));
             }
             // add newKey to the edge
             updates.push(EdgesTableInsertToNewest(newKey));
@@ -373,8 +372,8 @@ bool RelationshipsGraph::associateOneExisting(const RelationshipsGraph& graph, c
         }
         // remove the old edges
         for (GraphEdge e : existingEdges) {
-            for (const PotentialValue& pv : graph.edgesTable.at(e)) {
-                updates.push(ValuesTableDelete(pv, e));
+            for (const SynonymWithValue& swv : graph.edgesTable.at(e)) {
+                updates.push(ValuesTableDelete(swv.asPv(), e));
             }
             updates.push(EdgesTableDeleteEdge(e));
         }
@@ -428,7 +427,7 @@ bool RelationshipsGraph::associateZeroExisting(const RelationshipsGraph& /* unus
     return true;
 }
 
-Boolean RelationshipsGraph::checkIfPotentialValueHasRelationships(const PotentialValue& pv)
+bool RelationshipsGraph::hasRelationships(const PotentialValue& pv)
 {
     if (valuesTable.find(pv) != valuesTable.end()) {
         return !valuesTable[pv].empty();
@@ -443,12 +442,13 @@ RelationshipsGraph::RelationshipsGraph(const std::vector<std::pair<GraphEdge, st
     edgesIndex(currentEdgeIndex)
 {
     for (const std::pair<GraphEdge, std::vector<PotentialValue>>& edge : edges) {
-        edgesTable.insert(std::pair<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>>(
-            edge.first, std::unordered_set<PotentialValue, PotentialValueHasher>()));
+        edgesTable.insert(std::pair<GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>>(
+            edge.first, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>()));
         for (const PotentialValue& pv : edge.second) {
-            edgesTable[edge.first].insert(pv);
-            if (valuesTable.find(pv) != valuesTable.end()) {
+            edgesTable[edge.first].insert(pv.asSwv());
+            if (valuesTable.find(pv) == valuesTable.end()) {
                 valuesTable.insert({pv, {}});
+                synonymSet.insert(pv.synonym);
             }
             valuesTable[pv].insert(edge.first);
         }
@@ -457,14 +457,60 @@ RelationshipsGraph::RelationshipsGraph(const std::vector<std::pair<GraphEdge, st
 
 bool RelationshipsGraph::operator==(const RelationshipsGraph& rg) const
 {
-    return this->valuesTable == rg.valuesTable && this->edgesTable == rg.edgesTable;
-    // cache is not checked because the exact values may be different,
-    // depending on order of addition to the relationships graph
+    return this->valuesTable == rg.valuesTable && this->edgesTable == rg.edgesTable && this->synonymSet == rg.synonymSet
+           && this->edgesIndex == rg.edgesIndex;
 }
 
-bool RelationshipsGraph::checkEqualIncludingCache(const RelationshipsGraph& rg) const
+bool RelationshipsGraph::compareStructure(const RelationshipsGraph& rg) const
 {
-    return *this == rg && this->synonymRelationshipsCache == rg.synonymRelationshipsCache;
+    if (this->synonymSet != rg.synonymSet) {
+        return false;
+    }
+
+    // compare values
+    std::vector<PotentialValue> thisValues;
+    std::vector<PotentialValue> rgValues;
+    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>>& value : this->valuesTable) {
+        thisValues.push_back(value.first);
+    }
+    for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>>& value : rg.valuesTable) {
+        rgValues.push_back(value.first);
+    }
+    std::sort(thisValues.begin(), thisValues.end());
+    std::sort(rgValues.begin(), rgValues.end());
+    if (thisValues != rgValues) {
+        return false;
+    }
+
+    // compare edges
+    std::vector<std::vector<PotentialValue>> thisEdges;
+    std::vector<std::vector<PotentialValue>> rgEdges;
+    for (const std::pair<const GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>>& edge :
+         this->edgesTable) {
+        std::vector<PotentialValue> pvList;
+        for (const SynonymWithValue& sve : edge.second) {
+            pvList.push_back(sve.asPv());
+        }
+        std::sort(pvList.begin(), pvList.end());
+        thisEdges.push_back(pvList);
+    }
+    for (const std::pair<const GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>>& edge :
+         rg.edgesTable) {
+        std::vector<PotentialValue> pvList;
+        for (const SynonymWithValue& sve : edge.second) {
+            pvList.push_back(sve.asPv());
+        }
+        std::sort(pvList.begin(), pvList.end());
+        rgEdges.push_back(pvList);
+    }
+    std::sort(thisEdges.begin(), thisEdges.end());
+    std::sort(rgEdges.begin(), rgEdges.end());
+    return thisEdges == rgEdges;
+}
+
+void RelationshipsGraph::addToSynonymSet(const Synonym& syn)
+{
+    synonymSet.insert(syn);
 }
 
 Pair<Vector<String>, Vector<String>>
@@ -492,18 +538,12 @@ RelationshipsGraph::insertRelationships(const Vector<Pair<String, String>>& valu
         (*updatesToValuesTable.front())(*this);
         updatesToValuesTable.pop();
     }
-    // store the relationships in cache
-    if (!valueRelationships.empty()) {
-        if (synonymRelationshipsCache.find(firstSynonym) == synonymRelationshipsCache.end()) {
-            synonymRelationshipsCache.insert(
-                std::pair<Synonym, std::unordered_set<Synonym>>(firstSynonym, std::unordered_set<Synonym>()));
-        }
-        synonymRelationshipsCache[firstSynonym].insert(secondSynonym);
-        if (synonymRelationshipsCache.find(secondSynonym) == synonymRelationshipsCache.end()) {
-            synonymRelationshipsCache.insert(
-                std::pair<Synonym, std::unordered_set<Synonym>>(secondSynonym, std::unordered_set<Synonym>()));
-        }
-        synonymRelationshipsCache[secondSynonym].insert(firstSynonym);
+    // update synonym set
+    if (firstIsNew) {
+        synonymSet.insert(firstSynonym);
+    }
+    if (secondIsNew) {
+        synonymSet.insert(secondSynonym);
     }
     return Pair<Vector<String>, Vector<String>>(
         Vector<String>(firstSynonymResults.begin(), firstSynonymResults.end()),
@@ -524,10 +564,10 @@ void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resul
     std::unordered_set<GraphEdge> affectedEdges = valuesTable[pv];
     std::unordered_set<PotentialValue, PotentialValueHasher> affectedValues;
     for (GraphEdge ge : affectedEdges) {
-        std::unordered_set<PotentialValue, PotentialValueHasher> currentEdgeValues = edgesTable[ge];
-        for (const PotentialValue& otherValue : currentEdgeValues) {
-            valuesTable[otherValue].erase(ge);
-            affectedValues.insert(otherValue);
+        std::unordered_set<SynonymWithValue, SynonymWithValueHasher> currentEdgeValues = edgesTable[ge];
+        for (const SynonymWithValue& otherValue : currentEdgeValues) {
+            valuesTable[otherValue.asPv()].erase(ge);
+            affectedValues.insert(otherValue.asPv());
         }
         edgesTable.erase(ge);
     }
@@ -536,22 +576,13 @@ void RelationshipsGraph::deleteOne(const PotentialValue& pv, ResultsTable* resul
     valuesTable.erase(pv);
     // check related values to see if they are empty as well
     for (const PotentialValue& affected : affectedValues) {
-        if (!checkIfPotentialValueHasRelationships(affected)) {
+        if (!hasRelationships(affected)) {
             // this related value no longer has any relationships
             // we update the results table
             resultsTable->eliminatePotentialValue(affected.synonym, affected.value);
             deleteOne(affected, resultsTable);
         }
-        // clear synonyms relationship from cache
-        if (synonymRelationshipsCache.find(affected.synonym) != synonymRelationshipsCache.end()) {
-            // delete the cached relationship between synonyms, even if there could
-            // still be relationships between them for other potential values
-            synonymRelationshipsCache[affected.synonym].erase(pv.synonym);
-        }
     }
-    // clear synonym from cache, even though the synonym may still
-    // have other potential values with relationships
-    synonymRelationshipsCache.erase(pv.synonym);
 }
 
 void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const PotentialValue& secondKey,
@@ -561,7 +592,7 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
         return;
     }
     // short-circuit if either values are empty
-    bool doShortCircuit;
+    bool doShortCircuit = false;
     if (valuesTable[firstKey].empty()) {
         doShortCircuit = true;
         valuesTable.erase(firstKey);
@@ -578,7 +609,9 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
     std::unordered_set<GraphEdge> firstKeyEdges = valuesTable[firstKey];
     std::unordered_set<GraphEdge> edgesToDelete;
     for (GraphEdge potentialEdge : firstKeyEdges) {
-        if (edgesTable[potentialEdge].find(secondKey) != edgesTable[potentialEdge].end()) {
+        auto entry = edgesTable[potentialEdge].find(secondKey.asSwv());
+        // check the true value of the SynonymWithValue for that edge
+        if (entry != edgesTable[potentialEdge].end() && entry->value == secondKey.value) {
             // transfer this edge to edgesToDelete
             valuesTable[firstKey].erase(potentialEdge);
             valuesTable[secondKey].erase(potentialEdge);
@@ -588,19 +621,19 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
     // delete edges
     std::unordered_set<PotentialValue, PotentialValueHasher> affectedValues;
     for (GraphEdge edge : edgesToDelete) {
-        std::unordered_set<PotentialValue, PotentialValueHasher> currentEdgeValues = edgesTable[edge];
-        for (const PotentialValue& otherValue : currentEdgeValues) {
-            valuesTable[otherValue].erase(edge);
-            affectedValues.insert(otherValue);
+        std::unordered_set<SynonymWithValue, SynonymWithValueHasher>& currentEdgeValues = edgesTable[edge];
+        for (const SynonymWithValue& otherValue : currentEdgeValues) {
+            valuesTable[otherValue.asPv()].erase(edge);
+            affectedValues.insert(otherValue.asPv());
         }
         edgesTable.erase(edge);
     }
     // check firstKey and secondKey whether empty or not
-    if (!checkIfPotentialValueHasRelationships(firstKey)) {
+    if (!hasRelationships(firstKey)) {
         resultsTable->eliminatePotentialValue(firstKey.synonym, firstKey.value);
         valuesTable.erase(firstKey);
     }
-    if (!checkIfPotentialValueHasRelationships(secondKey)) {
+    if (!hasRelationships(secondKey)) {
         resultsTable->eliminatePotentialValue(secondKey.synonym, secondKey.value);
         valuesTable.erase(secondKey);
     }
@@ -609,62 +642,29 @@ void RelationshipsGraph::deleteTwo(const PotentialValue& firstKey, const Potenti
     affectedValues.erase(secondKey);
     // check related values to see if they are empty as well
     for (const PotentialValue& affected : affectedValues) {
-        if (!checkIfPotentialValueHasRelationships(affected)) {
+        if (!hasRelationships(affected)) {
             // this related value no longer has any relationships
             // we update the results table
             resultsTable->eliminatePotentialValue(affected.synonym, affected.value);
             // clear the value from relationships graph
             deleteOne(affected, resultsTable);
         }
-        // clear synonyms relationship from cache
-        if (synonymRelationshipsCache.find(affected.synonym) != synonymRelationshipsCache.end()) {
-            // clear cache for affected synonym -> first synonym and second synonym
-            synonymRelationshipsCache[affected.synonym].erase(firstKey.synonym);
-            synonymRelationshipsCache[affected.synonym].erase(secondKey.synonym);
-        }
     }
-    // clear cache for first synonym and second synonym
-    synonymRelationshipsCache.erase(firstKey.synonym);
-    synonymRelationshipsCache.erase(secondKey.synonym);
 }
 
-Boolean RelationshipsGraph::checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym)
+Boolean RelationshipsGraph::hasSeenBefore(const Synonym& syn)
 {
-    if (synonymRelationshipsCache.find(firstSynonym) != synonymRelationshipsCache.end()) {
-        return synonymRelationshipsCache[firstSynonym].find(secondSynonym)
-               != synonymRelationshipsCache[firstSynonym].end();
-    } else if (synonymRelationshipsCache.find(secondSynonym) != synonymRelationshipsCache.end()) {
-        return synonymRelationshipsCache[secondSynonym].find(firstSynonym)
-               != synonymRelationshipsCache[secondSynonym].end();
-    } else {
-        return false;
-    }
+    return synonymSet.find(syn) != synonymSet.end();
 }
 
-Boolean RelationshipsGraph::checkIfSynonymInRelationshipsGraph(const Synonym& syn)
-{
-    if (valuesTable.empty()) {
-        return false;
-    } else if (synonymRelationshipsCache.find(syn) != synonymRelationshipsCache.end()) {
-        return true;
-    } else {
-        Boolean hasPotentialValue = false;
-        for (const std::pair<const PotentialValue, std::unordered_set<GraphEdge>>& entry : valuesTable) {
-            if (entry.first.synonym == syn) {
-                hasPotentialValue = true;
-                break;
-            }
-        }
-        return hasPotentialValue;
-    }
-}
-
-Boolean RelationshipsGraph::checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv)
+Boolean RelationshipsGraph::areValuesRelated(const PotentialValue& firstPv, const PotentialValue& secondPv)
 {
     if (valuesTable.find(firstPv) != valuesTable.end()) {
         bool isRelated = false;
         for (GraphEdge ge : valuesTable[firstPv]) {
-            if (edgesTable[ge].find(secondPv) != edgesTable[ge].end()) {
+            auto entry = edgesTable[ge].find(secondPv.asSwv());
+            // check the true value of the SynonymWithValue for that edge
+            if (entry != edgesTable[ge].end() && entry->value == secondPv.value) {
                 isRelated = true;
                 break;
             }
@@ -675,14 +675,31 @@ Boolean RelationshipsGraph::checkIfRelated(const PotentialValue& firstPv, const 
     }
 }
 
+Boolean RelationshipsGraph::isValueRelated(const PotentialValue& pv, const Synonym& syn)
+{
+    if (valuesTable.find(pv) == valuesTable.end() || valuesTable[pv].empty()) {
+        return false;
+    } else {
+        std::unordered_set<SynonymWithValue, SynonymWithValueHasher>& valuesInEdge
+            = edgesTable[*valuesTable[pv].begin()]; // just get first edge in unordered_set
+                                                    // (all edges should have the same synonyms)
+        SynonymWithValue placeholderValue(syn, "");
+        return valuesInEdge.find(placeholderValue) != valuesInEdge.end();
+    }
+}
+
 std::vector<PotentialValue> RelationshipsGraph::retrieveRelationships(const PotentialValue& value)
 {
     if (valuesTable.find(value) != valuesTable.end()) {
         std::unordered_set<PotentialValue, PotentialValueHasher> resultsSet;
         for (GraphEdge e : valuesTable[value]) {
-            std::unordered_set<PotentialValue, PotentialValueHasher> edgeValues = edgesTable[e];
-            resultsSet.insert(edgeValues.begin(), edgeValues.end());
+            std::unordered_set<SynonymWithValue, SynonymWithValueHasher>& edgeValues = edgesTable[e];
+            for (const SynonymWithValue& edgeVal : edgeValues) {
+                resultsSet.insert(static_cast<PotentialValue>(edgeVal));
+            }
         }
+        // remove the original potential value
+        resultsSet.erase(value);
         return std::vector<PotentialValue>(resultsSet.begin(), resultsSet.end());
     } else {
         return std::vector<PotentialValue>();

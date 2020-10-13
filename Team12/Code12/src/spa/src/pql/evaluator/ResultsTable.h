@@ -133,6 +133,14 @@ public:
     bool operator==(const ResultsTable& rt) const;
 
     /**
+     * A method to get the RelationshipsGraph stored inside
+     * the ResultsTable, for testing purposes.
+     *
+     * @return The RelationshipsGraph stored inside.
+     */
+    RelationshipsGraph getRelationshipsGraph() const;
+
+    /**
      * Returns true if the result table is marked as having
      * no results at all, which happens if a clause returns
      * no results. This would ensure that the entire program
@@ -143,24 +151,6 @@ public:
      *         an empty result.
      */
     Boolean hasResults() const;
-
-    /**
-     * Adds a list of relationships between potential values
-     * of certain synonyms. This method assumes the values are
-     * new to the table and do not have any existing relations
-     * in the relationships graph.
-     *
-     * If the references are not synonyms, do nothing.
-     *
-     * @param syn1 The reference that the first value
-     *             corresponds to.
-     * @param syn2 The reference that the second
-     *             value corresponds to.
-     * @param relationshipsPairs List of relationships between
-     *                           potential values.
-     */
-    void associateRelationships(const Synonym& syn1, const Synonym& syn2,
-                                const Vector<Pair<String, String>>& relationshipsPairs);
 
     /**
      * Disassociates a certain value from a synonym in
@@ -307,12 +297,6 @@ public:
  */
 ClauseResult retrieveAllMatching(DesignEntityType entTypeOfSynonym);
 
-// Identity function for strings
-inline String stringId(String str)
-{
-    return str;
-}
-
 typedef Integer GraphEdge;
 class TableUpdate;
 class UpdatesQueue;
@@ -325,15 +309,14 @@ class UpdatesQueue;
 class RelationshipsGraph {
 private:
     std::unordered_map<PotentialValue, std::unordered_set<GraphEdge>, PotentialValueHasher> valuesTable;
-    std::unordered_map<GraphEdge, std::unordered_set<PotentialValue, PotentialValueHasher>> edgesTable;
+    std::unordered_map<GraphEdge, std::unordered_set<SynonymWithValue, SynonymWithValueHasher>> edgesTable;
     GraphEdge edgesIndex = 0;
     /**
-     * If a relationship between two synonyms is found in the cache, then
-     * it is certain that their potential values have some relationship
-     * within relationshipsTable. If it is not found, a manual search of
-     * relationshipsTable is required.
+     * A set that keeps track of synonyms that were put into the graph.
+     * This set will never decrease in size for the entire lifetime of
+     * the RelationshipsGraph (synonyms will never be removed).
      */
-    std::unordered_map<Synonym, std::unordered_set<Synonym>> synonymRelationshipsCache;
+    std::unordered_set<Synonym> synonymSet;
     // Allow ValuesTablesUpdates to access the valuesTable
     friend class ValuesTableDelete;
     friend class ValuesTableInsert;
@@ -354,7 +337,7 @@ private:
                                             const PotentialValue& existingKey, UpdatesQueue& updates);
     static bool associateZeroExisting(const RelationshipsGraph& graph, const PotentialValue& firstKey,
                                       const PotentialValue& secondKey, UpdatesQueue& updates);
-    Boolean checkIfPotentialValueHasRelationships(const PotentialValue& pv);
+    bool hasRelationships(const PotentialValue& pv);
 
 public:
     RelationshipsGraph() = default;
@@ -368,20 +351,26 @@ public:
 
     /**
      * A method to compare two RelationshipsGraph for testing purposes.
-     * This method ignores differences in the synonym cache.
      */
     bool operator==(const RelationshipsGraph& rg) const;
 
     /**
-     * A method to compare two RelationshipsGraph for testing purposes.
-     * This method compares the synonym cache of the graph as well.
+     * A method to compare the structure of two RelationshipsGraphs.
+     * This method ignores specific edge numbers.
      */
-    bool checkEqualIncludingCache(const RelationshipsGraph& rg) const;
+    bool compareStructure(const RelationshipsGraph& rg) const;
+
+    /**
+     * A method to add a synonym to the synonyms set, that keeps
+     * track of which synonyms have already been encountered by
+     * the RelationshipsGraph. Used for unit testing.
+     */
+    void addToSynonymSet(const Synonym& syn);
 
     /**
      * Adds a list of relationships between potential values
      * of certain synonyms. This method assumes that the
-     * synonyms are not related (checkIfRelated returns false).
+     * synonyms are not related (areValuesRelated returns false).
      *
      * Doing this insertion may cause certain values to be discarded
      * from the ResultsTable.
@@ -410,8 +399,10 @@ public:
      * table if other potential values can no longer exist.
      *
      * This method is to be called whenever a potential value
-     * is filtered out from the results table, to automatically
-     * delete related values as well (if possible).
+     * is deleted from the results table, to automatically
+     * delete related values as well (if possible). Because
+     * of this, deleteOne assumes pv no longer exists in
+     * the resultsTable, and will not attempt to delete it.
      *
      * @param pv The potential value to delete.
      * @param resultsTable The results table to update, if related
@@ -432,32 +423,14 @@ public:
     void deleteTwo(const PotentialValue& firstKey, const PotentialValue& secondKey, ResultsTable* resultsTable);
 
     /**
-     * Checks whether two synonyms have relationships in the
-     * relationships table cache. If this returns false, the
-     * two synonyms could still have a relationship, but it
-     * would require iterating over the entire relationship
-     * table to determine. If this returns true, then it is
-     * certain that firstSynonym and secondSynonym have some
-     * potential values that affect each other.
-     *
-     * @param firstSynonym The first synonym to be checked.
-     * @param secondSynonym The second synonym to be checked.
-     *
-     * @return True, if it is certain that firstSynonym and
-     *         secondSynonym has relationships in the graph.
-     *         If it is uncertain, but not impossible, false.
-     */
-    Boolean checkCachedRelationships(const Synonym& firstSynonym, const Synonym& secondSynonym);
-
-    /**
-     * Checks if a synonym has any potential values
-     * in the relationships graph.
+     * Checks if a synonym has existed in the relationship
+     * graph before (may not exist currently, however).
      *
      * @param syn The synonym to be checked.
-     * @return True, if synonym has some potential values.
-     *         Otherwise, false.
+     * @return True, if synonym has been entered into the
+     *         graph before. Otherwise, false.
      */
-    Boolean checkIfSynonymInRelationshipsGraph(const Synonym& syn);
+    Boolean hasSeenBefore(const Synonym& syn);
 
     /**
      * Checks if two potential values are related in the
@@ -469,7 +442,18 @@ public:
      *         there is a relationship between them.
      *         Otherwise, false.
      */
-    Boolean checkIfRelated(const PotentialValue& firstPv, const PotentialValue& secondPv);
+    Boolean areValuesRelated(const PotentialValue& firstPv, const PotentialValue& secondPv);
+
+    /**
+     * For one potential value, checks whether it has an edge
+     * with any potential values of a synonym.
+     *
+     * @param pv The potential value.
+     * @param syn The synonym to be checked.
+     * @return True, if pv has an edge to some
+     *         potential value of synonym syn.
+     */
+    Boolean isValueRelated(const PotentialValue& pv, const Synonym& syn);
 
     /**
      * Retrieves all values related to a potential value

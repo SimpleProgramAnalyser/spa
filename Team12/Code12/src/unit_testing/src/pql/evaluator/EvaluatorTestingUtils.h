@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "catch.hpp"
+#include "pql/evaluator/ResultsTable.h"
 
 /**
  * A method to compare two vectors, to see whether
@@ -58,5 +59,9 @@ inline void requireVectorsHaveSameElements<std::pair<std::string, std::string>>(
     REQUIRE(vector1 == vector2);
 }
 */
+
+RelationshipsGraph setUpTestingGraph();
+
+std::unique_ptr<ResultsTable> setUpResultsTable();
 
 #endif // UNIT_TESTING_EVALUATOR_TESTING_UTILS_H
