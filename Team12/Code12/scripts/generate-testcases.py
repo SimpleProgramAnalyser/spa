@@ -194,6 +194,7 @@ def print_such_that(clauses, synonyms, num_clause):
     print("such that", end=" ")
     for i in range(num_clause):
         print_such_that_clause(clauses[i], synonyms[2 * i], synonyms[2 * i + 1])
+        print("and", end=" ")
 
 
 # TODO: generate pattern, with as well
