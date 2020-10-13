@@ -822,6 +822,7 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
     StatementNode* statement;
     TokenListIndex nextUnparsed = startIndex;
     Boolean isSyntaxError = false; // flag for syntax error
+    Boolean isCall = false;        // flag for CallStatement
 
     if (numberOfTokens - startIndex > 1) {
         // determine statement type
@@ -839,6 +840,7 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
                     = parseCallStmt(programTokens, startIndex);
                 statement = resultCall.astNode.release();
                 nextUnparsed = resultCall.nextUnparsedToken;
+                isCall = true;
                 break;
             }
             case frontend::PrintKeywordTag: {
@@ -880,11 +882,12 @@ ParserReturnType<std::unique_ptr<StatementNode>> parseStatement(frontend::TokenL
 
     if (isSyntaxError || nextUnparsed < 0) {
         return getSyntaxError<StatementNode>();
-    } else {
-        insertIntoStatementTable(statement->getStatementNumber(), statement->getStatementType());
-        return ParserReturnType<std::unique_ptr<StatementNode>>(std::unique_ptr<StatementNode>(statement),
-                                                                nextUnparsed);
     }
+    isCall ? insertIntoStatementTable(statement->getStatementNumber(),
+                                      // NOLINTNEXTLINE
+                                      static_cast<CallStatementNode*>(statement)->procedureName)
+           : insertIntoStatementTable(statement->getStatementNumber(), statement->getStatementType());
+    return ParserReturnType<std::unique_ptr<StatementNode>>(std::unique_ptr<StatementNode>(statement), nextUnparsed);
 }
 
 ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::TokenList* programTokens,
