@@ -108,14 +108,14 @@ RawQueryResult Evaluator::evaluateSelectSynonym()
     }
     case 1: {
         ClauseResult resultsForSynonym = resultsTable.getResultsOne(selectedSynonyms[0].getSynonym());
-        resultsWithAttributes = mapAttributesOne(resultsForSynonym, selectedSynonyms[0]);
+        resultsWithAttributes = mapAttributesOne(resultsTable, resultsForSynonym, selectedSynonyms[0]);
         break;
     }
     case 2: {
         PairedResult resultsForSynonym
             = resultsTable.getResultsTwo(selectedSynonyms[0].getSynonym(), selectedSynonyms[1].getSynonym());
-        resultsWithAttributes
-            = convertToTupleString(mapAttributesTwo(resultsForSynonym, selectedSynonyms[0], selectedSynonyms[1]));
+        resultsWithAttributes = convertToTupleString(
+            mapAttributesTwo(resultsTable, resultsForSynonym, selectedSynonyms[0], selectedSynonyms[1]));
         break;
     }
     default: {
@@ -124,7 +124,7 @@ RawQueryResult Evaluator::evaluateSelectSynonym()
             synonymsList.push_back(rs.getSynonym());
         }
         NtupledResult resultsForSynonym = resultsTable.getResultsN(synonymsList);
-        resultsWithAttributes = convertToTupleString(mapAttributesN(resultsForSynonym, selectedSynonyms));
+        resultsWithAttributes = convertToTupleString(mapAttributesN(resultsTable, resultsForSynonym, selectedSynonyms));
     }
     }
     return RawQueryResult(resultsWithAttributes);
