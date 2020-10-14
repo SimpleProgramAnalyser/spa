@@ -78,7 +78,7 @@ String getResultForSingleValue(const String& value, DesignEntityType synonymType
                                const SignificanceMap& map)
 {
     if (isSignificant(synonymType, attributeType, map)) {
-        return map[synonymType][attributeType](value);
+        return map.at(synonymType).at(attributeType)(value);
     } else {
         return value;
     }
@@ -104,19 +104,37 @@ PairedResult mapAttributesTwo(const ResultsTable& results, const PairedResult& p
                               const ResultSynonym& syn2)
 {
     SignificanceMap significanceMap = getSignificanceMap();
-    bool syn1Significant
-        = isSignificant(results.getTypeOfSynonym(syn1.getSynonym()), syn1.getAttribute().getType(), significanceMap);
-    bool syn2Significant
-        = isSignificant(results.getTypeOfSynonym(syn2.getSynonym()), syn2.getAttribute().getType(), significanceMap);
+    DesignEntityType syn1Type = results.getTypeOfSynonym(syn1.getSynonym());
+    AttributeType syn1Attr = syn1.getAttribute().getType();
+    DesignEntityType syn2Type = results.getTypeOfSynonym(syn2.getSynonym());
+    AttributeType syn2Attr = syn2.getAttribute().getType();
+    bool syn1Significant = isSignificant(syn1Type, syn1Attr, significanceMap);
+    bool syn2Significant = isSignificant(syn2Type, syn2Attr, significanceMap);
+
     if (!syn1Significant && !syn2Significant) {
         return pairs;
-    } else {
-        std::unordered_set<std::pair<std::string, std::string>> attributesResult;
-        for (const std::pair<std::string, std::string>& pair : pairs) {
-            attributesResult.insert(significanceMap[synonymType][attributeType](value));
-        }
-        return PairedResult(attributesResult.begin(), attributesResult.end());
     }
+    std::unordered_set<ResultsRelation, ResultsRelationHasher> attributesResult;
+    if (syn1Significant && syn2Significant) {
+        for (const std::pair<std::string, std::string>& pair : pairs) {
+            attributesResult.insert(ResultsRelation(significanceMap[syn1Type][syn1Attr](pair.first),
+                                                    significanceMap[syn2Type][syn2Attr](pair.second)));
+        }
+    } else if (syn1Significant) {
+        for (const std::pair<std::string, std::string>& pair : pairs) {
+            attributesResult.insert(ResultsRelation(significanceMap[syn1Type][syn1Attr](pair.first), pair.second));
+        }
+    } else {
+        // syn2Significant
+        for (const std::pair<std::string, std::string>& pair : pairs) {
+            attributesResult.insert(ResultsRelation(pair.first, significanceMap[syn2Type][syn2Attr](pair.second)));
+        }
+    }
+    PairedResult resultsList;
+    for (const ResultsRelation& rr : attributesResult) {
+        resultsList.emplace_back(rr.value1, rr.value2);
+    }
+    return resultsList;
 }
 
 NtupledResult mapAttributesN(const ResultsTable& results, const NtupledResult& tuples,
