@@ -4,6 +4,7 @@
 
 #include "Evaluator.h"
 
+#include <sstream>
 #include <stdexcept>
 #include <utility>
 
@@ -29,6 +30,34 @@ Vector<String> convertToTupleString(const PairedResult& resultPairs)
     Vector<String> tupleStrings;
     for (const std::pair<std::string, std::string>& result : resultPairs) {
         tupleStrings.push_back(result.first + delimiter + result.second);
+    }
+    return tupleStrings;
+}
+
+/**
+ * Converts a n-tupled result to a vector of strings, where
+ * each string is a tuple with elements separated by spaces.
+ *
+ * Example: Select <a, p, x> ... returns {{"e", "1", "n"}, {"f", "2", "m"}}
+ * This method will return {"e 1 n", "f 2 m"}.
+ *
+ * @param resultTuples The n-tuples of results to be converted.
+ * @return A vector of strings with each tuple as a single string.
+ */
+Vector<String> convertToTupleString(const NtupledResult& resultTuples)
+{
+    std::string delimiter = " ";
+    Vector<String> tupleStrings;
+    for (const std::vector<std::string>& tuple : resultTuples) {
+        std::ostringstream stringStream;
+        size_t length = tuple.size();
+        for (size_t i = 0; i < length - 1; i++) {
+            stringStream << tuple[i] << delimiter;
+        }
+        if (length - 1 >= 0) {
+            stringStream << tuple[length - 1];
+        }
+        tupleStrings.emplace_back(stringStream.str());
     }
     return tupleStrings;
 }
