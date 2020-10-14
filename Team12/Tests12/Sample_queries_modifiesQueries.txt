@@ -233,32 +233,32 @@ call c; variable v;
 Select v such that Modifies(c,v)
 cenX, normSq, x, y
 5000
-47 - Modifies with 2 synonyms, Select based on LHS (if)
+48 - Modifies with 2 synonyms, Select based on LHS (if)
 if i; variable v;
 Select i such that Modifies(i,v)
 3, 7, 26, 33, 37
 5000
-48 - Modifies with 2 synonyms, Select based on RHS (if)
+49 - Modifies with 2 synonyms, Select based on RHS (if)
 if i; variable v;
 Select v such that Modifies(i,v)
 normSq, x, y, count, cenX, cenY, flag, readPoint
 5000
-49 - Modifies with 2 synonyms, Select based on LHS (while)
+50 - Modifies with 2 synonyms, Select based on LHS (while)
 while w; variable v;
 Select w such that Modifies(w,v)
 9, 17, 24, 30
 5000
-50 - Modifies with 2 synonyms, Select based on RHS (while)
+51 - Modifies with 2 synonyms, Select based on RHS (while)
 while w; variable v;
 Select v such that Modifies(w,v)
 normSq, x, y, count, cenX, cenY
 5000
-51 - Modifies with 2 synonyms, Select based on LHS (assign)
+52 - Modifies with 2 synonyms, Select based on LHS (assign)
 assign a; variable v;
 Select a such that Modifies(a,v)
 4, 5, 6, 8, 10, 13, 18, 19, 20, 21, 22, 25, 27, 29, 32, 34, 35, 36, 38, 39, 40
 5000
-52 - Modifies with 2 synonyms, Select based on RHS (assign)
+53 - Modifies with 2 synonyms, Select based on RHS (assign)
 assign a; variable v;
 Select v such that Modifies(a,v)
 cenX, cenY, count, flag, normSq, readPoint, x, y
