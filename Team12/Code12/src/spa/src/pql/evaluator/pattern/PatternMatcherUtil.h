@@ -5,14 +5,14 @@
 #ifndef SPA_PQL_PATTERN_MATCHER_UTIL_H
 #define SPA_PQL_PATTERN_MATCHER_UTIL_H
 
+#include <stdexcept>
 #include <unordered_set>
 
 #include "Types.h"
 #include "pkb/PKB.h"
 #include "pql/evaluator/ResultsTable.h"
 #include "pql/preprocessor/AqTypes.h"
-#include <stdexcept>
-git
+
 /**
  * A class to hold result lists for matching
  * patterns and variables.
