@@ -145,8 +145,8 @@ NtupledResult ResultsTable::joinAllSynonyms(const Vector<Synonym>& syns)
         Synonym firstSyn = syns[i];
         Synonym secondSyn = syns[i + 1];
         if (!hasRelationships(firstSyn, secondSyn)) {
-            bool firstSynNewInGraph = relationships->hasSeenBefore(firstSyn);
-            bool secondSynNewInGraph = relationships->hasSeenBefore(secondSyn);
+            bool firstSynNewInGraph = !relationships->hasSeenBefore(firstSyn);
+            bool secondSynNewInGraph = !relationships->hasSeenBefore(secondSyn);
             Vector<Pair<String, String>> tuples
                 = generateCartesianProduct(getResultsOne(firstSyn), getResultsOne(secondSyn));
             // do joining to combine the tables
@@ -434,7 +434,7 @@ PairedResult ResultsTable::getResultsTwo(const Synonym& syn1, const Synonym& syn
 
 NtupledResult ResultsTable::getResultsN(const Vector<Synonym>& syns)
 {
-    assert(("Size < 2 in getResultsN", syns.size() > 1)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(syns.size() > 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     mergeResults();
     return joinAllSynonyms(syns);
 }

@@ -60,7 +60,15 @@ inline void requireVectorsHaveSameElements<std::pair<std::string, std::string>>(
 }
 */
 
+/**
+ * Creates a testing RelationshipsGraph with multiple relationships.
+ */
 RelationshipsGraph setUpTestingGraph();
+
+/**
+ * Returns a ResultsTable that gives the same graph as setUpTestingGraph().
+ */
+std::unique_ptr<ResultsTable> setUpResultsTableWithSameTestingGraph();
 
 std::unique_ptr<ResultsTable> setUpResultsTable();
 
