@@ -102,17 +102,10 @@ Void FollowsEvaluator::evaluateBothAny() const
 Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
 {
     /*
-     * For this case, in iteration 1, the clause is perpetually not
-     * related to any synonym (because the wildcard to converted
-     * to any StmtType, hence no checking needs to be done here).
+     * For this case, the clause is perpetually not related to any
+     * synonym, since there are two specific statement numbers.
      */
-    Boolean followsHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
-    std::vector<String> tempResult;
-    if (followsHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueFollows");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
+    resultsTable->storeResultsZero(pkbBothKnownFunction(leftRefVal, rightRefVal));
 }
 
 Void FollowsEvaluator::evaluateFollowsClause() const

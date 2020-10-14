@@ -96,12 +96,7 @@ Void UsesEvaluator::evaluateBothKnown() const
         // leftRefType == LiteralRefType
         usesHolds = checkIfProcedureUses(leftRef.getValue(), rightRef.getValue());
     }
-    std::vector<String> tempResult;
-    if (usesHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueUses");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
+    resultsTable->storeResultsZero(usesHolds);
 }
 
 Void UsesEvaluator::evaluateUsesClause() const

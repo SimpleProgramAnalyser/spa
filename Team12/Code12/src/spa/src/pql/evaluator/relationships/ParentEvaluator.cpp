@@ -88,13 +88,7 @@ Void ParentEvaluator::evaluateBothAny() const
 
 Void ParentEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
 {
-    Boolean parentHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
-    std::vector<String> tempResult;
-    if (parentHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueParent");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
+    resultsTable->storeResultsZero(pkbBothKnownFunction(leftRefVal, rightRefVal));
 }
 
 Void ParentEvaluator::evaluateParentClause() const
