@@ -52,6 +52,14 @@ std::vector<std::pair<Integer, String>> PatternMatcherTuple::getRelationships() 
     return relationshipsResults;
 }
 
+/**
+ * Extracts and return all variables in the
+ * given expression.
+ *
+ * @param expr          The given Expression.
+ * @param variables     The variables set to store extracted
+ *                      variables in.
+ */
 Void getVariableInExpr(const Expression* expr, std::unordered_set<String>& variables)
 {
     if (expr->isArithmetic()) {
@@ -74,6 +82,14 @@ Void getVariableInExpr(const Expression* expr, std::unordered_set<String>& varia
     }
 }
 
+/**
+ * Extracts and return all variables in the
+ * given conditional expression.
+ *
+ * @param condExpr      The given ConditonalExpression.
+ * @param variables     The variables set to store extracted
+ *                      variables in.
+ */
 Void getLiteralVariablesInCondExpr(const ConditionalExpression* condExpr, std::unordered_set<String>& variables)
 {
     auto conditionType = condExpr->getConditionalType();

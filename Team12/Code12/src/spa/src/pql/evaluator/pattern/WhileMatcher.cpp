@@ -5,6 +5,24 @@
 
 #include "WhileMatcher.h"
 
+/**
+ * Checks if the WhileStatementNode matches
+ * the conditions set by the given Pattern
+ * Clause. Depending on the type of reference
+ * in the Pattern Clause, the returned results
+ * will differ. For WilcardRefType and
+ * LiteralRefType, only the statement number
+ * is needed. For SynonymRefType, we return all
+ * corresponding variables and the statement
+ * number.
+ *
+ * @param ifNode        The current WhileStatementNode.
+ * @param pnClause      The given Pattern Clause.
+ * @param stmtNumber    The current statement number.
+ * @return              The results of matching the current
+ *                      IfStatementNode to the given Pattern
+ *                      Clause.
+ */
 PatternMatcherTuple matchWhileStatement(WhileStatementNode* whileNode, PatternClause* pnClause, StatementNumber stmtNumber)
 {
     Reference controlVariableRef = pnClause->getEntRef();
@@ -37,6 +55,17 @@ PatternMatcherTuple matchWhileStatement(WhileStatementNode* whileNode, PatternCl
     return results;
 }
 
+/**
+ * Finds all while statement nodes in the AST, and
+ * check if they match the given Pattern Clause.
+ *
+ * @param stmtLstNode   The statement list node to search
+ *                      for while statement nodes.
+ * @param pnClause      The Pattern Clause to match to.
+ * @return              A PatternMatcherTuple that stores
+ *                      all matching statements in the
+ *                      given statement list node.
+ */
 PatternMatcherTuple findWhileInStatementList(const StmtlstNode* const stmtLstNode, PatternClause* pnClause)
 {
     const List<StatementNode>& statements = stmtLstNode->statementList;
