@@ -221,7 +221,7 @@ public:
     Boolean operator==(const Reference& reference);
 };
 
-enum RelationshipReferenceType : uint16_t {
+enum RelationshipReferenceType : char {
     FollowsType,
     FollowsStarType,
     ParentType,
@@ -239,6 +239,16 @@ enum RelationshipReferenceType : uint16_t {
     AffectsType,
     AffectsStarType,
     InvalidRelationshipType
+};
+
+// Hash function for RelationshipReferenceType
+template <>
+struct std::hash<RelationshipReferenceType> {
+    std::size_t operator()(const RelationshipReferenceType& relRefType) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(relRefType));
+    }
 };
 
 class Relationship {
@@ -323,6 +333,16 @@ public:
 };
 
 enum PatternStatementType : char { AssignPatternType, WhilePatternType, IfPatternType };
+
+// Hash function for RelationshipReferenceType
+template <>
+struct std::hash<PatternStatementType> {
+    std::size_t operator()(const PatternStatementType& patternStatementType) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(patternStatementType));
+    }
+};
 
 class PatternClause: public Clause {
 private:
