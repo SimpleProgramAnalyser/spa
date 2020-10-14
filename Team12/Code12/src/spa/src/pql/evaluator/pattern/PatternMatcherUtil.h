@@ -11,7 +11,8 @@
 #include "pkb/PKB.h"
 #include "pql/evaluator/ResultsTable.h"
 #include "pql/preprocessor/AqTypes.h"
-
+#include <stdexcept>
+git
 /**
  * A class to hold result lists for matching
  * patterns and variables.

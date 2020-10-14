@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include <stdexcept>
 
 #include "PatternMatcherUtil.h"
 #include "pkb/PKB.h"
