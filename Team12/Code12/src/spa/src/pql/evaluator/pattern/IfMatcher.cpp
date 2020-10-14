@@ -29,7 +29,8 @@ PatternMatcherTuple matchIfStatement(IfStatementNode* ifNode, PatternClause* pnC
     ReferenceType refType = controlVariableRef.getReferenceType();
     PatternMatcherTuple results;
 
-    assert(refType == WildcardRefType || refType == LiteralRefType || refType == SynonymRefType);
+    assert(refType == WildcardRefType || refType == LiteralRefType
+           || refType == SynonymRefType); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     if (refType == WildcardRefType) {
         results.addTargetStatement(stmtNumber);
