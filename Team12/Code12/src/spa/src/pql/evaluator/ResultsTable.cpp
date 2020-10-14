@@ -59,7 +59,7 @@ PairedResult generateCartesianProduct(const ClauseResult& results1, const Clause
  * @return True, if the synonym exists in the table.
  *         Otherwise, false.
  */
-inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
+inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn) const
 {
     return resultsMap.find(syn) != resultsMap.end();
 }
@@ -249,13 +249,13 @@ void ResultsTable::mergeResults()
     hasEvaluated = true;
 }
 
-ClauseResult ResultsTable::get(const Synonym& syn)
+ClauseResult ResultsTable::get(const Synonym& syn) const
 {
     if (!hasResults()) {
         // table is marked as having no results
         return std::vector<String>();
     } else if (checkIfSynonymInMap(syn)) {
-        ResultsSet resultsSet = resultsMap[syn];
+        ResultsSet resultsSet = resultsMap.at(syn);
         return std::vector<String>(resultsSet.begin(), resultsSet.end());
     } else {
         return retrieveAllMatching(getTypeOfSynonym(syn));
@@ -377,12 +377,12 @@ Void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String&
     }
 }
 
-DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
+DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn) const
 {
     return declarations.getDesignEntityOfSynonym(syn).getType();
 }
 
-Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
+Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn) const
 {
     if (!hasResults()) {
         // there are no results, so by the specification of
@@ -393,7 +393,7 @@ Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
     }
 }
 
-Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
+Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym) const
 {
     if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)
         || leftSynonym == rightSynonym) {

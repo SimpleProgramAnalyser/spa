@@ -38,7 +38,7 @@ private:
     AffectsEvaluator* affectsEvaluator;
     NextEvaluator* nextEvaluator;
 
-    Boolean checkIfSynonymInMap(const Synonym& syn);
+    Boolean checkIfSynonymInMap(const Synonym& syn) const;
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
     ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
     NtupledResult joinAllSynonyms(const Vector<Synonym>& syns);
@@ -85,7 +85,7 @@ private:
      * @param syn The synonym to look up.
      * @return List of results for the synonym.
      */
-    ClauseResult get(const Synonym& syn);
+    ClauseResult get(const Synonym& syn) const;
 
     /**
      * Removes all relationships between the leftValue of synonym left
@@ -228,7 +228,7 @@ public:
      * @return The type of the synonym. If the synonym is
      *         not in the table, return NonExistentType.
      */
-    DesignEntityType getTypeOfSynonym(const Synonym& syn);
+    DesignEntityType getTypeOfSynonym(const Synonym& syn) const;
 
     /**
      * Checks if a synonym has been restricted to only match a
@@ -237,7 +237,7 @@ public:
      *
      * @return True, if synonym has been restricted.
      */
-    Boolean doesSynonymHaveConstraints(const Synonym& syn);
+    Boolean doesSynonymHaveConstraints(const Synonym& syn) const;
 
     /**
      * Checks the relationship table for two synonyms, to
@@ -249,7 +249,7 @@ public:
      * @return True, if some clause has restricted the
      *         left and right to certain relationships.
      */
-    Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+    Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym) const;
 
     /**
      * Forces the merging of the results queue.
