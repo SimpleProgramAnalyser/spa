@@ -16,6 +16,10 @@ public:
     Vector<ProcedureName> getAllCallersStar(const ProcedureName& callee);
     Vector<ProcedureName> getAllCallees(const ProcedureName& caller);
     Vector<ProcedureName> getAllCalleesStar(const ProcedureName& caller);
+    Vector<ProcedureName> getAllCallers();
+    Vector<ProcedureName> getAllCallees();
+    Vector<ProcedureName> getAllCallersStar();
+    Vector<ProcedureName> getAllCalleesStar();
     Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTuple();
     Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTupleStar();
 
@@ -35,6 +39,19 @@ private:
     HashMap<ProcedureName, Vector<ProcedureName>> procCalleeMapStar;
     HashMap<ProcedureName, HashSet<ProcedureName>> procCalleeSetStar;
 
+    // Collection
+    /**
+     * Just a collection of procedure names.
+     */
+    Vector<ProcedureName> callers;
+    HashSet<ProcedureName> callersSet;
+    Vector<ProcedureName> callees;
+    HashSet<ProcedureName> calleesSet;
+    Vector<ProcedureName> callersStar;
+    HashSet<ProcedureName> callersStarSet;
+    Vector<ProcedureName> calleesStar;
+    HashSet<ProcedureName> calleesStarSet;
+
     // Tuples
     /**
      * Just a collection of tuples.
@@ -45,8 +62,10 @@ private:
 
     // we only have basic and tuple here
     void addIntoBasicTables(const ProcedureName& caller, const ProcedureName& callee);
+    void addIntoCollectionTables(const ProcedureName& caller, const ProcedureName& callee);
     void addIntoTupleTables(const ProcedureName& caller, const ProcedureName& callee);
     void addIntoBasicTablesStar(const ProcedureName& caller, const ProcedureName& callee);
+    void addIntoCollectionTablesStar(const ProcedureName& caller, const ProcedureName& callee);
     void addIntoTupleTablesStar(const ProcedureName& caller, const ProcedureName& callee);
 };
 

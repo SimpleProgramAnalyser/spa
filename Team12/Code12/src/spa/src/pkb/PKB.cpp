@@ -405,6 +405,22 @@ Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTupleStar()
 {
     return pkb.callsTable.getAllCallsTupleStar();
 }
+Vector<ProcedureName> getAllCallers()
+{
+    return pkb.callsTable.getAllCallers();
+}
+Vector<ProcedureName> getAllCallersStar()
+{
+    return pkb.callsTable.getAllCallersStar();
+}
+Vector<ProcedureName> getAllCallees()
+{
+    return pkb.callsTable.getAllCallees();
+}
+Vector<ProcedureName> getAllCalleesStar()
+{
+    return pkb.callsTable.getAllCalleesStar();
+}
 
 // CFG
 void storeCFG(void* cfg, ProcedureName procedureName)
