@@ -130,7 +130,7 @@ public:
     explicit ResultSynonym(Synonym syn);
     ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity);
     Synonym getSynonym() const;
-    Attribute getAttribute();
+    Attribute getAttribute() const;
     Boolean operator==(const ResultSynonym& resultSynonym);
     Boolean operator!=(const ResultSynonym& resultSynonym);
 };
