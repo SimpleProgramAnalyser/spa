@@ -91,6 +91,6 @@ Void CallsEvaluator::evaluateCallsClause() const
         evaluateBothAny();
     } else {
         throw std::runtime_error(
-            "Error in CallsExtractor::evaluateCallsClause: No synonyms or string literals in Calls clause");
+            "Error in CallsEvaluator::evaluateCallsClause: No synonyms or string literals in Calls clause");
     }
 }
