@@ -108,8 +108,11 @@ RawQueryResult Evaluator::evaluateSelectSynonym()
         return RawQueryResult(convertToTupleString(
             resultsTable.getResultsTwo(selectedSynonyms[0].getSynonym(), selectedSynonyms[1].getSynonym())));
     default:
-        // TODO
-        return RawQueryResult::getSyntaxError("TODO LOL");
+        Vector<Synonym> synonymsList;
+        for (const ResultSynonym& rs : selectedSynonyms) {
+            synonymsList.push_back(rs.getSynonym());
+        }
+        return RawQueryResult(convertToTupleString(resultsTable.getResultsN(synonymsList)));
     }
 }
 
