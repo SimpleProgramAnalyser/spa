@@ -13,6 +13,26 @@
 #include "relationships/NextEvaluator.h"
 #include "relationships/SuchThatEvaluator.h"
 
+/**
+ * Converts a paired result to a vector of strings, where
+ * each string is a tuple with elements separated by spaces.
+ *
+ * Example: Select <a, p> ... returns {{"a", "b"}, {"c", "d"}}
+ * This method will return {"a b", "c d"}.
+ *
+ * @param resultPairs The pairs of results to be converted.
+ * @return A vector of strings with each tuple as a single string.
+ */
+Vector<String> convertToTupleString(const PairedResult& resultPairs)
+{
+    std::string delimiter = " ";
+    Vector<String> tupleStrings;
+    for (const std::pair<std::string, std::string>& result : resultPairs) {
+        tupleStrings.push_back(result.first + delimiter + result.second);
+    }
+    return tupleStrings;
+}
+
 RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
 {
     Evaluator evaluator(abstractQuery);
@@ -64,7 +84,24 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
         }
     }
     // call the result table to return the final result
-    return RawQueryResult(resultsTable.getResultsOne(query.getSelectSynonym()));
+    return evaluateSelectSynonym();
+}
+
+RawQueryResult Evaluator::evaluateSelectSynonym()
+{
+    Vector<ResultSynonym> selectedSynonyms = query.getSelectSynonym();
+    switch (selectedSynonyms.size()) {
+    case 0:
+        return RawQueryResult(Vector<String>({resultsTable.getResultsZero() ? "TRUE" : "FALSE"}));
+    case 1:
+        return RawQueryResult(resultsTable.getResultsOne(selectedSynonyms[0].getSynonym()));
+    case 2:
+        return RawQueryResult(convertToTupleString(
+            resultsTable.getResultsTwo(selectedSynonyms[0].getSynonym(), selectedSynonyms[1].getSynonym())));
+    default:
+        // TODO
+        return RawQueryResult::getSyntaxError("TODO LOL");
+    }
 }
 
 void evaluateAndCastSuchThat(Clause* cl, ResultsTable* resultsTable)

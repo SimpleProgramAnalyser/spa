@@ -19,6 +19,7 @@ private:
     ResultsTable resultsTable;
 
     RawQueryResult evaluateSyntacticallyValidQuery();
+    RawQueryResult evaluateSelectSynonym();
     Void evaluateClause(Clause* clause);
 
 public:
