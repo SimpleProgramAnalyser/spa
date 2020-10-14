@@ -346,7 +346,8 @@ Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
 
 Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
 {
-    if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)) {
+    if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)
+        || leftSynonym == rightSynonym) {
         return false;
     }
     ClauseResult resultsForLeft = get(leftSynonym);
@@ -429,7 +430,13 @@ Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& re
         // ignore reference 2
         storeResultsOne(rfc1, res1);
     } else {
-        queue.push(createEvaluatorTwo(this, rfc1.getValue(), rfc2.getValue(), tuples));
+        Synonym s1 = rfc1.getValue();
+        Synonym s2 = rfc2.getValue();
+        if (s1 == s2) {
+            storeResultsOne(rfc1, res1);
+        } else {
+            queue.push(createEvaluatorTwo(this, s1, s2, tuples));
+        }
     }
 }
 
