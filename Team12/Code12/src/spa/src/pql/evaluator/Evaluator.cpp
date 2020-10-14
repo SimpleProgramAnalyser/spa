@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include "attribute/AttributeMap.h"
 #include "attribute/WithQualifier.h"
 #include "pattern/PatternMatcher.h"
 #include "relationships/AffectsEvaluator.h"
@@ -99,21 +100,34 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 RawQueryResult Evaluator::evaluateSelectSynonym()
 {
     Vector<ResultSynonym> selectedSynonyms = query.getSelectSynonym();
+    Vector<String> resultsWithAttributes;
     switch (selectedSynonyms.size()) {
-    case 0:
-        return RawQueryResult(Vector<String>({resultsTable.getResultsZero() ? "TRUE" : "FALSE"}));
-    case 1:
-        return RawQueryResult(resultsTable.getResultsOne(selectedSynonyms[0].getSynonym()));
-    case 2:
-        return RawQueryResult(convertToTupleString(
-            resultsTable.getResultsTwo(selectedSynonyms[0].getSynonym(), selectedSynonyms[1].getSynonym())));
-    default:
+    case 0: {
+        resultsWithAttributes = Vector<String>({resultsTable.getResultsZero() ? "TRUE" : "FALSE"});
+        break;
+    }
+    case 1: {
+        ClauseResult resultsForSynonym = resultsTable.getResultsOne(selectedSynonyms[0].getSynonym());
+        resultsWithAttributes = mapAttributesOne(resultsForSynonym, selectedSynonyms[0]);
+        break;
+    }
+    case 2: {
+        PairedResult resultsForSynonym
+            = resultsTable.getResultsTwo(selectedSynonyms[0].getSynonym(), selectedSynonyms[1].getSynonym());
+        resultsWithAttributes
+            = convertToTupleString(mapAttributesTwo(resultsForSynonym, selectedSynonyms[0], selectedSynonyms[1]));
+        break;
+    }
+    default: {
         Vector<Synonym> synonymsList;
         for (const ResultSynonym& rs : selectedSynonyms) {
             synonymsList.push_back(rs.getSynonym());
         }
-        return RawQueryResult(convertToTupleString(resultsTable.getResultsN(synonymsList)));
+        NtupledResult resultsForSynonym = resultsTable.getResultsN(synonymsList);
+        resultsWithAttributes = convertToTupleString(mapAttributesN(resultsForSynonym, selectedSynonyms));
     }
+    }
+    return RawQueryResult(resultsWithAttributes);
 }
 
 void evaluateAndCastSuchThat(Clause* cl, ResultsTable* resultsTable)
