@@ -23,7 +23,8 @@
  *                      IfStatementNode to the given Pattern
  *                      Clause.
  */
-PatternMatcherTuple matchWhileStatement(WhileStatementNode* whileNode, PatternClause* pnClause, StatementNumber stmtNumber)
+PatternMatcherTuple matchWhileStatement(WhileStatementNode* whileNode, PatternClause* pnClause,
+                                        StatementNumber stmtNumber)
 {
     Reference controlVariableRef = pnClause->getEntRef();
     ReferenceType refType = controlVariableRef.getReferenceType();

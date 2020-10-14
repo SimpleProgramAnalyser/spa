@@ -8,9 +8,9 @@
 #include <unordered_set>
 
 #include "Types.h"
-#include "pql/preprocessor/AqTypes.h"
-#include "pql/evaluator/ResultsTable.h"
 #include "pkb/PKB.h"
+#include "pql/evaluator/ResultsTable.h"
+#include "pql/preprocessor/AqTypes.h"
 
 /**
  * A class to hold result lists for matching
@@ -66,6 +66,5 @@ public:
 
 Void getVariableInExpr(const Expression* expr, std::unordered_set<String>& variables);
 Void getLiteralVariablesInCondExpr(const ConditionalExpression* condExpr, std::unordered_set<String>& variables);
-
 
 #endif // SPA_PQL_PATTERN_MATCHER_UTIL_H

@@ -86,7 +86,8 @@ PatternMatcherTuple findIfInStatementList(const StmtlstNode* const stmtLstNode, 
         } else if (stmtType == WhileStatement) {
             // NOLINTNEXTLINE
             auto* nestedWhileNode = static_cast<WhileStatementNode*>(currStmt.get());
-            PatternMatcherTuple resultsFromNestedWhile = findIfInStatementList(nestedWhileNode->statementList, pnClause);
+            PatternMatcherTuple resultsFromNestedWhile
+                = findIfInStatementList(nestedWhileNode->statementList, pnClause);
             results.concatTuple(resultsFromNestedWhile);
         }
     }
@@ -94,7 +95,8 @@ PatternMatcherTuple findIfInStatementList(const StmtlstNode* const stmtLstNode, 
     return results;
 }
 
-Void evaluateIfPattern(PatternClause* pnClause, ResultsTable* resultsTable) {
+Void evaluateIfPattern(PatternClause* pnClause, ResultsTable* resultsTable)
+{
     // get all results from AST
     ProgramNode* ast = getRootNode();
     const List<ProcedureNode>& procedureList = ast->procedureList;
@@ -107,15 +109,15 @@ Void evaluateIfPattern(PatternClause* pnClause, ResultsTable* resultsTable) {
     // store results in ResultTable
     ReferenceType controlVariableRefType = pnClause->getEntRef().getReferenceType();
     switch (controlVariableRefType) {
-        case WildcardRefType:
-        case LiteralRefType:
-            resultsTable->storeResultsOne(pnClause->getPatternSynonym(), allResults.getTargetStatements());
-            break;
-        case SynonymRefType:
-            resultsTable->storeResultsTwo(pnClause->getPatternSynonym(), allResults.getTargetStatements(),
-                                          pnClause->getEntRef(), convertToPairedResult(allResults.getRelationships()));
-            break;
-        default:
-            throw std::runtime_error("Unknown or invalid reference type in evaluateIfPattern");
+    case WildcardRefType:
+    case LiteralRefType:
+        resultsTable->storeResultsOne(pnClause->getPatternSynonym(), allResults.getTargetStatements());
+        break;
+    case SynonymRefType:
+        resultsTable->storeResultsTwo(pnClause->getPatternSynonym(), allResults.getTargetStatements(),
+                                      pnClause->getEntRef(), convertToPairedResult(allResults.getRelationships()));
+        break;
+    default:
+        throw std::runtime_error("Unknown or invalid reference type in evaluateIfPattern");
     }
 }

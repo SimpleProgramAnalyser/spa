@@ -116,8 +116,8 @@ TEST_CASE("While statement patterns are evaluated correctly")
         requireVectorsHaveSameElements(resTable.getResultsOne("var"),
                                        std::vector<String>({"count", "steps", "x", "p"}));
         requireVectorsHaveSameElements(resTable.getResultsTwo("while", "var"),
-                                      std::vector<std::pair<std::string, std::string>>(
-                                          {{"7", "count"}, {"7", "steps"}, {"19", "x"}, {"19", "p"}}));
+                                       std::vector<std::pair<std::string, std::string>>(
+                                           {{"7", "count"}, {"7", "steps"}, {"19", "x"}, {"19", "p"}}));
     }
 }
 
