@@ -34,6 +34,25 @@ bool doVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vector2)
 }
 
 /**
+ * Given two result lists, generate all possible pairs between
+ * the two result lists by doing a Cartesian product.
+ *
+ * @param results1 The first result list.
+ * @param results2 The second result list.
+ * @return A list of pairs (first, second).
+ */
+PairedResult generateCartesianProduct(const ClauseResult& results1, const ClauseResult& results2)
+{
+    std::vector<std::pair<String, String>> tuples;
+    for (const String& res1 : results1) {
+        for (const String& res2 : results2) {
+            tuples.emplace_back(res1, res2);
+        }
+    }
+    return tuples;
+}
+
+/**
  * Checks if a synonym exists in the results table.
  *
  * @param syn The synonym to be checked.
@@ -105,6 +124,36 @@ ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, cons
         relationships->deleteOne(PotentialValue(synonym, rejectedNewResult), this);
     }
     return resultsFoundInBoth;
+}
+
+/**
+ * For a list of synonyms, check the relationships between
+ * every synonym to ensure that rows across every synonym
+ * exists in the table, and then return these rows.
+ *
+ * This method will modify the RelationshipsGraph to join
+ * two tables together (cross-join), if both synonyms are
+ * in the vector but are not within the same table.
+ *
+ * @param syns The vector of synonyms to be processed.
+ * @return All edges that match the vector of synonyms.
+ */
+NtupledResult ResultsTable::joinAllSynonyms(const Vector<Synonym>& syns)
+{
+    size_t length = syns.size();
+    for (size_t i = 0; i < length - 1; i++) {
+        Synonym firstSyn = syns[i];
+        Synonym secondSyn = syns[i + 1];
+        if (!hasRelationships(firstSyn, secondSyn)) {
+            bool firstSynNewInGraph = relationships->hasSeenBefore(firstSyn);
+            bool secondSynNewInGraph = relationships->hasSeenBefore(secondSyn);
+            Vector<Pair<String, String>> tuples
+                = generateCartesianProduct(getResultsOne(firstSyn), getResultsOne(secondSyn));
+            // do joining to combine the tables
+            relationships->insertRelationships(tuples, firstSyn, firstSynNewInGraph, secondSyn, secondSynNewInGraph);
+        }
+    }
+    return relationships->retrieveRowsMatching(syns);
 }
 
 std::function<void()> ResultsTable::createEvaluatorOne(ResultsTable* table, const Synonym& syn,
@@ -376,17 +425,18 @@ PairedResult ResultsTable::getResultsTwo(const Synonym& syn1, const Synonym& syn
         // table is marked as having no results
         return std::vector<std::pair<String, String>>();
     } else if (hasRelationships(syn1, syn2)) {
-        return this->getRelationships(syn1, syn2);
+        return getRelationships(syn1, syn2);
     } else {
-        std::vector<std::pair<String, String>> tuples;
         // do a Cartesian product of both result lists
-        for (const String& res1 : this->get(syn1)) {
-            for (const String& res2 : this->get(syn2)) {
-                tuples.emplace_back(res1, res2);
-            }
-        }
-        return tuples;
+        return generateCartesianProduct(this->get(syn1), this->get(syn2));
     }
+}
+
+NtupledResult ResultsTable::getResultsN(const Vector<Synonym>& syns)
+{
+    assert(("Size < 2 in getResultsN", syns.size() > 1)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    mergeResults();
+    return joinAllSynonyms(syns);
 }
 
 Void ResultsTable::storeResultsZero(Boolean hasResults)

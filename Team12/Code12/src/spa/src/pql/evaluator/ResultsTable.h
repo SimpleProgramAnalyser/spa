@@ -41,6 +41,7 @@ private:
     Boolean checkIfSynonymInMap(const Synonym& syn);
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
     ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
+    NtupledResult joinAllSynonyms(const Vector<Synonym>& syns);
 
     /**
      * Creates a evaluation closure for one synonym's results.
@@ -277,6 +278,22 @@ public:
      * @return The result pairs for (syn1, syn2).
      */
     PairedResult getResultsTwo(const Synonym& syn1, const Synonym& syn2);
+
+    /**
+     * Initiates merging of the results queue, unless a certain
+     * result in the queue was empty. Afterwards, returns the
+     * results for all synonyms in the vector, as a vector
+     * of n-tuples for each synonym. The order of the results
+     * depends on the order of the synonyms.
+     *
+     * Note that this method assumes the synonyms vector to have
+     * at least two synonyms (size > 1).
+     *
+     * @param syns The synonyms to get results for.
+     *
+     * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
+     */
+    NtupledResult getResultsN(const Vector<Synonym>& syns);
 
     /**
      * Stores the result for a clause with no synonyms.
@@ -532,7 +549,17 @@ public:
      * @return List of all other potential values that are
      *         related to it.
      */
-    std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value);
+    std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value) const;
+
+    /**
+     * Given a vector of synonym, retrieve all entries in the
+     * RelationshipsGraph matching these synonyms, and return
+     * them in the same order within a vector of rows.
+     *
+     * @param synonyms The synonyms to retrieve the rows of.
+     * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
+     */
+    NtupledResult retrieveRowsMatching(const Vector<Synonym>& synonyms) const;
 };
 
 #endif // SPA_PQL_RESULTS_TABLE_H

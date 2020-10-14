@@ -688,12 +688,12 @@ Boolean RelationshipsGraph::isValueRelated(const PotentialValue& pv, const Synon
     }
 }
 
-std::vector<PotentialValue> RelationshipsGraph::retrieveRelationships(const PotentialValue& value)
+std::vector<PotentialValue> RelationshipsGraph::retrieveRelationships(const PotentialValue& value) const
 {
     if (valuesTable.find(value) != valuesTable.end()) {
         std::unordered_set<PotentialValue, PotentialValueHasher> resultsSet;
-        for (GraphEdge e : valuesTable[value]) {
-            std::unordered_set<SynonymWithValue, SynonymWithValueHasher>& edgeValues = edgesTable[e];
+        for (GraphEdge e : valuesTable.at(value)) {
+            const std::unordered_set<SynonymWithValue, SynonymWithValueHasher>& edgeValues = edgesTable.at(e);
             for (const SynonymWithValue& edgeVal : edgeValues) {
                 resultsSet.insert(static_cast<PotentialValue>(edgeVal));
             }
@@ -704,4 +704,29 @@ std::vector<PotentialValue> RelationshipsGraph::retrieveRelationships(const Pote
     } else {
         return std::vector<PotentialValue>();
     }
+}
+
+NtupledResult RelationshipsGraph::retrieveRowsMatching(const Vector<Synonym>& synonyms) const
+{
+    NtupledResult matchingRows;
+    for (const std::pair<GraphEdge, const std::unordered_set<SynonymWithValue, SynonymWithValueHasher>&> edge :
+         edgesTable) {
+        const std::unordered_set<SynonymWithValue, SynonymWithValueHasher>& rowValues = edge.second;
+        Vector<String> currentRow;
+        bool matchedAll = true;
+        for (const Synonym& synonym : synonyms) {
+            SynonymWithValue placeholderValue(synonym, "");
+            auto synPosition = rowValues.find(placeholderValue);
+            if (synPosition == rowValues.end()) {
+                matchedAll = false;
+                break;
+            } else {
+                currentRow.emplace_back(synPosition->value);
+            }
+        }
+        if (matchedAll) {
+            matchingRows.push_back(currentRow);
+        }
+    }
+    return matchingRows;
 }

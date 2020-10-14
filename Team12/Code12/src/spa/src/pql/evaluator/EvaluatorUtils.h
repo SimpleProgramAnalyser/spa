@@ -18,6 +18,8 @@ typedef std::string Value;
 
 typedef Vector<Pair<String, String>> PairedResult;
 
+typedef Vector<Vector<String>> NtupledResult;
+
 // Foreward declaration of SynonymWithValue
 class SynonymWithValue;
 
