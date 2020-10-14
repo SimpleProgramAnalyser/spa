@@ -433,7 +433,8 @@ Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& re
         Synonym s1 = rfc1.getValue();
         Synonym s2 = rfc2.getValue();
         if (s1 == s2) {
-            storeResultsOne(rfc1, res1);
+            // pairs between same synonym, so we just store one result
+            storeResultsOne(s1, res1);
         } else {
             queue.push(createEvaluatorTwo(this, s1, s2, tuples));
         }
