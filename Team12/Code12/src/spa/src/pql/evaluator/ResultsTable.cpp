@@ -356,9 +356,10 @@ Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym
            && relationships->isValueRelated(PotentialValue(leftSynonym, resultsForLeft[0]), rightSynonym);
 }
 
-Void ResultsTable::getResultsZero()
+Boolean ResultsTable::getResultsZero()
 {
     mergeResults();
+    return hasResults();
 }
 
 ClauseResult ResultsTable::getResultsOne(const Synonym& syn)

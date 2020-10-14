@@ -252,8 +252,10 @@ public:
 
     /**
      * Forces the merging of the results queue.
+     *
+     * @return Whether this results table contains any results.
      */
-    Void getResultsZero();
+    Boolean getResultsZero();
 
     /**
      * Initiates merging of the results queue, unless
