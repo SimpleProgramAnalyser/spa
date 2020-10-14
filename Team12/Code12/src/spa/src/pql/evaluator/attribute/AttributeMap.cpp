@@ -140,6 +140,19 @@ PairedResult mapAttributesTwo(const ResultsTable& results, const PairedResult& p
 NtupledResult mapAttributesN(const ResultsTable& results, const NtupledResult& tuples,
                              const Vector<ResultSynonym>& syns)
 {
+    SignificanceMap significanceMap = getSignificanceMap();
     NtupledResult attributesResult;
+    for (const std::vector<std::string>& tuple : tuples) {
+        std::vector<std::string> mappedTuple;
+        size_t length = tuple.size();
+        mappedTuple.reserve(length);
+        for (size_t i = 0; i < length; i++) {
+            const ResultSynonym& currentSynonym = syns.at(i);
+            mappedTuple.push_back(getResultForSingleValue(tuple[i],
+                                                          results.getTypeOfSynonym(currentSynonym.getSynonym()),
+                                                          currentSynonym.getAttribute().getType(), significanceMap));
+        }
+        attributesResult.push_back(mappedTuple);
+    }
     return attributesResult;
 }
