@@ -30,7 +30,8 @@ PatternMatcherTuple matchWhileStatement(WhileStatementNode* whileNode, PatternCl
     ReferenceType refType = controlVariableRef.getReferenceType();
     PatternMatcherTuple results;
 
-    assert(refType == WildcardRefType || refType == LiteralRefType || refType == SynonymRefType);
+    assert(refType == WildcardRefType || refType == LiteralRefType
+           || refType == SynonymRefType); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     if (refType == WildcardRefType) {
         results.addTargetStatement(stmtNumber);
@@ -75,7 +76,7 @@ PatternMatcherTuple findWhileInStatementList(const StmtlstNode* const stmtLstNod
         StatementType stmtType = currStmt->getStatementType();
         if (stmtType == WhileStatement) {
             // NOLINTNEXTLINE
-            auto* whileNode = static_cast<WhileStatementNode*>(currStmt.get());
+            auto* whileNode = static_cast<WhileStatementNode*>(currStmt.get()); // NOLINT
             StatementNumber stmtNumber = currStmt->getStatementNumber();
             PatternMatcherTuple resultsFromWhile = matchWhileStatement(whileNode, pnClause, stmtNumber);
             results.concatTuple(resultsFromWhile);
@@ -85,7 +86,7 @@ PatternMatcherTuple findWhileInStatementList(const StmtlstNode* const stmtLstNod
             results.concatTuple(resultsFromNestedWhile);
         } else if (stmtType == IfStatement) {
             // NOLINTNEXTLINE
-            auto* ifNode = static_cast<IfStatementNode*>(currStmt.get());
+            auto* ifNode = static_cast<IfStatementNode*>(currStmt.get()); // NOLINT
             PatternMatcherTuple resultsFromIf = findWhileInStatementList(ifNode->ifStatementList, pnClause);
             PatternMatcherTuple resultsFromElse = findWhileInStatementList(ifNode->elseStatementList, pnClause);
             results.concatTuple(resultsFromIf);

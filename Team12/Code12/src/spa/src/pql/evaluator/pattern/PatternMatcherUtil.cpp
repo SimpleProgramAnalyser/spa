@@ -22,7 +22,7 @@ Void PatternMatcherTuple::addTargetStatement(Integer targetStatementNumber, cons
 {
     targetStatementResults.push_back(std::to_string(targetStatementNumber));
 
-    for (auto variable : variables) {
+    for (const auto& variable : variables) {
         variableResults.insert(variable);
         relationshipsResults.emplace_back(targetStatementNumber, variable);
     }
@@ -64,7 +64,7 @@ std::vector<std::pair<Integer, String>> PatternMatcherTuple::getRelationships() 
 Void getVariableInExpr(const Expression* expr, std::unordered_set<String>& variables)
 {
     if (expr->isArithmetic()) {
-        auto arithmeticExpr = static_cast<const ArithmeticExpression*>(expr);
+        auto arithmeticExpr = static_cast<const ArithmeticExpression*>(expr); // NOLINT
         const Expression* leftExpr = arithmeticExpr->leftFactor;
         const Expression* rightExpr = arithmeticExpr->rightFactor;
 
@@ -72,13 +72,13 @@ Void getVariableInExpr(const Expression* expr, std::unordered_set<String>& varia
         getVariableInExpr(rightExpr, variables);
     } else {
         // Reference Expression
-        auto refExpr = static_cast<const ReferenceExpression*>(expr);
+        auto refExpr = static_cast<const ReferenceExpression*>(expr); // NOLINT
         const BasicDataType* basicDataType = refExpr->basicData;
         if (basicDataType->isConstant()) {
             return;
         }
 
-        const auto* variable = static_cast<const Variable*>(basicDataType);
+        const auto* variable = static_cast<const Variable*>(basicDataType); // NOLINT
         variables.insert(variable->varName);
     }
 }
@@ -96,14 +96,14 @@ Void getLiteralVariablesInCondExpr(const ConditionalExpression* condExpr, std::u
     auto conditionType = condExpr->getConditionalType();
     switch (conditionType) {
     case NotConditionalExpression: {
-        auto notCondExpr = static_cast<const NotExpression*>(condExpr);
+        auto notCondExpr = static_cast<const NotExpression*>(condExpr); // NOLINT
         const ConditionalExpression* negatedCondExpression = notCondExpr->expression;
 
         getLiteralVariablesInCondExpr(negatedCondExpression, variables);
         break;
     }
     case OrConditionalExpression: {
-        auto orCondExpr = static_cast<const OrExpression*>(condExpr);
+        auto orCondExpr = static_cast<const OrExpression*>(condExpr); // NOLINT
         const ConditionalExpression* leftCondExpr = orCondExpr->leftExpression;
         const ConditionalExpression* rightCondExpr = orCondExpr->rightExpression;
 
@@ -112,7 +112,7 @@ Void getLiteralVariablesInCondExpr(const ConditionalExpression* condExpr, std::u
         break;
     }
     case AndConditionalExpression: {
-        auto andCondExpr = static_cast<const AndExpression*>(condExpr);
+        auto andCondExpr = static_cast<const AndExpression*>(condExpr); // NOLINT
         const ConditionalExpression* leftCondExpr = andCondExpr->leftExpression;
         const ConditionalExpression* rightCondExpr = andCondExpr->rightExpression;
 
@@ -121,7 +121,7 @@ Void getLiteralVariablesInCondExpr(const ConditionalExpression* condExpr, std::u
         break;
     }
     case RelationalConditionalExpression: {
-        auto relCondExpr = static_cast<const RelationalExpression*>(condExpr);
+        auto relCondExpr = static_cast<const RelationalExpression*>(condExpr); // NOLINT
         const Expression* leftExpr = relCondExpr->leftFactor;
         const Expression* rightExpr = relCondExpr->rightFactor;
 

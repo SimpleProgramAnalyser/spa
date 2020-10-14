@@ -74,7 +74,7 @@ PatternMatcherTuple findIfInStatementList(const StmtlstNode* const stmtLstNode, 
         StatementType stmtType = currStmt->getStatementType();
         if (stmtType == IfStatement) {
             // NOLINTNEXTLINE
-            auto* ifNode = static_cast<IfStatementNode*>(currStmt.get());
+            auto* ifNode = static_cast<IfStatementNode*>(currStmt.get()); // NOLINT
             StatementNumber stmtNumber = currStmt->getStatementNumber();
             PatternMatcherTuple resultsFromIf = matchIfStatement(ifNode, pnClause, stmtNumber);
             results.concatTuple(resultsFromIf);
@@ -85,7 +85,7 @@ PatternMatcherTuple findIfInStatementList(const StmtlstNode* const stmtLstNode, 
             results.concatTuple(resultsFromNestedElse);
         } else if (stmtType == WhileStatement) {
             // NOLINTNEXTLINE
-            auto* nestedWhileNode = static_cast<WhileStatementNode*>(currStmt.get());
+            auto* nestedWhileNode = static_cast<WhileStatementNode*>(currStmt.get()); // NOLINT
             PatternMatcherTuple resultsFromNestedWhile
                 = findIfInStatementList(nestedWhileNode->statementList, pnClause);
             results.concatTuple(resultsFromNestedWhile);
