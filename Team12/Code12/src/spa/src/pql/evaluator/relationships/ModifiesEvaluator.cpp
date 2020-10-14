@@ -30,7 +30,7 @@ public:
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), resultsTable(resultsTable),
         leftRefType(leftRef.getReferenceType())
     {}
-    Void evaluateModifiesClause();
+    Void evaluateModifiesClause() const;
 };
 
 Void evaluateModifiesClause(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
@@ -104,7 +104,7 @@ Void ModifiesEvaluator::evaluateBothKnown() const
     resultsTable->storeResultsOne(leftRef, tempResult);
 }
 
-Void ModifiesEvaluator::evaluateModifiesClause()
+Void ModifiesEvaluator::evaluateModifiesClause() const
 {
     ReferenceType rightRefType = rightRef.getReferenceType();
     if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {

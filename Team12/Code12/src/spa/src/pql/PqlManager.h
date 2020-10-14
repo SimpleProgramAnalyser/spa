@@ -13,7 +13,7 @@
 
 class PqlManager {
 public:
-    FormattedQueryResult executeQuery(String query, QueryResultFormatType format);
+    static FormattedQueryResult executeQuery(const String& query, QueryResultFormatType format);
 };
 
 #endif // SPA_PQL_PQL_MANAGER_H

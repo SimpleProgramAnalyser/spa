@@ -7,8 +7,11 @@
 #include <stdexcept>
 #include <utility>
 
-#include "PatternMatcher.h"
-#include "SuchThatEvaluator.h"
+#include "attribute/WithQualifier.h"
+#include "pattern/PatternMatcher.h"
+#include "relationships/AffectsEvaluator.h"
+#include "relationships/NextEvaluator.h"
+#include "relationships/SuchThatEvaluator.h"
 
 RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
 {
@@ -42,6 +45,9 @@ RawQueryResult Evaluator::evaluateQuery()
  */
 RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 {
+    // initiate Affects and Next evaluators
+    resultsTable.manageEvaluator(new NextEvaluator(resultsTable));
+    resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable));
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);
@@ -61,6 +67,32 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
     return RawQueryResult(resultsTable.getResultsOne(query.getSelectSynonym()));
 }
 
+void evaluateAndCastSuchThat(Clause* cl, ResultsTable* resultsTable)
+{
+    // NOLINTNEXTLINE
+    evaluateSuchThat(static_cast<SuchThatClause*>(cl), resultsTable);
+}
+
+void evaluateAndCastPattern(Clause* cl, ResultsTable* resultsTable)
+{
+    // NOLINTNEXTLINE
+    evaluatePattern(static_cast<PatternClause*>(cl), resultsTable);
+}
+
+void evaluateAndCastWith(Clause* cl, ResultsTable* resultsTable)
+{
+    // NOLINTNEXTLINE
+    evaluateWith(static_cast<WithClause*>(cl), resultsTable);
+}
+
+std::unordered_map<ClauseType, auto (*)(Clause*, ResultsTable*)->void> getClauseEvaluatorMap()
+{
+    return std::unordered_map<ClauseType, auto (*)(Clause*, ResultsTable*)->void>(
+        {{SuchThatClauseType, evaluateAndCastSuchThat},
+         {PatternClauseType, evaluateAndCastPattern},
+         {WithClauseType, evaluateAndCastWith}});
+}
+
 /*
  * Processes a single clause in a PQL query, with respect to
  * a given synonym. All results obtained from the clauses will be
@@ -71,13 +103,11 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 Void Evaluator::evaluateClause(Clause* clause)
 {
     ClauseType type = clause->getType();
-    if (type == SuchThatClauseType) {
-        // NOLINTNEXTLINE
-        return evaluateSuchThat(static_cast<SuchThatClause*>(clause), &resultsTable);
-    } else if (type == PatternClauseType) {
-        // NOLINTNEXTLINE
-        return evaluatePattern(static_cast<PatternClause*>(clause), &resultsTable);
-    } else {
+    std::unordered_map<ClauseType, auto (*)(Clause*, ResultsTable*)->void> evaluatorMap = getClauseEvaluatorMap();
+    auto mapEntry = evaluatorMap.find(type);
+    if (mapEntry == evaluatorMap.end()) {
         throw std::runtime_error("Unknown clause type in evaluateClause");
+    } else {
+        mapEntry->second(clause, &resultsTable);
     }
 }

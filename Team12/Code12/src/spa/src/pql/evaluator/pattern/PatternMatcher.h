@@ -6,10 +6,8 @@
 #ifndef SPA_PQL_PATTERN_MATCHER_H
 #define SPA_PQL_PATTERN_MATCHER_H
 
-#include <vector>
-
-#include "ResultsTable.h"
 #include "Types.h"
+#include "pql/evaluator/ResultsTable.h"
 #include "pql/preprocessor/AqTypes.h"
 
 /**

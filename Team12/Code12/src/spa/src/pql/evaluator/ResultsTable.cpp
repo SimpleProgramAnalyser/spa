@@ -14,6 +14,8 @@
 #include <utility>
 
 #include "pkb/PKB.h"
+#include "relationships/AffectsEvaluator.h"
+#include "relationships/NextEvaluator.h"
 
 /**
  * A method to compare two vectors, to see whether
@@ -152,14 +154,14 @@ struct ResultsRelationHasher {
 void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const Synonym& s2,
                                     const PairedResult& tuples)
 {
+    ClauseResult syn1Results;
+    ClauseResult syn2Results;
     if (table->hasRelationships(s1, s2)) {
         // past relations exist for s1 and s2 (inner join)
         std::unordered_set<ResultsRelation, ResultsRelationHasher> newRelationsSet;
         for (const std::pair<String, String>& newRelation : tuples) {
             newRelationsSet.insert(ResultsRelation(newRelation.first, newRelation.second));
         }
-        ClauseResult syn1Results;
-        ClauseResult syn2Results;
         std::vector<std::pair<String, String>> pastRelationsList = table->getRelationships(s1, s2);
         for (const std::pair<String, String>& pastRelationPair : pastRelationsList) {
             ResultsRelation pastRelation(pastRelationPair.first, pastRelationPair.second);
@@ -172,20 +174,20 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
                 syn2Results.push_back(pastRelationPair.second);
             }
         }
-        table->filterAfterVerification(s1, syn1Results);
-        table->filterAfterVerification(s2, syn2Results);
     } else {
-        Boolean s1IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s1);
-        Boolean s2IsNew = !table->relationships->checkIfSynonymInRelationshipsGraph(s2);
+        Boolean s1IsNew = !table->relationships->hasSeenBefore(s1);
+        Boolean s2IsNew = !table->relationships->hasSeenBefore(s2);
         // load relationships first, to see which relationships were successfully added
         Pair<Vector<String>, Vector<String>> successfulValues
             = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
-        if (successfulValues.first.empty() || successfulValues.second.empty()) {
-            table->hasResult = false;
-        } else {
-            table->filterAfterVerification(s1, successfulValues.first);
-            table->filterAfterVerification(s2, successfulValues.second);
-        }
+        syn1Results = successfulValues.first;
+        syn2Results = successfulValues.second;
+    }
+    if (syn1Results.empty() || syn2Results.empty()) {
+        table->hasResult = false;
+    } else {
+        table->filterAfterVerification(s1, syn1Results);
+        table->filterAfterVerification(s2, syn2Results);
     }
 }
 
@@ -237,8 +239,14 @@ PairedResult ResultsTable::getRelationships(const Synonym& leftSynonym, const Sy
 // set hasResult to true at the start, since no clauses have been evaluated
 ResultsTable::ResultsTable(DeclarationTable decls):
     declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
-    hasResult(true), hasEvaluated(false)
+    hasResult(true), hasEvaluated(false), affectsEvaluator(nullptr), nextEvaluator(nullptr)
 {}
+
+ResultsTable::~ResultsTable()
+{
+    delete affectsEvaluator;
+    delete nextEvaluator;
+}
 
 std::vector<std::pair<std::string, std::vector<std::string>>>
 getVectorFromResultsMap(const std::unordered_map<Synonym, ResultsSet>& resultsMap)
@@ -283,18 +291,37 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
            && this->hasResult == rt.hasResult && this->hasEvaluated == rt.hasEvaluated;
 }
 
+RelationshipsGraph ResultsTable::getRelationshipsGraph() const
+{
+    return *relationships;
+}
+
 Boolean ResultsTable::hasResults() const
 {
     return hasResult;
 }
 
-void ResultsTable::associateRelationships(const Synonym& syn1, const Synonym& syn2,
-                                          const Vector<Pair<String, String>>& relationshipsPairs)
+AffectsEvaluator* ResultsTable::getAffectsEvaluator() const
 {
-    this->relationships->insertRelationships(relationshipsPairs, syn1, true, syn2, true);
+    return affectsEvaluator;
 }
 
-void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
+NextEvaluator* ResultsTable::getNextEvaluator() const
+{
+    return nextEvaluator;
+}
+
+Void ResultsTable::manageEvaluator(AffectsEvaluator* affectsEval)
+{
+    affectsEvaluator = affectsEval;
+}
+
+Void ResultsTable::manageEvaluator(NextEvaluator* nextEval)
+{
+    nextEvaluator = nextEval;
+}
+
+Void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
 {
     if (resultsMap.find(synonym) != resultsMap.end()) {
         resultsMap[synonym].erase(value);
@@ -319,20 +346,14 @@ Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
 
 Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
 {
-    if (relationships->checkCachedRelationships(leftSynonym, rightSynonym)) {
-        return true;
+    if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)) {
+        return false;
     }
     ClauseResult resultsForLeft = get(leftSynonym);
-    ClauseResult resultsForRight = get(rightSynonym);
-    for (const String& leftResult : resultsForLeft) {
-        for (const String& rightResult : resultsForRight) {
-            if (relationships->checkIfRelated(PotentialValue(leftSynonym, leftResult),
-                                              PotentialValue(rightSynonym, rightResult))) {
-                return true;
-            }
-        }
-    }
-    return false;
+    // just check one potential value, as the synonym results are guaranteed
+    // to be in RelationshipsGraph if both synonyms are inside the graph
+    return !resultsForLeft.empty()
+           && relationships->isValueRelated(PotentialValue(leftSynonym, resultsForLeft[0]), rightSynonym);
 }
 
 Void ResultsTable::getResultsZero()

@@ -8,6 +8,64 @@
 #include <unordered_map>
 #include <unordered_set>
 
+PotentialValue::PotentialValue(Synonym synonym, String value): synonym(std::move(synonym)), value(std::move(value)) {}
+
+PotentialValue::PotentialValue(const SynonymWithValue& swv): synonym(swv.synonym), value(swv.value) {}
+
+PotentialValue::operator SynonymWithValue() const
+{
+    return SynonymWithValue(synonym, value);
+}
+
+bool PotentialValue::operator==(const PotentialValue& pv) const
+{
+    return this->synonym == pv.synonym && this->value == pv.value;
+}
+
+bool PotentialValue::operator<(const PotentialValue& pv) const
+{
+    if (this->synonym == pv.synonym) {
+        return this->value < pv.value;
+    }
+    return this->synonym < pv.synonym;
+}
+
+SynonymWithValue PotentialValue::asSwv() const
+{
+    return SynonymWithValue(*this);
+}
+
+std::size_t PotentialValueHasher::operator()(const PotentialValue& pv) const
+{
+    std::hash<std::string> stringHasher;
+    std::size_t hashedSynonym = stringHasher(pv.synonym);
+    return (hashedSynonym
+            ^ (stringHasher(pv.value) + uint32_t(2654435769) + (hashedSynonym * 64) + (hashedSynonym / 4)));
+}
+
+SynonymWithValue::SynonymWithValue(Synonym synonym, String value): synonym(std::move(synonym)), value(std::move(value))
+{}
+
+SynonymWithValue::operator PotentialValue() const
+{
+    return PotentialValue(synonym, value);
+}
+
+bool SynonymWithValue::operator==(const SynonymWithValue& swv) const
+{
+    return this->synonym == swv.synonym;
+}
+
+PotentialValue SynonymWithValue::asPv() const
+{
+    return PotentialValue(*this);
+}
+
+std::size_t SynonymWithValueHasher::operator()(const SynonymWithValue& swv) const
+{
+    return std::hash<std::string>()(swv.synonym);
+}
+
 ClauseResult convertToClauseResult(const Vector<Integer>& intList)
 {
     ClauseResult strList;
@@ -47,9 +105,9 @@ PairedResult convertToPairedResult(const Vector<Pair<Integer, String>>& intPairs
 std::unordered_map<DesignEntityType, StatementType> getStatementTypesMap()
 {
     std::unordered_map<DesignEntityType, StatementType> queryPkbTypesMap
-        = {{StmtType, AnyStatement},         {ReadType, ReadStatement},   {PrintType, PrintStatement},
-           {CallType, CallStatement},        {WhileType, WhileStatement}, {IfType, IfStatement},
-           {AssignType, AssignmentStatement}};
+        = {{StmtType, AnyStatement},          {ReadType, ReadStatement},    {PrintType, PrintStatement},
+           {CallType, CallStatement},         {WhileType, WhileStatement},  {IfType, IfStatement},
+           {AssignType, AssignmentStatement}, {Prog_LineType, AnyStatement}};
     return queryPkbTypesMap;
 }
 

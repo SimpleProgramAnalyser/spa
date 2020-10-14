@@ -30,7 +30,7 @@ public:
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), resultsTable(resultsTable),
         leftRefType(leftRef.getReferenceType())
     {}
-    Void evaluateUsesClause();
+    Void evaluateUsesClause() const;
 };
 
 Void evaluateUsesClause(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
@@ -104,7 +104,7 @@ Void UsesEvaluator::evaluateBothKnown() const
     resultsTable->storeResultsOne(leftRef, tempResult);
 }
 
-Void UsesEvaluator::evaluateUsesClause()
+Void UsesEvaluator::evaluateUsesClause() const
 {
     ReferenceType rightRefType = rightRef.getReferenceType();
     if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {

@@ -123,8 +123,13 @@ SCENARIO("Iteration 1 Tables Test")
         }
         WHEN("statements are added")
         {
-            for (auto statement : statements)
-                statementTable.insertIntoStatementTable(statement.first, statement.second);
+            for (auto statement : statements) {
+                if (statement.second == CallStatement) {
+                    statementTable.insertIntoStatementTable(statement.first, "bestmodule3203");
+                } else {
+                    statementTable.insertIntoStatementTable(statement.first, statement.second);
+                }
+            }
             // create (un)realistic expectations, just like this mean world
             Array<Vector<Integer>, STATEMENT_TYPE_COUNT> statementLists;
             for (int i = 0; i < STATEMENT_TYPE_COUNT; i++) {
@@ -154,8 +159,9 @@ SCENARIO("Iteration 1 Tables Test")
         }
         WHEN("procedures are added")
         {
-            for (const auto& procedure : procedures)
-                procedureTable.insertIntoProcedureTable(procedure);
+            procedureTable.insertIntoProcedureTable("main", 1, 3);
+            procedureTable.insertIntoProcedureTable("raymarch", 4, 14);
+            procedureTable.insertIntoProcedureTable("spheresdf", 14, 23);
 
             THEN("correct procedures can be found")
             {

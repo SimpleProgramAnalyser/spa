@@ -21,7 +21,7 @@ TEST_CASE("syntatically invalid query")
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -50,7 +50,7 @@ TEST_CASE("semantically invalid query")
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -79,7 +79,7 @@ TEST_CASE("vacuously true query no clauses")
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -231,7 +231,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -263,7 +263,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -296,7 +296,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -363,7 +363,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -395,7 +395,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -428,7 +428,7 @@ TEST_CASE(
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -512,7 +512,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -541,8 +541,8 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
     QueryResultFormatType format = AutotesterFormat;
 
-     // Obviously, there are many more possible combinations, however
-     // we won't be exhaustively testing for all of them.
+    // Obviously, there are many more possible combinations, however
+    // we won't be exhaustively testing for all of them.
 
     SECTION("AssignmentStatement type")
     {
@@ -553,15 +553,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
@@ -577,15 +574,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -600,15 +594,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -623,15 +614,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -646,15 +634,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -669,15 +654,12 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
 
         PqlManager pqlManager;
 
-
         // === Execute test method ===
         FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
         FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
         // === Check expected test results ===
         REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -694,7 +676,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -726,7 +708,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -759,7 +741,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -827,7 +809,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -859,7 +841,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -892,7 +874,7 @@ TEST_CASE(
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -976,7 +958,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -1208,8 +1190,8 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand proce
     String procName1 = "proc1";
     String procName2 = "proc2";
 
-    insertIntoProcedureTable(procName1);
-    insertIntoProcedureTable(procName2);
+    insertIntoProcedureTable(procName1, 1, 2);
+    insertIntoProcedureTable(procName2, 3, 4);
 
     Vector<String> varNames;
 
@@ -1482,8 +1464,8 @@ TEST_CASE(
     String procName1 = "proc1";
     String procName2 = "proc2";
 
-    insertIntoProcedureTable(procName1);
-    insertIntoProcedureTable(procName2);
+    insertIntoProcedureTable(procName1, 1, 2);
+    insertIntoProcedureTable(procName2, 3, 4);
 
     Vector<String> varNames;
 
@@ -1731,7 +1713,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -1771,7 +1753,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -1812,7 +1794,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -1893,7 +1875,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand w
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -1933,7 +1915,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -1974,7 +1956,7 @@ TEST_CASE(
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2106,7 +2088,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand w
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2322,7 +2304,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2362,7 +2344,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2403,7 +2385,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2485,7 +2467,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wi
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2525,7 +2507,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2566,7 +2548,7 @@ TEST_CASE(
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2698,7 +2680,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wi
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2743,7 +2725,7 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand variable nam
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2777,7 +2759,7 @@ TEST_CASE(
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2810,7 +2792,7 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand variable nam
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2844,7 +2826,7 @@ TEST_CASE("query with Pattern clause, left operand variable name, right operand 
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -2967,7 +2949,7 @@ TEST_CASE("query with Pattern clause, left operand variable synonym, right opera
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -3000,7 +2982,7 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand wildcard, ri
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -3040,7 +3022,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand sy
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -3077,7 +3059,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand sy
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -3114,7 +3096,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     // Call PKB API to add some dummy relationships
     resetPKB();
     insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, CallStatement);
+    insertIntoStatementTable(4, "CallStatement");
     insertIntoStatementTable(5, IfStatement);
     insertIntoStatementTable(6, PrintStatement);
     insertIntoStatementTable(7, ReadStatement);
@@ -3137,7 +3119,8 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, at least one operand in clauses is related")
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand "
+          "synonym, right operand wildcard, at least one operand in clauses is related")
 {
     // === Test set-up ===
     String query = "stmt s; variable v; assign a; Select s such that Uses(s,v) pattern a(v,_)";
@@ -3179,22 +3162,20 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
 
     PqlManager pqlManager;
 
-
     // === Execute test method ===
     FormattedQueryResult formattedQueryResult = pqlManager.executeQuery(query, format);
-
 
     // === Expected test results ===
     String expectedResultsStr = "6, 5";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand synonym, right operand wildcard, all operands in clauses unrelated")
+TEST_CASE("query with such that Uses clause, left operand synonym, right operand synonym, Pattern clause, left operand "
+          "synonym, right operand wildcard, all operands in clauses unrelated")
 {
     // === Test set-up ===
     String query = "stmt s; variable v, v1; assign a; Select s such that Uses(s,v1) pattern a(v,_)";

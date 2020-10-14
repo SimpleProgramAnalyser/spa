@@ -9,16 +9,6 @@ std::unordered_map<String, RelationshipReferenceType> Relationship::relationship
     {"Uses", UsesType},       {"Modifies", ModifiesType},    {"Calls", CallsType},     {"Calls*", CallsStarType},
     {"Next", NextType},       {"Next*", NextStarType},       {"Affects", AffectsType}, {"Affects*", AffectsStarType}};
 
-// Hash function for RelationshipReferenceType
-template <>
-struct std::hash<RelationshipReferenceType> {
-    std::size_t operator()(const RelationshipReferenceType& rrt) const
-    {
-        // NOLINTNEXTLINE
-        return std::hash<char>()(static_cast<const char&>(rrt));
-    }
-};
-
 // Hash function for ReferenceType
 template <>
 struct std::hash<ReferenceType> {
@@ -157,7 +147,7 @@ Boolean Relationship::isInvalid() const
     return hasError;
 }
 
-RelationshipReferenceType Relationship::getRelationship()
+RelationshipReferenceType Relationship::getType()
 {
     return relationshipReferenceType;
 }

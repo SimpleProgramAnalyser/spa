@@ -168,6 +168,16 @@ public:
     virtual Boolean operator==(Clause& clause);
 };
 
+// Hash function for ClauseType
+template <>
+struct std::hash<ClauseType> {
+    std::size_t operator()(const ClauseType& clauseType) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(clauseType));
+    }
+};
+
 enum ReferenceType : char {
     SynonymRefType,
     WildcardRefType,
@@ -211,7 +221,7 @@ public:
     Boolean operator==(const Reference& reference);
 };
 
-enum RelationshipReferenceType : uint16_t {
+enum RelationshipReferenceType : char {
     FollowsType,
     FollowsStarType,
     ParentType,
@@ -229,6 +239,16 @@ enum RelationshipReferenceType : uint16_t {
     AffectsType,
     AffectsStarType,
     InvalidRelationshipType
+};
+
+// Hash function for RelationshipReferenceType
+template <>
+struct std::hash<RelationshipReferenceType> {
+    std::size_t operator()(const RelationshipReferenceType& relRefType) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(relRefType));
+    }
 };
 
 class Relationship {
@@ -253,7 +273,7 @@ private:
 public:
     Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
     explicit Relationship(Boolean hasError);
-    RelationshipReferenceType getRelationship();
+    RelationshipReferenceType getType();
     Reference getLeftRef();
     Reference getRightRef();
     Boolean isInvalid() const;
@@ -313,6 +333,16 @@ public:
 };
 
 enum PatternStatementType : char { AssignPatternType, WhilePatternType, IfPatternType };
+
+// Hash function for RelationshipReferenceType
+template <>
+struct std::hash<PatternStatementType> {
+    std::size_t operator()(const PatternStatementType& patternStatementType) const
+    {
+        // NOLINTNEXTLINE
+        return std::hash<char>()(static_cast<const char&>(patternStatementType));
+    }
+};
 
 class PatternClause: public Clause {
 private:
