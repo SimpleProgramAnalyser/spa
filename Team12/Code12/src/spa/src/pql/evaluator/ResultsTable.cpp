@@ -387,6 +387,11 @@ PairedResult ResultsTable::getResultsTwo(const Synonym& syn1, const Synonym& syn
     }
 }
 
+Void ResultsTable::storeResultsZero(Boolean hasResults)
+{
+    hasResult = hasResults;
+}
+
 Void ResultsTable::storeResultsOne(const Synonym& syn, const ClauseResult& res)
 {
     if (res.empty()) {

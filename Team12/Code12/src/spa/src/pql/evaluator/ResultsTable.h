@@ -277,6 +277,15 @@ public:
     PairedResult getResultsTwo(const Synonym& syn1, const Synonym& syn2);
 
     /**
+     * Stores the result for a clause with no synonyms.
+     * If true, nothing happens. But if false, the entire
+     * results table is invalidated.
+     *
+     * @param hasResults Whether a clause has results.
+     */
+    Void storeResultsZero(Boolean hasResults);
+
+    /**
      * Adds the result for a single synonym into a queue.
      * The results in the queue will not be evaluated until
      * getResults is called.
