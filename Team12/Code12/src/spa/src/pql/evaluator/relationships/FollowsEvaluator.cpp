@@ -173,6 +173,6 @@ Void FollowsEvaluator::evaluateFollowsClause() const
         evaluateBothAny();
     } else {
         throw std::runtime_error(
-            "Error in FollowsExtractor::evaluateFollowsClause: No synonyms or integers in Follows clause");
+            "Error in FollowsEvaluator::evaluateFollowsClause: No synonyms or integers in Follows clause");
     }
 }

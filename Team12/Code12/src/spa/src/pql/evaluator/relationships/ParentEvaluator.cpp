@@ -116,6 +116,6 @@ Void ParentEvaluator::evaluateParentClause() const
         evaluateBothAny();
     } else {
         throw std::runtime_error(
-            "Error in ParentExtractor::evaluateParentClause: No synonyms or integers in Parent clause");
+            "Error in ParentEvaluator::evaluateParentClause: No synonyms or integers in Parent clause");
     }
 }

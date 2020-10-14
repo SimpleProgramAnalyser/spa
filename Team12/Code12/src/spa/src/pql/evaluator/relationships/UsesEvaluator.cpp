@@ -116,6 +116,6 @@ Void UsesEvaluator::evaluateUsesClause() const
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         evaluateBothAny();
     } else {
-        throw std::runtime_error("Error in UsesExtractor::evaluateUsesClause: invalid arguments in Uses");
+        throw std::runtime_error("Error in UsesEvaluator::evaluateUsesClause: invalid arguments in Uses");
     }
 }
