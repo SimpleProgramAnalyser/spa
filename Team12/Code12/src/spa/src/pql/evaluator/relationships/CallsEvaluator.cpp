@@ -4,8 +4,9 @@
  */
 #include "CallsEvaluator.h"
 
+#include <stdexcept>
+
 #include "RelationshipsUtil.h"
-#include "pkb/PKB.h"
 
 class CallsEvaluator {
 private:
