@@ -30,8 +30,7 @@ PatternMatcherTuple matchIfStatement(IfStatementNode* ifNode, PatternClause* pnC
     PatternMatcherTuple results;
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    assert(refType == WildcardRefType || refType == LiteralRefType
-           || refType == SynonymRefType);
+    assert(refType == WildcardRefType || refType == LiteralRefType || refType == SynonymRefType);
 
     if (refType == WildcardRefType) {
         results.addTargetStatement(stmtNumber);
