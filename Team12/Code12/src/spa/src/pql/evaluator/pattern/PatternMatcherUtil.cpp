@@ -6,26 +6,40 @@
 
 #include <iterator>
 
-Void PatternMatcherTuple::addAssignStatement(Integer assignStatementNumber, const String& variable)
+Void PatternMatcherTuple::addTargetStatement(Integer targetStatementNumber) {
+    targetStatementResults.push_back(std::to_string(targetStatementNumber));
+}
+
+Void PatternMatcherTuple::addTargetStatement(Integer targetStatementNumber, const String& variable)
 {
-    assignStatementResults.push_back(std::to_string(assignStatementNumber));
+    targetStatementResults.push_back(std::to_string(targetStatementNumber));
     variableResults.insert(variable);
-    relationshipsResults.emplace_back(assignStatementNumber, variable);
+    relationshipsResults.emplace_back(targetStatementNumber, variable);
+}
+
+Void PatternMatcherTuple::addTargetStatement(Integer targetStatementNumber, const std::unordered_set<String>& variables)
+{
+    targetStatementResults.push_back(std::to_string(targetStatementNumber));
+
+    for (auto variable : variables) {
+        variableResults.insert(variable);
+        relationshipsResults.emplace_back(targetStatementNumber, variable);
+    }
 }
 
 Void PatternMatcherTuple::concatTuple(const PatternMatcherTuple& pmt)
 {
-    this->assignStatementResults.insert(this->assignStatementResults.cend(), pmt.assignStatementResults.cbegin(),
-                                        pmt.assignStatementResults.cend());
+    this->targetStatementResults.insert(this->targetStatementResults.cend(), pmt.targetStatementResults.cbegin(),
+                                        pmt.targetStatementResults.cend());
     std::copy(pmt.variableResults.begin(), pmt.variableResults.end(),
               std::inserter(this->variableResults, this->variableResults.end()));
     this->relationshipsResults.insert(this->relationshipsResults.cend(), pmt.relationshipsResults.cbegin(),
                                       pmt.relationshipsResults.cend());
 }
 
-std::vector<String> PatternMatcherTuple::getAssignStatements() const
+std::vector<String> PatternMatcherTuple::getTargetStatements() const
 {
-    return assignStatementResults;
+    return targetStatementResults;
 }
 
 std::vector<String> PatternMatcherTuple::getVariables() const

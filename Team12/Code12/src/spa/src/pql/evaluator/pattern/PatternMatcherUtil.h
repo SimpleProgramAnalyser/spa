@@ -11,11 +11,11 @@
 
 /**
  * A class to hold result lists for matching
- * assign patterns and variables.
+ * patterns and variables.
  */
 class PatternMatcherTuple {
 private:
-    std::vector<String> assignStatementResults;
+    std::vector<String> targetStatementResults;
     std::unordered_set<String> variableResults;
     std::vector<std::pair<Integer, String>> relationshipsResults;
 
@@ -23,9 +23,21 @@ public:
     PatternMatcherTuple() = default;
 
     /**
-     * Adds a matching assign statement to the result lists.
+     * Adds a matching target statement to the result lists.
      */
-    Void addAssignStatement(Integer assignStatementNumber, const String& variable);
+    Void addTargetStatement(Integer targetStatementNumber);
+
+    /**
+     * Adds a matching target statement and its variable
+     * to the result lists.
+     */
+    Void addTargetStatement(Integer targetStatementNumber, const String& variable);
+
+    /**
+     * Adds a matching target statement and accompany set
+     * of variables to the result lists.
+     */
+    Void addTargetStatement(Integer targetStatementNumber, const std::unordered_set<String>& variables);
 
     /**
      * Adds entries from another PatternMatcherTuple to
@@ -36,7 +48,7 @@ public:
     /**
      * Gets the list of results for matching statements.
      */
-    std::vector<String> getAssignStatements() const;
+    std::vector<String> getTargetStatements() const;
 
     /**
      * Gets the list of results for matching variables.

@@ -82,3 +82,78 @@ TEST_CASE("Assignment statement patterns are evaluated correctly")
                                        std::vector<std::pair<std::string, std::string>>({{"po", "9"}}));
     }
 }
+
+TEST_CASE("While statement patterns are evaluated correctly")
+{
+    resetPKB();
+    assignRootNode(getProgram20Tree_multipleProceduresSpheresdf());
+    DeclarationTable declTable{};
+    DesignEntity whileDesignEntity(WhileType);
+    DesignEntity variableDesignEntity(VariableType);
+    declTable.addDeclaration("while", whileDesignEntity);
+    declTable.addDeclaration("var", variableDesignEntity);
+    ResultsTable resTable(declTable);
+
+    SECTION("Wildcard")
+    {
+        PatternClause clause1("while", WhilePatternType, Reference(WildcardRefType, "_"));
+        evaluatePattern(&clause1, &resTable);
+        requireVectorsHaveSameElements(resTable.getResultsOne("while"), std::vector<String>({"7", "19"}));
+    }
+
+    SECTION("Literal Variable")
+    {
+        PatternClause clause1("while", WhilePatternType, Reference(LiteralRefType, "count"));
+        evaluatePattern(&clause1, &resTable);
+        requireVectorsHaveSameElements(resTable.getResultsOne("while"), std::vector<String>({"7"}));
+    }
+
+    SECTION("Synonym Variable")
+    {
+        PatternClause clause1("while", WhilePatternType, Reference(SynonymRefType, "var"));
+        evaluatePattern(&clause1, &resTable);
+        requireVectorsHaveSameElements(resTable.getResultsOne("while"), std::vector<String>({"7", "19"}));
+        requireVectorsHaveSameElements(resTable.getResultsOne("var"),
+                                       std::vector<String>({"count", "steps", "x", "p"}));
+        requireVectorsHaveSameElements(resTable.getResultsTwo("while", "var"),
+                                      std::vector<std::pair<std::string, std::string>>(
+                                          {{"7", "count"}, {"7", "steps"}, {"19", "x"}, {"19", "p"}}));
+    }
+}
+
+//TEST_CASE("If statement patterns are evaluated correctly")
+//{
+//    resetPKB();
+//    assignRootNode(getProgram19Tree_multipleProcedures());
+//    DeclarationTable declTable{};
+//    DesignEntity ifDesignEntity(IfType);
+//    DesignEntity variableDesignEntity(VariableType);
+//    declTable.addDeclaration("if", ifDesignEntity);
+//    declTable.addDeclaration("var", variableDesignEntity);
+//    ResultsTable resTable(declTable);
+//
+//    SECTION("Wildcard")
+//    {
+//        PatternClause clause1("if", IfPatternType, Reference(WildcardRefType, "_"));
+//        evaluatePattern(&clause1, &resTable);
+//        requireVectorsHaveSameElements(resTable.getResultsOne("if"), std::vector<String>({"12", "16"}));
+//    }
+//
+//    SECTION("Literal Variable")
+//    {
+//        PatternClause clause1("if", IfPatternType, Reference(LiteralRefType, "depth"));
+//        evaluatePattern(&clause1, &resTable);
+//        requireVectorsHaveSameElements(resTable.getResultsOne("if"), std::vector<String>({"16"}));
+//    }
+//
+//    SECTION("Synonym Variable")
+//    {
+//        PatternClause clause1("if", IfPatternType, Reference(SynonymRefType, "var"));
+//        evaluatePattern(&clause1, &resTable);
+//        requireVectorsHaveSameElements(resTable.getResultsOne("if"), std::vector<String>({"12", "16"}));
+//        requireVectorsHaveSameElements(resTable.getResultsOne("var"), std::vector<String>({"base", "depth"}));
+//        requireVectorsHaveSameElements(
+//            resTable.getResultsTwo("var", "if"),
+//            std::vector<std::pair<std::string, std::string>>({{"12", "base"}, {"16", "depth"}}));
+//    }
+//}

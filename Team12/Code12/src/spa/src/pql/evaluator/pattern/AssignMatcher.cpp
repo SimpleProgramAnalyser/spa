@@ -121,7 +121,7 @@ PatternMatcherTuple findAssignInStatementList(const StmtlstNode* const stmtLstNo
             Boolean hasMatch = matchAssignStatement(assign, pnClause);
             // if there is a match, check the relationship to add to list of results
             if (hasMatch) {
-                results.addAssignStatement(currStmt->getStatementNumber(), assign->variable.varName);
+                results.addTargetStatement(currStmt->getStatementNumber(), assign->variable.varName);
             }
         } else if (stmtType == IfStatement) {
             // NOLINTNEXTLINE
@@ -150,6 +150,6 @@ Void evaluateAssignPattern(PatternClause* pnClause, ResultsTable* resultsTable)
         allResults.concatTuple(resultsFromProcedure);
     }
     // store results in ResultTable
-    resultsTable->storeResultsTwo(pnClause->getPatternSynonym(), allResults.getAssignStatements(),
+    resultsTable->storeResultsTwo(pnClause->getPatternSynonym(), allResults.getTargetStatements(),
                                   pnClause->getEntRef(), convertToPairedResult(allResults.getRelationships()));
 }
