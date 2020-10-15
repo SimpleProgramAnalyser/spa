@@ -1,42 +1,44 @@
 #include <utility>
+
 #include "AqTypes.h"
 
 /************************/
 /** Constructors        */
 /************************/
 
-AbstractQuery::AbstractQuery()= default;
+AbstractQuery::AbstractQuery() = default;
 
-AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage) {
+AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage)
+{
     this->setError(queryErrorType, std::move(errorMessage));
 }
 
-AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean isSelectBoolean) { // TODO:
+AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult):
+    isToReturnFalseResult(returnFalseResult)
+{
     this->setError(queryErrorType, std::move(errorMessage));
 }
 
-AbstractQuery::AbstractQuery(const Vector<ResultSynonym>& synonyms, DeclarationTable& declarations):
-    resultSynonyms(synonyms), declarationTable(declarations)
+AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations):
+    resultSynonyms(std::move(synonyms)), declarationTable(declarations)
 {}
 
-AbstractQuery::AbstractQuery(const Vector<ResultSynonym>& synonyms, DeclarationTable& declarations,
-                             ClauseVector& clauseVector):
-    resultSynonyms(synonyms),
-    clauses(std::move(clauseVector)), declarationTable(declarations)
+AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations, ClauseVector& clauseVector):
+    resultSynonyms(std::move(synonyms)), clauses(std::move(clauseVector)), declarationTable(declarations)
 {}
 
 /*************************/
 /** Instance Methods    */
 /************************/
 
-Vector<ResultSynonym> AbstractQuery::getSelectSynonym() const
+Vector<ResultSynonym> AbstractQuery::getSelectSynonym()
 {
-    return resultSynonyms;
+    return resultSynonyms.getSynonyms();
 }
 
 Vector<ResultSynonym> AbstractQuery::getSynonyms()
 {
-    return resultSynonyms;
+    return resultSynonyms.getSynonyms();
 }
 
 const ClauseVector& AbstractQuery::getClauses() const
@@ -51,17 +53,6 @@ DeclarationTable AbstractQuery::getDeclarationTable() const
 
 Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
 {
-    // Check equality of resultSynonyms
-    if (this->resultSynonyms.size() != abstractQuery.resultSynonyms.size()) {
-        return false;
-    }
-
-    size_t length = this->resultSynonyms.size();
-    for (size_t i = 0; i < length; i++) {
-        if (resultSynonyms.at(i) != abstractQuery.resultSynonyms.at(i)) {
-            return false;
-        }
-    }
-
-    return this->clauses == abstractQuery.clauses && this->declarationTable == abstractQuery.declarationTable;
+    return this->resultSynonyms == abstractQuery.resultSynonyms && this->clauses == abstractQuery.clauses
+           && this->declarationTable == abstractQuery.declarationTable;
 }

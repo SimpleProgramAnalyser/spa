@@ -126,6 +126,21 @@ public:
     Boolean operator!=(const ResultSynonym& resultSynonym);
 };
 
+class ResultSynonymVector: public QueryError {
+private:
+    Vector<ResultSynonym> resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
+
+public:
+    ResultSynonymVector() = default;
+    explicit ResultSynonymVector(ResultSynonym synonym);
+    ResultSynonymVector(Vector<ResultSynonym> synonyms);
+    ResultSynonymVector(QueryErrorType queryErrorType, ErrorMessage errorMessage);
+    Void add(ResultSynonym resultSynonym);
+    Vector<ResultSynonym> getSynonyms();
+    Boolean isSelectBoolean();
+    Boolean operator==(const ResultSynonymVector& resultSynonymVector);
+};
+
 class DeclarationTable: public QueryError {
 private:
     std::unordered_map<Synonym, DesignEntity> table;
@@ -378,17 +393,18 @@ public:
 
 class AbstractQuery: public QueryError {
 private:
-    Vector<ResultSynonym> resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
+    ResultSynonymVector resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
     ClauseVector clauses;
     DeclarationTable declarationTable;
+    Boolean isToReturnFalseResult = false;
 
 public:
     AbstractQuery();
     AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage);
-    AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean isSelectBoolean);
-    AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations);
-    AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
-    Vector<ResultSynonym> getSelectSynonym() const;
+    AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult);
+    AbstractQuery(ResultSynonymVector synonym, DeclarationTable& declarations);
+    AbstractQuery(ResultSynonymVector synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
+    Vector<ResultSynonym> getSelectSynonym();
     Vector<ResultSynonym> getSynonyms();
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;

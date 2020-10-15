@@ -1,6 +1,5 @@
 #include <utility>
 
-
 #include "AqTypes.h"
 
 /************************/

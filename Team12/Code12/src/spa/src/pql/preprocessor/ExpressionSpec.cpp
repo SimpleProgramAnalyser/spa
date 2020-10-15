@@ -63,7 +63,7 @@ ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString
     Expression* expression = createExpression(expressionString);
     if (!expression) {
         return ExpressionSpec(QuerySyntaxError,
-                              "Invalid Expression");  // TODO: Implement error type for invalid Expression
+                              "Invalid Expression"); // TODO: Implement error type for invalid Expression
     }
 
     ExpressionSpec expressionSpec{expression, LiteralExpressionType};

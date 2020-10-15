@@ -90,6 +90,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryError.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryError.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryErrorType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonymVector.cpp
 
     # pql/evaluator
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h

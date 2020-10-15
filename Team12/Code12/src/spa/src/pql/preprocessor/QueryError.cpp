@@ -49,7 +49,8 @@ Void QueryError::setError(QueryErrorType queryErrorType)
     }
 }
 
-String QueryError::getErrorMessage() {
+String QueryError::getErrorMessage()
+{
     return errorMessage;
 }
 
