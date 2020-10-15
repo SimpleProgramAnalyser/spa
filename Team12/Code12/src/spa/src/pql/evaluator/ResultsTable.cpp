@@ -34,13 +34,32 @@ bool doVectorsHaveSameElements(std::vector<T> vector1, std::vector<T> vector2)
 }
 
 /**
+ * Given two result lists, generate all possible pairs between
+ * the two result lists by doing a Cartesian product.
+ *
+ * @param results1 The first result list.
+ * @param results2 The second result list.
+ * @return A list of pairs (first, second).
+ */
+PairedResult generateCartesianProduct(const ClauseResult& results1, const ClauseResult& results2)
+{
+    std::vector<std::pair<String, String>> tuples;
+    for (const String& res1 : results1) {
+        for (const String& res2 : results2) {
+            tuples.emplace_back(res1, res2);
+        }
+    }
+    return tuples;
+}
+
+/**
  * Checks if a synonym exists in the results table.
  *
  * @param syn The synonym to be checked.
  * @return True, if the synonym exists in the table.
  *         Otherwise, false.
  */
-inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn)
+inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn) const
 {
     return resultsMap.find(syn) != resultsMap.end();
 }
@@ -107,6 +126,36 @@ ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, cons
     return resultsFoundInBoth;
 }
 
+/**
+ * For a list of synonyms, check the relationships between
+ * every synonym to ensure that rows across every synonym
+ * exists in the table, and then return these rows.
+ *
+ * This method will modify the RelationshipsGraph to join
+ * two tables together (cross-join), if both synonyms are
+ * in the vector but are not within the same table.
+ *
+ * @param syns The vector of synonyms to be processed.
+ * @return All edges that match the vector of synonyms.
+ */
+NtupledResult ResultsTable::joinAllSynonyms(const Vector<Synonym>& syns)
+{
+    size_t length = syns.size();
+    for (size_t i = 0; i < length - 1; i++) {
+        Synonym firstSyn = syns[i];
+        Synonym secondSyn = syns[i + 1];
+        if (!hasRelationships(firstSyn, secondSyn)) {
+            bool firstSynNewInGraph = !relationships->hasSeenBefore(firstSyn);
+            bool secondSynNewInGraph = !relationships->hasSeenBefore(secondSyn);
+            Vector<Pair<String, String>> tuples
+                = generateCartesianProduct(getResultsOne(firstSyn), getResultsOne(secondSyn));
+            // do joining to combine the tables
+            relationships->insertRelationships(tuples, firstSyn, firstSynNewInGraph, secondSyn, secondSynNewInGraph);
+        }
+    }
+    return relationships->retrieveRowsMatching(syns);
+}
+
 std::function<void()> ResultsTable::createEvaluatorOne(ResultsTable* table, const Synonym& syn,
                                                        const ClauseResult& results)
 {
@@ -127,29 +176,6 @@ void ResultsTable::mergeOneSynonym(ResultsTable* table, const Synonym& syn, cons
 {
     table->filterAfterVerification(syn, results);
 }
-
-// Helper class to merge pairs of strings
-class ResultsRelation {
-public:
-    String value1;
-    String value2;
-
-    ResultsRelation(String v1, String v2): value1(std::move(v1)), value2(std::move(v2)) {}
-    bool operator==(const ResultsRelation& rr) const
-    {
-        return this->value1 == rr.value1 && this->value2 == rr.value2;
-    }
-};
-
-// Hash function for ResultsRelation
-struct ResultsRelationHasher {
-    std::size_t operator()(const ResultsRelation& rr) const
-    {
-        std::hash<std::string> stringHasher;
-        std::size_t hashedA = stringHasher(rr.value1);
-        return (hashedA ^ (stringHasher(rr.value2) + uint32_t(2654435769) + (hashedA * 64) + (hashedA / 4)));
-    }
-};
 
 void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, const Synonym& s2,
                                     const PairedResult& tuples)
@@ -200,13 +226,13 @@ void ResultsTable::mergeResults()
     hasEvaluated = true;
 }
 
-ClauseResult ResultsTable::get(const Synonym& syn)
+ClauseResult ResultsTable::get(const Synonym& syn) const
 {
     if (!hasResults()) {
         // table is marked as having no results
         return std::vector<String>();
     } else if (checkIfSynonymInMap(syn)) {
-        ResultsSet resultsSet = resultsMap[syn];
+        ResultsSet resultsSet = resultsMap.at(syn);
         return std::vector<String>(resultsSet.begin(), resultsSet.end());
     } else {
         return retrieveAllMatching(getTypeOfSynonym(syn));
@@ -328,12 +354,12 @@ Void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String&
     }
 }
 
-DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn)
+DesignEntityType ResultsTable::getTypeOfSynonym(const Synonym& syn) const
 {
     return declarations.getDesignEntityOfSynonym(syn).getType();
 }
 
-Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
+Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn) const
 {
     if (!hasResults()) {
         // there are no results, so by the specification of
@@ -344,9 +370,10 @@ Boolean ResultsTable::doesSynonymHaveConstraints(const Synonym& syn)
     }
 }
 
-Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym)
+Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym) const
 {
-    if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)) {
+    if (!relationships->hasSeenBefore(leftSynonym) || !relationships->hasSeenBefore(rightSynonym)
+        || leftSynonym == rightSynonym) {
         return false;
     }
     ClauseResult resultsForLeft = get(leftSynonym);
@@ -356,9 +383,10 @@ Boolean ResultsTable::hasRelationships(const Synonym& leftSynonym, const Synonym
            && relationships->isValueRelated(PotentialValue(leftSynonym, resultsForLeft[0]), rightSynonym);
 }
 
-Void ResultsTable::getResultsZero()
+Boolean ResultsTable::getResultsZero()
 {
     mergeResults();
+    return hasResults();
 }
 
 ClauseResult ResultsTable::getResultsOne(const Synonym& syn)
@@ -374,17 +402,23 @@ PairedResult ResultsTable::getResultsTwo(const Synonym& syn1, const Synonym& syn
         // table is marked as having no results
         return std::vector<std::pair<String, String>>();
     } else if (hasRelationships(syn1, syn2)) {
-        return this->getRelationships(syn1, syn2);
+        return getRelationships(syn1, syn2);
     } else {
-        std::vector<std::pair<String, String>> tuples;
         // do a Cartesian product of both result lists
-        for (const String& res1 : this->get(syn1)) {
-            for (const String& res2 : this->get(syn2)) {
-                tuples.emplace_back(res1, res2);
-            }
-        }
-        return tuples;
+        return generateCartesianProduct(this->get(syn1), this->get(syn2));
     }
+}
+
+NtupledResult ResultsTable::getResultsN(const Vector<Synonym>& syns)
+{
+    assert(syns.size() > 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    mergeResults();
+    return joinAllSynonyms(syns);
+}
+
+Void ResultsTable::storeResultsZero(Boolean hasResults)
+{
+    hasResult = hasResults;
 }
 
 Void ResultsTable::storeResultsOne(const Synonym& syn, const ClauseResult& res)
@@ -423,7 +457,14 @@ Void ResultsTable::storeResultsTwo(const Reference& rfc1, const ClauseResult& re
         // ignore reference 2
         storeResultsOne(rfc1, res1);
     } else {
-        queue.push(createEvaluatorTwo(this, rfc1.getValue(), rfc2.getValue(), tuples));
+        Synonym s1 = rfc1.getValue();
+        Synonym s2 = rfc2.getValue();
+        if (s1 == s2) {
+            // pairs between same synonym, so we just store one result
+            storeResultsOne(s1, res1);
+        } else {
+            queue.push(createEvaluatorTwo(this, s1, s2, tuples));
+        }
     }
 }
 

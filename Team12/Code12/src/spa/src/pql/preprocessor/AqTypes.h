@@ -130,7 +130,7 @@ public:
     explicit ResultSynonym(Synonym syn);
     ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity);
     Synonym getSynonym() const;
-    Attribute getAttribute();
+    Attribute getAttribute() const;
     Boolean operator==(const ResultSynonym& resultSynonym);
     Boolean operator!=(const ResultSynonym& resultSynonym);
 };
@@ -404,7 +404,7 @@ public:
     AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations);
     AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
-    Synonym getSelectSynonym() const;
+    Vector<ResultSynonym> getSelectSynonym() const;
     Vector<ResultSynonym> getSynonyms();
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;

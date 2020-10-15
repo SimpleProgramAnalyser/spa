@@ -26,7 +26,7 @@ Synonym ResultSynonym::getSynonym() const
     return synonym;
 }
 
-Attribute ResultSynonym::getAttribute()
+Attribute ResultSynonym::getAttribute() const
 {
     return attribute;
 }

@@ -129,6 +129,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/WhileMatcher.cpp
 
     # pql/evaluator/attribute
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.cpp
 
