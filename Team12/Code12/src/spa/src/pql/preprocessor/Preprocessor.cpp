@@ -36,7 +36,7 @@ AbstractQuery Preprocessor::processQuery(const String& query)
 
     // Process declarations into declaration table
     DeclarationTable declarationTable = processDeclarations(declarationString);
-    if (declarationTable.isInvalid()) {
+    if (declarationTable.isSyntacticallyInvalid()) {
         return AbstractQuery(true);
     }
 
@@ -135,15 +135,19 @@ std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynon
                                                        DeclarationTable& declarationTable)
 {
     StringVector splitByFullStop = splitByDelimiter(resultSynonymString, ".");
-    std::pair<Boolean, ResultSynonym> invalidResult = std::make_pair(true, ResultSynonym(true));
     if (splitByFullStop.size() > 2) {
-        return invalidResult;
+        return std::make_pair(
+            true, ResultSynonym(QuerySyntaxError, "More than one full stop in Synonym " + resultSynonymString));
     }
 
     // Synonym without attributes
     if (splitByFullStop.size() == 1) {
-        if (!isValidSynonym(resultSynonymString) || !declarationTable.hasSynonym(resultSynonymString)) {
-            return invalidResult;
+        if (!isValidSynonym(resultSynonymString)) {
+            return std::make_pair(
+                true, ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString));
+        } else if (!declarationTable.hasSynonym(resultSynonymString)) {
+            return std::make_pair(
+                true, ResultSynonym(QuerySemanticsError, "Synonym " + resultSynonymString + " is not declared"));
         }
 
         return std::make_pair(false, ResultSynonym(resultSynonymString));
@@ -152,15 +156,18 @@ std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynon
     Synonym synonym = splitByFullStop[0];
     String attribute = splitByFullStop[1];
 
-    if (!isValidSynonym(synonym) || !declarationTable.hasSynonym(synonym)) {
-        return invalidResult;
+    if (!isValidSynonym(synonym)) {
+        return std::make_pair(
+            true, ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString));
+    } else if (!declarationTable.hasSynonym(synonym)) {
+        return std::make_pair(true, ResultSynonym(QuerySemanticsError, "Synonym " + synonym + " is not declared"));
     }
 
     DesignEntity designEntityOfSynonym = declarationTable.getDesignEntityOfSynonym(synonym);
 
     ResultSynonym resultSynonym(synonym, attribute, designEntityOfSynonym);
     if (resultSynonym.isInvalid()) {
-        return invalidResult;
+        return std::make_pair(true, resultSynonym);
     }
 
     return std::make_pair(false, resultSynonym);
@@ -421,7 +428,8 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             if (token == "_") {
                 if (!isPotentialProgLineDesignEntity) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
+                                                                     DeclarationTable::INVALID_DESIGN_ENTITY + "prog");
                 }
 
                 isPotentialProgLineDesignEntity = false;
@@ -431,7 +439,8 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             if (token == "line") {
                 if (!isHighPotentialProgLineDesignEntity) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
+                                                                     DeclarationTable::INVALID_DESIGN_ENTITY + "prog_");
                 }
 
                 currentDesignEntity = DesignEntity(Prog_LineType);
@@ -442,14 +451,16 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             currentDesignEntity = DesignEntity(token);
             if (currentDesignEntity.getType() == NonExistentType) {
-                return DeclarationTable::invalidDeclarationTable();
+                return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
+                                                                 DeclarationTable::INVALID_DESIGN_ENTITY + token);
             }
 
             hasCurrentDesignEntity = true;
         } else {
             if (token == ";") {
                 if (!isPreviousTokenASynonym) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
+                                                                     DeclarationTable::INVALID_DECLARATION_SYNTAX);
                 }
 
                 hasCurrentDesignEntity = false;
@@ -457,17 +468,23 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 continue;
             } else if (token == ",") {
                 if (!isPreviousTokenASynonym) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
+                                                                     DeclarationTable::INVALID_DECLARATION_SYNTAX);
                 }
 
                 isPreviousTokenASynonym = false;
                 continue;
             } else if (isPreviousTokenASynonym) {
                 // Syntax error e.g. while w w1;
-                return DeclarationTable::invalidDeclarationTable();
+                return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
+                                                                 DeclarationTable::INVALID_DECLARATION_SYNTAX);
             } else {
-                if (!isValidSynonym(token) || newDeclarations.hasSynonym(token)) {
-                    return DeclarationTable::invalidDeclarationTable();
+                if (!isValidSynonym(token)) {
+                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
+                                                                     ResultSynonym::INVALID_SYNONYM_MESSAGE + token);
+                } else if (newDeclarations.hasSynonym(token)) {
+                    return DeclarationTable::invalidDeclarationTable(QuerySemanticsError,
+                                                                     "Synonym " + token + " has already been declared");
                 }
 
                 newDeclarations.addDeclaration(token, currentDesignEntity);

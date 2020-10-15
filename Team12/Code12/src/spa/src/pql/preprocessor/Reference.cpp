@@ -116,7 +116,7 @@ Boolean Reference::isProcedure()
     return designEntity.getType() == ProcedureType;
 }
 
-Boolean Reference::isWildCard() const // TODO: phase out
+Boolean Reference::isWildCard() const
 {
     return referenceType == WildcardRefType;
 }

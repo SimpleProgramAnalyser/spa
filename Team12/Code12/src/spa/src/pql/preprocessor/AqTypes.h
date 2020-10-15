@@ -13,6 +13,7 @@
 #include <unordered_set>
 #include <utility>
 
+#include "QueryError.h"
 #include "Types.h"
 #include "Util.h"
 #include "ast/AstTypes.h"
@@ -22,6 +23,8 @@
 class Error {
 private:
     Boolean hasError = false;
+    Boolean isSemanticError = false;
+    Boolean isSyntaxError = false;
 
 public:
     Boolean isInvalid() const
@@ -118,15 +121,18 @@ public:
     Boolean operator!=(const Attribute& attribute);
 };
 
-class ResultSynonym: public Error {
+class ResultSynonym: public QueryError {
 private:
+    static std::unordered_map<AttributeType, DesignEntityTypeSet> attributeDesignEntityTypeValidationMap;
+
     Synonym synonym;
     Attribute attribute;
 
-    static std::unordered_map<AttributeType, DesignEntityTypeSet> attributeDesignEntityTypeValidationMap;
-
 public:
-    explicit ResultSynonym(Boolean hasError);
+    static const String INVALID_SYNONYM_MESSAGE;
+
+    explicit ResultSynonym(QueryErrorType queryErrorType);
+    explicit ResultSynonym(QueryErrorType queryErrorType, String errorMessage);
     explicit ResultSynonym(Synonym syn);
     ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity);
     Synonym getSynonym() const;
@@ -135,15 +141,20 @@ public:
     Boolean operator!=(const ResultSynonym& resultSynonym);
 };
 
-class DeclarationTable: public Error {
+class DeclarationTable: public QueryError {
 private:
     std::unordered_map<Synonym, DesignEntity> table;
 
 public:
+    static const String INVALID_DESIGN_ENTITY;
+    static const String INVALID_DECLARATION_SYNTAX;
+
+    static DeclarationTable invalidDeclarationTable(QueryErrorType queryErrorType);
+    static DeclarationTable invalidDeclarationTable(QueryErrorType queryErrorType, String errorMessage);
+
     Void addDeclaration(const Synonym& s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s) const;
     Boolean hasSynonym(Synonym s);
-    static DeclarationTable invalidDeclarationTable();
     Boolean operator==(const DeclarationTable& declarationTable) const;
 };
 

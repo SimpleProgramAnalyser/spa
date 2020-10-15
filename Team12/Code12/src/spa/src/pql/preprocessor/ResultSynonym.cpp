@@ -1,25 +1,46 @@
+#include <utility>
+
 #include "AqTypes.h"
+
+/************************/
+/** Static Members      */
+/************************/
+
+const String ResultSynonym::INVALID_SYNONYM_MESSAGE = "Invalid naming for Synonym ";
+
+/************************/
+/** Constructors        */
+/************************/
 
 ResultSynonym::ResultSynonym(String syn): synonym(std::move(syn)), attribute(NoAttributeType) {}
 
-ResultSynonym::ResultSynonym(Boolean hasError): attribute(NoAttributeType)
+ResultSynonym::ResultSynonym(QueryErrorType queryErrorType)
 {
-    setError(hasError);
+    setError(queryErrorType);
+}
+
+ResultSynonym::ResultSynonym(QueryErrorType queryErrorType, String errorMessage)
+{
+    setError(queryErrorType, std::move(errorMessage));
 }
 
 ResultSynonym::ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity): synonym(std::move(syn))
 {
     auto got = Attribute::attributeMap.find(attr);
     if (got == Attribute::attributeMap.end()) {
-        setError(true);
+        setError(QuerySyntaxError, "Attribute " + attr + " does not exist for Synonym " + syn);
     } else {
         if (!Attribute::validateDesignEntityAttributeSemantics(designEntity.getType(), got->second)) {
-            setError(true);
+            setError(QuerySemanticsError, "Attribute " + attr + " cannot be used for Synonym " + syn);
         } else {
             attribute = Attribute(got->second);
         }
     }
 }
+
+/************************/
+/** Instance Methods    */
+/************************/
 
 Synonym ResultSynonym::getSynonym() const
 {

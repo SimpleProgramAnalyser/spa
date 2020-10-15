@@ -87,6 +87,9 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Attribute.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryError.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryError.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryErrorType.h
 
     # pql/evaluator
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h

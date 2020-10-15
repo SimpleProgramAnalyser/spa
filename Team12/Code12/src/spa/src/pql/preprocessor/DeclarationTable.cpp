@@ -1,5 +1,35 @@
 #include "AqTypes.h"
 
+/************************/
+/** Static Methods      */
+/************************/
+
+const String DeclarationTable::INVALID_DESIGN_ENTITY = "Invalid declaration of Design Entity ";
+const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
+
+/************************/
+/** Static Methods      */
+/************************/
+
+DeclarationTable DeclarationTable::invalidDeclarationTable(QueryErrorType queryErrorType)
+{
+    DeclarationTable dT;
+    dT.setError(queryErrorType);
+    return dT;
+}
+
+DeclarationTable DeclarationTable::invalidDeclarationTable(QueryErrorType queryErrorType, String errorMessage)
+{
+    DeclarationTable dT;
+
+    dT.setError(queryErrorType, errorMessage);
+    return dT;
+}
+
+/************************/
+/** Instance Methods    */
+/************************/
+
 Void DeclarationTable::addDeclaration(const Synonym& s, DesignEntity& designEntity)
 {
     table.insert({s, designEntity});
@@ -24,13 +54,6 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s) const
     } else {
         return got->second;
     }
-}
-
-DeclarationTable DeclarationTable::invalidDeclarationTable()
-{
-    DeclarationTable dT;
-    dT.setError(true);
-    return dT;
 }
 
 Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable) const

@@ -885,14 +885,13 @@ TEST_CASE("Such That Follows* and Pattern Statement")
     REQUIRE(abstractQuery.isInvalid());
 }
 
-// TODO: Uncomment it when with clause is implemented
-// TEST_CASE("Such That Follows* and With Statement")
-//{
-//    AbstractQuery abstractQuery
-//        = processQuery("assign a; Select a and such that Follows* (a, _) and with a.stmt# = 12");
-//
-//    REQUIRE(abstractQuery.isInvalid());
-//}
+ TEST_CASE("Such That Follows* and With Statement")
+{
+    AbstractQuery abstractQuery
+        = processQuery("assign a; Select a and such that Follows* (a, _) and with a.stmt# = 12");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
 
 TEST_CASE("'and' occurs before clauses")
 {
