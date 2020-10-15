@@ -16,16 +16,16 @@ Clause* WithClause::createWithClause(const String& clauseConstraint, Declaration
 {
     StringVector splitStringVector = splitByDelimiter(clauseConstraint, "=");
     if (splitStringVector.size() != 2) {
-        return Clause::invalidClause(WithClauseType, QuerySyntaxError,
-                                     "Invalid syntax in WithClause " + clauseConstraint);
+        return new Clause(WithClauseType, QuerySyntaxError, "Invalid syntax in WithClause " + clauseConstraint);
     }
 
     Reference leftRef = Reference::createReference(splitStringVector.at(0), declarationTable);
     Reference rightRef = Reference::createReference(splitStringVector.at(1), declarationTable);
 
-    if (leftRef.isInvalid() || rightRef.isInvalid()) {
-        return Clause::invalidClause(WithClauseType, QuerySemanticsError,
-                                     leftRef.isInvalid() ? leftRef.getErrorMessage() : rightRef.getErrorMessage());
+    if (leftRef.isInvalid()) {
+        return new Clause(SuchThatClauseType, leftRef.getErrorType(), leftRef.getErrorMessage());
+    } else if (rightRef.isInvalid()) {
+        return new Clause(SuchThatClauseType, rightRef.getErrorType(), rightRef.getErrorMessage());
     }
 
     // Validate equality of AttributeValueType for both References
@@ -33,8 +33,7 @@ Clause* WithClause::createWithClause(const String& clauseConstraint, Declaration
     AttributeValueType rightRefValueType = rightRef.getAttributeValueType();
 
     if (leftRefValueType != rightRefValueType) {
-        return Clause::invalidClause(WithClauseType, QuerySemanticsError,
-                                     "Left and Right value type of With Clause do not match");
+        return new Clause(WithClauseType, QuerySemanticsError, "Left and Right value type of With Clause do not match");
     }
 
     return new WithClause(leftRef, rightRef);

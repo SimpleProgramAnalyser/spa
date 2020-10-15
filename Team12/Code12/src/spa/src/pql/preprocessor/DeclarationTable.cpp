@@ -1,3 +1,6 @@
+#include <utility>
+
+
 #include "AqTypes.h"
 
 /************************/
@@ -7,22 +10,14 @@
 const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
 
 /************************/
-/** Static Methods      */
+/** Constructors        */
 /************************/
 
-DeclarationTable DeclarationTable::invalidDeclarationTable(QueryErrorType queryErrorType)
-{
-    DeclarationTable dT;
-    dT.setError(queryErrorType);
-    return dT;
-}
+DeclarationTable::DeclarationTable(): table{} {}
 
-DeclarationTable DeclarationTable::invalidDeclarationTable(QueryErrorType queryErrorType, String errorMessage)
+DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, String errorMessage)
 {
-    DeclarationTable dT;
-
-    dT.setError(queryErrorType, errorMessage);
-    return dT;
+    this->setError(queryErrorType, std::move(errorMessage));
 }
 
 /************************/

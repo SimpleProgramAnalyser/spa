@@ -259,7 +259,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
         if (!hasCurrentClause) {
             if (token != "such" && token != "pattern" && token != "with") {
-                return ClauseVector::invalidClauseVector();
+                return ClauseVector(QuerySyntaxError, "Invalid Clause Type: " + token);
             }
 
             if (token == "such") {
@@ -277,7 +277,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
         if (isPreviousTokenSuch) {
             if (token != "that") {
-                return ClauseVector::invalidClauseVector();
+                return ClauseVector(QuerySyntaxError, "Keyword such is not followed by keyword that");
             }
 
             isPreviousTokenSuch = false;
@@ -318,7 +318,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
                 Clause* clause = WithClause::createWithClause(currentClauseConstraint, declarationTable);
                 if (clause->isInvalid()) {
-                    return ClauseVector::invalidClauseVector();
+                    return ClauseVector(clause->getErrorType(), clause->getErrorMessage());
                 }
 
                 clauseVector.add(clause);
@@ -340,7 +340,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
         std::pair<Boolean, Integer> result = countNumOfOpenParentheses(token, numOfOpenedParentheses);
         if (!result.first) {
-            return ClauseVector::invalidClauseVector();
+            return ClauseVector(QuerySyntaxError, "Incorrect number of parentheses");
         }
 
         numOfOpenedParentheses = result.second;
@@ -350,7 +350,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
         }
 
         if (numOfOpenedParentheses < 0) {
-            return ClauseVector::invalidClauseVector();
+            return ClauseVector(QuerySyntaxError, "Close parentheses appears before open parentheses");
         } else if (numOfOpenedParentheses == 0) {
             if (!hasOpenParentheses) {
                 if (token != "*") {
@@ -358,7 +358,8 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
                 }
 
                 if (numOfTokensWithoutOpenParentheses >= 2) {
-                    return ClauseVector::invalidClauseVector();
+                    return ClauseVector(QuerySyntaxError,
+                                        "Too many tokens after parsing Relationship: " + currentClauseConstraint);
                 }
             } else {
                 Clause* clause;
@@ -370,7 +371,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
                 }
 
                 if (clause->isInvalid()) {
-                    return ClauseVector::invalidClauseVector();
+                    return ClauseVector(clause->getErrorType(), clause->getErrorMessage());
                 }
 
                 clauseVector.add(clause);
@@ -387,7 +388,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
     }
 
     if (!currentClauseConstraint.empty() || isInProcessOfCreatingClause) {
-        return ClauseVector::invalidClauseVector();
+        return ClauseVector(QuerySyntaxError, "Extra incomplete tokens at end of query");
     }
 
     return clauseVector;
@@ -428,8 +429,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             if (token == "_") {
                 if (!isPotentialProgLineDesignEntity) {
-                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                     DesignEntity::INVALID_DESIGN_ENTITY + "prog");
+                    return DeclarationTable(QuerySyntaxError, DesignEntity::INVALID_DESIGN_ENTITY + "prog");
                 }
 
                 isPotentialProgLineDesignEntity = false;
@@ -439,8 +439,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             if (token == "line") {
                 if (!isHighPotentialProgLineDesignEntity) {
-                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                     DesignEntity::INVALID_DESIGN_ENTITY + "prog_");
+                    return DeclarationTable(QuerySyntaxError, DesignEntity::INVALID_DESIGN_ENTITY + "prog_");
                 }
 
                 currentDesignEntity = DesignEntity(Prog_LineType);
@@ -451,16 +450,14 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             currentDesignEntity = DesignEntity(token);
             if (currentDesignEntity.getType() == NonExistentType) {
-                return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                 DesignEntity::INVALID_DESIGN_ENTITY + token);
+                return DeclarationTable(QuerySyntaxError, DesignEntity::INVALID_DESIGN_ENTITY + token);
             }
 
             hasCurrentDesignEntity = true;
         } else {
             if (token == ";") {
                 if (!isPreviousTokenASynonym) {
-                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                     DeclarationTable::INVALID_DECLARATION_SYNTAX);
+                    return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
                 }
 
                 hasCurrentDesignEntity = false;
@@ -468,23 +465,19 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 continue;
             } else if (token == ",") {
                 if (!isPreviousTokenASynonym) {
-                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                     DeclarationTable::INVALID_DECLARATION_SYNTAX);
+                    return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
                 }
 
                 isPreviousTokenASynonym = false;
                 continue;
             } else if (isPreviousTokenASynonym) {
                 // Syntax error e.g. while w w1;
-                return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                 DeclarationTable::INVALID_DECLARATION_SYNTAX);
+                return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
             } else {
                 if (!isValidSynonym(token)) {
-                    return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                     ResultSynonym::INVALID_SYNONYM_MESSAGE + token);
+                    return DeclarationTable(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + token);
                 } else if (newDeclarations.hasSynonym(token)) {
-                    return DeclarationTable::invalidDeclarationTable(QuerySemanticsError,
-                                                                     "Synonym " + token + " has already been declared");
+                    return DeclarationTable(QuerySemanticsError, "Synonym " + token + " has already been declared");
                 }
 
                 newDeclarations.addDeclaration(token, currentDesignEntity);

@@ -28,7 +28,7 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
 
     RelationshipReferenceType relRefType = Relationship::getRelRefType(relRef);
     if (relRefType == InvalidRelationshipType) {
-        return Clause::invalidClause(SuchThatClauseType, QuerySyntaxError, "Invalid Relationship type " + relRef);
+        return new Clause(SuchThatClauseType, QuerySyntaxError, "Invalid Relationship type " + relRef);
     }
 
     String references
@@ -40,15 +40,15 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
     Reference leftReference = Reference::createReference(leftRefString, declarationTable);
     Reference rightReference = Reference::createReference(rightRefString, declarationTable);
 
-    if (leftReference.isInvalid() || rightReference.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError,
-                                     leftReference.isInvalid() ? leftReference.getErrorMessage()
-                                                               : rightReference.getErrorMessage());
+    if (leftReference.isInvalid()) {
+        return new Clause(SuchThatClauseType, leftReference.getErrorType(), leftReference.getErrorMessage());
+    } else if (rightReference.isInvalid()) {
+        return new Clause(SuchThatClauseType, rightReference.getErrorType(), rightReference.getErrorMessage());
     }
 
     Relationship relationship = Relationship::createRelationship(relRefType, leftReference, rightReference);
     if (relationship.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError, relationship.getErrorMessage());
+        return new Clause(SuchThatClauseType, QuerySemanticsError, relationship.getErrorMessage());
     }
 
     return new SuchThatClause(relationship);

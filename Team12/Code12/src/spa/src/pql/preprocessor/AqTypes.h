@@ -133,9 +133,8 @@ private:
 public:
     static const String INVALID_DECLARATION_SYNTAX;
 
-    static DeclarationTable invalidDeclarationTable(QueryErrorType queryErrorType);
-    static DeclarationTable invalidDeclarationTable(QueryErrorType queryErrorType, String errorMessage);
-
+    DeclarationTable();
+    DeclarationTable(QueryErrorType queryErrorType, String errorMessage);
     Void addDeclaration(const Synonym& s, DesignEntity& designEntity);
     DesignEntity getDesignEntityOfSynonym(Synonym s) const;
     Boolean hasSynonym(Synonym s);
@@ -150,7 +149,7 @@ protected:
 
 public:
     explicit Clause(ClauseType clauseType);
-    static Clause* invalidClause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessage errorMessage);
+    Clause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessage errorMessage);
 
     ClauseType getType();
     // The rest of the methods are required to allow virtual operator==
@@ -361,26 +360,22 @@ public:
     Boolean operator==(const PatternClause& patternClause);
 };
 
-class ClauseVector {
+class ClauseVector: public QueryError {
 private:
     List<Clause> clauses;
-    Boolean hasError;
-    explicit ClauseVector(Boolean hasError) noexcept;
 
 public:
-    ClauseVector() noexcept;
+    ClauseVector();
+    ClauseVector(QueryErrorType queryErrorType, ErrorMessage);
+    Void add(Clause* clause);
+    Clause* get(Integer index) const;
+    Integer count() const;
+    Boolean operator==(const ClauseVector& clauseVector);
     ~ClauseVector() = default;
     ClauseVector(const ClauseVector&) = delete;
     ClauseVector operator=(const ClauseVector&) = delete;
     ClauseVector(ClauseVector&&) = default;
     ClauseVector& operator=(ClauseVector&&) = default;
-
-    static ClauseVector invalidClauseVector();
-    Void add(Clause* clause);
-    Clause* get(Integer index) const;
-    Integer count() const;
-    Boolean isInvalid() const;
-    Boolean operator==(const ClauseVector& clauseVector);
 };
 
 class AbstractQuery {
