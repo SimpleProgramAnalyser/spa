@@ -1861,12 +1861,12 @@ doNothing, doNothing2, doSomething, mainPrint
 514 - Select Based on Two Unknown Synonym, 0 common synonym permutation
 stmt s, s1, s2; variable v;
 Select v such that Parent(s, s1) such that Modifies(s2, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, read, x, y, z
 5000
 515 - Select Based on Two Unknown Synonym, 0 common synonym permutation
-stmt s; if s1; variable v;
+stmt s; if s1, s2; variable v;
 Select v such that Parent(s, s1) such that Modifies(s2, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, read, x, y, z
 5000
 516 - Select Based on Two Unknown Synonym, 0 common synonym permutation
 stmt s, s2; read s1; variable v;
@@ -1914,17 +1914,12 @@ Select s1 such that Parent(s, s1) such that Modifies(s1, "doNothing")
 22, 45, 56, 80
 5000
 519 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
-stmt s, s2; print s1; variable v;
+stmt s, s2; read s1; variable v;
 Select s1 such that Parent(s, s1) such that Modifies(s1, "doNothing")
-36, 57, 65, 71, 86
+18, 21, 44
 5000
 520 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 stmt s, s2; call s1; variable v;
-Select s such that Parent(s, s1) such that Modifies(s, v)
-10, 20, 25, 36, 43, 54, 55, 65, 71, 79, 86, 99
-5000
-521 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
-stmt s, s2; read s1; variable v;
 Select s such that Parent(s, s1) such that Modifies(s, v)
 12, 25, 36, 57, 65, 71, 86, 99
 5000
@@ -1951,7 +1946,7 @@ TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNot
 526 - Select Based on Two Unknown Synonym, 0 common synonym permutation
 stmt s, s1; call a; variable v;
 Select v such that Parent(s, s1) such that Uses("doSomething", v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, read, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, print, procedure, read, x, y, z
 5000
 527 - Select Based on Two Unknown Synonym, 0 common synonym permutation
 stmt s, s1, s2; call a; variable v;
@@ -1971,12 +1966,12 @@ doNothing, doNothing2, doSomething, mainPrint
 530 - Select Based on Two Unknown Synonym, 0 common synonym permutation
 stmt s, s1, s2; variable v;
 Select v such that Parent(s, s1) such that Uses(s2, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, print, procedure, read, x, y, z
 5000
 531 - Select Based on Two Unknown Synonym, 0 common synonym permutation
-stmt s; if s1; variable v;
+stmt s; if s1; while s2; variable v;
 Select v such that Parent(s, s1) such that Uses(s2, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, print, procedure, read, x, y, z
 5000
 532 - Select Based on Two Unknown Synonym, 0 common synonym permutation
 stmt s, s2; read s1; variable v;
