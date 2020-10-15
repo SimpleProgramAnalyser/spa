@@ -16,14 +16,16 @@ Clause* WithClause::createWithClause(const String& clauseConstraint, Declaration
 {
     StringVector splitStringVector = splitByDelimiter(clauseConstraint, "=");
     if (splitStringVector.size() != 2) {
-        return Clause::invalidClause(WithClauseType, QuerySyntaxError, "Invalid With Clause " + clauseConstraint);
+        return Clause::invalidClause(WithClauseType, QuerySyntaxError,
+                                     "Invalid syntax in WithClause " + clauseConstraint);
     }
 
     Reference leftRef = Reference::createReference(splitStringVector.at(0), declarationTable);
     Reference rightRef = Reference::createReference(splitStringVector.at(1), declarationTable);
 
     if (leftRef.isInvalid() || rightRef.isInvalid()) {
-        return Clause::invalidClause(WithClauseType, QuerySemanticsError, "Invalid Reference");
+        return Clause::invalidClause(WithClauseType, QuerySemanticsError,
+                                     leftRef.isInvalid() ? leftRef.getErrorMessage() : rightRef.getErrorMessage());
     }
 
     // Validate equality of AttributeValueType for both References

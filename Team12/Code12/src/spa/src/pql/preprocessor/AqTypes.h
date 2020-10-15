@@ -185,19 +185,18 @@ typedef std::unordered_set<ReferenceType> ReferenceTypeSet;
 
 typedef String ReferenceValue;
 
-class Reference {
+class Reference: public QueryError {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
     DesignEntity designEntity;
     Attribute attribute;
-    Boolean hasError;
 
 public:
     static Reference createReference(String ref, DeclarationTable& declarationTable);
 
     Reference();
-    explicit Reference(Boolean hasError);
+    Reference(QueryErrorType queryErrorType, ErrorMessage errorMessage);
     Reference(ReferenceType refType, ReferenceValue refValue);
     Reference(ReferenceType refType, ReferenceValue refValue,
               DesignEntity
@@ -208,8 +207,6 @@ public:
     ReferenceValue getValue() const;
     Attribute getAttribute();
     AttributeValueType getAttributeValueType();
-    Boolean isValidEntityRef();
-    Boolean isInvalid() const;
     Boolean isProcedure();
     Boolean isWildCard() const;
     Boolean operator==(const Reference& reference);
@@ -245,12 +242,8 @@ struct std::hash<RelationshipReferenceType> {
     }
 };
 
-class Relationship {
+class Relationship: public QueryError {
 private:
-    RelationshipReferenceType relationshipReferenceType;
-    Reference leftReference;
-    Reference rightReference;
-    Boolean hasError;
     static std::unordered_map<String, RelationshipReferenceType> relationshipReferenceTypeMap;
     static std::unordered_map<RelationshipReferenceType, std::unordered_set<DesignEntityType>>
         leftReferenceSynonymValidationTable;
@@ -261,18 +254,22 @@ private:
     static std::unordered_map<RelationshipReferenceType, std::unordered_set<ReferenceType>>
         rightReferenceTypeValidationTable;
 
+    RelationshipReferenceType relationshipReferenceType;
+    Reference leftReference;
+    Reference rightReference;
+
     static Boolean validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
                                                  Reference rightRef);
 
 public:
+    static Relationship createRelationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
+    static RelationshipReferenceType getRelRefType(String relRef);
+
     Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
-    explicit Relationship(Boolean hasError);
+    Relationship(QueryErrorType queryErrorType, ErrorMessage errorMessage);
     RelationshipReferenceType getType();
     Reference getLeftRef();
     Reference getRightRef();
-    Boolean isInvalid() const;
-    static Relationship createRelationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
-    static RelationshipReferenceType getRelRefType(String relRef);
     Boolean operator==(const Relationship& relationship);
 };
 

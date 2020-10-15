@@ -46,8 +46,7 @@ Clause* PatternClause::createPatternClause(const String& clauseConstraint, Decla
         = designEntityTypeValidationSet.find(synonymDesignEntityType) != designEntityTypeValidationSet.end();
     if (!isValidDesignEntityType) {
         return Clause::invalidClause(PatternClauseType, QuerySyntaxError,
-                                     DesignEntity::INVALID_DESIGN_ENTITY + "used in PatternClause "
-                                     + clauseConstraint);
+                                     DesignEntity::INVALID_DESIGN_ENTITY + "used in PatternClause " + clauseConstraint);
     }
 
     String constraintVariablesString
@@ -77,12 +76,16 @@ Clause* PatternClause::processAssignPatternClause(Synonym patternSynonym, String
     Reference firstReference = Reference::createReference(firstConstraintString, declarationTable);
     if (!isValidVariableEntityRef(firstReference)) { // TODO: Implement inheritance from QueryError for Reference
         return Clause::invalidClause(PatternClauseType, QuerySemanticsError,
-                                     "Invalid first Reference used in assign PatternClause: " + firstReference.getValue());
+                                     "Invalid first Reference used in assign PatternClause: "
+                                         + firstReference.getValue());
     }
 
     ExpressionSpec rightExpressionSpec = ExpressionSpec::createExpressionSpec(secondConstraintString);
     if (rightExpressionSpec.isInvalid()) {
-        return Clause::invalidClause(PatternClauseType, QuerySemanticsError, "Invalid ExpressionSpec used in assign PatternClause: " + secondConstraintString); // TODO: May need ExpressionSpec to return Syntax/Semantic Error
+        return Clause::invalidClause(
+            PatternClauseType, QuerySemanticsError,
+            "Invalid ExpressionSpec used in assign PatternClause: "
+                + secondConstraintString); // TODO: May need ExpressionSpec to return Syntax/Semantic Error
     }
 
     return new PatternClause(std::move(patternSynonym), AssignPatternType, firstReference,
@@ -97,7 +100,8 @@ Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, Desig
 
     if ((constraints.size() != 3 && synonymDesignEntityType == IfType)
         || (constraints.size() != 2 && synonymDesignEntityType == WhileType)) {
-        return Clause::invalidClause(PatternClauseType, QuerySyntaxError, "Incorrect number of arguments for PatternClause");
+        return Clause::invalidClause(PatternClauseType, QuerySyntaxError,
+                                     "Incorrect number of arguments for PatternClause");
     }
 
     String firstConstraintString = constraints.at(0);
@@ -113,7 +117,8 @@ Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, Desig
     }
 
     if (secondConstraintString != "_" || (synonymDesignEntityType == IfType && thirdConstraintString != "_")) {
-        return Clause::invalidClause(PatternClauseType, QuerySyntaxError, "Second or third argument of if/while PatternClause is not a wildcard");
+        return Clause::invalidClause(PatternClauseType, QuerySyntaxError,
+                                     "Second or third argument of if/while PatternClause is not a wildcard");
     }
 
     PatternStatementType patternType = synonymDesignEntityType == IfType ? IfPatternType : WhilePatternType;

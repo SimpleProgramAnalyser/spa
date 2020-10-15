@@ -41,12 +41,14 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
     Reference rightReference = Reference::createReference(rightRefString, declarationTable);
 
     if (leftReference.isInvalid() || rightReference.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError, "Invalid Reference"); // TODO: Implement Reference inherit QueryError
+        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError,
+                                     leftReference.isInvalid() ? leftReference.getErrorMessage()
+                                                               : rightReference.getErrorMessage());
     }
 
     Relationship relationship = Relationship::createRelationship(relRefType, leftReference, rightReference);
     if (relationship.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError, "Invalid Relationship"); // TODO: Implement Relationship inherit QueryError
+        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError, relationship.getErrorMessage());
     }
 
     return new SuchThatClause(relationship);
