@@ -4,7 +4,9 @@
  */
 #include "CallsEvaluator.h"
 
-#include "pkb/PKB.h"
+#include <stdexcept>
+
+#include "RelationshipsUtil.h"
 
 class CallsEvaluator {
 private:
@@ -38,12 +40,60 @@ Void evaluateCallsClause(const Reference& leftRef, const Reference& rightRef, Bo
     evaluator.evaluateCallsClause();
 }
 
-Void CallsEvaluator::evaluateLeftKnown() const {}
+Void CallsEvaluator::evaluateLeftKnown() const
+{
+    Vector<ProcedureName> (*function)(const ProcedureName&) = getAllCallees;
+    Vector<ProcedureName> (*starFunction)(const ProcedureName&) = getAllCalleesStar;
+    resultsTable->storeResultsOne(rightRef, (isStar ? function : starFunction)(leftRef.getValue()));
+}
 
-Void CallsEvaluator::evaluateRightKnown() const {}
+Void CallsEvaluator::evaluateRightKnown() const
+{
+    Vector<ProcedureName> (*function)(const ProcedureName&) = getAllCallers;
+    Vector<ProcedureName> (*starFunction)(const ProcedureName&) = getAllCallersStar;
+    resultsTable->storeResultsOne(leftRef, (isStar ? function : starFunction)(rightRef.getValue()));
+}
 
-Void CallsEvaluator::evaluateBothAny() const {}
+Void CallsEvaluator::evaluateBothAny() const
+{
+    ClauseResult leftResults;
+    ClauseResult rightResults;
+    PairedResult tuples;
+    if (isStar) {
+        leftResults = getAllCallees();
+        rightResults = getAllCallers();
+        tuples = getAllCallsTuple();
+    } else {
+        leftResults = getAllCalleesStar();
+        rightResults = getAllCallersStar();
+        tuples = getAllCallsTupleStar();
+    }
+    resultsTable->storeResultsTwo(leftRef, leftResults, rightRef, rightResults, tuples);
+}
 
-Void CallsEvaluator::evaluateBothKnown(const String& leftRefVal, const String& rightRefVal) const {}
+Void CallsEvaluator::evaluateBothKnown(const String& leftRefVal, const String& rightRefVal) const
+{
+    resultsTable->storeResultsZero(pkbBothKnownFunction(leftRefVal, rightRefVal));
+}
 
-Void CallsEvaluator::evaluateCallsClause() const {}
+Void CallsEvaluator::evaluateCallsClause() const
+{
+    ReferenceType leftRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = rightRef.getReferenceType();
+    if (leftRefType == LiteralRefType && canMatchMultiple(rightRefType)) {
+        evaluateLeftKnown();
+    } else if (canMatchMultiple(leftRefType) && rightRefType == LiteralRefType) {
+        evaluateRightKnown();
+    } else if (leftRefType == LiteralRefType && rightRefType == LiteralRefType) {
+        evaluateBothKnown(leftRef.getValue(), rightRef.getValue());
+    } else if (!leftRef.isWildCard() && leftRef.getValue() == rightRef.getValue()) {
+        // if left == right, for Calls this will always return empty
+        // this is because recursive calls are not allowed
+        resultsTable->storeResultsOne(leftRef, std::vector<String>());
+    } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
+        evaluateBothAny();
+    } else {
+        throw std::runtime_error(
+            "Error in CallsEvaluator::evaluateCallsClause: No synonyms or string literals in Calls clause");
+    }
+}

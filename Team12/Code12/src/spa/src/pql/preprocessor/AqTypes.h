@@ -404,7 +404,7 @@ public:
     AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations);
     AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
     static AbstractQuery invalidAbstractQuery();
-    Synonym getSelectSynonym() const;
+    Vector<ResultSynonym> getSelectSynonym() const;
     Vector<ResultSynonym> getSynonyms();
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;

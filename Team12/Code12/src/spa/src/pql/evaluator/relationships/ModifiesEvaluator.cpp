@@ -96,12 +96,7 @@ Void ModifiesEvaluator::evaluateBothKnown() const
         // leftRefType == LiteralRefType
         modifiesHolds = checkIfProcedureModifies(leftRef.getValue(), rightRef.getValue());
     }
-    std::vector<String> tempResult;
-    if (modifiesHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueModifies");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
+    resultsTable->storeResultsZero(modifiesHolds);
 }
 
 Void ModifiesEvaluator::evaluateModifiesClause() const
@@ -116,6 +111,6 @@ Void ModifiesEvaluator::evaluateModifiesClause() const
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         evaluateBothAny();
     } else {
-        throw std::runtime_error("Error in ModifiesExtractor::evaluateModifiesClause: invalid arguments in Modifies");
+        throw std::runtime_error("Error in ModifiesEvaluator::evaluateModifiesClause: invalid arguments in Modifies");
     }
 }

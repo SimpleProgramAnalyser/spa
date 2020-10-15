@@ -252,8 +252,10 @@ public:
 
     /**
      * Forces the merging of the results queue.
+     *
+     * @return Whether this results table contains any results.
      */
-    Void getResultsZero();
+    Boolean getResultsZero();
 
     /**
      * Initiates merging of the results queue, unless
@@ -275,6 +277,15 @@ public:
      * @return The result pairs for (syn1, syn2).
      */
     PairedResult getResultsTwo(const Synonym& syn1, const Synonym& syn2);
+
+    /**
+     * Stores the result for a clause with no synonyms.
+     * If true, nothing happens. But if false, the entire
+     * results table is invalidated.
+     *
+     * @param hasResults Whether a clause has results.
+     */
+    Void storeResultsZero(Boolean hasResults);
 
     /**
      * Adds the result for a single synonym into a queue.
