@@ -706,9 +706,9 @@ std::vector<PotentialValue> RelationshipsGraph::retrieveRelationships(const Pote
     }
 }
 
-NtupledResult RelationshipsGraph::retrieveRowsMatching(const Vector<Synonym>& synonyms) const
+NtupledResult RelationshipsGraph::retrieveUniqueRowsMatching(const Vector<Synonym>& synonyms) const
 {
-    NtupledResult matchingRows;
+    std::unordered_set<Vector<String>, NtupleHasher> matchingRows;
     for (const std::pair<GraphEdge, const std::unordered_set<SynonymWithValue, SynonymWithValueHasher>&> edge :
          edgesTable) {
         const std::unordered_set<SynonymWithValue, SynonymWithValueHasher>& rowValues = edge.second;
@@ -725,8 +725,8 @@ NtupledResult RelationshipsGraph::retrieveRowsMatching(const Vector<Synonym>& sy
             }
         }
         if (matchedAll) {
-            matchingRows.push_back(currentRow);
+            matchingRows.insert(currentRow);
         }
     }
-    return matchingRows;
+    return NtupledResult(matchingRows.begin(), matchingRows.end());
 }

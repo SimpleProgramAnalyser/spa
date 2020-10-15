@@ -153,7 +153,7 @@ NtupledResult ResultsTable::joinAllSynonyms(const Vector<Synonym>& syns)
             relationships->insertRelationships(tuples, firstSyn, firstSynNewInGraph, secondSyn, secondSynNewInGraph);
         }
     }
-    return relationships->retrieveRowsMatching(syns);
+    return relationships->retrieveUniqueRowsMatching(syns);
 }
 
 std::function<void()> ResultsTable::createEvaluatorOne(ResultsTable* table, const Synonym& syn,
