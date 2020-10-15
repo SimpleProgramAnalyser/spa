@@ -131,8 +131,8 @@ add_library(spa
     # pql/evaluator/attribute
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.cpp
 
     # pql/projector
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp
