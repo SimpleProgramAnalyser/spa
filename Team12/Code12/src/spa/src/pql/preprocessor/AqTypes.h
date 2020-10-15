@@ -305,19 +305,17 @@ enum ExpressionSpecType : char {
     InvalidExpressionType
 };
 
-class ExpressionSpec {
+class ExpressionSpec: public QueryError {
 private:
     std::unique_ptr<Expression> expression;
-    bool hasError;
 
 public:
     ExpressionSpecType expressionSpecType;
     ExpressionSpec();
-    explicit ExpressionSpec(Boolean hasError);
+    ExpressionSpec(QueryErrorType queryErrorType, ErrorMessage errorMessage);
     explicit ExpressionSpec(ExpressionSpecType exprSpecType);
     ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType);
     Expression* getExpression() const;
-    Boolean isInvalid() const;
     static ExpressionSpec createExpressionSpec(const String& exprSpecString);
     Boolean operator==(const ExpressionSpec& expressionSpec);
 };

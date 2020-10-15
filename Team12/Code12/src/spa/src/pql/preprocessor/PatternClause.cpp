@@ -73,17 +73,17 @@ Clause* PatternClause::processAssignPatternClause(Synonym patternSynonym, String
     String secondConstraintString = constraints.at(1);
 
     Reference firstReference = Reference::createReference(firstConstraintString, declarationTable);
-    if (!isValidVariableEntityRef(firstReference)) { // TODO: Implement inheritance from QueryError for Reference
+    if (firstReference.isInvalid()) {
+        return new Clause(PatternClauseType, firstReference.getErrorType(), firstReference.getErrorMessage());
+    } else if (!isValidVariableEntityRef(firstReference)) {
         return new Clause(PatternClauseType, QuerySemanticsError,
                           "Invalid first Reference used in assign PatternClause: " + firstReference.getValue());
     }
 
     ExpressionSpec rightExpressionSpec = ExpressionSpec::createExpressionSpec(secondConstraintString);
     if (rightExpressionSpec.isInvalid()) {
-        return new Clause(
-            PatternClauseType, QuerySemanticsError,
-            "Invalid ExpressionSpec used in assign PatternClause: "
-                + secondConstraintString); // TODO: May need ExpressionSpec to return Syntax/Semantic Error
+        return new Clause(PatternClauseType, QuerySemanticsError,
+                          "Invalid ExpressionSpec used in assign PatternClause: " + secondConstraintString);
     }
 
     return new PatternClause(std::move(patternSynonym), AssignPatternType, firstReference,
@@ -109,7 +109,9 @@ Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, Desig
     }
 
     Reference firstReference = Reference::createReference(firstConstraintString, declarationTable);
-    if (!isValidVariableEntityRef(firstReference)) { // TODO: Implement inheritance from QueryError for Reference
+    if (firstReference.isInvalid()) {
+        return new Clause(PatternClauseType, firstReference.getErrorType(), firstReference.getErrorMessage());
+    } else if (!isValidVariableEntityRef(firstReference)) {
         return new Clause(PatternClauseType, QuerySyntaxError, "");
     }
 
@@ -125,10 +127,6 @@ Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, Desig
 
 Boolean PatternClause::isValidVariableEntityRef(Reference ref)
 {
-    if (ref.isInvalid()) {
-        return false;
-    }
-
     Boolean isVariableType
         = ref.getReferenceType() == SynonymRefType && ref.getDesignEntity().getType() == VariableType;
     Boolean isWildcard = ref.getReferenceType() == WildcardRefType;
