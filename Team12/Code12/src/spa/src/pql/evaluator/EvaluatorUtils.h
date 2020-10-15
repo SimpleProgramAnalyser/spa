@@ -20,6 +20,11 @@ typedef Vector<Pair<String, String>> PairedResult;
 
 typedef Vector<Vector<String>> NtupledResult;
 
+// A hash function for a n-tuple (Vector<String>)
+struct NtupleHasher {
+    std::size_t operator()(const Vector<String>& tuple) const;
+};
+
 // Foreward declaration of SynonymWithValue
 class SynonymWithValue;
 
