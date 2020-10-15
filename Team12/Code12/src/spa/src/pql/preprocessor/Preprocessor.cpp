@@ -6,10 +6,9 @@ StringVector splitByFirstConsecutiveWhitespace(const String& str);
 Boolean containsOpenParentheses(const String& str);
 StringPair splitDeclarationAndSelectClause(const String& query);
 std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
-std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
-                                                                    DeclarationTable& declarationTable);
-std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString,
-                                                       DeclarationTable& declarationTable);
+std::pair<QueryErrorType, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
+                                                                           DeclarationTable& declarationTable);
+ResultSynonym processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable);
 StringVector splitResultAndClauses(String& s);
 
 /**
@@ -37,7 +36,7 @@ AbstractQuery Preprocessor::processQuery(const String& query)
     // Process declarations into declaration table
     DeclarationTable declarationTable = processDeclarations(declarationString);
     if (declarationTable.isSyntacticallyInvalid()) {
-        return AbstractQuery(true);
+        return AbstractQuery(QuerySyntaxError, declarationTable.getErrorMessage());
     }
 
     // Extract select keyword
@@ -45,12 +44,12 @@ AbstractQuery Preprocessor::processQuery(const String& query)
 
     // No select clause
     if (selectAndClausesVector.size() < 2) {
-        return AbstractQuery(true);
+        return AbstractQuery(QuerySyntaxError, "No Select Clause");
     }
 
     String possibleSelectKeyword = selectAndClausesVector.at(0);
     if (possibleSelectKeyword != "Select") {
-        return AbstractQuery(true);
+        return AbstractQuery(QuerySyntaxError, "No Select keyword");
     }
 
     String synonymAndClauses = selectAndClausesVector.at(1);
@@ -58,16 +57,22 @@ AbstractQuery Preprocessor::processQuery(const String& query)
 
     // No synonym
     if (selectAndClausesVector.empty()) {
-        return AbstractQuery(true);
+        return AbstractQuery(QuerySyntaxError, "No Result Synonym");
     }
 
     String selectResultString = synonymAndClausesVector.at(0);
 
-    std::pair<Boolean, Vector<ResultSynonym>> processedResults
+    std::pair<QueryErrorType, Vector<ResultSynonym>> processedResults
         = processSelectResultString(selectResultString, declarationTable);
 
-    if (processedResults.first) {
-        return AbstractQuery(true);
+    if (processedResults.first != NoQueryErrorType) {
+        return AbstractQuery(
+            processedResults.first,
+            "Error in Result Synonyms"); // TODO: Create ResultSynonymVector, so can return ErrorMessage
+    }
+
+    if (declarationTable.isSemanticallyInvalid()) {
+        return AbstractQuery(QuerySemanticsError, declarationTable.getErrorMessage(), processedResults.second.empty());
     }
 
     Vector<ResultSynonym> resultSynonyms = processedResults.second;
@@ -81,36 +86,39 @@ AbstractQuery Preprocessor::processQuery(const String& query)
     // Process clauses into ClauseList
     String clausesString = synonymAndClausesVector.at(1);
     ClauseVector clausesVector = processClauses(clausesString, declarationTable);
-    if (clausesVector.isInvalid()) {
-        return AbstractQuery(true);
+    if (clausesVector.isSyntacticallyInvalid()) {
+        return AbstractQuery(QuerySyntaxError, clausesVector.getErrorMessage());
+    } else if (clausesVector.isSemanticallyInvalid()) {
+        return AbstractQuery(QuerySemanticsError, clausesVector.getErrorMessage(), resultSynonyms.empty());
     }
 
     AbstractQuery abstractQuery(resultSynonyms, declarationTable, clausesVector);
     return abstractQuery;
 }
 
-std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
-                                                                    DeclarationTable& declarationTable)
+std::pair<QueryErrorType, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
+                                                                           DeclarationTable& declarationTable)
 {
-    // BOOLEAN result
+    // BOOLEAN result // TODO: logic of this should be in processResultSynonym
     if (selectResultString == "BOOLEAN") {
         if (!declarationTable.hasSynonym(selectResultString)) {
             // Empty Vector means result is of type BOOLEAN
-            return std::make_pair(false, Vector<ResultSynonym>());
+            return std::make_pair(NoQueryErrorType, Vector<ResultSynonym>());
         }
 
-        return std::make_pair(false, Vector<ResultSynonym>{ResultSynonym{selectResultString}});
+        return std::make_pair(NoQueryErrorType, Vector<ResultSynonym>{ResultSynonym{selectResultString}});
     }
 
     // Single Synonym result
     if (selectResultString.at(0) != '<') {
-        std::pair<Boolean, ResultSynonym> processedResultSynonym
-            = processResultSynonym(selectResultString, declarationTable);
-        if (processedResultSynonym.first) {
-            return std::make_pair(true, Vector<ResultSynonym>{});
+        ResultSynonym processedResultSynonym = processResultSynonym(selectResultString, declarationTable);
+        if (processedResultSynonym.isInvalid()) {
+            return std::make_pair(
+                processedResultSynonym.getErrorType(),
+                Vector<ResultSynonym>{}); // TODO: Create ResultSynonymVector, so can return ErrorMessage
         }
 
-        return std::make_pair(false, Vector<ResultSynonym>{processedResultSynonym.second});
+        return std::make_pair(NoQueryErrorType, Vector<ResultSynonym>{processedResultSynonym});
     }
 
     // Tuple result
@@ -119,58 +127,50 @@ std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selec
     Vector<ResultSynonym> resultSynonyms;
     for (auto& resultSynonymString : resultSynonymStrings) {
         String trimmedResultSynonymString = trimWhitespace(resultSynonymString);
-        std::pair<Boolean, ResultSynonym> processedResultSynonym
-            = processResultSynonym(trimmedResultSynonymString, declarationTable);
-        if (processedResultSynonym.first) {
-            return std::make_pair(true, Vector<ResultSynonym>{});
+        ResultSynonym processedResultSynonym = processResultSynonym(trimmedResultSynonymString, declarationTable);
+        if (processedResultSynonym.isInvalid()) {
+            return std::make_pair(
+                processedResultSynonym.getErrorType(),
+                Vector<ResultSynonym>{}); // TODO: Create ResultSynonymVector, so can return ErrorMessage
         }
 
-        resultSynonyms.push_back(processedResultSynonym.second);
+        resultSynonyms.push_back(processedResultSynonym);
     }
 
-    return std::make_pair(false, resultSynonyms);
+    return std::make_pair(NoQueryErrorType, resultSynonyms);
 }
 
-std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString,
-                                                       DeclarationTable& declarationTable)
+ResultSynonym processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable)
 {
     StringVector splitByFullStop = splitByDelimiter(resultSynonymString, ".");
     if (splitByFullStop.size() > 2) {
-        return std::make_pair(
-            true, ResultSynonym(QuerySyntaxError, "More than one full stop in Synonym " + resultSynonymString));
+        return ResultSynonym(QuerySyntaxError, "More than one full stop in Synonym " + resultSynonymString);
     }
 
     // Synonym without attributes
     if (splitByFullStop.size() == 1) {
         if (!isValidSynonym(resultSynonymString)) {
-            return std::make_pair(
-                true, ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString));
+            return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
         } else if (!declarationTable.hasSynonym(resultSynonymString)) {
-            return std::make_pair(
-                true, ResultSynonym(QuerySemanticsError, "Synonym " + resultSynonymString + " is not declared"));
+            return ResultSynonym(QuerySemanticsError, "Synonym " + resultSynonymString + " is not declared");
         }
 
-        return std::make_pair(false, ResultSynonym(resultSynonymString));
+        return ResultSynonym(resultSynonymString);
     }
 
     Synonym synonym = splitByFullStop[0];
     String attribute = splitByFullStop[1];
 
     if (!isValidSynonym(synonym)) {
-        return std::make_pair(
-            true, ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString));
+        return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
     } else if (!declarationTable.hasSynonym(synonym)) {
-        return std::make_pair(true, ResultSynonym(QuerySemanticsError, "Synonym " + synonym + " is not declared"));
+        return ResultSynonym(QuerySemanticsError, "Synonym " + synonym + " is not declared");
     }
 
     DesignEntity designEntityOfSynonym = declarationTable.getDesignEntityOfSynonym(synonym);
-
     ResultSynonym resultSynonym(synonym, attribute, designEntityOfSynonym);
-    if (resultSynonym.isInvalid()) {
-        return std::make_pair(true, resultSynonym);
-    }
 
-    return std::make_pair(false, resultSynonym);
+    return resultSynonym;
 }
 
 /**

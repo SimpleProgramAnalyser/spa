@@ -376,25 +376,23 @@ public:
     ClauseVector& operator=(ClauseVector&&) = default;
 };
 
-class AbstractQuery {
+class AbstractQuery: public QueryError {
 private:
-    Vector<ResultSynonym> resultSynonyms; // Empty Vector but valid Abstract Query => Select BOOLEAN
+    Vector<ResultSynonym> resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
     ClauseVector clauses;
     DeclarationTable declarationTable;
-    Boolean hasError;
 
 public:
-    explicit AbstractQuery(Boolean hasError);
+    AbstractQuery();
+    AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage);
+    AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean isSelectBoolean);
     AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations);
     AbstractQuery(const Vector<ResultSynonym>& synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
-    static AbstractQuery invalidAbstractQuery();
     Vector<ResultSynonym> getSelectSynonym() const;
     Vector<ResultSynonym> getSynonyms();
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;
-    Boolean isInvalid() const;
     Boolean operator==(const AbstractQuery& abstractQuery);
-    AbstractQuery();
 };
 
 // Utils
