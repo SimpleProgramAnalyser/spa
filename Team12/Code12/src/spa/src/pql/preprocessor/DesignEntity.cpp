@@ -47,7 +47,7 @@ DesignEntityType DesignEntity::getType()
     return type;
 }
 
-Boolean DesignEntity::operator==(const DesignEntity& designEntity)
+Boolean DesignEntity::operator==(const DesignEntity& designEntity) const
 {
     return this->type == designEntity.type;
 }

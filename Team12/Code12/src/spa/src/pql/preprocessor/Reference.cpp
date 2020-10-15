@@ -162,7 +162,7 @@ AttributeValueType Reference::getAttributeValueType()
     return NameValueType;
 }
 
-Boolean Reference::operator==(const Reference& reference)
+Boolean Reference::operator==(const Reference& reference) const
 {
     return this->referenceType == reference.referenceType && this->referenceValue == reference.referenceValue
            && this->designEntity == reference.designEntity;

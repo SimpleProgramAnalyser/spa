@@ -64,7 +64,7 @@ public:
     explicit DesignEntity(DesignEntityType designEntityType);
     explicit DesignEntity(const String& stringType);
     DesignEntityType getType();
-    Boolean operator==(const DesignEntity& designEntity);
+    Boolean operator==(const DesignEntity& designEntity) const;
 };
 
 // Hash function for DesignEntityType
@@ -218,7 +218,7 @@ public:
     Boolean isInvalid() const;
     Boolean isProcedure();
     Boolean isWildCard() const;
-    Boolean operator==(const Reference& reference);
+    Boolean operator==(const Reference& reference) const;
 };
 
 enum RelationshipReferenceType : char {
