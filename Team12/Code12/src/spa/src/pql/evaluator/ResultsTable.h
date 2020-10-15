@@ -559,7 +559,7 @@ public:
      * @param synonyms The synonyms to retrieve the rows of.
      * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
      */
-    NtupledResult retrieveRowsMatching(const Vector<Synonym>& synonyms) const;
+    NtupledResult retrieveUniqueRowsMatching(const Vector<Synonym>& synonyms) const;
 };
 
 #endif // SPA_PQL_RESULTS_TABLE_H
