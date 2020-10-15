@@ -20,23 +20,6 @@
 #include "frontend/parser/Parser.h"
 #include "lexer/Lexer.h"
 
-class Error {
-private:
-    Boolean hasError = false;
-    Boolean isSemanticError = false;
-    Boolean isSyntaxError = false;
-
-public:
-    Boolean isInvalid() const
-    {
-        return hasError;
-    }
-    void setError(Boolean error)
-    {
-        hasError = error;
-    }
-};
-
 enum DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
     StmtType = 1,       // 0000 0001
@@ -63,6 +46,8 @@ private:
     DesignEntityType type;
 
 public:
+    static const ErrorMessage INVALID_DESIGN_ENTITY;
+
     DesignEntity();
     explicit DesignEntity(DesignEntityType designEntityType);
     explicit DesignEntity(const String& stringType);
@@ -129,10 +114,10 @@ private:
     Attribute attribute;
 
 public:
-    static const String INVALID_SYNONYM_MESSAGE;
+    static const ErrorMessage INVALID_SYNONYM_MESSAGE;
 
     explicit ResultSynonym(QueryErrorType queryErrorType);
-    explicit ResultSynonym(QueryErrorType queryErrorType, String errorMessage);
+    explicit ResultSynonym(QueryErrorType queryErrorType, ErrorMessage errorMessage);
     explicit ResultSynonym(Synonym syn);
     ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity);
     Synonym getSynonym() const;
@@ -146,7 +131,6 @@ private:
     std::unordered_map<Synonym, DesignEntity> table;
 
 public:
-    static const String INVALID_DESIGN_ENTITY;
     static const String INVALID_DECLARATION_SYNTAX;
 
     static DeclarationTable invalidDeclarationTable(QueryErrorType queryErrorType);
@@ -160,16 +144,15 @@ public:
 
 enum ClauseType : char { SuchThatClauseType, PatternClauseType, WithClauseType, NonExistentClauseType };
 
-class Clause {
+class Clause: public QueryError {
 protected:
     ClauseType type;
-    Boolean hasError;
 
 public:
     explicit Clause(ClauseType clauseType);
-    static Clause* invalidClause(ClauseType clauseType);
+    static Clause* invalidClause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessage errorMessage);
+
     ClauseType getType();
-    Boolean isInvalid();
     // The rest of the methods are required to allow virtual operator==
     Clause(const Clause&) = default;
     Clause operator=(const Clause&) = delete;

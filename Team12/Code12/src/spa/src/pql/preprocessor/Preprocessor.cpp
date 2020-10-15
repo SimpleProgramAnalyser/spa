@@ -429,7 +429,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
             if (token == "_") {
                 if (!isPotentialProgLineDesignEntity) {
                     return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                     DeclarationTable::INVALID_DESIGN_ENTITY + "prog");
+                                                                     DesignEntity::INVALID_DESIGN_ENTITY + "prog");
                 }
 
                 isPotentialProgLineDesignEntity = false;
@@ -440,7 +440,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
             if (token == "line") {
                 if (!isHighPotentialProgLineDesignEntity) {
                     return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                     DeclarationTable::INVALID_DESIGN_ENTITY + "prog_");
+                                                                     DesignEntity::INVALID_DESIGN_ENTITY + "prog_");
                 }
 
                 currentDesignEntity = DesignEntity(Prog_LineType);
@@ -452,7 +452,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
             currentDesignEntity = DesignEntity(token);
             if (currentDesignEntity.getType() == NonExistentType) {
                 return DeclarationTable::invalidDeclarationTable(QuerySyntaxError,
-                                                                 DeclarationTable::INVALID_DESIGN_ENTITY + token);
+                                                                 DesignEntity::INVALID_DESIGN_ENTITY + token);
             }
 
             hasCurrentDesignEntity = true;

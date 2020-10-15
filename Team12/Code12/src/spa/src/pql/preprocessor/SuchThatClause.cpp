@@ -1,16 +1,14 @@
 #include "AqTypes.h"
 
+/************************/
+/** Constructors        */
+/************************/
+
 SuchThatClause::SuchThatClause(Relationship& r): Clause(SuchThatClauseType), relationship{r} {}
 
-Relationship SuchThatClause::getRelationship()
-{
-    return relationship;
-}
-
-Boolean SuchThatClause::operator==(const SuchThatClause& suchThatClause)
-{
-    return this->relationship == suchThatClause.relationship;
-}
+/************************/
+/** Static Methods      */
+/************************/
 
 /**
  * Processes the clause constraint string for a
@@ -30,7 +28,7 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
 
     RelationshipReferenceType relRefType = Relationship::getRelRefType(relRef);
     if (relRefType == InvalidRelationshipType) {
-        return Clause::invalidClause(SuchThatClauseType);
+        return Clause::invalidClause(SuchThatClauseType, QuerySyntaxError, "Invalid Relationship type " + relRef);
     }
 
     String references
@@ -43,13 +41,27 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
     Reference rightReference = Reference::createReference(rightRefString, declarationTable);
 
     if (leftReference.isInvalid() || rightReference.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType);
+        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError, "Invalid Reference"); // TODO: Implement Reference inherit QueryError
     }
 
     Relationship relationship = Relationship::createRelationship(relRefType, leftReference, rightReference);
     if (relationship.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType);
+        return Clause::invalidClause(SuchThatClauseType, QuerySemanticsError, "Invalid Relationship"); // TODO: Implement Relationship inherit QueryError
     }
 
     return new SuchThatClause(relationship);
+}
+
+/************************/
+/** Instance Methods    */
+/************************/
+
+Relationship SuchThatClause::getRelationship()
+{
+    return relationship;
+}
+
+Boolean SuchThatClause::operator==(const SuchThatClause& suchThatClause)
+{
+    return this->relationship == suchThatClause.relationship;
 }

@@ -8,11 +8,12 @@
 #include "QueryErrorType.h"
 #include "Types.h"
 
+typedef String ErrorMessage;
+
 class QueryError {
 protected:
-    Boolean isSemanticError = false;
-    Boolean isSyntaxError = false;
-    String errorMessage;
+    QueryErrorType errorType = NoQueryErrorType;
+    ErrorMessage errorMessage;
 
 public:
     Boolean isSyntacticallyInvalid();
@@ -21,8 +22,9 @@ public:
     Void setSemanticsError();
     Void setSyntaxError();
     Void setError(QueryErrorType queryErrorType);
-    Void setError(QueryErrorType queryErrorType, String message);
+    Void setError(QueryErrorType queryErrorType, ErrorMessage message);
     String getErrorMessage();
+    QueryErrorType getErrorType();
 };
 
 #endif // SPA_QUERYERROR_H

@@ -4,7 +4,6 @@
 /** Static Methods      */
 /************************/
 
-const String DeclarationTable::INVALID_DESIGN_ENTITY = "Invalid declaration of Design Entity ";
 const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
 
 /************************/

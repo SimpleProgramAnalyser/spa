@@ -16,14 +16,14 @@ Clause* WithClause::createWithClause(const String& clauseConstraint, Declaration
 {
     StringVector splitStringVector = splitByDelimiter(clauseConstraint, "=");
     if (splitStringVector.size() != 2) {
-        return Clause::invalidClause(WithClauseType);
+        return Clause::invalidClause(WithClauseType, QuerySyntaxError, "Invalid With Clause " + clauseConstraint);
     }
 
     Reference leftRef = Reference::createReference(splitStringVector.at(0), declarationTable);
     Reference rightRef = Reference::createReference(splitStringVector.at(1), declarationTable);
 
     if (leftRef.isInvalid() || rightRef.isInvalid()) {
-        return Clause::invalidClause(WithClauseType);
+        return Clause::invalidClause(WithClauseType, QuerySemanticsError, "Invalid Reference");
     }
 
     // Validate equality of AttributeValueType for both References
@@ -31,7 +31,8 @@ Clause* WithClause::createWithClause(const String& clauseConstraint, Declaration
     AttributeValueType rightRefValueType = rightRef.getAttributeValueType();
 
     if (leftRefValueType != rightRefValueType) {
-        return Clause::invalidClause(WithClauseType);
+        return Clause::invalidClause(WithClauseType, QuerySemanticsError,
+                                     "Left and Right value type of With Clause do not match");
     }
 
     return new WithClause(leftRef, rightRef);

@@ -6,27 +6,27 @@
 
 Boolean QueryError::isSyntacticallyInvalid()
 {
-    return isSyntaxError;
+    return errorType == QuerySyntaxError;
 }
 
 Boolean QueryError::isSemanticallyInvalid()
 {
-    return isSemanticError;
+    return errorType == QuerySemanticsError;
 }
 
 Boolean QueryError::isInvalid()
 {
-    return isSyntaxError || isSemanticError;
+    return errorType != NoQueryErrorType;
 }
 
 Void QueryError::setSemanticsError()
 {
-    isSemanticError = true;
+    errorType = QuerySemanticsError;
 }
 
 Void QueryError::setSyntaxError()
 {
-    isSyntaxError = true;
+    errorType = QuerySyntaxError;
 }
 
 Void QueryError::setError(QueryErrorType queryErrorType, String message)
@@ -39,10 +39,10 @@ Void QueryError::setError(QueryErrorType queryErrorType)
 {
     switch (queryErrorType) {
     case QuerySemanticsError:
-        isSemanticError = true;
+        errorType = QuerySemanticsError;
         break;
     case QuerySyntaxError:
-        isSyntaxError = true;
+        errorType = QuerySyntaxError;
         break;
     default:
         break;
@@ -51,4 +51,9 @@ Void QueryError::setError(QueryErrorType queryErrorType)
 
 String QueryError::getErrorMessage() {
     return errorMessage;
+}
+
+QueryErrorType QueryError::getErrorType()
+{
+    return errorType;
 }

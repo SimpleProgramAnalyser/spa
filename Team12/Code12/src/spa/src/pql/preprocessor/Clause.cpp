@@ -1,6 +1,6 @@
 #include "AqTypes.h"
 
-Clause::Clause(ClauseType clauseType): hasError{false}
+Clause::Clause(ClauseType clauseType)
 {
     type = clauseType;
 }
@@ -10,15 +10,10 @@ ClauseType Clause::getType()
     return type;
 }
 
-Boolean Clause::isInvalid()
-{
-    return hasError;
-}
-
-Clause* Clause::invalidClause(ClauseType clauseType)
+Clause* Clause::invalidClause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessage errorMessage)
 {
     auto* c = new Clause(clauseType);
-    c->hasError = true;
+    c->setError(queryErrorType, errorMessage);
     return c;
 }
 

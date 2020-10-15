@@ -6,7 +6,7 @@
 /** Static Members      */
 /************************/
 
-const String ResultSynonym::INVALID_SYNONYM_MESSAGE = "Invalid naming for Synonym ";
+const ErrorMessage ResultSynonym::INVALID_SYNONYM_MESSAGE = "Invalid naming for Synonym ";
 
 /************************/
 /** Constructors        */
@@ -19,7 +19,7 @@ ResultSynonym::ResultSynonym(QueryErrorType queryErrorType)
     setError(queryErrorType);
 }
 
-ResultSynonym::ResultSynonym(QueryErrorType queryErrorType, String errorMessage)
+ResultSynonym::ResultSynonym(QueryErrorType queryErrorType, ErrorMessage errorMessage)
 {
     setError(queryErrorType, std::move(errorMessage));
 }
