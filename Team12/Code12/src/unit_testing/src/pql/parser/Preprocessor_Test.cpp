@@ -885,7 +885,7 @@ TEST_CASE("Such That Follows* and Pattern Statement")
     REQUIRE(abstractQuery.isInvalid());
 }
 
- TEST_CASE("Such That Follows* and With Statement")
+TEST_CASE("Such That Follows* and With Statement")
 {
     AbstractQuery abstractQuery
         = processQuery("assign a; Select a and such that Follows* (a, _) and with a.stmt# = 12");
@@ -1157,6 +1157,21 @@ TEST_CASE("Select BOOLEAN with Follows")
 
     REQUIRE(equal);
 }
+
+TEST_CASE("Select BOOLEAN semantically incorrect query")
+{
+    AbstractQuery abstractQuery = processQuery("read re; Select BOOLEAN such that Parent (re, _)");
+
+    REQUIRE(abstractQuery.toReturnFalseResult());
+}
+//
+// TEST_CASE("Select BOOLEAN semantically then syntactically incorrect query")
+//{
+//    AbstractQuery abstractQuery = processQuery("read re; Select BOOLEAN such that Parent (re, _) with 5");
+//
+//    REQUIRE(abstractQuery.isInvalid());
+//    REQUIRE(!abstractQuery.toReturnFalseResult());
+//}
 
 /************************************************************************************/
 /*  Select Tuple                                                                    */
