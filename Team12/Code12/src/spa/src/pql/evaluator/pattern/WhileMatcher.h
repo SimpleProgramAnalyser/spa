@@ -6,8 +6,7 @@
 #ifndef SPA_PQL_WHILE_MATCHER_H
 #define SPA_PQL_WHILE_MATCHER_H
 
-#include "pql/evaluator/ResultsTable.h"
-#include "pql/preprocessor/AqTypes.h"
+#include "PatternMatcherUtil.h"
 
 /**
  * Given a while pattern clause, retrieves the SIMPLE
