@@ -131,12 +131,12 @@ ReferenceValue Reference::getValue() const
     return referenceValue;
 }
 
-DesignEntity Reference::getDesignEntity()
+DesignEntity Reference::getDesignEntity() const
 {
     return designEntity;
 }
 
-Attribute Reference::getAttribute()
+Attribute Reference::getAttribute() const
 {
     return attribute;
 }
