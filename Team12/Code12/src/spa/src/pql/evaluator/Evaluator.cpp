@@ -60,6 +60,7 @@ RawQueryResult Evaluator::evaluateQuery()
      * If invalid, don't continue evaluating query.
      */
     if (query.isInvalid()) {
+        // TODO: Check query.toReturnFalseResult() for Semantically invalid query but Select BOOLEAN
         return RawQueryResult::getSyntaxError(
             "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.");
     }

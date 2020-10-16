@@ -1,13 +1,21 @@
+#include <utility>
+
 #include "AqTypes.h"
 
-ClauseVector::ClauseVector(Boolean hasError) noexcept: hasError(hasError) {}
+/************************/
+/** Constructors        */
+/************************/
 
-ClauseVector::ClauseVector() noexcept: hasError{false} {}
+ClauseVector::ClauseVector() {}
 
-ClauseVector ClauseVector::invalidClauseVector()
+ClauseVector::ClauseVector(QueryErrorType queryErrorType, ErrorMessage errorMessage)
 {
-    return ClauseVector(true);
+    this->setError(queryErrorType, std::move(errorMessage));
 }
+
+/************************/
+/** Instance Methods    */
+/************************/
 
 Void ClauseVector::add(Clause* clause)
 {
@@ -24,13 +32,7 @@ Integer ClauseVector::count() const
     return clauses.size();
 }
 
-Boolean ClauseVector::isInvalid() const
-{
-    return hasError;
-}
-
 Boolean ClauseVector::operator==(const ClauseVector& clauseVector)
 {
-    return util::checkVectorOfPointersEqual(this->clauses, clauseVector.clauses)
-           && this->hasError == clauseVector.hasError;
+    return util::checkVectorOfPointersEqual(this->clauses, clauseVector.clauses);
 }
