@@ -41,6 +41,7 @@ private:
     Boolean checkIfSynonymInMap(const Synonym& syn) const;
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
     ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
+    NtupledResult calculateMatchingTuples(const Vector<Synonym>& synonyms);
     NtupledResult joinAllSynonyms(const Vector<Synonym>& syns);
 
     /**
@@ -563,29 +564,6 @@ public:
      * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
      */
     NtupledResult retrieveUniqueRowsMatching(const Vector<Synonym>& synonyms) const;
-
-    /**
-     * Given a vector of synonym which may contain duplicates,
-     * iterate through the possible results and based on the
-     * edges in RelationshipsGraph, create tuples that match
-     * the list of (non-unique) synonyms.
-     *
-     * This method is more general than retrieveUniqueRowsMatching,
-     * but it is less efficent than retrieveUniqueRowsMatching, as
-     * retrieveUniqueRowsMatching has an asymptotic time complexity
-     * linear to the number of edges in the graph, while this method
-     * calculateMatchingTuples potentially runs in exponential time.
-     *
-     * The worst case is when all synonyms are the same, in which
-     * calculateMatchingTuples will generate multiple Cartesian
-     * products and be O((number of results) ^ n) where n is the
-     * total number of synonyms in the vector of synonyms.
-     *
-     * @param synonyms The synonyms to retrieve the rows of.
-     * @param resultsTable ResultsTable to look up results for one synonym.
-     * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
-     */
-    NtupledResult calculateMatchingTuples(const Vector<Synonym>& synonyms, ResultsTable* resultsTable) const;
 };
 
 #endif // SPA_PQL_RESULTS_TABLE_H

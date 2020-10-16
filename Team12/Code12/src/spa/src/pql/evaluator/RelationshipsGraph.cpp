@@ -730,9 +730,3 @@ NtupledResult RelationshipsGraph::retrieveUniqueRowsMatching(const Vector<Synony
     }
     return NtupledResult(matchingRows.begin(), matchingRows.end());
 }
-
-NtupledResult RelationshipsGraph::calculateMatchingTuples(const Vector<Synonym>& synonyms,
-                                                          ResultsTable* resultsTable) const
-{
-    return NtupledResult();
-}
