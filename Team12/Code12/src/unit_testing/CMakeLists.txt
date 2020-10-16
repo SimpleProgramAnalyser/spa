@@ -3,11 +3,14 @@ set(CMAKE_BUILD_TYPE Debug)
 file(GLOB_RECURSE srcs
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/ast_utils/AstUtils.cpp")
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/ast_utils/AstUtils.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/cfg_utils/CfgUtils.cpp")
+
 file(GLOB headers
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/ast_utils/AstUtils.h")
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/ast_utils/AstUtils.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/cfg_utils/CfgUtils.h")
 file(GLOB_RECURSE frontend
         "${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/*.h"

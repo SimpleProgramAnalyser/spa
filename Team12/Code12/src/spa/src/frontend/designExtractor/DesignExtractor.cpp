@@ -12,6 +12,7 @@
 #include "UsesExtractor.h"
 #include "CallsExtractor.h"
 #include "../src/cfg/CfgBuilder.h"
+#include "./pkb/PKB.h"
 
 Void extractDesign(ProgramNode& rootNode)
 {
@@ -36,8 +37,10 @@ Void extractDesign(ProgramNode& rootNode)
         Name procName = procedureList->at(i)->procedureName;
         const StmtlstNode* const stmtListNode = procedureList->at(i)->statementListNode;
         std::pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtListNode);
-        // TODO: Insert Cfg root node into PKB
-
+        // Add CFG root node into PKB
+        storeCFG(cfgInfo.first, procName);
+        
+        // Extract Next relationships
         extractNext(cfgInfo);
     }
 }

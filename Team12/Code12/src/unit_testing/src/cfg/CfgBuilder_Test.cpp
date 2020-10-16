@@ -3,213 +3,216 @@
  * of the Design Extractor in SPA Frontend
  */
 
-//#include "../ast_utils/AstUtils.cpp"
 #include "catch.hpp"
 #include "cfg/CfgBuilder.cpp"
 #include "ast/AstLibrary.h"
+#include "../ast_utils/AstUtils.h"
+#include "../cfg_utils/CfgUtils.h"
 
-
-TEST_CASE("Cfg Builder works for if and else statements nested in while - program2, factorials")
+TEST_CASE("Cfg Builder works for basic program with read, assign, print - program1, compute")
 {
-    List<StatementNode> statements;
-    statements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(1, Variable("limit"), createRefExpr(100))));
-    statements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("current"), createRefExpr(0))));
-    statements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(3, Variable("factorial"), createRefExpr(0))));
-    List<StatementNode> ifStatements;
-    List<StatementNode> elseStatements;
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("factorial"), createRefExpr(1))));
-    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
-        7, Variable("factorial"), createTimesExpr(createRefExpr("current"), createRefExpr("factorial")))));
-    List<StatementNode> whileStatements;
-    whileStatements.push_back(std::unique_ptr<IfStatementNode>(
-        createIfNode(5, createEqExpr(createRefExpr("current"), createRefExpr(0)), createStmtlstNode(ifStatements),
-                     createStmtlstNode(elseStatements))));
-    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(8, Variable("current"), createPlusExpr(createRefExpr("current"), createRefExpr(1)))));
-    statements.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
-        4, createLtExpr(createRefExpr("current"), createRefExpr("limit")), createStmtlstNode(whileStatements))));
-    statements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(9, Variable("answer"), createRefExpr("factorial"))));
-
-    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
-
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram1Tree_compute()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
     Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
     CfgNode* cfgRootNode = cfgInfo.first;
-    
 
-    //Expected
-    size_t currentNumberOfNodes = -1;
-    CfgNode* expectedCfg = createCfgNode(5, currentNumberOfNodes);
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram1Cfg_compute();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
 
-    expectedCfg->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(1, Variable("limit"), createRefExpr(100))));
-    expectedCfg->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("current"), createRefExpr(0))));
-    expectedCfg->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(3, Variable("factorial"), createRefExpr(0))));
-
-    CfgNode* firstWhileCfgNode = createCfgNode(1, currentNumberOfNodes);
-    CfgNode* firstWhileCfgChildrenNode = createCfgNode(1, currentNumberOfNodes);
-    expectedCfg->childrenNodes->push_back(std::unique_ptr<CfgNode> (firstWhileCfgNode));
-
-    // To populate if and else statementLists
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("factorial"), createRefExpr(1))));
-    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
-        7, Variable("factorial"), createTimesExpr(createRefExpr("current"), createRefExpr("factorial")))));
-
-    firstWhileCfgChildrenNode->statementNodes->push_back(std::unique_ptr<IfStatementNode>(
-        createIfNode(5, createEqExpr(createRefExpr("current"), createRefExpr(0)), createStmtlstNode(ifStatements),
-                     createStmtlstNode(elseStatements))));
-
-
-     // To populate if and else statementLists
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("factorial"), createRefExpr(1))));
-    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
-        7, Variable("factorial"), createTimesExpr(createRefExpr("current"), createRefExpr("factorial")))));
-    
-    whileStatements.push_back(std::unique_ptr<IfStatementNode>(
-        createIfNode(5, createEqExpr(createRefExpr("current"), createRefExpr(0)), createStmtlstNode(ifStatements),
-                     createStmtlstNode(elseStatements))));
-                     
-
-    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(8, Variable("current"), createPlusExpr(createRefExpr("current"), createRefExpr(1)))));
-
-    firstWhileCfgNode->statementNodes->push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
-        4, createLtExpr(createRefExpr("current"), createRefExpr("limit")), createStmtlstNode(whileStatements))));
-    firstWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode> (firstWhileCfgChildrenNode));
-
-    CfgNode* ifCfgNode = createCfgNode(1, currentNumberOfNodes);
-    CfgNode* elseCfgNode = createCfgNode(1, currentNumberOfNodes);
-    CfgNode* ifDummyNode = createCfgNode(1, currentNumberOfNodes);
-
-    firstWhileCfgChildrenNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifCfgNode));
-    firstWhileCfgChildrenNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(elseCfgNode));
-
-    ifCfgNode->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("factorial"), createRefExpr(1))));
-    elseCfgNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
-        7, Variable("factorial"), createTimesExpr(createRefExpr("current"), createRefExpr("factorial")))));
-
-    ifCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
-    elseCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
-
-    ifDummyNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
-        createAssignNode(8, Variable("current"), createPlusExpr(createRefExpr("current"), createRefExpr(1)))));
-
-    ifDummyNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgNode));
-
-
-    CfgNode* nextNode = createCfgNode(1, currentNumberOfNodes);
-
-    nextNode->statementNodes->push_back(
-         std::unique_ptr<AssignmentStatementNode>(createAssignNode(9, Variable("answer"), createRefExpr("factorial"))));
-
-    firstWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(nextNode));
-
-
-    Boolean isEqual = cfgRootNode->equals(expectedCfg, currentNumberOfNodes);
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
     REQUIRE(isEqual == true);
 }
 
-
-
-TEST_CASE("CfgBuilder works for if and else statements")
+TEST_CASE("Cfg Builder works for if and else statements nested in while - program2, factorials")
 {
-    List<StatementNode> statements;
-    statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("num1"))));
-    statements.push_back(std::unique_ptr<ReadStatementNode>(createReadNode(2, Variable("num2"))));
-    statements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(3, Variable("noSwap"), createRefExpr(0))));
+    // Actual 
+    const List<ProcedureNode>* procedureList = &(getProgram2Tree_factorials()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
+    
+    //Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram2Cfg_factorials();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
+
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
+
+TEST_CASE("Cfg Builder works for program with read, assign, print - program3, computeAverage")
+{
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram3Tree_computeAverage()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
+
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram3Cfg_computeAverage();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
+
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
+
+TEST_CASE("CfgBuilder works for if and else statements - program4, printAscending")
+{
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram4Tree_printAscending()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
+
+
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram4Cfg_printAscending();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
+
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
+
+TEST_CASE("CfgBuilder works for program with read, assign, while, print - program5, sumDigit")
+{
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram5Tree_sumDigit()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
+
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram5Cfg_sumDigit();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
+
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
+
+TEST_CASE("CfgBuilder works for program with if right after while, call - program7, computeCentroid")
+{
+    // Actual
+    // Compute Centroid
+    List<StatementNode> computeCentroidStatements;
+    computeCentroidStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(10, Variable("count"), createRefExpr(0))));
+    computeCentroidStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(11, Variable("cenX"), createRefExpr(0))));
+    computeCentroidStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(12, Variable("cenY"), createRefExpr(0))));
+    computeCentroidStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(13, "readPoint")));
+
+    // Compute Centroid - While statement
+    List<StatementNode> whileStatements;
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(15, Variable("count"), createPlusExpr(createRefExpr("count"), createRefExpr(1)))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(16, Variable("cenX"), createPlusExpr(createRefExpr("cenX"), createRefExpr("x")))));
+    whileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(17, Variable("cenY"), createPlusExpr(createRefExpr("cenY"), createRefExpr("y")))));
+    whileStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(18, "readPoint")));
+    StmtlstNode* whileStmtLstNode = createStmtlstNode(whileStatements);
+
+    computeCentroidStatements.push_back(std::unique_ptr<WhileStatementNode>(
+        createWhileNode(14,
+                        createAndExpr(createNeqExpr(createRefExpr("x"), (createRefExpr(0))),
+                                      createNeqExpr(createRefExpr("y"), (createRefExpr(0)))),
+                        whileStmtLstNode)));
 
     List<StatementNode> ifStatements;
     List<StatementNode> elseStatements;
-    // If statements
+    // Compute Centroid - If statement
     ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("temp"), createRefExpr("num1"))));
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("num1"), createRefExpr("num2"))));
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(7, Variable("num2"), createRefExpr("temp"))));
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(20, Variable("flag"), createRefExpr(1))));
     StmtlstNode* ifStmtLstNode = createStmtlstNode(ifStatements);
-    // Else statements
-    elseStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(8, Variable("noSwap"), createRefExpr(1))));
+    // Compute Centroid - Else statement
+    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(21, Variable("cenX"), createDivExpr(createRefExpr("cenX"), createRefExpr("count")))));
+    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(22, Variable("cenY"), createDivExpr(createRefExpr("cenY"), createRefExpr("count")))));
     StmtlstNode* elseStmtLstNode = createStmtlstNode(elseStatements);
 
-    statements.push_back(std::unique_ptr<IfStatementNode>(
-        createIfNode(4, createGtExpr(createRefExpr("num1"), createRefExpr("num2")), ifStmtLstNode, elseStmtLstNode)));
+    computeCentroidStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(19, createEqExpr(createRefExpr("count"), createRefExpr(0)), ifStmtLstNode, elseStmtLstNode)));
 
-    statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(9, Variable("num1"))));
-    statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(10, Variable("num2"))));
-    statements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(11, Variable("noSwap"))));
-
-    StmtlstNode* stmtLstNode = createStmtlstNode(statements);
+    computeCentroidStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(23, Variable("normSq"),
+                         createPlusExpr(createTimesExpr(createRefExpr("cenX"), createRefExpr("cenX")),
+                                        createTimesExpr(createRefExpr("cenY"), createRefExpr("cenY"))))));
+    StmtlstNode* stmtLstNode = createStmtlstNode(computeCentroidStatements);
 
     Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
     CfgNode* cfgRootNode = cfgInfo.first;
 
     // Expected
-    size_t currentNumberOfNodes = -1;
-    CfgNode* expectedCfg = createCfgNode(7, currentNumberOfNodes);
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram7Cfg_computeCentroid();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
 
-    expectedCfg->statementNodes->push_back(
-                std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("num1"))));
-    expectedCfg->statementNodes->push_back(std::unique_ptr<ReadStatementNode>(createReadNode(2, Variable("num2"))));
-    expectedCfg->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(3, Variable("noSwap"), createRefExpr(0))));
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
 
-    CfgNode* ifNode = createCfgNode(1, currentNumberOfNodes);
-    CfgNode* ifCfgNode = createCfgNode(3, currentNumberOfNodes);
-    CfgNode* elseCfgNode = createCfgNode(1, currentNumberOfNodes);
-    CfgNode* ifDummyNode = createCfgNode(1, currentNumberOfNodes);
+TEST_CASE("CfgBuilder works for program with if statement and assign - program13, ifExample")
+{
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram13Tree_ifExample()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
 
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram13Cfg_ifExample();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
 
-    // To populate if and else statement lists
-    // If statements
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("temp"), createRefExpr("num1"))));
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("num1"), createRefExpr("num2"))));
-    ifStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(7, Variable("num2"), createRefExpr("temp"))));
-    ifStmtLstNode = createStmtlstNode(ifStatements);
-    // Else statements
-    elseStatements.push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(8, Variable("noSwap"), createRefExpr(1))));
-    elseStmtLstNode = createStmtlstNode(elseStatements);
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
 
-    ifNode->statementNodes->push_back(std::unique_ptr<IfStatementNode>(createIfNode(4, createGtExpr(createRefExpr("num1"), createRefExpr("num2")), ifStmtLstNode, elseStmtLstNode)));
-    expectedCfg->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifNode));
+TEST_CASE("CfgBuilder works for program with while statement and assign - program14, whileExample")
+{
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram14Tree_whileExample()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
 
-    ifNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifCfgNode));
-    ifNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(elseCfgNode));
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram14Cfg_whileExample();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
 
-   
-    ifCfgNode->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("temp"), createRefExpr("num1"))));
-    ifCfgNode->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(6, Variable("num1"), createRefExpr("num2"))));
-    ifCfgNode->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(7, Variable("num2"), createRefExpr("temp"))));
-    ifCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
 
-    elseCfgNode->statementNodes->push_back(
-        std::unique_ptr<AssignmentStatementNode>(createAssignNode(8, Variable("noSwap"), createRefExpr(1))));
-    elseCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
+TEST_CASE("CfgBuilder works for program with complicated conditional in while - program15, complicatedConditional")
+{
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram15Tree_complicatedConditional()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
 
-    ifDummyNode->statementNodes->push_back(
-        std::unique_ptr<PrintStatementNode>(createPrintNode(9, Variable("num1"))));
-    ifDummyNode->statementNodes->push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(10, Variable("num2"))));
-    ifDummyNode->statementNodes->push_back(
-        std::unique_ptr<PrintStatementNode>(createPrintNode(11, Variable("noSwap"))));
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram15Cfg_complicatedConditional();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
 
-    Boolean isEqual = cfgRootNode->equals(expectedCfg, currentNumberOfNodes);
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
+    REQUIRE(isEqual == true);
+}
+
+TEST_CASE("CfgBuilder works for program with procedure ending with while statement, with multiple assign - program18, endWithWhile")
+{
+    // Actual
+    const List<ProcedureNode>* procedureList = &(getProgram18Tree_endWithWhile()->procedureList);
+    const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
+
+    // Expected
+    std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram18Cfg_endWithWhile();
+    CfgNode* expectedCfg = expectedCfgInfo.first;
+
+    Boolean isEqual = cfgRootNode->equals(expectedCfg, expectedCfgInfo.second);
     REQUIRE(isEqual == true);
 }

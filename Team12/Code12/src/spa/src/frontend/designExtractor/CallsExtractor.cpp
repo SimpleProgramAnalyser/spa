@@ -41,6 +41,9 @@ std::unordered_set<size_t> extractCallsStarUtil(const ProcedureNodeList* procLis
     // Else, we go loop though the columns of this current row for this 
     // procedure (adjacencyMatrix)
     if (!isMemo->at(rowIndex)) {
+        // We mark the current procedure as memoized
+        isMemo->at(rowIndex) = true;
+
         for (size_t j = 0; j< sizeOfProcList; j++) {
             // If a column is true, the procedure with the index j of the 
             // column is called by the current procedure 
@@ -53,6 +56,7 @@ std::unordered_set<size_t> extractCallsStarUtil(const ProcedureNodeList* procLis
                 // the called procedure have Calls* relationships with. 
                 if (isMemo->at(j)) {
                     std::unordered_set<size_t> memoResult = memo->at(j).second;
+                    currentSet.insert(j);
                     currentSet.insert(memoResult.begin(), memoResult.end());
                 } else {
                     // Else, we recurse with the called procedure
@@ -63,14 +67,13 @@ std::unordered_set<size_t> extractCallsStarUtil(const ProcedureNodeList* procLis
                 }
             }
         }
-        // We mark the current procedure as memoized
-        isMemo->at(rowIndex) = true;
+
         // Then we insert the current set into the memoization adjacency list
         memo->at(rowIndex).second.insert(currentSet.begin(), currentSet.end());
         // We add the current index into current set so that the returned set 
         // will include the current procedure
-        currentSet.insert({rowIndex});
     }
+    currentSet.insert({rowIndex});
     return currentSet;
 }
 
