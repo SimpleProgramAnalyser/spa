@@ -18,7 +18,7 @@ protected:
 public:
     Boolean isSyntacticallyInvalid();
     Boolean isSemanticallyInvalid();
-    Boolean isInvalid();
+    Boolean isInvalid() const;
     Void setSemanticsError();
     Void setSyntaxError();
     Void setError(QueryErrorType queryErrorType);

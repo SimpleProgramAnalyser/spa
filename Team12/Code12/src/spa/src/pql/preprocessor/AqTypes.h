@@ -102,8 +102,8 @@ public:
     explicit Attribute(AttributeType attributeType);
     explicit Attribute(String attributeTypeString);
     AttributeType getType();
-    Boolean operator==(const Attribute& attribute);
-    Boolean operator!=(const Attribute& attribute);
+    Boolean operator==(const Attribute& attribute) const;
+    Boolean operator!=(const Attribute& attribute) const;
 };
 
 class ResultSynonym: public QueryError {
@@ -122,8 +122,8 @@ public:
     ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity);
     Synonym getSynonym() const;
     Attribute getAttribute() const;
-    Boolean operator==(const ResultSynonym& resultSynonym);
-    Boolean operator!=(const ResultSynonym& resultSynonym);
+    Boolean operator==(const ResultSynonym& resultSynonym) const;
+    Boolean operator!=(const ResultSynonym& resultSynonym) const;
 };
 
 class ResultSynonymVector: public QueryError {
@@ -136,9 +136,9 @@ public:
     ResultSynonymVector(Vector<ResultSynonym> synonyms);
     ResultSynonymVector(QueryErrorType queryErrorType, ErrorMessage errorMessage);
     Void add(ResultSynonym resultSynonym);
-    Vector<ResultSynonym> getSynonyms();
+    Vector<ResultSynonym> getSynonyms() const;
     Boolean isSelectBoolean();
-    Boolean operator==(const ResultSynonymVector& resultSynonymVector);
+    Boolean operator==(const ResultSynonymVector& resultSynonymVector) const;
 };
 
 class DeclarationTable: public QueryError {
@@ -393,19 +393,19 @@ public:
 
 class AbstractQuery: public QueryError {
 private:
-    ResultSynonymVector resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
+    const ResultSynonymVector resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
     ClauseVector clauses;
     DeclarationTable declarationTable;
     Boolean isToReturnFalseResult = false;
 
 public:
-    AbstractQuery();
+//    AbstractQuery();
     AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage);
     AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult);
     AbstractQuery(ResultSynonymVector synonym, DeclarationTable& declarations);
     AbstractQuery(ResultSynonymVector synonym, DeclarationTable& declarations, ClauseVector& clauseVector);
-    Vector<ResultSynonym> getSelectSynonym();
-    Vector<ResultSynonym> getSynonyms();
+    const Vector<ResultSynonym> getSelectSynonym() const;
+    const Vector<ResultSynonym> getSynonyms() const;
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;
     Boolean toReturnFalseResult();

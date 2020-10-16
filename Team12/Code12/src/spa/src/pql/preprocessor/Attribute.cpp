@@ -61,12 +61,12 @@ AttributeType Attribute::getType()
     return type;
 }
 
-Boolean Attribute::operator==(const Attribute& attribute)
+Boolean Attribute::operator==(const Attribute& attribute) const
 {
     return this->type == attribute.type;
 }
 
-Boolean Attribute::operator!=(const Attribute& attribute)
+Boolean Attribute::operator!=(const Attribute& attribute) const
 {
     return this->type != attribute.type;
 }

@@ -52,12 +52,12 @@ Attribute ResultSynonym::getAttribute() const
     return attribute;
 }
 
-Boolean ResultSynonym::operator==(const ResultSynonym& resultSynonym)
+Boolean ResultSynonym::operator==(const ResultSynonym& resultSynonym) const
 {
     return this->synonym == resultSynonym.synonym && this->attribute == resultSynonym.attribute;
 }
 
-Boolean ResultSynonym::operator!=(const ResultSynonym& resultSynonym)
+Boolean ResultSynonym::operator!=(const ResultSynonym& resultSynonym) const
 {
     return this->synonym != resultSynonym.synonym || this->attribute != resultSynonym.attribute;
 }

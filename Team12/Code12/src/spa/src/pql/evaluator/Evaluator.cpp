@@ -43,13 +43,13 @@ Vector<String> convertToTupleString(const NtupledResult& resultTuples)
     return tupleStrings;
 }
 
-RawQueryResult evaluateQuery(AbstractQuery& abstractQuery)
+RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
 {
     Evaluator evaluator(abstractQuery);
     return evaluator.evaluateQuery();
 }
 
-Evaluator::Evaluator(AbstractQuery& abstractQuery):
+Evaluator::Evaluator(const AbstractQuery& abstractQuery):
     query(abstractQuery), resultsTable{abstractQuery.getDeclarationTable()}
 {}
 

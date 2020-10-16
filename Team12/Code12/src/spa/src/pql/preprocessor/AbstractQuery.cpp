@@ -6,7 +6,7 @@
 /** Constructors        */
 /************************/
 
-AbstractQuery::AbstractQuery() = default;
+//AbstractQuery::AbstractQuery() = default;
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage)
 {
@@ -31,12 +31,12 @@ AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& dec
 /** Instance Methods    */
 /************************/
 
-Vector<ResultSynonym> AbstractQuery::getSelectSynonym()
+const Vector<ResultSynonym> AbstractQuery::getSelectSynonym() const
 {
     return resultSynonyms.getSynonyms();
 }
 
-Vector<ResultSynonym> AbstractQuery::getSynonyms()
+const Vector<ResultSynonym> AbstractQuery::getSynonyms() const
 {
     return resultSynonyms.getSynonyms();
 }

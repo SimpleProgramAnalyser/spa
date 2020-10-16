@@ -12,7 +12,7 @@ ResultSynonymVector::ResultSynonymVector(QueryErrorType queryErrorType, ErrorMes
     this->setError(queryErrorType, errorMessage);
 }
 
-Vector<ResultSynonym> ResultSynonymVector::getSynonyms()
+Vector<ResultSynonym> ResultSynonymVector::getSynonyms() const
 {
     return resultSynonyms;
 }
@@ -27,7 +27,7 @@ Boolean ResultSynonymVector::isSelectBoolean()
     return resultSynonyms.empty();
 }
 
-Boolean ResultSynonymVector::operator==(const ResultSynonymVector& resultSynonymVector)
+Boolean ResultSynonymVector::operator==(const ResultSynonymVector& resultSynonymVector) const
 {
     // Check equality of resultSynonyms
     if (this->resultSynonyms.size() != resultSynonymVector.resultSynonyms.size()) {

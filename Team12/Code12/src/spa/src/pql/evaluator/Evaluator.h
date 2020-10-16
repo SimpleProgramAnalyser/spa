@@ -15,7 +15,7 @@
 
 class Evaluator {
 private:
-    AbstractQuery& query;
+    const AbstractQuery& query;
     ResultsTable resultsTable;
 
     RawQueryResult evaluateSyntacticallyValidQuery();
@@ -26,7 +26,7 @@ public:
     /**
      * Constructor for a Evaluator for an abstract query.
      */
-    explicit Evaluator(AbstractQuery& abstractQuery);
+    explicit Evaluator(const AbstractQuery& abstractQuery);
 
     /**
      * Evaluates the query stored in this Evaluator.
@@ -71,6 +71,6 @@ Vector<String> convertToTupleString(const NtupledResult& resultTuples);
  * valid but yields no result, an empty RawQueryResult
  * would be returned).
  */
-RawQueryResult evaluateQuery(AbstractQuery& abstractQuery);
+RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery);
 
 #endif // SPA_PQL_EVALUATOR_H

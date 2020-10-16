@@ -14,7 +14,7 @@ Boolean QueryError::isSemanticallyInvalid()
     return errorType == QuerySemanticsError;
 }
 
-Boolean QueryError::isInvalid()
+Boolean QueryError::isInvalid() const
 {
     return errorType != NoQueryErrorType;
 }
