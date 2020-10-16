@@ -42,9 +42,21 @@ Void NextEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) c
     resultsTable.storeResultsZero(checkIfNextHolds(leftRefVal, rightRefVal));
 }
 
-Void NextEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) const {}
+Void NextEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
+{
+    DesignEntityType rightSynonymType = rightRef.isWildCard() ? StmtType : rightRef.getDesignEntity().getType();
+    CacheSet nextStarAnyStmtResults = getCacheNextStatement(leftRefVal);
+    ClauseResult filteredResults = nextStarAnyStmtResults.filterStatementType(mapToStatementType(rightSynonymType));
+    resultsTable.storeResultsOne(rightRef, filteredResults);
+}
 
-Void NextEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal) const {}
+Void NextEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal)
+{
+    DesignEntityType leftSynonymType = leftRef.isWildCard() ? StmtType : leftRef.getDesignEntity().getType();
+    CacheSet prevStarAnyStmtResults = getCachePrevStatement(rightRefVal);
+    ClauseResult filteredResults = prevStarAnyStmtResults.filterStatementType(mapToStatementType(leftSynonymType));
+    resultsTable.storeResultsOne(leftRef, filteredResults);
+}
 
 Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) const {}
 
@@ -85,4 +97,62 @@ Void NextEvaluator::evaluateNextStarClause(const Reference& leftRef, const Refer
         throw std::runtime_error(
             "Error in NextEvaluator::evaluateNextStarClause: No synonyms or integers in Next* clause");
     }
+}
+
+CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
+{
+    // Check if statement number has been explored
+    if (cacheNextStarTable.isCached(stmtNum)) {
+        return cacheNextStarTable.get(stmtNum);
+    }
+
+    visitedNextStatements.insert(stmtNum);
+
+    Vector<StatementNumber> nextStatementList = getAllNextStatements(stmtNum, AnyStatement);
+    CacheSet currentCacheSet(nextStatementList);
+    for (auto nextStmtNum : nextStatementList) {
+        if (isNextVisited(nextStmtNum)) {
+            continue;
+        }
+
+        CacheSet nextCacheSet = getCacheNextStatement(nextStmtNum);
+        currentCacheSet.combine(nextCacheSet);
+    }
+
+    cacheNextStarTable.insert(stmtNum, currentCacheSet);
+    return currentCacheSet;
+}
+
+CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
+{
+    // Check if statement number has been explored
+    if (cachePrevStarTable.isCached(stmtNum)) {
+        return cachePrevStarTable.get(stmtNum);
+    }
+
+    visitedPrevStatements.insert(stmtNum);
+
+    Vector<StatementNumber> prevStatementList = getAllPreviousStatements(stmtNum, AnyStatement);
+    CacheSet currentCacheSet(prevStatementList);
+    for (auto prevStmtNum : prevStatementList) {
+        if (isPrevVisited(prevStmtNum)) {
+            continue;
+        }
+
+        CacheSet prevCacheSet = getCachePrevStatement(prevStmtNum);
+        currentCacheSet.combine(prevCacheSet);
+    }
+
+    cachePrevStarTable.insert(stmtNum, currentCacheSet);
+    return currentCacheSet;
+}
+
+Boolean NextEvaluator::isNextVisited(StatementNumber stmtNum) const
+{
+    return visitedNextStatements.isCached(stmtNum);
+}
+
+Boolean NextEvaluator::isPrevVisited(StatementNumber stmtNum) const
+{
+    return visitedPrevStatements.isCached(stmtNum);
 }

@@ -217,7 +217,7 @@ public:
                   designEnt); // TODO: Refactor to remove refType parameter (not needed, will always be SynonymRefType)
     Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute attr);
     ReferenceType getReferenceType() const;
-    DesignEntity getDesignEntity();
+    DesignEntity getDesignEntity() const;
     ReferenceValue getValue() const;
     Attribute getAttribute();
     AttributeValueType getAttributeValueType();

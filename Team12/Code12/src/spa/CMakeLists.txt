@@ -106,6 +106,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/AffectsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CallsEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CallsEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CacheSet.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CacheSet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CacheTable.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CacheTable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ModifiesEvaluator.h

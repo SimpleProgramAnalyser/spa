@@ -7,6 +7,7 @@
 #include "pkb/PKB.h"
 #include "pql/evaluator/relationships/FollowsEvaluator.h"
 #include "pql/evaluator/relationships/ModifiesEvaluator.h"
+#include "pql/evaluator/relationships/NextEvaluator.h"
 #include "pql/evaluator/relationships/ParentEvaluator.h"
 #include "pql/evaluator/relationships/UsesEvaluator.h"
 
@@ -613,5 +614,75 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference rightRef(LiteralRefType, "f");
         evaluateUsesClause(leftRef, rightRef, &resTable);
         REQUIRE(resTable.hasResults());
+    }
+}
+
+TEST_CASE("Next* clauses are evaluated correctly")
+{
+    /*
+            1. read x;
+            2. print x;
+            3. if (x > 2) {
+            4.    x = 5;
+                } else {
+            5.    x = 6;}
+            6. while (x < 0) {
+            7.    read y;
+            8.    x = x - y;}
+            9. Dummy Node
+     */
+
+    resetPKB();
+
+    insertIntoStatementTable(1, ReadStatement);
+    insertIntoStatementTable(2, PrintStatement);
+    insertIntoStatementTable(3, IfStatement);
+    insertIntoStatementTable(4, AssignmentStatement);
+    insertIntoStatementTable(5, AssignmentStatement);
+    insertIntoStatementTable(6, WhileStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, AssignmentStatement);
+
+    addNextRelationships(1, ReadStatement, 2, PrintStatement);
+    addNextRelationships(2, PrintStatement, 3, IfStatement);
+    addNextRelationships(3, IfStatement, 4, AssignmentStatement);
+    addNextRelationships(3, IfStatement, 5, AssignmentStatement);
+    addNextRelationships(4, AssignmentStatement, 6, WhileStatement);
+    addNextRelationships(5, AssignmentStatement, 6, WhileStatement);
+    addNextRelationships(6, WhileStatement, 7, ReadStatement);
+    addNextRelationships(7, ReadStatement, 8, AssignmentStatement);
+    addNextRelationships(8, AssignmentStatement, 6, WhileStatement);
+
+    DeclarationTable declTable{};
+    DesignEntity readDesignEntity(ReadType);
+    DesignEntity printDesignEntity(PrintType);
+    DesignEntity assignDesignEntity(AssignType);
+    DesignEntity stmtDesignEntity(StmtType);
+    DesignEntity whileDesignEntity(WhileType);
+    DesignEntity ifDesignEntity(IfType);
+    declTable.addDeclaration("re", readDesignEntity);
+    declTable.addDeclaration("pn", printDesignEntity);
+    declTable.addDeclaration("a", assignDesignEntity);
+    declTable.addDeclaration("s", stmtDesignEntity);
+    declTable.addDeclaration("w", whileDesignEntity);
+    declTable.addDeclaration("if", ifDesignEntity);
+    ResultsTable resTable(declTable);
+
+    SECTION("Left integer, right synonym (statement)")
+    {
+        Reference leftRef(IntegerRefType, "1");
+        Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
+        NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                       Vector<String>({"2", "3", "4", "5", "6", "7", "8"}));
+    }
+
+    SECTION("Left synonym (statement), right integer)")
+    {
+        Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+        Reference rightRef(IntegerRefType, "8");
+        NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+        requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                       Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
     }
 }
