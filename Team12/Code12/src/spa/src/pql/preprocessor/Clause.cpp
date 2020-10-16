@@ -1,25 +1,29 @@
+#include <utility>
+
 #include "AqTypes.h"
 
-Clause::Clause(ClauseType clauseType): hasError{false}
+/************************/
+/** Constructors        */
+/************************/
+
+Clause::Clause(ClauseType clauseType)
 {
     type = clauseType;
 }
 
+Clause::Clause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessage errorMessage)
+{
+    type = clauseType;
+    this->setError(queryErrorType, std::move(errorMessage));
+}
+
+/************************/
+/** Instance Methods    */
+/************************/
+
 ClauseType Clause::getType()
 {
     return type;
-}
-
-Boolean Clause::isInvalid()
-{
-    return hasError;
-}
-
-Clause* Clause::invalidClause(ClauseType clauseType)
-{
-    auto* c = new Clause(clauseType);
-    c->hasError = true;
-    return c;
 }
 
 Boolean Clause::operator==(Clause& clause)

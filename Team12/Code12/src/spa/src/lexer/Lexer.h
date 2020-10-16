@@ -12,5 +12,5 @@ StringVector splitByWhitespace(const String& str) noexcept;
 StringVector splitByDelimiter(const String& str, const String& delimiter);
 StringVector splitProgram(const String& program) noexcept;
 String trimWhitespace(const String& str);
-
+Boolean isAllWhitespaces(const String s);
 #endif // SPA_LEXER_H

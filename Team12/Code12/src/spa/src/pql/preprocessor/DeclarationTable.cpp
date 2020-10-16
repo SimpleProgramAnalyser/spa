@@ -1,4 +1,27 @@
+#include <utility>
+
 #include "AqTypes.h"
+
+/************************/
+/** Static Methods      */
+/************************/
+
+const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
+
+/************************/
+/** Constructors        */
+/************************/
+
+DeclarationTable::DeclarationTable(): table{} {}
+
+DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, String errorMessage)
+{
+    this->setError(queryErrorType, std::move(errorMessage));
+}
+
+/************************/
+/** Instance Methods    */
+/************************/
 
 Void DeclarationTable::addDeclaration(const Synonym& s, DesignEntity& designEntity)
 {
@@ -24,13 +47,6 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s) const
     } else {
         return got->second;
     }
-}
-
-DeclarationTable DeclarationTable::invalidDeclarationTable()
-{
-    DeclarationTable dT;
-    dT.setError(true);
-    return dT;
 }
 
 Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable) const
