@@ -51,12 +51,14 @@ DeclarationTable AbstractQuery::getDeclarationTable() const
     return declarationTable;
 }
 
-Boolean AbstractQuery::toReturnFalseResult() {
+Boolean AbstractQuery::toReturnFalseResult()
+{
     return isToReturnFalseResult;
 }
 
 Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
 {
     return this->resultSynonyms == abstractQuery.resultSynonyms && this->clauses == abstractQuery.clauses
-           && this->declarationTable == abstractQuery.declarationTable;
+           && this->declarationTable == abstractQuery.declarationTable
+           && this->isToReturnFalseResult == abstractQuery.isToReturnFalseResult;
 }
