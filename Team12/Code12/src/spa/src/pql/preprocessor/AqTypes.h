@@ -13,7 +13,7 @@
 #include <unordered_set>
 #include <utility>
 
-#include "QueryError.h"
+#include "Errorable.h"
 #include "Types.h"
 #include "Util.h"
 #include "ast/AstTypes.h"
@@ -106,7 +106,7 @@ public:
     Boolean operator!=(const Attribute& attribute) const;
 };
 
-class ResultSynonym: public QueryError {
+class ResultSynonym: public Errorable {
 private:
     static std::unordered_map<AttributeType, DesignEntityTypeSet> attributeDesignEntityTypeValidationMap;
 
@@ -126,7 +126,7 @@ public:
     Boolean operator!=(const ResultSynonym& resultSynonym) const;
 };
 
-class ResultSynonymVector: public QueryError {
+class ResultSynonymVector: public Errorable {
 private:
     Vector<ResultSynonym> resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
 
@@ -141,7 +141,7 @@ public:
     Boolean operator==(const ResultSynonymVector& resultSynonymVector) const;
 };
 
-class DeclarationTable: public QueryError {
+class DeclarationTable: public Errorable {
 private:
     std::unordered_map<Synonym, DesignEntity> table;
 
@@ -158,7 +158,7 @@ public:
 
 enum ClauseType : char { SuchThatClauseType, PatternClauseType, WithClauseType, NonExistentClauseType };
 
-class Clause: public QueryError {
+class Clause: public Errorable {
 protected:
     ClauseType type;
 
@@ -199,7 +199,7 @@ typedef std::unordered_set<ReferenceType> ReferenceTypeSet;
 
 typedef String ReferenceValue;
 
-class Reference: public QueryError {
+class Reference: public Errorable {
 protected:
     ReferenceType referenceType;
     ReferenceValue referenceValue;
@@ -256,7 +256,7 @@ struct std::hash<RelationshipReferenceType> {
     }
 };
 
-class Relationship: public QueryError {
+class Relationship: public Errorable {
 private:
     static std::unordered_map<String, RelationshipReferenceType> relationshipReferenceTypeMap;
     static std::unordered_map<RelationshipReferenceType, std::unordered_set<DesignEntityType>>
@@ -320,7 +320,7 @@ enum ExpressionSpecType : char {
     InvalidExpressionType
 };
 
-class ExpressionSpec: public QueryError {
+class ExpressionSpec: public Errorable {
 private:
     std::unique_ptr<Expression> expression;
 
@@ -373,7 +373,7 @@ public:
     Boolean operator==(const PatternClause& patternClause);
 };
 
-class ClauseVector: public QueryError {
+class ClauseVector: public Errorable {
 private:
     List<Clause> clauses;
 
@@ -391,7 +391,7 @@ public:
     ClauseVector& operator=(ClauseVector&&) = default;
 };
 
-class AbstractQuery: public QueryError {
+class AbstractQuery: public Errorable {
 private:
     const ResultSynonymVector resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
     ClauseVector clauses;
@@ -399,7 +399,6 @@ private:
     Boolean isToReturnFalseResult = false;
 
 public:
-//    AbstractQuery();
     AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage);
     AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult);
     AbstractQuery(ResultSynonymVector synonym, DeclarationTable& declarations);

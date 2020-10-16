@@ -10,7 +10,7 @@
 
 typedef String ErrorMessage;
 
-class QueryError {
+class Errorable {
 protected:
     QueryErrorType errorType = NoQueryErrorType;
     ErrorMessage errorMessage;

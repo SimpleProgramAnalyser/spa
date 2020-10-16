@@ -6,8 +6,6 @@
 /** Constructors        */
 /************************/
 
-//AbstractQuery::AbstractQuery() = default;
-
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage)
 {
     this->setError(queryErrorType, std::move(errorMessage));

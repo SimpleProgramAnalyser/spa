@@ -1,41 +1,41 @@
-#include "QueryError.h"
+#include "Errorable.h"
 
 /************************/
 /** Instance Methods    */
 /************************/
 
-Boolean QueryError::isSyntacticallyInvalid()
+Boolean Errorable::isSyntacticallyInvalid()
 {
     return errorType == QuerySyntaxError;
 }
 
-Boolean QueryError::isSemanticallyInvalid()
+Boolean Errorable::isSemanticallyInvalid()
 {
     return errorType == QuerySemanticsError;
 }
 
-Boolean QueryError::isInvalid() const
+Boolean Errorable::isInvalid() const
 {
     return errorType != NoQueryErrorType;
 }
 
-Void QueryError::setSemanticsError()
+Void Errorable::setSemanticsError()
 {
     errorType = QuerySemanticsError;
 }
 
-Void QueryError::setSyntaxError()
+Void Errorable::setSyntaxError()
 {
     errorType = QuerySyntaxError;
 }
 
-Void QueryError::setError(QueryErrorType queryErrorType, String message)
+Void Errorable::setError(QueryErrorType queryErrorType, String message)
 {
     setError(queryErrorType);
     this->errorMessage = message;
 }
 
-Void QueryError::setError(QueryErrorType queryErrorType)
+Void Errorable::setError(QueryErrorType queryErrorType)
 {
     switch (queryErrorType) {
     case QuerySemanticsError:
@@ -49,12 +49,12 @@ Void QueryError::setError(QueryErrorType queryErrorType)
     }
 }
 
-String QueryError::getErrorMessage()
+String Errorable::getErrorMessage()
 {
     return errorMessage;
 }
 
-QueryErrorType QueryError::getErrorType()
+QueryErrorType Errorable::getErrorType()
 {
     return errorType;
 }
