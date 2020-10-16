@@ -1,0 +1,58 @@
+procedure mainPrint {
+1.    read x;
+2.    print y;
+}
+
+
+procedure readPoint {
+3.    if ((x < y) && (y < z)) then {
+4.        cenX = cenX + x;
+5.        y = z + x;
+    } else {
+6.        y = x + y;
+    }
+7.    if ((x < y) && (y < z)) then {
+8.        normSq = y;
+9.        while (y < z) {
+10            normSq = z + y;
+11            print z;
+        }
+12        print normSq;
+    } else {
+13        y = x + y;
+14        read x;
+15        read y;
+16        call mainPrint;
+    }
+17    while (x > z) {
+18        x = y;
+19        y = normSq + 3;
+    }
+}
+
+procedure computeCentroid {
+20    count = 0;
+21    cenX = 0;
+22    cenY = 0;
+23    call readPoint;
+24    while ((x != 10) && (y != 100)) {
+25        count = count + 1;
+26        if (y < count) then {
+27            cenX = cenX + x;
+        } else {
+28            cenY = cenY + y;
+        }
+29        while (y < x) {
+30            call readPoint;
+        }
+31        cenY = cenX;
+    }
+
+32    if (count == 0) then {
+33        flag = 1;
+    } else {
+34        cenX = cenX / count;
+35        cenY = cenY / count;
+    }
+36    normSq = cenX * cenX + cenY * cenY;
+}
