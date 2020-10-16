@@ -104,13 +104,13 @@ Select <p, s> such that Modifies (s, "y")
 mainPrint 3, readPoint 3, computeCentroid 3, mainPrint 5, readPoint 5, computeCentroid 5, mainPrint 6, readPoint 6, computeCentroid 6, mainPrint 7, readPoint 7, computeCentroid 7, mainPrint 13, readPoint 13, computeCentroid 13, mainPrint 15, readPoint 15, computeCentroid 15, mainPrint 17, readPoint 17, computeCentroid 17, mainPrint 19, readPoint 19, computeCentroid 19, mainPrint 23, readPoint 23, computeCentroid 23, mainPrint 24, readPoint 24, computeCentroid 24, mainPrint 30, readPoint 30, computeCentroid 30, mainPrint 31, readPoint 31, computeCentroid 31
 5000
 18 - Modifies statement with 1 unknown synonym, Select based on LHS
-print p; stmt s;
-Select <p, s> such that Modifies (p, "z")
+print p; procedure proc;
+Select <p, proc> such that Modifies (p, "z")
 none
 5000
 18 - Modifies statement with 1 unknown synonym, Select based on LHS
-print p; stmt s;
-Select <s, p> such that Modifies (p, "z")
+print p; procedure proc;
+Select <proc, p> such that Modifies (p, "z")
 none
 5000
 19 - Modifies statement with 1 unknown synonym, Select based on LHS
@@ -124,33 +124,33 @@ Select <p, a> such that Modifies (a, "normSq")
 mainPrint 8, readPoint 8, computeCentroid 8, mainPrint 10, readPoint 10, computeCentroid 10, mainPrint 40, readPoint 40, computeCentroid 40
 5000
 20 - Modifies statement with 1 unknown synonym, Select based on LHS
-call c; stmt s;
-Select <c, s> such that Modifies (c, "y")
+call c; procedure p;
+Select <c, p> such that Modifies (c, "y")
 23 mainPrint, 23 readPoint, 23 computeCentroid, 31 mainPrint, 31 readPoint, 31 computeCentroid
 5000
 20 - Modifies statement with 1 unknown synonym, Select based on LHS
-call c; stmt s;
-Select <s, c> such that Modifies (c, "y")
+call c; procedure p;
+Select <s, p> such that Modifies (c, "y")
 mainPrint 23, readPoint 23, computeCentroid 23, mainPrint 31, readPoint 31, computeCentroid 31
 5000
 21 - Modifies statement with 1 unknown synonym, Select based on LHS
-while w; stmt s;
-Select <w, s> such that Modifies (w, "y") (While contains call)
+while w; procedure p;
+Select <w, p> such that Modifies (w, "y") (While contains call)
 none
 5000
 21 - Modifies statement with 1 unknown synonym, Select based on LHS
-while w; stmt s;
-Select <s, w> such that Modifies (w, "y") (While contains call)
+while w; procedure p;
+Select <s, p> such that Modifies (w, "y") (While contains call)
 none
 5000
 22 - Modifies statement with 1 unknown synonym, Select based on LHS
-if i; stmt s;
-Select <i, s> such that Modifies (i, "y")
+if i; procedure p;
+Select <i, p> such that Modifies (i, "y")
 3 mainPrint, 3 readPoint, 3 computeCentroid, 7 mainPrint, 7 readPoint, 7 computeCentroid
 5000
 22 - Modifies statement with 1 unknown synonym, Select based on LHS
-if i; stmt s;
-Select <s, i> such that Modifies (i, "y")
+if i; procedure p;
+Select <p, i> such that Modifies (i, "y")
 mainPrint 3, readPoint 3, computeCentroid 3, mainPrint 7, readPoint 7, computeCentroid 7
 5000
 23 - Modifies statement with 1 unknown synonym, Select based on RHS (assign)
