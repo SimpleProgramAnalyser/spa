@@ -141,19 +141,23 @@ ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, cons
 NtupledResult ResultsTable::joinAllSynonyms(const Vector<Synonym>& syns)
 {
     size_t length = syns.size();
+    bool allDifferent = true;
     for (size_t i = 0; i < length - 1; i++) {
         Synonym firstSyn = syns[i];
         Synonym secondSyn = syns[i + 1];
-        if (!hasRelationships(firstSyn, secondSyn)) {
+        if (!hasRelationships(firstSyn, secondSyn) && firstSyn != secondSyn) {
             bool firstSynNewInGraph = !relationships->hasSeenBefore(firstSyn);
             bool secondSynNewInGraph = !relationships->hasSeenBefore(secondSyn);
             Vector<Pair<String, String>> tuples
                 = generateCartesianProduct(getResultsOne(firstSyn), getResultsOne(secondSyn));
             // do joining to combine the tables
             relationships->insertRelationships(tuples, firstSyn, firstSynNewInGraph, secondSyn, secondSynNewInGraph);
+        } else if (firstSyn == secondSyn) {
+            allDifferent = false;
         }
     }
-    return relationships->retrieveUniqueRowsMatching(syns);
+    return allDifferent ? relationships->retrieveUniqueRowsMatching(syns)
+                        : relationships->calculateMatchingTuples(syns, this);
 }
 
 std::function<void()> ResultsTable::createEvaluatorOne(ResultsTable* table, const Synonym& syn,
