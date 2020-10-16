@@ -119,6 +119,11 @@ ResultSynonymVector processSelectResultString(String selectResultString, Declara
     // Tuple result
     String removeTupleString = selectResultString.substr(1);
     StringVector resultSynonymStrings = splitByDelimiter(removeTupleString, ",");
+    if (resultSynonymStrings.size() == 0
+        || (resultSynonymStrings.size() == 1 && isAllWhitespaces(resultSynonymStrings.at(0)))) {
+        return ResultSynonymVector(QuerySyntaxError, "Result Synonym tuple does not have any Synonym");
+    }
+
     ResultSynonymVector resultSynonyms;
     for (auto& resultSynonymString : resultSynonymStrings) {
         String trimmedResultSynonymString = trimWhitespace(resultSynonymString);

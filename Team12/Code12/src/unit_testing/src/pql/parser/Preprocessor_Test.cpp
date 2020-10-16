@@ -1222,6 +1222,13 @@ TEST_CASE("Select Tuple <s1, s2, v1, v2, w, ifs> such that Follows")
     REQUIRE(equal);
 }
 
+TEST_CASE("Select empty tuple")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select <  \n\t \v > such that Follows (s, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
 /************************************************************************************/
 /*  Select Attribute                                                                */
 /************************************************************************************/
