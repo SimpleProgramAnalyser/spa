@@ -1,0 +1,175 @@
+1 - Select All Statements
+stmt s;
+Select <s>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+5000
+2 - Select All Statements (using attr name)
+stmt s;
+Select <s.stmt#>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+5000
+3 - Select All Program Lines (same as Statements)
+prog_line s;
+Select <s>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+5000
+2 - Select All Procedures
+procedure p; 
+Select <p>
+main, raymarch, spheresdf
+5000
+3 - Select All Procedures (using attr name)
+procedure p; 
+Select <p.procName>
+main, raymarch, spheresdf
+5000
+4 - Select All Variables
+variable v;
+Select <v>
+steps, depth, ro, rd, count, dist, epsilon, done, x, p, y, z, po
+5000
+5 - Select All Variables (using attr name)
+variable v;
+Select <v.varName>
+steps, depth, ro, rd, count, dist, epsilon, done, x, p, y, z, po
+5000
+6 - Select All Read Statements
+read r;
+Select <r>
+1, 6, 18
+5000
+7 - Select All Read Statements (using attr name)
+read r;
+Select <r.stmt#>
+1, 6, 18
+5000
+7 - Select All Read Statements (using attr name)
+read r;
+Select <r.varName>
+steps, depth, p
+5000
+8 - Select All Print Statements
+print r;
+Select <r>
+3, 8
+5000
+9 - Select All Print Statements (using attr name)
+print r;
+Select <r.stmt#>
+3, 8
+5000
+9 - Select All Print Statements (using attr name)
+print r;
+Select <r.varName>
+depth
+5000
+10 - Select All Call Statements
+call r;
+Select <r>
+2, 10
+5000
+11 - Select All Call Statements (using attr name)
+call r;
+Select <r.stmt#>
+2, 10
+5000
+11 - Select All Call Statements (using attr name)
+call r;
+Select <r.procName>
+raymarch, spheresdf
+5000
+12 - Select All While Statements
+while r;
+Select <r>
+7, 19
+5000
+13 - Select All While Statements (using attr name)
+while r;
+Select <r.stmt#>
+7, 19
+5000
+14 - Select All If Statements
+if r;
+Select <r>
+11
+5000
+15 - Select All If Statements (using attr name)
+if r;
+Select <r.stmt#>
+11
+5000
+16 - Select All Assign Statements
+assign r;
+Select <r>
+4, 5, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23
+5000
+17 - Select All Assign Statements (using attr name)
+assign r;
+Select <r.stmt#>
+4, 5, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23
+5000
+18 - Select All Constants
+constant r;
+Select <r>
+1, 2, 13, 19
+5000
+19 - Select All Constants (using attr name)
+constant r;
+Select <r.value>
+1, 2, 13, 19
+5000
+20 - Select Boolean, with declarations
+constant c;
+Select BOOLEAN
+TRUE
+5000
+21 - Select Boolean, no declarations
+constant c;
+Select BOOLEAN
+TRUE
+5000
+19 - Select All Statements with Variables, Cart product
+stmt s; variable v;
+Select <s, v>
+1 steps, 1 depth, 1 ro, 1 rd, 1 count, 1 dist, 1 epsilon, 1 done, 1 x, 1 p, 1 y, 1 z, 1 po, 2 steps, 2 depth, 2 ro, 2 rd, 2 count, 2 dist, 2 epsilon, 2 done, 2 x, 2 p, 2 y, 2 z, 2 po, 3 steps, 3 depth, 3 ro, 3 rd, 3 count, 3 dist, 3 epsilon, 3 done, 3 x, 3 p, 3 y, 3 z, 3 po, 4 steps, 4 depth, 4 ro, 4 rd, 4 count, 4 dist, 4 epsilon, 4 done, 4 x, 4 p, 4 y, 4 z, 4 po, 5 steps, 5 depth, 5 ro, 5 rd, 5 count, 5 dist, 5 epsilon, 5 done, 5 x, 5 p, 5 y, 5 z, 5 po, 6 steps, 6 depth, 6 ro, 6 rd, 6 count, 6 dist, 6 epsilon, 6 done, 6 x, 6 p, 6 y, 6 z, 6 po, 7 steps, 7 depth, 7 ro, 7 rd, 7 count, 7 dist, 7 epsilon, 7 done, 7 x, 7 p, 7 y, 7 z, 7 po, 8 steps, 8 depth, 8 ro, 8 rd, 8 count, 8 dist, 8 epsilon, 8 done, 8 x, 8 p, 8 y, 8 z, 8 po, 9 steps, 9 depth, 9 ro, 9 rd, 9 count, 9 dist, 9 epsilon, 9 done, 9 x, 9 p, 9 y, 9 z, 9 po, 10 steps, 10 depth, 10 ro, 10 rd, 10 count, 10 dist, 10 epsilon, 10 done, 10 x, 10 p, 10 y, 10 z, 10 po, 11 steps, 11 depth, 11 ro, 11 rd, 11 count, 11 dist, 11 epsilon, 11 done, 11 x, 11 p, 11 y, 11 z, 11 po, 12 steps, 12 depth, 12 ro, 12 rd, 12 count, 12 dist, 12 epsilon, 12 done, 12 x, 12 p, 12 y, 12 z, 12 po, 13 steps, 13 depth, 13 ro, 13 rd, 13 count, 13 dist, 13 epsilon, 13 done, 13 x, 13 p, 13 y, 13 z, 13 po, 14 steps, 14 depth, 14 ro, 14 rd, 14 count, 14 dist, 14 epsilon, 14 done, 14 x, 14 p, 14 y, 14 z, 14 po, 15 steps, 15 depth, 15 ro, 15 rd, 15 count, 15 dist, 15 epsilon, 15 done, 15 x, 15 p, 15 y, 15 z, 15 po, 16 steps, 16 depth, 16 ro, 16 rd, 16 count, 16 dist, 16 epsilon, 16 done, 16 x, 16 p, 16 y, 16 z, 16 po, 17 steps, 17 depth, 17 ro, 17 rd, 17 count, 17 dist, 17 epsilon, 17 done, 17 x, 17 p, 17 y, 17 z, 17 po, 18 steps, 18 depth, 18 ro, 18 rd, 18 count, 18 dist, 18 epsilon, 18 done, 18 x, 18 p, 18 y, 18 z, 18 po, 19 steps, 19 depth, 19 ro, 19 rd, 19 count, 19 dist, 19 epsilon, 19 done, 19 x, 19 p, 19 y, 19 z, 19 po, 20 steps, 20 depth, 20 ro, 20 rd, 20 count, 20 dist, 20 epsilon, 20 done, 20 x, 20 p, 20 y, 20 z, 20 po, 21 steps, 21 depth, 21 ro, 21 rd, 21 count, 21 dist, 21 epsilon, 21 done, 21 x, 21 p, 21 y, 21 z, 21 po, 22 steps, 22 depth, 22 ro, 22 rd, 22 count, 22 dist, 22 epsilon, 22 done, 22 x, 22 p, 22 y, 22 z, 22 po, 23 steps, 23 depth, 23 ro, 23 rd, 23 count, 23 dist, 23 epsilon, 23 done, 23 x, 23 p, 23 y, 23 z, 23 po
+5000
+19 - Select All Variables with Statements, Cart product
+stmt s; variable v;
+Select <v, s>
+steps 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, depth 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, ro 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, rd 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, count 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, dist 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, epsilon 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, done 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, x 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, p 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, y 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, z 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23, po 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+5000
+22 - Select Boolean, invalid query (semantic)
+constant c; call c;
+Select BOOLEAN with c.value = 5
+FALSE
+5000
+23 - Select Boolean, invalid query (syntatic)
+constant c;
+Select BOOLEAN with c.value =
+none
+5000
+24 - Multiple Spaces
+stmt  s1;	stmt         s2;
+Select <s1>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+5000
+25 - Multiple Tabs
+stmt  		s1;	stmt         		s2;					
+Select <s1>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+5000
+26 - Invalid Queries (Select statement wrong)
+stmt s; variable v;
+Selec <s>
+none
+5000
+27 - Invalid Queries (no semicolon)
+stmt stmt
+Select <stmt>
+none
+5000
+28 - Same keyword name
+stmt  s1, Select;
+Select <Select>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+5000
