@@ -1,77 +1,15 @@
 /**
- * Implementation of Pattern Matcher for Query Evaluator,
- * used to evaluate Pattern clauses in queries
- * given to SIMPLE Program Analyser.
+ * Implementation of Assign Matcher for Query Evaluator,
+ * used to evaluate assign pattern clauses.
  */
-#include "PatternMatcher.h"
+
+#include "AssignMatcher.h"
 
 #include <algorithm>
 #include <iterator>
-#include <stdexcept>
 
+#include "PatternMatcherUtil.h"
 #include "pkb/PKB.h"
-
-/**
- * A class to hold result lists for matching
- * assign patterns and variables.
- */
-class PatternMatcherTuple {
-private:
-    std::vector<String> assignStatementResults;
-    std::unordered_set<String> variableResults;
-    std::vector<std::pair<Integer, String>> relationshipsResults;
-
-public:
-    PatternMatcherTuple() = default;
-
-    /**
-     * Adds a matching assign statement to the result lists.
-     */
-    Void addAssignStatement(Integer assignStatementNumber, const String& variable)
-    {
-        assignStatementResults.push_back(std::to_string(assignStatementNumber));
-        variableResults.insert(variable);
-        relationshipsResults.emplace_back(assignStatementNumber, variable);
-    }
-
-    /**
-     * Adds entries from another PatternMatcherTuple to
-     * this PatternMatcherTuple.
-     */
-    Void concatTuple(const PatternMatcherTuple& pmt)
-    {
-        this->assignStatementResults.insert(this->assignStatementResults.cend(), pmt.assignStatementResults.cbegin(),
-                                            pmt.assignStatementResults.cend());
-        std::copy(pmt.variableResults.begin(), pmt.variableResults.end(),
-                  std::inserter(this->variableResults, this->variableResults.end()));
-        this->relationshipsResults.insert(this->relationshipsResults.cend(), pmt.relationshipsResults.cbegin(),
-                                          pmt.relationshipsResults.cend());
-    }
-
-    /**
-     * Gets the list of results for matching statements.
-     */
-    std::vector<String> getAssignStatements() const
-    {
-        return assignStatementResults;
-    }
-
-    /**
-     * Gets the list of results for matching variables.
-     */
-    std::vector<String> getVariables() const
-    {
-        return std::vector<String>(variableResults.begin(), variableResults.end());
-    }
-
-    /**
-     * Gets the list of results for matching relationships.
-     */
-    std::vector<std::pair<Integer, String>> getRelationships() const
-    {
-        return relationshipsResults;
-    }
-};
 
 /**
  * Checks whether the clauseExpression can be found
@@ -182,7 +120,7 @@ PatternMatcherTuple findAssignInStatementList(const StmtlstNode* const stmtLstNo
             Boolean hasMatch = matchAssignStatement(assign, pnClause);
             // if there is a match, check the relationship to add to list of results
             if (hasMatch) {
-                results.addAssignStatement(currStmt->getStatementNumber(), assign->variable.varName);
+                results.addTargetStatement(currStmt->getStatementNumber(), assign->variable.varName);
             }
         } else if (stmtType == IfStatement) {
             // NOLINTNEXTLINE
@@ -201,16 +139,6 @@ PatternMatcherTuple findAssignInStatementList(const StmtlstNode* const stmtLstNo
     return results;
 }
 
-/**
- * Given an assignment pattern clause, retrieves the SIMPLE
- * program from the Program Knowledge Base (root node of
- * Abstract Syntax Tree) and tries to find the assignment
- * statements, or assigned to variables, that match the
- * expression pattern specified.
- *
- * @param pnClause A pattern clause in the query.
- * @param resultsTable The results table to store the results in.
- */
 Void evaluateAssignPattern(PatternClause* pnClause, ResultsTable* resultsTable)
 {
     ProgramNode* ast = getRootNode();
@@ -221,15 +149,6 @@ Void evaluateAssignPattern(PatternClause* pnClause, ResultsTable* resultsTable)
         allResults.concatTuple(resultsFromProcedure);
     }
     // store results in ResultTable
-    resultsTable->storeResultsTwo(pnClause->getPatternSynonym(), allResults.getAssignStatements(),
+    resultsTable->storeResultsTwo(pnClause->getPatternSynonym(), allResults.getTargetStatements(),
                                   pnClause->getEntRef(), convertToPairedResult(allResults.getRelationships()));
-}
-
-Void evaluatePattern(PatternClause* pnClause, ResultsTable* resultsTable)
-{
-    if (pnClause->getStatementType() == AssignPatternType) {
-        evaluateAssignPattern(pnClause, resultsTable);
-    } else {
-        throw std::runtime_error("Unknown PatternClause type in evaluatePattern");
-    }
 }

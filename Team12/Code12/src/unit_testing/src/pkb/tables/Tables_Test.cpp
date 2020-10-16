@@ -123,8 +123,13 @@ SCENARIO("Iteration 1 Tables Test")
         }
         WHEN("statements are added")
         {
-            for (auto statement : statements)
-                statementTable.insertIntoStatementTable(statement.first, statement.second);
+            for (auto statement : statements) {
+                if (statement.second == CallStatement) {
+                    statementTable.insertIntoStatementTable(statement.first, "bestmodule3203");
+                } else {
+                    statementTable.insertIntoStatementTable(statement.first, statement.second);
+                }
+            }
             // create (un)realistic expectations, just like this mean world
             Array<Vector<Integer>, STATEMENT_TYPE_COUNT> statementLists;
             for (int i = 0; i < STATEMENT_TYPE_COUNT; i++) {

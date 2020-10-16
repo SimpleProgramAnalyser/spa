@@ -8,6 +8,23 @@
 #include <unordered_map>
 #include <unordered_set>
 
+std::size_t NtupleHasher::operator()(const Vector<String>& tuple) const
+{
+    if (tuple.empty()) {
+        return 0;
+    } else {
+        std::hash<std::string> stringHasher;
+        std::size_t hashedValues = stringHasher(tuple[0]);
+        std::size_t length = tuple.size();
+        for (std::size_t i = 1; i < length; i++) {
+            const std::string& value = tuple[i];
+            hashedValues = (hashedValues
+                            ^ (stringHasher(value) + uint32_t(2654435769) + (hashedValues * 64) + (hashedValues / 4)));
+        }
+        return hashedValues;
+    }
+}
+
 PotentialValue::PotentialValue(Synonym synonym, String value): synonym(std::move(synonym)), value(std::move(value)) {}
 
 PotentialValue::PotentialValue(const SynonymWithValue& swv): synonym(swv.synonym), value(swv.value) {}
@@ -105,9 +122,9 @@ PairedResult convertToPairedResult(const Vector<Pair<Integer, String>>& intPairs
 std::unordered_map<DesignEntityType, StatementType> getStatementTypesMap()
 {
     std::unordered_map<DesignEntityType, StatementType> queryPkbTypesMap
-        = {{StmtType, AnyStatement},         {ReadType, ReadStatement},   {PrintType, PrintStatement},
-           {CallType, CallStatement},        {WhileType, WhileStatement}, {IfType, IfStatement},
-           {AssignType, AssignmentStatement}};
+        = {{StmtType, AnyStatement},          {ReadType, ReadStatement},    {PrintType, PrintStatement},
+           {CallType, CallStatement},         {WhileType, WhileStatement},  {IfType, IfStatement},
+           {AssignType, AssignmentStatement}, {Prog_LineType, AnyStatement}};
     return queryPkbTypesMap;
 }
 

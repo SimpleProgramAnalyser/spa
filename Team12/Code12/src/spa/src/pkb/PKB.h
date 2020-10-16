@@ -93,6 +93,10 @@ void addCallerRelationships(const ProcedureName& caller, const ProcedureName& ca
 void addCallerRelationshipsStar(const ProcedureName& caller, const ProcedureName& callee);
 Boolean checkIfCallsHolds(const ProcedureName& caller, const ProcedureName& callee);
 Boolean checkIfCallsHoldsStar(const ProcedureName& caller, const ProcedureName& callee);
+Vector<ProcedureName> getAllCallers();
+Vector<ProcedureName> getAllCallersStar();
+Vector<ProcedureName> getAllCallees();
+Vector<ProcedureName> getAllCalleesStar();
 Vector<ProcedureName> getAllCallers(const ProcedureName& callee);
 Vector<ProcedureName> getAllCallersStar(const ProcedureName& callee);
 Vector<ProcedureName> getAllCallees(const ProcedureName& caller);

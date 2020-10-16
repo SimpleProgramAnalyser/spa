@@ -9,16 +9,6 @@ std::unordered_map<String, RelationshipReferenceType> Relationship::relationship
     {"Uses", UsesType},       {"Modifies", ModifiesType},    {"Calls", CallsType},     {"Calls*", CallsStarType},
     {"Next", NextType},       {"Next*", NextStarType},       {"Affects", AffectsType}, {"Affects*", AffectsStarType}};
 
-// Hash function for RelationshipReferenceType
-template <>
-struct std::hash<RelationshipReferenceType> {
-    std::size_t operator()(const RelationshipReferenceType& rrt) const
-    {
-        // NOLINTNEXTLINE
-        return std::hash<char>()(static_cast<const char&>(rrt));
-    }
-};
-
 // Hash function for ReferenceType
 template <>
 struct std::hash<ReferenceType> {
@@ -111,11 +101,23 @@ std::unordered_map<RelationshipReferenceType, DesignEntityTypeSet> Relationship:
     {AffectsType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
     {AffectsStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}}};
 
+/************************/
+/** Constructors        */
+/************************/
+
 Relationship::Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef):
-    relationshipReferenceType(relRefType), leftReference(leftRef), rightReference(rightRef), hasError(false)
+    relationshipReferenceType(relRefType), leftReference(leftRef), rightReference(rightRef)
 {}
 
-Relationship::Relationship(Boolean hasError): relationshipReferenceType{InvalidRelationshipType}, hasError{hasError} {}
+Relationship::Relationship(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    relationshipReferenceType{InvalidRelationshipType}
+{
+    this->setError(queryErrorType, errorMessage);
+}
+
+/************************/
+/** Instance Methods    */
+/************************/
 
 Relationship Relationship::createRelationship(RelationshipReferenceType relRefType, Reference leftRef,
                                               Reference rightRef)
@@ -126,7 +128,7 @@ Relationship Relationship::createRelationship(RelationshipReferenceType relRefTy
 
     // Validate semantics for relationships
     if (!validateRelationshipSemantics(relRefType, leftRef, rightRef)) {
-        return Relationship(true);
+        return Relationship(QuerySemanticsError, "Invalid Relationship");
     }
 
     // Split Statement and Procedure type for Uses and Modifies
@@ -139,37 +141,6 @@ Relationship Relationship::createRelationship(RelationshipReferenceType relRefTy
     }
 
     return Relationship(relRefType, leftRef, rightRef);
-}
-
-RelationshipReferenceType Relationship::getRelRefType(String relRef)
-{
-    auto got = relationshipReferenceTypeMap.find(relRef);
-
-    if (got == relationshipReferenceTypeMap.end()) {
-        return InvalidRelationshipType;
-    }
-
-    return got->second;
-}
-
-Boolean Relationship::isInvalid() const
-{
-    return hasError;
-}
-
-RelationshipReferenceType Relationship::getRelationship()
-{
-    return relationshipReferenceType;
-}
-
-Reference Relationship::getLeftRef()
-{
-    return leftReference;
-}
-
-Reference Relationship::getRightRef()
-{
-    return rightReference;
 }
 
 Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
@@ -214,6 +185,42 @@ Boolean Relationship::validateRelationshipSemantics(RelationshipReferenceType re
     return true;
 }
 
+/************************/
+/** Instance Methods    */
+/************************/
+
+RelationshipReferenceType Relationship::getRelRefType(String relRef)
+{
+    auto got = relationshipReferenceTypeMap.find(relRef);
+
+    if (got == relationshipReferenceTypeMap.end()) {
+        return InvalidRelationshipType;
+    }
+
+    return got->second;
+}
+
+RelationshipReferenceType Relationship::getType()
+{
+    return relationshipReferenceType;
+}
+
+Reference Relationship::getLeftRef()
+{
+    return leftReference;
+}
+
+Reference Relationship::getRightRef()
+{
+    return rightReference;
+}
+
+Boolean Relationship::operator==(const Relationship& relationship)
+{
+    return this->relationshipReferenceType == relationship.relationshipReferenceType
+           && this->leftReference == relationship.leftReference && this->rightReference == relationship.rightReference;
+}
+
 template <typename T>
 Boolean isValidInTable(std::unordered_map<RelationshipReferenceType, std::unordered_set<T>> table,
                        RelationshipReferenceType relRefType, T type)
@@ -222,10 +229,4 @@ Boolean isValidInTable(std::unordered_map<RelationshipReferenceType, std::unorde
     Boolean isValid = validationSet.find(type) != validationSet.end();
 
     return isValid;
-}
-
-Boolean Relationship::operator==(const Relationship& relationship)
-{
-    return this->relationshipReferenceType == relationship.relationshipReferenceType
-           && this->leftReference == relationship.leftReference && this->rightReference == relationship.rightReference;
 }

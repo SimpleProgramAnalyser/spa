@@ -1,26 +1,29 @@
+#include <utility>
+
 #include "AqTypes.h"
 
 /************************/
 /** Constructors        */
 /************************/
 
-Reference::Reference(): referenceType{InvalidRefType}, designEntity{}, attribute{NoAttributeType}, hasError{false} {}
+Reference::Reference(): referenceType{InvalidRefType}, designEntity{}, attribute{NoAttributeType} {}
 
-Reference::Reference(Boolean hasError): referenceType{InvalidRefType}, attribute{NoAttributeType}, hasError{hasError} {}
+Reference::Reference(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    referenceType{InvalidRefType}, attribute{NoAttributeType}
+{
+    this->setError(queryErrorType, std::move(errorMessage));
+}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, attribute{NoAttributeType}, hasError{
-                                                                                                                 false}
+    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, attribute{NoAttributeType}
 {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt):
-    referenceType{refType}, referenceValue{std::move(refValue)},
-    designEntity{designEnt}, attribute{NoAttributeType}, hasError{false}
+    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{designEnt}, attribute{NoAttributeType}
 {}
 
 Reference::Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute attr):
-    referenceType{AttributeRefType}, referenceValue{std::move(refValue)},
-    designEntity{designEnt}, attribute{attr}, hasError{false}
+    referenceType{AttributeRefType}, referenceValue{std::move(refValue)}, designEntity{designEnt}, attribute{attr}
 {}
 
 /************************/
@@ -64,7 +67,7 @@ Reference Reference::createReference(String ref, DeclarationTable& declarationTa
     if (fullStopPosition == String::npos) {
         DesignEntity designEnt = declarationTable.getDesignEntityOfSynonym(ref);
         if (designEnt.getType() == NonExistentType) {
-            return Reference(true);
+            return Reference(QuerySemanticsError, "Reference Synonym was not declared: " + ref);
         }
 
         Reference reference(SynonymRefType, ref, designEnt);
@@ -74,23 +77,23 @@ Reference Reference::createReference(String ref, DeclarationTable& declarationTa
     // Synonym Attribute
     StringVector splitRefString = splitByDelimiter(ref, ".");
     if (splitRefString.size() != 2) {
-        return Reference(true);
+        return Reference(QuerySyntaxError, "Invalid Attribute Reference syntax: " + ref);
     }
 
     Synonym synonym = splitRefString.at(0);
     String attributeString = splitRefString.at(1);
     DesignEntity designEnt = declarationTable.getDesignEntityOfSynonym(synonym);
     if (designEnt.getType() == NonExistentType) {
-        return Reference(true);
+        return Reference(QuerySemanticsError, "Reference Synonym was not declared: " + ref);
     }
 
     Attribute attribute(attributeString);
     if (attribute.getType() == InvalidAttributeType) {
-        return Reference(true);
+        return Reference(QuerySyntaxError, "Invalid Attribute: " + attributeString);
     }
 
     if (!Attribute::validateDesignEntityAttributeSemantics(designEnt.getType(), attribute.getType())) {
-        return Reference(true);
+        return Reference(QuerySemanticsError, "Attribute type does not match Design Entity: " + ref);
     }
 
     Reference reference(synonym, designEnt, attribute);
@@ -101,22 +104,12 @@ Reference Reference::createReference(String ref, DeclarationTable& declarationTa
 /** Instance Methods    */
 /************************/
 
-Boolean Reference::isInvalid() const
-{
-    return hasError;
-}
-
-Boolean Reference::isValidEntityRef()
-{
-    return referenceType == LiteralRefType || referenceType == SynonymRefType || referenceType == WildcardRefType;
-}
-
 Boolean Reference::isProcedure()
 {
     return designEntity.getType() == ProcedureType;
 }
 
-Boolean Reference::isWildCard() const // TODO: phase out
+Boolean Reference::isWildCard() const
 {
     return referenceType == WildcardRefType;
 }

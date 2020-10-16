@@ -4,11 +4,44 @@
 
 #include "Evaluator.h"
 
+#include <sstream>
 #include <stdexcept>
 #include <utility>
 
-#include "PatternMatcher.h"
-#include "SuchThatEvaluator.h"
+#include "attribute/AttributeMap.h"
+#include "attribute/WithQualifier.h"
+#include "pattern/PatternMatcher.h"
+#include "relationships/AffectsEvaluator.h"
+#include "relationships/NextEvaluator.h"
+#include "relationships/SuchThatEvaluator.h"
+
+Vector<String> convertToTupleString(const PairedResult& resultPairs)
+{
+    std::string delimiter = " ";
+    Vector<String> tupleStrings;
+    for (const std::pair<std::string, std::string>& result : resultPairs) {
+        tupleStrings.push_back(result.first + delimiter + result.second);
+    }
+    return tupleStrings;
+}
+
+Vector<String> convertToTupleString(const NtupledResult& resultTuples)
+{
+    std::string delimiter = " ";
+    Vector<String> tupleStrings;
+    for (const std::vector<std::string>& tuple : resultTuples) {
+        std::ostringstream stringStream;
+        size_t length = tuple.size();
+        for (size_t i = 0; i < length - 1; i++) {
+            stringStream << tuple[i] << delimiter;
+        }
+        if (length - 1 >= 0) {
+            stringStream << tuple[length - 1];
+        }
+        tupleStrings.emplace_back(stringStream.str());
+    }
+    return tupleStrings;
+}
 
 RawQueryResult evaluateQuery(const AbstractQuery& abstractQuery)
 {
@@ -27,6 +60,7 @@ RawQueryResult Evaluator::evaluateQuery()
      * If invalid, don't continue evaluating query.
      */
     if (query.isInvalid()) {
+        // TODO: Check query.toReturnFalseResult() for Semantically invalid query but Select BOOLEAN
         return RawQueryResult::getSyntaxError(
             "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.");
     }
@@ -42,6 +76,9 @@ RawQueryResult Evaluator::evaluateQuery()
  */
 RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 {
+    // initiate Affects and Next evaluators
+    resultsTable.manageEvaluator(new NextEvaluator(resultsTable));
+    resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable));
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);
@@ -58,7 +95,66 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
         }
     }
     // call the result table to return the final result
-    return RawQueryResult(resultsTable.getResultsOne(query.getSelectSynonym()));
+    return evaluateSelectSynonym();
+}
+
+RawQueryResult Evaluator::evaluateSelectSynonym()
+{
+    Vector<ResultSynonym> selectedSynonyms = query.getSelectSynonym();
+    Vector<String> resultsWithAttributes;
+    switch (selectedSynonyms.size()) {
+    case 0: {
+        resultsWithAttributes = Vector<String>({resultsTable.getResultsZero() ? "TRUE" : "FALSE"});
+        break;
+    }
+    case 1: {
+        ClauseResult resultsForSynonym = resultsTable.getResultsOne(selectedSynonyms[0].getSynonym());
+        resultsWithAttributes = mapAttributesOne(resultsTable, resultsForSynonym, selectedSynonyms[0]);
+        break;
+    }
+    case 2: {
+        PairedResult resultsForSynonym
+            = resultsTable.getResultsTwo(selectedSynonyms[0].getSynonym(), selectedSynonyms[1].getSynonym());
+        resultsWithAttributes = convertToTupleString(
+            mapAttributesTwo(resultsTable, resultsForSynonym, selectedSynonyms[0], selectedSynonyms[1]));
+        break;
+    }
+    default: {
+        Vector<Synonym> synonymsList;
+        for (const ResultSynonym& rs : selectedSynonyms) {
+            synonymsList.push_back(rs.getSynonym());
+        }
+        NtupledResult resultsForSynonym = resultsTable.getResultsN(synonymsList);
+        resultsWithAttributes = convertToTupleString(mapAttributesN(resultsTable, resultsForSynonym, selectedSynonyms));
+    }
+    }
+    return RawQueryResult(resultsWithAttributes);
+}
+
+void evaluateAndCastSuchThat(Clause* cl, ResultsTable* resultsTable)
+{
+    // NOLINTNEXTLINE
+    evaluateSuchThat(static_cast<SuchThatClause*>(cl), resultsTable);
+}
+
+void evaluateAndCastPattern(Clause* cl, ResultsTable* resultsTable)
+{
+    // NOLINTNEXTLINE
+    evaluatePattern(static_cast<PatternClause*>(cl), resultsTable);
+}
+
+void evaluateAndCastWith(Clause* cl, ResultsTable* resultsTable)
+{
+    // NOLINTNEXTLINE
+    evaluateWith(static_cast<WithClause*>(cl), resultsTable);
+}
+
+std::unordered_map<ClauseType, auto (*)(Clause*, ResultsTable*)->void> getClauseEvaluatorMap()
+{
+    return std::unordered_map<ClauseType, auto (*)(Clause*, ResultsTable*)->void>(
+        {{SuchThatClauseType, evaluateAndCastSuchThat},
+         {PatternClauseType, evaluateAndCastPattern},
+         {WithClauseType, evaluateAndCastWith}});
 }
 
 /*
@@ -71,13 +167,11 @@ RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
 Void Evaluator::evaluateClause(Clause* clause)
 {
     ClauseType type = clause->getType();
-    if (type == SuchThatClauseType) {
-        // NOLINTNEXTLINE
-        return evaluateSuchThat(static_cast<SuchThatClause*>(clause), &resultsTable);
-    } else if (type == PatternClauseType) {
-        // NOLINTNEXTLINE
-        return evaluatePattern(static_cast<PatternClause*>(clause), &resultsTable);
-    } else {
+    std::unordered_map<ClauseType, auto (*)(Clause*, ResultsTable*)->void> evaluatorMap = getClauseEvaluatorMap();
+    auto mapEntry = evaluatorMap.find(type);
+    if (mapEntry == evaluatorMap.end()) {
         throw std::runtime_error("Unknown clause type in evaluateClause");
+    } else {
+        mapEntry->second(clause, &resultsTable);
     }
 }

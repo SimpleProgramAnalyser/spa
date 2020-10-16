@@ -30,7 +30,7 @@ public:
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), isStar(isStar), resultsTable(resultsTable),
         pkbBothKnownFunction(isStar ? checkIfFollowsHoldsStar : checkIfFollowsHolds)
     {}
-    Void evaluateFollowsClause();
+    Void evaluateFollowsClause() const;
 };
 
 Void evaluateFollowsClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
@@ -102,20 +102,13 @@ Void FollowsEvaluator::evaluateBothAny() const
 Void FollowsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
 {
     /*
-     * For this case, in iteration 1, the clause is perpetually not
-     * related to any synonym (because the wildcard to converted
-     * to any StmtType, hence no checking needs to be done here).
+     * For this case, the clause is perpetually not related to any
+     * synonym, since there are two specific statement numbers.
      */
-    Boolean followsHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
-    std::vector<String> tempResult;
-    if (followsHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueFollows");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
+    resultsTable->storeResultsZero(pkbBothKnownFunction(leftRefVal, rightRefVal));
 }
 
-Void FollowsEvaluator::evaluateFollowsClause()
+Void FollowsEvaluator::evaluateFollowsClause() const
 {
     ReferenceType leftRefType = leftRef.getReferenceType();
     ReferenceType rightRefType = rightRef.getReferenceType();
@@ -173,6 +166,6 @@ Void FollowsEvaluator::evaluateFollowsClause()
         evaluateBothAny();
     } else {
         throw std::runtime_error(
-            "Error in FollowsExtractor::evaluateFollowsClause: No synonyms or integers in Follows clause");
+            "Error in FollowsEvaluator::evaluateFollowsClause: No synonyms or integers in Follows clause");
     }
 }

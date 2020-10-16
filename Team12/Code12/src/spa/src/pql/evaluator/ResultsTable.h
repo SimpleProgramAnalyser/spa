@@ -22,6 +22,9 @@ typedef std::unordered_set<String> ResultsSet;
 
 // Forward declaration of RelationshipsGraph
 class RelationshipsGraph;
+// Forward declaration of Evaluators
+class AffectsEvaluator;
+class NextEvaluator;
 
 class ResultsTable {
 private:
@@ -31,10 +34,14 @@ private:
     EvaluationQueue queue;
     Boolean hasResult;
     Boolean hasEvaluated;
+    // cache results for Next, Affects
+    AffectsEvaluator* affectsEvaluator;
+    NextEvaluator* nextEvaluator;
 
-    Boolean checkIfSynonymInMap(const Synonym& syn);
+    Boolean checkIfSynonymInMap(const Synonym& syn) const;
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
     ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
+    NtupledResult joinAllSynonyms(const Vector<Synonym>& syns);
 
     /**
      * Creates a evaluation closure for one synonym's results.
@@ -78,7 +85,7 @@ private:
      * @param syn The synonym to look up.
      * @return List of results for the synonym.
      */
-    ClauseResult get(const Synonym& syn);
+    ClauseResult get(const Synonym& syn) const;
 
     /**
      * Removes all relationships between the leftValue of synonym left
@@ -121,7 +128,7 @@ public:
      *                     the query.
      */
     explicit ResultsTable(DeclarationTable decls);
-    ~ResultsTable() = default;
+    ~ResultsTable();
     ResultsTable(const ResultsTable&) = delete;
     ResultsTable& operator=(const ResultsTable&) = delete;
     ResultsTable(ResultsTable&&) = delete;
@@ -139,6 +146,58 @@ public:
      * @return The RelationshipsGraph stored inside.
      */
     RelationshipsGraph getRelationshipsGraph() const;
+
+    /**
+     * Returns the AffectsEvaluator stored within this ResultsTable.
+     * This method may return a nullptr, if no AffectsEvaluator exists.
+     *
+     * @return The AffectsEvaluator storing cached results for
+     *         Affects and Affects* specifically for the query
+     *         that this ResultsTable is storing results for.
+     */
+    AffectsEvaluator* getAffectsEvaluator() const;
+
+    /**
+     * Returns the NextEvaluator stored within this ResultsTable.
+     * This method may return a nullptr, if no NextEvaluator exists.
+     *
+     * @return The NextEvaluator storing cached results for
+     *         Next* specifically for the query that this
+     *         ResultsTable is storing results for.
+     */
+    NextEvaluator* getNextEvaluator() const;
+
+    /**
+     * Associates an AffectsEvaluator with this ResultsTable.
+     * AffectsEvaluator will cache results for Affects, Affects* and
+     * provide methods for the evaluation of Affects or Affects*.
+     *
+     * This evaluator should only persist for a single query,
+     * similar to the ResultsTable, in order to make the SPA
+     * scalable and compute Affects, Affects* on demand.
+     *
+     * The ResultsTable will handle deletion of the
+     * AffectsEvaluator, once this method is called.
+     *
+     * @param affectsEval The AffectsEvaluator to manage.
+     */
+    Void manageEvaluator(AffectsEvaluator* affectsEval);
+
+    /**
+     * Associates a NextEvaluator with this ResultsTable.
+     * NextEvaluator will cache results for Next* and
+     * provide methods for the evaluation of Next, Next*.
+     *
+     * This evaluator should only persist for a single query,
+     * similar to the ResultsTable, in order to make the SPA
+     * scalable and compute Next* on demand.
+     *
+     * The ResultsTable will handle deletion of the
+     * NextEvaluator, once this method is called.
+     *
+     * @param nextEval The NextEvaluator to manage.
+     */
+    Void manageEvaluator(NextEvaluator* nextEval);
 
     /**
      * Returns true if the result table is marked as having
@@ -159,7 +218,7 @@ public:
      * @param synonym The synonym in the query.
      * @param value The result to eliminate.
      */
-    void eliminatePotentialValue(const Synonym& synonym, const String& value);
+    Void eliminatePotentialValue(const Synonym& synonym, const String& value);
 
     /**
      * Retrieves the type of synonym from the
@@ -169,7 +228,7 @@ public:
      * @return The type of the synonym. If the synonym is
      *         not in the table, return NonExistentType.
      */
-    DesignEntityType getTypeOfSynonym(const Synonym& syn);
+    DesignEntityType getTypeOfSynonym(const Synonym& syn) const;
 
     /**
      * Checks if a synonym has been restricted to only match a
@@ -178,7 +237,7 @@ public:
      *
      * @return True, if synonym has been restricted.
      */
-    Boolean doesSynonymHaveConstraints(const Synonym& syn);
+    Boolean doesSynonymHaveConstraints(const Synonym& syn) const;
 
     /**
      * Checks the relationship table for two synonyms, to
@@ -190,12 +249,14 @@ public:
      * @return True, if some clause has restricted the
      *         left and right to certain relationships.
      */
-    Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+    Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym) const;
 
     /**
      * Forces the merging of the results queue.
+     *
+     * @return Whether this results table contains any results.
      */
-    Void getResultsZero();
+    Boolean getResultsZero();
 
     /**
      * Initiates merging of the results queue, unless
@@ -217,6 +278,31 @@ public:
      * @return The result pairs for (syn1, syn2).
      */
     PairedResult getResultsTwo(const Synonym& syn1, const Synonym& syn2);
+
+    /**
+     * Initiates merging of the results queue, unless a certain
+     * result in the queue was empty. Afterwards, returns the
+     * results for all synonyms in the vector, as a vector
+     * of n-tuples for each synonym. The order of the results
+     * depends on the order of the synonyms.
+     *
+     * Note that this method assumes the synonyms vector to have
+     * at least two synonyms (size > 1).
+     *
+     * @param syns The synonyms to get results for.
+     *
+     * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
+     */
+    NtupledResult getResultsN(const Vector<Synonym>& syns);
+
+    /**
+     * Stores the result for a clause with no synonyms.
+     * If true, nothing happens. But if false, the entire
+     * results table is invalidated.
+     *
+     * @param hasResults Whether a clause has results.
+     */
+    Void storeResultsZero(Boolean hasResults);
 
     /**
      * Adds the result for a single synonym into a queue.
@@ -463,7 +549,17 @@ public:
      * @return List of all other potential values that are
      *         related to it.
      */
-    std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value);
+    std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value) const;
+
+    /**
+     * Given a vector of synonym, retrieve all entries in the
+     * RelationshipsGraph matching these synonyms, and return
+     * them in the same order within a vector of rows.
+     *
+     * @param synonyms The synonyms to retrieve the rows of.
+     * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
+     */
+    NtupledResult retrieveUniqueRowsMatching(const Vector<Synonym>& synonyms) const;
 };
 
 #endif // SPA_PQL_RESULTS_TABLE_H

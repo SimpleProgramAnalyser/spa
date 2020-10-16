@@ -57,6 +57,7 @@ void CallsTable::addIntoTupleTablesStar(const ProcedureName& caller, const Proce
 void CallsTable::addCallerRelationships(const ProcedureName& caller, const ProcedureName& callee)
 {
     addIntoBasicTables(caller, callee);
+    addIntoCollectionTables(caller, callee);
     addIntoTupleTables(caller, callee);
 }
 
@@ -69,6 +70,7 @@ void CallsTable::addCallerRelationships(const ProcedureName& caller, const Proce
 void CallsTable::addCallerRelationshipsStar(const ProcedureName& caller, const ProcedureName& callee)
 {
     addIntoBasicTablesStar(caller, callee);
+    addIntoCollectionTablesStar(caller, callee);
     addIntoTupleTablesStar(caller, callee);
 }
 
@@ -162,4 +164,45 @@ Vector<Pair<ProcedureName, ProcedureName>> CallsTable::getAllCallsTuple()
 Vector<Pair<ProcedureName, ProcedureName>> CallsTable::getAllCallsTupleStar()
 {
     return callsTuplesStar;
+}
+
+Vector<ProcedureName> CallsTable::getAllCallers()
+{
+    return callers;
+}
+Vector<ProcedureName> CallsTable::getAllCallees()
+{
+    return callees;
+}
+Vector<ProcedureName> CallsTable::getAllCallersStar()
+{
+    return callersStar;
+}
+Vector<ProcedureName> CallsTable::getAllCalleesStar()
+{
+    return calleesStar;
+}
+
+/**
+ * Given caller and callee, add caller into a collection of all callers, same with callee.
+ *
+ * @param caller
+ * @param callee
+ */
+void CallsTable::addIntoCollectionTables(const ProcedureName& caller, const ProcedureName& callee)
+{
+    deduplicatedAdd(caller, callers, callersSet);
+    deduplicatedAdd(callee, callees, calleesSet);
+}
+
+/**
+ * Given caller and callee, add caller into a collection of all callers, same with callee.
+ *
+ * @param caller
+ * @param callee
+ */
+void CallsTable::addIntoCollectionTablesStar(const ProcedureName& caller, const ProcedureName& callee)
+{
+    deduplicatedAdd(caller, callersStar, callersStarSet);
+    deduplicatedAdd(callee, calleesStar, calleesStarSet);
 }

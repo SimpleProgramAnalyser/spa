@@ -30,7 +30,7 @@ public:
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), isStar(isStar), resultsTable(resultsTable),
         pkbBothKnownFunction(isStar ? checkIfParentHoldsStar : checkIfParentHolds)
     {}
-    Void evaluateParentClause();
+    Void evaluateParentClause() const;
 };
 
 Void evaluateParentClause(const Reference& leftRef, const Reference& rightRef, Boolean isStar,
@@ -88,16 +88,10 @@ Void ParentEvaluator::evaluateBothAny() const
 
 Void ParentEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
 {
-    Boolean parentHolds = pkbBothKnownFunction(leftRefVal, rightRefVal);
-    std::vector<String> tempResult;
-    if (parentHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueParent");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
+    resultsTable->storeResultsZero(pkbBothKnownFunction(leftRefVal, rightRefVal));
 }
 
-Void ParentEvaluator::evaluateParentClause()
+Void ParentEvaluator::evaluateParentClause() const
 {
     ReferenceType leftRefType = leftRef.getReferenceType();
     ReferenceType rightRefType = rightRef.getReferenceType();
@@ -116,6 +110,6 @@ Void ParentEvaluator::evaluateParentClause()
         evaluateBothAny();
     } else {
         throw std::runtime_error(
-            "Error in ParentExtractor::evaluateParentClause: No synonyms or integers in Parent clause");
+            "Error in ParentEvaluator::evaluateParentClause: No synonyms or integers in Parent clause");
     }
 }

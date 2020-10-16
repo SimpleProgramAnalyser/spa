@@ -4,6 +4,8 @@
 /** Static Members      */
 /************************/
 
+const ErrorMessage DesignEntity::INVALID_DESIGN_ENTITY = "Invalid Design Entity ";
+
 std::unordered_map<String, DesignEntityType> DesignEntity::designEntityMap{
     {"stmt", StmtType},           {"read", ReadType},          {"print", PrintType},
     {"call", CallType},           {"while", WhileType},        {"if", IfType},

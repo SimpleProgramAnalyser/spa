@@ -30,7 +30,7 @@ public:
         leftRef(std::move(leftRef)), rightRef(std::move(rightRef)), resultsTable(resultsTable),
         leftRefType(leftRef.getReferenceType())
     {}
-    Void evaluateUsesClause();
+    Void evaluateUsesClause() const;
 };
 
 Void evaluateUsesClause(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
@@ -96,15 +96,10 @@ Void UsesEvaluator::evaluateBothKnown() const
         // leftRefType == LiteralRefType
         usesHolds = checkIfProcedureUses(leftRef.getValue(), rightRef.getValue());
     }
-    std::vector<String> tempResult;
-    if (usesHolds) {
-        // we add a placeholder item to denote presence of results
-        tempResult.emplace_back("trueUses");
-    }
-    resultsTable->storeResultsOne(leftRef, tempResult);
+    resultsTable->storeResultsZero(usesHolds);
 }
 
-Void UsesEvaluator::evaluateUsesClause()
+Void UsesEvaluator::evaluateUsesClause() const
 {
     ReferenceType rightRefType = rightRef.getReferenceType();
     if (canMatchOnlyOne(leftRefType) && canMatchMultiple(rightRefType)) {
@@ -116,6 +111,6 @@ Void UsesEvaluator::evaluateUsesClause()
     } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
         evaluateBothAny();
     } else {
-        throw std::runtime_error("Error in UsesExtractor::evaluateUsesClause: invalid arguments in Uses");
+        throw std::runtime_error("Error in UsesEvaluator::evaluateUsesClause: invalid arguments in Uses");
     }
 }

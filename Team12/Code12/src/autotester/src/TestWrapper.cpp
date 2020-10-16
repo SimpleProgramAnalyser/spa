@@ -51,6 +51,7 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
     PqlManager pqlManager;
 
     FormattedQueryResult result = pqlManager.executeQuery(query, AutotesterFormat);
+    printf("result : %s", result.getResults().c_str());
     //retrieve String and perform split operation by delimiter "," to add into results
     std::string::size_type pos_begin, pos_end = 0;
     std::string input = result.getResults();
@@ -59,8 +60,15 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
         pos_end = input.find_first_of(',', pos_begin);
         if (pos_end == std::string::npos)
             pos_end = input.length();
-        std::string::iterator end_pos = std::remove(input.begin(), input.end(), ' ');
-        input.erase(end_pos, input.end());
-        results.push_back(input.substr(pos_begin, pos_end - pos_begin));
+        //std::string::iterator end_pos = std::remove(input.begin(), input.end(), ' ');
+        const char* ws = " \t\n\r\f\v";
+
+       // input.erase(end_pos, input.end());
+            //retrieve String and perform split operation by delimiter "," to add into results
+        std::string substring = input.substr(pos_begin, pos_end - pos_begin);
+        substring.erase(substring.find_last_not_of(ws) + 1);
+        substring.erase(0, substring.find_first_not_of(ws));
+        results.push_back(substring);
+
     }
 }

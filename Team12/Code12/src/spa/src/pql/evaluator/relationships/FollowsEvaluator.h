@@ -9,7 +9,7 @@
 
 /*
  * Processes a single (such that, Follows) clause in a PQL query, with
- * respect to a given synonym. All results obtained from the clauses
+ * respect to two given references. All results obtained from the clauses
  * will be stored in the results table. This method also
  * interacts with the PKB to obtain the results to the query.
  *
