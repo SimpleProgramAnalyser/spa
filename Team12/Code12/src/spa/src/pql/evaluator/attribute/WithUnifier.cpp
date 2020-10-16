@@ -69,20 +69,39 @@ SynonymTypeToClosureMap getSynonymTypeMap()
             {ProcedureType, getAllProcedures}};
 }
 
-Void unifyLeftKnown(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+SynonymTypeToClosureMap synonymTypeMap = getSynonymTypeMap();
+AttributeTypeToClosureMap attributeTypeMap = getAttributeTypeMap();
+
+/**
+ * Given a reference of either AttributeRefType or SynonymRefType,
+ * gets all results that match this reference from the Program
+ * Knowledge Base, with the help of hash maps.
+ *
+ * @param ref Reference to retrieve results for.
+ * @return List of results matching this reference.
+ */
+Vector<String> retrieveResultsForVariableReference(const Reference& ref)
 {
-    ReferenceType typeOfLiteral = leftRef.getReferenceType();
-    ReferenceType typeOfVariable = rightRef.getReferenceType();
-    Vector<String> resultsForVariable;
-    SynonymTypeToClosureMap synonymTypeMap = getSynonymTypeMap();
-    AttributeTypeToClosureMap attributeTypeMap = getAttributeTypeMap();
-    if (typeOfVariable == AttributeRefType) {
-        resultsForVariable
-            = attributeTypeMap[rightRef.getDesignEntity().getType()][rightRef.getAttribute().getType()]();
+    if (ref.getReferenceType() == AttributeRefType) {
+        return attributeTypeMap[ref.getDesignEntity().getType()][ref.getAttribute().getType()]();
     } else {
-        // typeOfVariable == SynonymRefType
-        resultsForVariable = synonymTypeMap[rightRef.getDesignEntity().getType()]();
+        // leftRefType == SynonymRefType
+        return synonymTypeMap[ref.getDesignEntity().getType()]();
     }
+}
+
+/**
+ * Unifies an expression where the left expression is
+ * a literal and the right expression is a variable.
+ *
+ * @param literalRef Reference of a String or Integer literal.
+ * @param varRef Reference of a Synonym or Synonym.Attribute.
+ * @param resultsTable ResultsTable to store the results.
+ */
+Void unifyLeftKnown(const Reference& literalRef, const Reference& varRef, ResultsTable* resultsTable)
+{
+    ReferenceType typeOfLiteral = literalRef.getReferenceType();
+    Vector<String> resultsForVariable = retrieveResultsForVariableReference(varRef);
     std::function<bool(const String&, const String&)> comparisonFunction = [](const String& str1, const String& str2) {
         return str1 == str2;
     };
@@ -91,24 +110,40 @@ Void unifyLeftKnown(const Reference& leftRef, const Reference& rightRef, Results
             return std::stoi(intStr1) == std::stoi(intStr2);
         };
     }
-    Vector<String> matchingResults;
-    String rawLiteral = leftRef.getValue();
+    ClauseResult matchingResults;
+    String rawLiteral = literalRef.getValue();
     for (const String& str : resultsForVariable) {
         // try to find a substitution that matches
         if (comparisonFunction(str, rawLiteral)) {
-            matchingResults.push_back(rawLiteral);
+            matchingResults.push_back(str);
             break;
         }
     }
-    resultsTable->storeResultsOne(rightRef.getValue(), matchingResults);
+    resultsTable->storeResultsOne(varRef.getValue(), matchingResults);
 }
 
-Void unifyRightKnown(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+/**
+ * Unifies an expression where the left expression is
+ * a variable and the right expression is a literal.
+ *
+ * @param varRef Reference of a Synonym or Synonym.Attribute.
+ * @param literalRef Reference of a String or Integer literal.
+ * @param resultsTable ResultsTable to store the results.
+ */
+Void unifyRightKnown(const Reference& varRef, const Reference& literalRef, ResultsTable* resultsTable)
 {
     // "with ... = ..." is an associative relation, so we just swap the terms
-    unifyLeftKnown(rightRef, leftRef, resultsTable);
+    unifyLeftKnown(literalRef, varRef, resultsTable);
 }
 
+/**
+ * Unifies an expression where both expressions
+ * are String or Integer literals.
+ *
+ * @param leftRef The left reference in the equality.
+ * @param rightRef The right reference in the equality.
+ * @param resultsTable ResultsTable to store the results.
+ */
 Void unifyBothKnown(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
 {
     bool unificationSuccessful = false;
@@ -120,11 +155,33 @@ Void unifyBothKnown(const Reference& leftRef, const Reference& rightRef, Results
     resultsTable->storeResultsZero(unificationSuccessful);
 }
 
+/**
+ * Unifies an expression where both expressions
+ * are Synonym or Synonym.Attributes.
+ *
+ * @param leftRef The left reference in the equality.
+ * @param rightRef The right reference in the equality.
+ * @param resultsTable ResultsTable to store the results.
+ */
 Void unifyBothAny(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
 {
     if (leftRef == rightRef) {
+        // all subtitutions work
         resultsTable->storeResultsZero(true);
     }
+    Vector<String> resultsForLeft = retrieveResultsForVariableReference(leftRef);
+    Vector<String> resultsForRight = retrieveResultsForVariableReference(rightRef);
+    PairedResult matchingResults;
+    for (const String& leftRes : resultsForLeft) {
+        for (const String& rightRes : resultsForRight) {
+            // find subtitutions that work and add them to results table
+            if (leftRes == rightRes) {
+                matchingResults.emplace_back(leftRes, rightRes);
+                break;
+            }
+        }
+    }
+    resultsTable->storeResultsTwo(leftRef.getValue(), rightRef.getValue(), matchingResults);
 }
 
 Void evaluateWith(WithClause* whClause, ResultsTable* resultsTable)
