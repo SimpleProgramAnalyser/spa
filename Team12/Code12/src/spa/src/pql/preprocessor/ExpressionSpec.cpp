@@ -2,19 +2,22 @@
 #include "frontend/parser/Parser.h"
 #include "lexer/Lexer.h"
 
-ExpressionSpec::ExpressionSpec():
-    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType{InvalidExpressionType}
+ExpressionSpec::ExpressionSpec(): expression(std::unique_ptr<Expression>()), expressionSpecType{InvalidExpressionType}
 {}
 
 ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType):
-    expression(std::unique_ptr<Expression>()), hasError{false}, expressionSpecType{exprSpecType}
+    expression(std::unique_ptr<Expression>()), expressionSpecType{exprSpecType}
 {}
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
-    expression(expr), hasError{false}, expressionSpecType{exprSpecType}
+    expression(expr), expressionSpecType{exprSpecType}
 {}
 
-ExpressionSpec::ExpressionSpec(Boolean hasError): hasError{hasError}, expressionSpecType{InvalidExpressionType} {}
+ExpressionSpec::ExpressionSpec(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    expressionSpecType{InvalidExpressionType}
+{
+    this->setError(queryErrorType, errorMessage);
+}
 
 /**
  * Creates an ExpressionSpec of based on the given
@@ -39,12 +42,13 @@ ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString
     if (util::isEnclosedWith(exprSpecString, '_', '_')) {
         String possibleLiteral = util::removeCharFromBothEnds(exprSpecString);
         if (!util::isEnclosedWith(possibleLiteral, '\"', '\"')) {
-            return ExpressionSpec(true);
+            return ExpressionSpec(QuerySyntaxError, "Extendable ExpressionSpec is not enclosed with double quotes");
         }
 
         Expression* expression = createExpression(util::removeCharFromBothEnds(possibleLiteral));
         if (!expression) {
-            return ExpressionSpec(true);
+            return ExpressionSpec(QuerySyntaxError,
+                                  "Invalid Expression"); // TODO: Implement error type for invalid Expression
         }
 
         ExpressionSpec expressionSpec{expression, ExtendableLiteralExpressionType};
@@ -52,13 +56,14 @@ ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString
     }
 
     if (!util::isEnclosedWith(exprSpecString, '\"', '\"')) {
-        return ExpressionSpec(true);
+        return ExpressionSpec(QuerySyntaxError, "ExpressionSpec is not enclosed with double quotes");
     }
 
     String expressionString = util::removeCharFromBothEnds(exprSpecString);
     Expression* expression = createExpression(expressionString);
     if (!expression) {
-        return ExpressionSpec(true);
+        return ExpressionSpec(QuerySyntaxError,
+                              "Invalid Expression"); // TODO: Implement error type for invalid Expression
     }
 
     ExpressionSpec expressionSpec{expression, LiteralExpressionType};
@@ -68,11 +73,6 @@ ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString
 Expression* ExpressionSpec::getExpression() const
 {
     return expression.get();
-}
-
-Boolean ExpressionSpec::isInvalid() const
-{
-    return hasError;
 }
 
 Boolean ExpressionSpec::operator==(const ExpressionSpec& expressionSpec)

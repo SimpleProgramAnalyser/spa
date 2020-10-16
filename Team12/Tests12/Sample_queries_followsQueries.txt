@@ -243,7 +243,6 @@ if s;
 Select s such that Follows*(s, 17)
 3, 7
 5000
-
 50 - 2 Unknown Synonyms Basic Query
 stmt s, s2;
 Select s such that Follows(s, s2)

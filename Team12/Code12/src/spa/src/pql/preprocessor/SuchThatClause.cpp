@@ -1,16 +1,14 @@
 #include "AqTypes.h"
 
+/************************/
+/** Constructors        */
+/************************/
+
 SuchThatClause::SuchThatClause(Relationship& r): Clause(SuchThatClauseType), relationship{r} {}
 
-Relationship SuchThatClause::getRelationship()
-{
-    return relationship;
-}
-
-Boolean SuchThatClause::operator==(const SuchThatClause& suchThatClause)
-{
-    return this->relationship == suchThatClause.relationship;
-}
+/************************/
+/** Static Methods      */
+/************************/
 
 /**
  * Processes the clause constraint string for a
@@ -30,7 +28,7 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
 
     RelationshipReferenceType relRefType = Relationship::getRelRefType(relRef);
     if (relRefType == InvalidRelationshipType) {
-        return Clause::invalidClause(SuchThatClauseType);
+        return new Clause(SuchThatClauseType, QuerySyntaxError, "Invalid Relationship type " + relRef);
     }
 
     String references
@@ -42,14 +40,30 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
     Reference leftReference = Reference::createReference(leftRefString, declarationTable);
     Reference rightReference = Reference::createReference(rightRefString, declarationTable);
 
-    if (leftReference.isInvalid() || rightReference.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType);
+    if (leftReference.isInvalid()) {
+        return new Clause(SuchThatClauseType, leftReference.getErrorType(), leftReference.getErrorMessage());
+    } else if (rightReference.isInvalid()) {
+        return new Clause(SuchThatClauseType, rightReference.getErrorType(), rightReference.getErrorMessage());
     }
 
     Relationship relationship = Relationship::createRelationship(relRefType, leftReference, rightReference);
     if (relationship.isInvalid()) {
-        return Clause::invalidClause(SuchThatClauseType);
+        return new Clause(SuchThatClauseType, QuerySemanticsError, relationship.getErrorMessage());
     }
 
     return new SuchThatClause(relationship);
+}
+
+/************************/
+/** Instance Methods    */
+/************************/
+
+Relationship SuchThatClause::getRelationship()
+{
+    return relationship;
+}
+
+Boolean SuchThatClause::operator==(const SuchThatClause& suchThatClause)
+{
+    return this->relationship == suchThatClause.relationship;
 }

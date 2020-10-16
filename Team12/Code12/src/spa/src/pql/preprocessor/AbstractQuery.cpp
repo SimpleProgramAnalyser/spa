@@ -1,25 +1,42 @@
+#include <utility>
+
 #include "AqTypes.h"
 
-AbstractQuery::AbstractQuery(Boolean hasError): hasError(hasError) {}
+/************************/
+/** Constructors        */
+/************************/
 
-AbstractQuery::AbstractQuery(const Vector<ResultSynonym>& synonyms, DeclarationTable& declarations):
-    resultSynonyms(synonyms), declarationTable(declarations), hasError(false)
-{}
-
-AbstractQuery::AbstractQuery(const Vector<ResultSynonym>& synonyms, DeclarationTable& declarations,
-                             ClauseVector& clauseVector):
-    resultSynonyms(synonyms),
-    clauses(std::move(clauseVector)), declarationTable(declarations), hasError(false)
-{}
-
-Vector<ResultSynonym> AbstractQuery::getSelectSynonym() const
+AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage)
 {
-    return resultSynonyms;
+    this->setError(queryErrorType, std::move(errorMessage));
 }
 
-Vector<ResultSynonym> AbstractQuery::getSynonyms()
+AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult):
+    isToReturnFalseResult(returnFalseResult)
 {
-    return resultSynonyms;
+    this->setError(queryErrorType, std::move(errorMessage));
+}
+
+AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations):
+    resultSynonyms(std::move(synonyms)), declarationTable(declarations)
+{}
+
+AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations, ClauseVector& clauseVector):
+    resultSynonyms(std::move(synonyms)), clauses(std::move(clauseVector)), declarationTable(declarations)
+{}
+
+/*************************/
+/** Instance Methods    */
+/************************/
+
+const Vector<ResultSynonym> AbstractQuery::getSelectSynonym() const
+{
+    return resultSynonyms.getSynonyms();
+}
+
+const Vector<ResultSynonym> AbstractQuery::getSynonyms() const
+{
+    return resultSynonyms.getSynonyms();
 }
 
 const ClauseVector& AbstractQuery::getClauses() const
@@ -32,31 +49,14 @@ DeclarationTable AbstractQuery::getDeclarationTable() const
     return declarationTable;
 }
 
-Boolean AbstractQuery::isInvalid() const
+Boolean AbstractQuery::toReturnFalseResult()
 {
-    return hasError;
-}
-
-AbstractQuery::AbstractQuery(): hasError{false} {}
-
-AbstractQuery AbstractQuery::invalidAbstractQuery()
-{
-    return AbstractQuery(true);
+    return isToReturnFalseResult;
 }
 
 Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
 {
-    // Check equality of resultSynonyms
-    if (this->resultSynonyms.size() != abstractQuery.resultSynonyms.size()) {
-        return false;
-    }
-
-    size_t length = this->resultSynonyms.size();
-    for (size_t i = 0; i < length; i++) {
-        if (resultSynonyms.at(i) != abstractQuery.resultSynonyms.at(i)) {
-            return false;
-        }
-    }
-
-    return this->clauses == abstractQuery.clauses && this->declarationTable == abstractQuery.declarationTable;
+    return this->resultSynonyms == abstractQuery.resultSynonyms && this->clauses == abstractQuery.clauses
+           && this->declarationTable == abstractQuery.declarationTable
+           && this->isToReturnFalseResult == abstractQuery.isToReturnFalseResult;
 }

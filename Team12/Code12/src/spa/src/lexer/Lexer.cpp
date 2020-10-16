@@ -236,3 +236,16 @@ String trimWhitespace(const String& str)
     // copy chars
     return str.substr(firstIndex, lastIndex - firstIndex + 1);
 }
+
+Boolean isAllWhitespaces(const String s)
+{
+    const char* currentChar = s.c_str();
+    while (*currentChar != '\0') {
+        if (isWhitespace(currentChar)) {
+            return true;
+        }
+        currentChar++;
+    }
+
+    return false;
+}
