@@ -1,5 +1,5 @@
 /**
- * Implementation of Control Flow Graph
+ * Implementation of Control Flow Graph Types
  * classes and methods.
  */
 
@@ -74,15 +74,16 @@ Boolean nodesAreEqual(CfgNode* node1, CfgNode* node2, Vector<Boolean>* visitedAr
 * 
 * @param cfgn CFG node for comprison
 * @param numberOfNodes The total number of nodes in the CFG
-* @return A boolean indicating if the CFG is equal
+* @return Boolean of whehter the current CFG node is equals to cfgn
 */
 Boolean CfgNode::equals(CfgNode* cfgn, size_t numberOfNodes)
 {
+    bool isEqual = true;
     Vector<Boolean> visitedArray;
-    // Initialise the visitedArray to false
+    // Initialise visitedArray to false
     for (size_t i = 0; i < numberOfNodes + 1; i++) {
         visitedArray.push_back(false);
     }
-    Boolean isEqual = nodesAreEqual(this, cfgn, &visitedArray);
+    isEqual = nodesAreEqual(this, cfgn, &visitedArray);
     return isEqual;
 }

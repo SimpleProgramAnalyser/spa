@@ -9,7 +9,7 @@
 #include "ast/AstLibrary.h"
 
 
-TEST_CASE("Cfg Builder works for if and else statements nested in while")
+TEST_CASE("Cfg Builder works for if and else statements nested in while - program2, factorials")
 {
     List<StatementNode> statements;
     statements.push_back(
@@ -37,7 +37,8 @@ TEST_CASE("Cfg Builder works for if and else statements nested in while")
 
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
 
-    CfgNode* cfgRootNode = buildCfg(stmtLstNode);
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
     
 
     //Expected
@@ -151,7 +152,8 @@ TEST_CASE("CfgBuilder works for if and else statements")
 
     StmtlstNode* stmtLstNode = createStmtlstNode(statements);
 
-    CfgNode* cfgRootNode = buildCfg(stmtLstNode);
+    Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
+    CfgNode* cfgRootNode = cfgInfo.first;
 
     // Expected
     size_t currentNumberOfNodes = -1;

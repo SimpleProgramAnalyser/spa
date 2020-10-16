@@ -3,6 +3,7 @@
  */
 
 #include "CfgBuilder.h"
+#include "pkb/PKB.h"
 
 /**
 * Creates a CFG node.
@@ -28,7 +29,7 @@ CfgNode* createCfgNode(size_t stmtListSize, size_t &currentNumberOfNodes)
 }
 
 /**
-* Checks is a CfgIsEmpty (i.e. does not have statements or children)
+* Checks is a Cfg node is empty (i.e. does not have statements or children)
 * 
 * @param node A CfgNode
 * @return A boolean to indicate if the CfgNode is empty
@@ -66,10 +67,17 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         const List<StatementNode>& stmtList = whileStmtListNode.statementList;
         size_t stmtListSize = stmtList.size();
 
-        CfgNode* whileNewNode = createCfgNode(1, currentNumberOfNodes);
-        CfgNode* whileNode = createCfgNode(stmtListSize, currentNumberOfNodes);
+        CfgNode* whileNewNode;
+        Boolean currentNodeIsEmpty = cfgNodeIsEmpty(currentCfgNode);
+        if (!currentNodeIsEmpty) {
+            whileNewNode = createCfgNode(1, currentNumberOfNodes);
+            (*currentCfgNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileNewNode));
 
-        (*currentCfgNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileNewNode));
+        } else {
+            whileNewNode = currentCfgNode;
+        }
+
+        CfgNode* whileNode = createCfgNode(stmtListSize, currentNumberOfNodes);
         (*whileNewNode->statementNodes).push_back(std::unique_ptr<StatementNode> (statementNodePtr));
         (*whileNewNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileNode));
 
@@ -150,7 +158,7 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
 * @param stmtListNode Statement List Node of a procedure
 * @return Pointer to the root CfgNode so that we can access the whole CFG
 */
-CfgNode* buildCfg(const StmtlstNode* const stmtListNode)
+Pair<CfgNode*, size_t> buildCfg(const StmtlstNode* const stmtListNode)
 {
     // We want the Cfg node number to start from 0 
     size_t currentNumber = -1;
@@ -164,6 +172,6 @@ CfgNode* buildCfg(const StmtlstNode* const stmtListNode)
         StatementNode* stmtNode = (stmtListNode->statementList).at(j).get();
         currentCfgNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumber, stmtListSize);
     }
-    return cfgRootNode;
+    return Pair<CfgNode*, size_t>(cfgRootNode, currentNumber);
 }
 

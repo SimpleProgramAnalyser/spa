@@ -4,7 +4,7 @@
  */
 
 #ifndef SPA_CFG_TYPES_H
-#define SPA_CFG_TYPES_HSS
+#define SPA_CFG_TYPES_H
 
 #include <Types.h>
 #include <ast/AstTypes.h>
