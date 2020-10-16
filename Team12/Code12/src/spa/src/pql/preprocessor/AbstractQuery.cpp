@@ -51,7 +51,8 @@ DeclarationTable AbstractQuery::getDeclarationTable() const
     return declarationTable;
 }
 
-Boolean AbstractQuery::toReturnFalseResult() {
+Boolean AbstractQuery::toReturnFalseResult()
+{
     return isToReturnFalseResult;
 }
 
