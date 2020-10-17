@@ -1807,13 +1807,13 @@ procedure raymarch {
 5.     rd = 19;
 6.     read depth;
 7.     while (count < steps) {
-8.            print depth;
-9.            po = ro + rd * depth;
-10.          call spheresdf;
-11.          if (dist < epsilon) then {
-12.                  done = depth; }
-                else {
-13.                  depth = depth + dist;}
+8.          print depth;
+9.          po = ro + rd * depth;
+10.         call spheresdf;
+11.         if (dist < epsilon) then {
+12.             done = depth; }
+            else {
+13.             depth = depth + dist;}
 14.          count = count + 1; }}
 
 procedure spheresdf {

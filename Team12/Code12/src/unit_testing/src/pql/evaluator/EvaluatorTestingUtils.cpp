@@ -25,6 +25,33 @@ RelationshipsGraph setUpTestingGraph()
                               8);
 }
 
+std::unique_ptr<ResultsTable> setUpResultsTableWithSameTestingGraph()
+{
+    std::unique_ptr<ResultsTable> results = std::unique_ptr<ResultsTable>(new ResultsTable{DeclarationTable()});
+    std::vector<std::pair<std::string, std::string>> redGreenRelationships(
+        {{"ns25", "ew13"}, {"ns26", "ew14"}, {"ns1", "ew24"}});
+    std::vector<std::pair<std::string, std::string>> numPurpleRelationships(
+        {{"6", "dhobyghaut"}, {"3", "outrampark"}, {"16", "sengkang"}, {"stc", "sengkang"}, {"16", "outrampark"}});
+    std::vector<std::pair<std::string, std::string>> circleNumRelationships({{"onenorth", "23"},
+                                                                             {"harbourfront", "29"},
+                                                                             {"bartley", "12"},
+                                                                             {"hollandvillage", "21"},
+                                                                             {"marymount", "16"},
+                                                                             {"dhobyghaut", "1"},
+                                                                             {"esplanade", "3"}});
+    std::vector<std::pair<std::string, std::string>> ccDtRelationships(
+        {{"4", "15"}, {"19", "9"}, {"10", "26"}, {"E1", "16"}});
+    std::vector<std::pair<std::string, std::string>> circleRedRelationships(
+        {{"esplanade", "ns25"}, {"marymount", "ns1"}, {"marinabay", "ns27"}});
+
+    results->storeResultsTwo("red", "green", redGreenRelationships);
+    results->storeResultsTwo("num", "purple", numPurpleRelationships);
+    results->storeResultsTwo("circle", "num", circleNumRelationships);
+    results->storeResultsTwo("CC", "DT", ccDtRelationships);
+    results->storeResultsTwo("circle", "red", circleRedRelationships);
+    return std::move(results);
+}
+
 std::unique_ptr<ResultsTable> setUpResultsTable()
 {
     std::unique_ptr<ResultsTable> results = std::unique_ptr<ResultsTable>(new ResultsTable{DeclarationTable()});

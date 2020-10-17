@@ -1134,6 +1134,11 @@ previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
 *Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls `callee` directly.
 *PROCEDURE_LIST* returned is empty if there is no procedure that calls `callee` directly.
 
+`*PROCEDURE_LIST* getAllCallers();`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls some process(es) directly.
+*PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
+
 '''
 
 [#getAllCallersStar]
@@ -1141,6 +1146,11 @@ previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
 
 *Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls `callee` directly or indirectly.
 *PROCEDURE_LIST* returned is empty if there is no procedure that calls `callee`.
+
+`*PROCEDURE_LIST* getAllCallersStar();`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls some process(es) directly or
+indirectly. *PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
 
 '''
 
@@ -1150,6 +1160,11 @@ previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
 *Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that are called by `caller` directly.
 *PROCEDURE_LIST* returned is empty if there is no procedure that are called by `caller` directly.
 
+`*PROCEDURE_LIST* getAllCallees();`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that is called by some process(es) directly.
+*PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
+
 '''
 
 [#getAllCalleesStar]
@@ -1157,6 +1172,11 @@ previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
 
 *Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that are called by `caller` directly or indirectly.
 *PROCEDURE_LIST* returned is empty if there is no procedure that are called by `caller`.
+
+`*PROCEDURE_LIST* getAllCalleesStar();`
+
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that is called by some process(es) directly or
+indirectly. *PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
 
 '''
 

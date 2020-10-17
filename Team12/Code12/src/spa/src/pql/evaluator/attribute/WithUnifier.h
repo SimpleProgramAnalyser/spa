@@ -1,6 +1,6 @@
 /**
- * WithQualifier holds logic required for Query Evaluator
- * to qualify the arguments in a with clause.
+ * WithUnifier holds logic required for Query Evaluator
+ * to unify the arguments in a with clause.
  */
 
 #ifndef SPA_PQL_WITH_QUALIFIER_H

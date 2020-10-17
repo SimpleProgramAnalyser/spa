@@ -19,6 +19,7 @@ private:
     ResultsTable resultsTable;
 
     RawQueryResult evaluateSyntacticallyValidQuery();
+    RawQueryResult evaluateSelectSynonym();
     Void evaluateClause(Clause* clause);
 
 public:
@@ -34,6 +35,30 @@ public:
      */
     RawQueryResult evaluateQuery();
 };
+
+/**
+ * Converts a paired result to a vector of strings, where
+ * each string is a tuple with elements separated by spaces.
+ *
+ * Example: Select <a, p> ... returns {{"a", "b"}, {"c", "d"}}
+ * This method will return {"a b", "c d"}.
+ *
+ * @param resultPairs The pairs of results to be converted.
+ * @return A vector of strings with each tuple as a single string.
+ */
+Vector<String> convertToTupleString(const PairedResult& resultPairs);
+
+/**
+ * Converts a n-tupled result to a vector of strings, where
+ * each string is a tuple with elements separated by spaces.
+ *
+ * Example: Select <a, p, x> ... returns {{"e", "1", "n"}, {"f", "2", "m"}}
+ * This method will return {"e 1 n", "f 2 m"}.
+ *
+ * @param resultTuples The n-tuples of results to be converted.
+ * @return A vector of strings with each tuple as a single string.
+ */
+Vector<String> convertToTupleString(const NtupledResult& resultTuples);
 
 /**
  * Evaluates a PQL query, and interacts with the PKB,

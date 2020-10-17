@@ -22,6 +22,12 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
 
+    # cfg library
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.cpp
+
     # design extractor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
@@ -35,6 +41,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.cpp
 
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
@@ -43,6 +53,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/ErrorMessages.cpp
 
     # frontend manager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
@@ -87,6 +98,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Attribute.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Errorable.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Errorable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryErrorType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonymVector.cpp
 
     # pql/evaluator
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
@@ -129,8 +144,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/WhileMatcher.cpp
 
     # pql/evaluator/attribute
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.cpp
 
     # pql/projector
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp

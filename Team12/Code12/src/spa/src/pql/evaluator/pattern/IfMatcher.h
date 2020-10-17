@@ -6,8 +6,7 @@
 #ifndef SPA_PQL_IF_MATCHER_H
 #define SPA_PQL_IF_MATCHER_H
 
-#include "pql/evaluator/ResultsTable.h"
-#include "pql/preprocessor/AqTypes.h"
+#include "PatternMatcherUtil.h"
 
 /**
  * Given an if pattern clause, retrieves the SIMPLE

@@ -4,13 +4,15 @@
  */
 
 #include "../../unit_testing/src/ast_utils/AstUtils.h"
+#include "Utils.h"
 #include "catch.hpp"
 #include "frontend/FrontendManager.h"
 #include "pkb/PKB.h"
 
 TEST_CASE("Multiple procedures Spheresdf Follows")
 {
-    parseSimple(getProgram20String_multipleProceduresSpheresdf());
+    UiStub ui;
+    parseSimple(getProgram20String_multipleProceduresSpheresdf(), ui);
     SECTION("Follows relationships stored correctly for test program - getAllBeforeStatementsTyped")
     {
 

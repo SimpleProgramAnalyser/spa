@@ -885,14 +885,13 @@ TEST_CASE("Such That Follows* and Pattern Statement")
     REQUIRE(abstractQuery.isInvalid());
 }
 
-// TODO: Uncomment it when with clause is implemented
-// TEST_CASE("Such That Follows* and With Statement")
-//{
-//    AbstractQuery abstractQuery
-//        = processQuery("assign a; Select a and such that Follows* (a, _) and with a.stmt# = 12");
-//
-//    REQUIRE(abstractQuery.isInvalid());
-//}
+TEST_CASE("Such That Follows* and With Statement")
+{
+    AbstractQuery abstractQuery
+        = processQuery("assign a; Select a and such that Follows* (a, _) and with a.stmt# = 12");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
 
 TEST_CASE("'and' occurs before clauses")
 {
@@ -1159,6 +1158,44 @@ TEST_CASE("Select BOOLEAN with Follows")
     REQUIRE(equal);
 }
 
+TEST_CASE("Select BOOLEAN semantically incorrect query")
+{
+    AbstractQuery abstractQuery = processQuery("read re; Select BOOLEAN such that Parent (re, _)");
+
+    REQUIRE(abstractQuery.toReturnFalseResult());
+}
+//
+// TEST_CASE("Select BOOLEAN semantically then syntactically incorrect query")
+//{
+//    AbstractQuery abstractQuery = processQuery("read re; Select BOOLEAN such that Parent (re, _) with 5");
+//
+//    REQUIRE(abstractQuery.isInvalid());
+//    REQUIRE(!abstractQuery.toReturnFalseResult());
+//}
+
+TEST_CASE("No declarations Select BOOLEAN")
+{
+    AbstractQuery abstractQuery = processQuery("Select BOOLEAN");
+
+    REQUIRE(!abstractQuery.isInvalid());
+    REQUIRE(!abstractQuery.toReturnFalseResult());
+}
+
+TEST_CASE("No declarations Select BOOLEAN with clauses")
+{
+    AbstractQuery abstractQuery = processQuery("Select BOOLEAN with 5 = 5");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+            .addWithClause(IntegerRefType, "5", NonExistentType, NoAttributeType,
+                           IntegerRefType, "5", NonExistentType, NoAttributeType)
+            .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
 /************************************************************************************/
 /*  Select Tuple                                                                    */
 /************************************************************************************/
@@ -1206,6 +1243,13 @@ TEST_CASE("Select Tuple <s1, s2, v1, v2, w, ifs> such that Follows")
     bool equal = abstractQuery == expectedAbstractQuery;
 
     REQUIRE(equal);
+}
+
+TEST_CASE("Select empty tuple")
+{
+    AbstractQuery abstractQuery = processQuery("stmt s; Select <  \n\t \v > such that Follows (s, _)");
+
+    REQUIRE(abstractQuery.isInvalid());
 }
 
 /************************************************************************************/

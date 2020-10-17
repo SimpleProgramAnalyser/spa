@@ -19,6 +19,11 @@ private:
     // case where both are known
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
 
+    Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) const;
+    Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal) const;
+    Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) const;
+    Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) const;
+
 public:
     explicit NextEvaluator(ResultsTable& resultsTable);
     Void evaluateNextClause(const Reference& leftRef, const Reference& rightRef);

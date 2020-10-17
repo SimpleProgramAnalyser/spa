@@ -269,30 +269,9 @@ TEST_CASE("Relationships are stored properly in ResultsTable")
 
 TEST_CASE("Results of two synonyms merges to give expected relationships")
 {
-    std::vector<std::pair<std::string, std::string>> redGreenRelationships(
-        {{"ns25", "ew13"}, {"ns26", "ew14"}, {"ns1", "ew24"}});
-    std::vector<std::pair<std::string, std::string>> numPurpleRelationships(
-        {{"6", "dhobyghaut"}, {"3", "outrampark"}, {"16", "sengkang"}, {"stc", "sengkang"}, {"16", "outrampark"}});
-    std::vector<std::pair<std::string, std::string>> circleNumRelationships({{"onenorth", "23"},
-                                                                             {"harbourfront", "29"},
-                                                                             {"bartley", "12"},
-                                                                             {"hollandvillage", "21"},
-                                                                             {"marymount", "16"},
-                                                                             {"dhobyghaut", "1"},
-                                                                             {"esplanade", "3"}});
-    std::vector<std::pair<std::string, std::string>> ccDtRelationships(
-        {{"4", "15"}, {"19", "9"}, {"10", "26"}, {"E1", "16"}});
-    std::vector<std::pair<std::string, std::string>> circleRedRelationships(
-        {{"esplanade", "ns25"}, {"marymount", "ns1"}, {"marinabay", "ns27"}});
-
-    ResultsTable table(DeclarationTable{});
-    table.storeResultsTwo("red", "green", redGreenRelationships);
-    table.storeResultsTwo("num", "purple", numPurpleRelationships);
-    table.storeResultsTwo("circle", "num", circleNumRelationships);
-    table.storeResultsTwo("CC", "DT", ccDtRelationships);
-    table.storeResultsTwo("circle", "red", circleRedRelationships);
-    table.getResultsZero();
-    REQUIRE(table.getRelationshipsGraph().compareStructure(setUpTestingGraph()));
+    std::unique_ptr<ResultsTable> table = setUpResultsTableWithSameTestingGraph();
+    table->getResultsZero();
+    REQUIRE(table->getRelationshipsGraph().compareStructure(setUpTestingGraph()));
 }
 
 TEST_CASE("Results of two synonyms merges to give empty results")
@@ -325,75 +304,219 @@ TEST_CASE("Results of two synonyms merges to give empty results")
 
 TEST_CASE("getResultsTwo returns expected relationships")
 {
-    std::vector<std::pair<std::string, std::string>> redGreenRelationships(
-        {{"ns25", "ew13"}, {"ns26", "ew14"}, {"ns1", "ew24"}});
-    std::vector<std::pair<std::string, std::string>> numPurpleRelationships(
-        {{"6", "dhobyghaut"}, {"3", "outrampark"}, {"16", "sengkang"}, {"stc", "sengkang"}, {"16", "outrampark"}});
-    std::vector<std::pair<std::string, std::string>> circleNumRelationships({{"onenorth", "23"},
-                                                                             {"harbourfront", "29"},
-                                                                             {"bartley", "12"},
-                                                                             {"hollandvillage", "21"},
-                                                                             {"marymount", "16"},
-                                                                             {"dhobyghaut", "1"},
-                                                                             {"esplanade", "3"}});
-    std::vector<std::pair<std::string, std::string>> ccDtRelationships(
-        {{"4", "15"}, {"19", "9"}, {"10", "26"}, {"E1", "16"}});
-    std::vector<std::pair<std::string, std::string>> circleRedRelationships(
-        {{"esplanade", "ns25"}, {"marymount", "ns1"}, {"marinabay", "ns27"}});
-
-    ResultsTable table(DeclarationTable{});
-    table.storeResultsTwo("red", "green", redGreenRelationships);
-    table.storeResultsTwo("num", "purple", numPurpleRelationships);
-    table.storeResultsTwo("circle", "num", circleNumRelationships);
-    table.storeResultsTwo("CC", "DT", ccDtRelationships);
-    table.storeResultsTwo("circle", "red", circleRedRelationships);
+    std::unique_ptr<ResultsTable> table = setUpResultsTableWithSameTestingGraph();
 
     SECTION("getResultsTwo returns correct relationships for related synonyms")
     {
-        requireVectorsHaveSameElements(table.getResultsTwo("red", "green"), {{"ns1", "ew24"}, {"ns25", "ew13"}});
-        requireVectorsHaveSameElements(table.getResultsTwo("num", "circle"), {{"16", "marymount"}, {"3", "esplanade"}});
-        requireVectorsHaveSameElements(table.getResultsTwo("purple", "green"),
+        requireVectorsHaveSameElements(table->getResultsTwo("red", "green"), {{"ns1", "ew24"}, {"ns25", "ew13"}});
+        requireVectorsHaveSameElements(table->getResultsTwo("num", "circle"),
+                                       {{"16", "marymount"}, {"3", "esplanade"}});
+        requireVectorsHaveSameElements(table->getResultsTwo("purple", "green"),
                                        {{"sengkang", "ew24"}, {"outrampark", "ew24"}, {"outrampark", "ew13"}});
-        requireVectorsHaveSameElements(table.getResultsTwo("DT", "CC"),
+        requireVectorsHaveSameElements(table->getResultsTwo("DT", "CC"),
                                        {{"15", "4"}, {"9", "19"}, {"26", "10"}, {"16", "E1"}});
     }
 
     SECTION("getResultsTwo returns cross-product for unrelated synonyms")
     {
-        requireVectorsHaveSameElements(table.getResultsTwo("red", "DT"), {{"ns1", "15"},
-                                                                          {"ns25", "15"},
-                                                                          {"ns1", "9"},
-                                                                          {"ns25", "9"},
-                                                                          {"ns1", "26"},
-                                                                          {"ns25", "26"},
-                                                                          {"ns1", "16"},
-                                                                          {"ns25", "16"}});
+        requireVectorsHaveSameElements(table->getResultsTwo("red", "DT"), {{"ns1", "15"},
+                                                                           {"ns25", "15"},
+                                                                           {"ns1", "9"},
+                                                                           {"ns25", "9"},
+                                                                           {"ns1", "26"},
+                                                                           {"ns25", "26"},
+                                                                           {"ns1", "16"},
+                                                                           {"ns25", "16"}});
         requireVectorsHaveSameElements(
-            table.getResultsTwo("num", "CC"),
+            table->getResultsTwo("num", "CC"),
             {{"16", "4"}, {"3", "4"}, {"16", "19"}, {"3", "19"}, {"16", "10"}, {"3", "10"}, {"16", "E1"}, {"3", "E1"}});
-        requireVectorsHaveSameElements(table.getResultsTwo("CC", "purple"), {{"4", "sengkang"},
-                                                                             {"4", "outrampark"},
-                                                                             {"19", "sengkang"},
-                                                                             {"19", "outrampark"},
-                                                                             {"10", "sengkang"},
-                                                                             {"10", "outrampark"},
-                                                                             {"E1", "sengkang"},
-                                                                             {"E1", "outrampark"}});
-        requireVectorsHaveSameElements(table.getResultsTwo("DT", "circle"), {{"15", "marymount"},
-                                                                             {"15", "esplanade"},
-                                                                             {"9", "marymount"},
-                                                                             {"9", "esplanade"},
-                                                                             {"26", "marymount"},
-                                                                             {"26", "esplanade"},
-                                                                             {"16", "marymount"},
-                                                                             {"16", "esplanade"}});
-        requireVectorsHaveSameElements(table.getResultsTwo("green", "CC"), {{"ew24", "4"},
-                                                                            {"ew13", "4"},
-                                                                            {"ew24", "19"},
-                                                                            {"ew13", "19"},
-                                                                            {"ew24", "10"},
-                                                                            {"ew13", "10"},
-                                                                            {"ew24", "E1"},
-                                                                            {"ew13", "E1"}});
+        requireVectorsHaveSameElements(table->getResultsTwo("CC", "purple"), {{"4", "sengkang"},
+                                                                              {"4", "outrampark"},
+                                                                              {"19", "sengkang"},
+                                                                              {"19", "outrampark"},
+                                                                              {"10", "sengkang"},
+                                                                              {"10", "outrampark"},
+                                                                              {"E1", "sengkang"},
+                                                                              {"E1", "outrampark"}});
+        requireVectorsHaveSameElements(table->getResultsTwo("DT", "circle"), {{"15", "marymount"},
+                                                                              {"15", "esplanade"},
+                                                                              {"9", "marymount"},
+                                                                              {"9", "esplanade"},
+                                                                              {"26", "marymount"},
+                                                                              {"26", "esplanade"},
+                                                                              {"16", "marymount"},
+                                                                              {"16", "esplanade"}});
+        requireVectorsHaveSameElements(table->getResultsTwo("green", "CC"), {{"ew24", "4"},
+                                                                             {"ew13", "4"},
+                                                                             {"ew24", "19"},
+                                                                             {"ew13", "19"},
+                                                                             {"ew24", "10"},
+                                                                             {"ew13", "10"},
+                                                                             {"ew24", "E1"},
+                                                                             {"ew13", "E1"}});
+    }
+}
+
+TEST_CASE("getResultsN returns expected relationships")
+{
+    std::unique_ptr<ResultsTable> table = setUpResultsTableWithSameTestingGraph();
+    NtupledResult results = table->getResultsN({"red", "green", "num", "purple", "circle", "CC", "DT"});
+    requireVectorsHaveSameElements(results, {{"ns1", "ew24", "16", "sengkang", "marymount", "4", "15"},
+                                             {"ns1", "ew24", "16", "outrampark", "marymount", "4", "15"},
+                                             {"ns25", "ew13", "3", "outrampark", "esplanade", "4", "15"},
+                                             {"ns1", "ew24", "16", "sengkang", "marymount", "19", "9"},
+                                             {"ns1", "ew24", "16", "outrampark", "marymount", "19", "9"},
+                                             {"ns25", "ew13", "3", "outrampark", "esplanade", "19", "9"},
+                                             {"ns1", "ew24", "16", "sengkang", "marymount", "10", "26"},
+                                             {"ns1", "ew24", "16", "outrampark", "marymount", "10", "26"},
+                                             {"ns25", "ew13", "3", "outrampark", "esplanade", "10", "26"},
+                                             {"ns1", "ew24", "16", "sengkang", "marymount", "E1", "16"},
+                                             {"ns1", "ew24", "16", "outrampark", "marymount", "E1", "16"},
+                                             {"ns25", "ew13", "3", "outrampark", "esplanade", "E1", "16"}});
+}
+
+TEST_CASE("getResultsN performs Cartesian product for repeated synonyms")
+{
+    ResultsTable table(DeclarationTable{});
+    table.storeResultsOne("o", {"1", "2", "3"});
+    table.storeResultsOne("p", {"4", "5", "6"});
+    table.storeResultsOne("q", {"Cpp", "Java", "Python", "Rust"});
+    table.storeResultsOne("r", {"a", "b", "c", "d", "e"});
+
+    SECTION("Select <p, p, p>")
+    {
+        NtupledResult results = table.getResultsN({"p", "p", "p"});
+        requireVectorsHaveSameElements(results, {{"4", "4", "4"}, {"4", "4", "5"}, {"4", "4", "6"}, {"4", "5", "4"},
+                                                 {"4", "5", "5"}, {"4", "5", "6"}, {"4", "6", "4"}, {"4", "6", "5"},
+                                                 {"4", "6", "6"}, {"5", "4", "4"}, {"5", "4", "5"}, {"5", "4", "6"},
+                                                 {"5", "5", "4"}, {"5", "5", "5"}, {"5", "5", "6"}, {"5", "6", "4"},
+                                                 {"5", "6", "5"}, {"5", "6", "6"}, {"6", "4", "4"}, {"6", "4", "5"},
+                                                 {"6", "4", "6"}, {"6", "5", "4"}, {"6", "5", "5"}, {"6", "5", "6"},
+                                                 {"6", "6", "4"}, {"6", "6", "5"}, {"6", "6", "6"}});
+    }
+
+    SECTION("Select <p, o, p>")
+    {
+        NtupledResult results = table.getResultsN({"p", "o", "p"});
+        requireVectorsHaveSameElements(results, {{"4", "1", "4"}, {"4", "1", "5"}, {"4", "1", "6"}, {"4", "2", "4"},
+                                                 {"4", "2", "5"}, {"4", "2", "6"}, {"4", "3", "4"}, {"4", "3", "5"},
+                                                 {"4", "3", "6"}, {"5", "1", "4"}, {"5", "1", "5"}, {"5", "1", "6"},
+                                                 {"5", "2", "4"}, {"5", "2", "5"}, {"5", "2", "6"}, {"5", "3", "4"},
+                                                 {"5", "3", "5"}, {"5", "3", "6"}, {"6", "1", "4"}, {"6", "1", "5"},
+                                                 {"6", "1", "6"}, {"6", "2", "4"}, {"6", "2", "5"}, {"6", "2", "6"},
+                                                 {"6", "3", "4"}, {"6", "3", "5"}, {"6", "3", "6"}});
+    }
+
+    SECTION("Select <p, o, p, o>")
+    {
+        NtupledResult results = table.getResultsN({"p", "o", "p", "o"});
+        requireVectorsHaveSameElements(
+            results, {{"4", "1", "4", "1"}, {"4", "1", "5", "1"}, {"4", "1", "6", "1"}, {"4", "2", "4", "1"},
+                      {"4", "2", "5", "1"}, {"4", "2", "6", "1"}, {"4", "3", "4", "1"}, {"4", "3", "5", "1"},
+                      {"4", "3", "6", "1"}, {"5", "1", "4", "1"}, {"5", "1", "5", "1"}, {"5", "1", "6", "1"},
+                      {"5", "2", "4", "1"}, {"5", "2", "5", "1"}, {"5", "2", "6", "1"}, {"5", "3", "4", "1"},
+                      {"5", "3", "5", "1"}, {"5", "3", "6", "1"}, {"6", "1", "4", "1"}, {"6", "1", "5", "1"},
+                      {"6", "1", "6", "1"}, {"6", "2", "4", "1"}, {"6", "2", "5", "1"}, {"6", "2", "6", "1"},
+                      {"6", "3", "4", "1"}, {"6", "3", "5", "1"}, {"6", "3", "6", "1"}, {"4", "1", "4", "2"},
+                      {"4", "1", "5", "2"}, {"4", "1", "6", "2"}, {"4", "2", "4", "2"}, {"4", "2", "5", "2"},
+                      {"4", "2", "6", "2"}, {"4", "3", "4", "2"}, {"4", "3", "5", "2"}, {"4", "3", "6", "2"},
+                      {"5", "1", "4", "2"}, {"5", "1", "5", "2"}, {"5", "1", "6", "2"}, {"5", "2", "4", "2"},
+                      {"5", "2", "5", "2"}, {"5", "2", "6", "2"}, {"5", "3", "4", "2"}, {"5", "3", "5", "2"},
+                      {"5", "3", "6", "2"}, {"6", "1", "4", "2"}, {"6", "1", "5", "2"}, {"6", "1", "6", "2"},
+                      {"6", "2", "4", "2"}, {"6", "2", "5", "2"}, {"6", "2", "6", "2"}, {"6", "3", "4", "2"},
+                      {"6", "3", "5", "2"}, {"6", "3", "6", "2"}, {"4", "1", "4", "3"}, {"4", "1", "5", "3"},
+                      {"4", "1", "6", "3"}, {"4", "2", "4", "3"}, {"4", "2", "5", "3"}, {"4", "2", "6", "3"},
+                      {"4", "3", "4", "3"}, {"4", "3", "5", "3"}, {"4", "3", "6", "3"}, {"5", "1", "4", "3"},
+                      {"5", "1", "5", "3"}, {"5", "1", "6", "3"}, {"5", "2", "4", "3"}, {"5", "2", "5", "3"},
+                      {"5", "2", "6", "3"}, {"5", "3", "4", "3"}, {"5", "3", "5", "3"}, {"5", "3", "6", "3"},
+                      {"6", "1", "4", "3"}, {"6", "1", "5", "3"}, {"6", "1", "6", "3"}, {"6", "2", "4", "3"},
+                      {"6", "2", "5", "3"}, {"6", "2", "6", "3"}, {"6", "3", "4", "3"}, {"6", "3", "5", "3"},
+                      {"6", "3", "6", "3"}});
+    }
+
+    SECTION("Select <o, p, q, p>")
+    {
+        NtupledResult results = table.getResultsN({"o", "p", "q", "p"});
+        requireVectorsHaveSameElements(
+            results,
+            {{"1", "4", "Cpp", "4"},    {"1", "4", "Cpp", "5"},    {"1", "4", "Cpp", "6"},  {"1", "4", "Python", "4"},
+             {"1", "4", "Python", "5"}, {"1", "4", "Python", "6"}, {"1", "4", "Java", "4"}, {"1", "4", "Java", "5"},
+             {"1", "4", "Java", "6"},   {"1", "4", "Rust", "4"},   {"1", "4", "Rust", "5"}, {"1", "4", "Rust", "6"},
+             {"1", "5", "Cpp", "4"},    {"1", "5", "Cpp", "5"},    {"1", "5", "Cpp", "6"},  {"1", "5", "Python", "4"},
+             {"1", "5", "Python", "5"}, {"1", "5", "Python", "6"}, {"1", "5", "Java", "4"}, {"1", "5", "Java", "5"},
+             {"1", "5", "Java", "6"},   {"1", "5", "Rust", "4"},   {"1", "5", "Rust", "5"}, {"1", "5", "Rust", "6"},
+             {"1", "6", "Cpp", "4"},    {"1", "6", "Cpp", "5"},    {"1", "6", "Cpp", "6"},  {"1", "6", "Python", "4"},
+             {"1", "6", "Python", "5"}, {"1", "6", "Python", "6"}, {"1", "6", "Java", "4"}, {"1", "6", "Java", "5"},
+             {"1", "6", "Java", "6"},   {"1", "6", "Rust", "4"},   {"1", "6", "Rust", "5"}, {"1", "6", "Rust", "6"},
+             {"2", "4", "Cpp", "4"},    {"2", "4", "Cpp", "5"},    {"2", "4", "Cpp", "6"},  {"2", "4", "Python", "4"},
+             {"2", "4", "Python", "5"}, {"2", "4", "Python", "6"}, {"2", "4", "Java", "4"}, {"2", "4", "Java", "5"},
+             {"2", "4", "Java", "6"},   {"2", "4", "Rust", "4"},   {"2", "4", "Rust", "5"}, {"2", "4", "Rust", "6"},
+             {"2", "5", "Cpp", "4"},    {"2", "5", "Cpp", "5"},    {"2", "5", "Cpp", "6"},  {"2", "5", "Python", "4"},
+             {"2", "5", "Python", "5"}, {"2", "5", "Python", "6"}, {"2", "5", "Java", "4"}, {"2", "5", "Java", "5"},
+             {"2", "5", "Java", "6"},   {"2", "5", "Rust", "4"},   {"2", "5", "Rust", "5"}, {"2", "5", "Rust", "6"},
+             {"2", "6", "Cpp", "4"},    {"2", "6", "Cpp", "5"},    {"2", "6", "Cpp", "6"},  {"2", "6", "Python", "4"},
+             {"2", "6", "Python", "5"}, {"2", "6", "Python", "6"}, {"2", "6", "Java", "4"}, {"2", "6", "Java", "5"},
+             {"2", "6", "Java", "6"},   {"2", "6", "Rust", "4"},   {"2", "6", "Rust", "5"}, {"2", "6", "Rust", "6"},
+             {"3", "4", "Cpp", "4"},    {"3", "4", "Cpp", "5"},    {"3", "4", "Cpp", "6"},  {"3", "4", "Python", "4"},
+             {"3", "4", "Python", "5"}, {"3", "4", "Python", "6"}, {"3", "4", "Java", "4"}, {"3", "4", "Java", "5"},
+             {"3", "4", "Java", "6"},   {"3", "4", "Rust", "4"},   {"3", "4", "Rust", "5"}, {"3", "4", "Rust", "6"},
+             {"3", "5", "Cpp", "4"},    {"3", "5", "Cpp", "5"},    {"3", "5", "Cpp", "6"},  {"3", "5", "Python", "4"},
+             {"3", "5", "Python", "5"}, {"3", "5", "Python", "6"}, {"3", "5", "Java", "4"}, {"3", "5", "Java", "5"},
+             {"3", "5", "Java", "6"},   {"3", "5", "Rust", "4"},   {"3", "5", "Rust", "5"}, {"3", "5", "Rust", "6"},
+             {"3", "6", "Cpp", "4"},    {"3", "6", "Cpp", "5"},    {"3", "6", "Cpp", "6"},  {"3", "6", "Python", "4"},
+             {"3", "6", "Python", "5"}, {"3", "6", "Python", "6"}, {"3", "6", "Java", "4"}, {"3", "6", "Java", "5"},
+             {"3", "6", "Java", "6"},   {"3", "6", "Rust", "4"},   {"3", "6", "Rust", "5"}, {"3", "6", "Rust", "6"}});
+    }
+
+    SECTION("Select <p, q, r, p>")
+    {
+        NtupledResult results = table.getResultsN({"p", "q", "r", "p"});
+        requireVectorsHaveSameElements(
+            results,
+            {{"4", "Cpp", "a", "4"},    {"4", "Cpp", "a", "5"},    {"4", "Cpp", "a", "6"},    {"4", "Cpp", "b", "4"},
+             {"4", "Cpp", "b", "5"},    {"4", "Cpp", "b", "6"},    {"4", "Cpp", "c", "4"},    {"4", "Cpp", "c", "5"},
+             {"4", "Cpp", "c", "6"},    {"4", "Cpp", "d", "4"},    {"4", "Cpp", "d", "5"},    {"4", "Cpp", "d", "6"},
+             {"4", "Cpp", "e", "4"},    {"4", "Cpp", "e", "5"},    {"4", "Cpp", "e", "6"},    {"4", "Java", "a", "4"},
+             {"4", "Java", "a", "5"},   {"4", "Java", "a", "6"},   {"4", "Java", "b", "4"},   {"4", "Java", "b", "5"},
+             {"4", "Java", "b", "6"},   {"4", "Java", "c", "4"},   {"4", "Java", "c", "5"},   {"4", "Java", "c", "6"},
+             {"4", "Java", "d", "4"},   {"4", "Java", "d", "5"},   {"4", "Java", "d", "6"},   {"4", "Java", "e", "4"},
+             {"4", "Java", "e", "5"},   {"4", "Java", "e", "6"},   {"4", "Python", "a", "4"}, {"4", "Python", "a", "5"},
+             {"4", "Python", "a", "6"}, {"4", "Python", "b", "4"}, {"4", "Python", "b", "5"}, {"4", "Python", "b", "6"},
+             {"4", "Python", "c", "4"}, {"4", "Python", "c", "5"}, {"4", "Python", "c", "6"}, {"4", "Python", "d", "4"},
+             {"4", "Python", "d", "5"}, {"4", "Python", "d", "6"}, {"4", "Python", "e", "4"}, {"4", "Python", "e", "5"},
+             {"4", "Python", "e", "6"}, {"4", "Rust", "a", "4"},   {"4", "Rust", "a", "5"},   {"4", "Rust", "a", "6"},
+             {"4", "Rust", "b", "4"},   {"4", "Rust", "b", "5"},   {"4", "Rust", "b", "6"},   {"4", "Rust", "c", "4"},
+             {"4", "Rust", "c", "5"},   {"4", "Rust", "c", "6"},   {"4", "Rust", "d", "4"},   {"4", "Rust", "d", "5"},
+             {"4", "Rust", "d", "6"},   {"4", "Rust", "e", "4"},   {"4", "Rust", "e", "5"},   {"4", "Rust", "e", "6"},
+             {"5", "Cpp", "a", "4"},    {"5", "Cpp", "a", "5"},    {"5", "Cpp", "a", "6"},    {"5", "Cpp", "b", "4"},
+             {"5", "Cpp", "b", "5"},    {"5", "Cpp", "b", "6"},    {"5", "Cpp", "c", "4"},    {"5", "Cpp", "c", "5"},
+             {"5", "Cpp", "c", "6"},    {"5", "Cpp", "d", "4"},    {"5", "Cpp", "d", "5"},    {"5", "Cpp", "d", "6"},
+             {"5", "Cpp", "e", "4"},    {"5", "Cpp", "e", "5"},    {"5", "Cpp", "e", "6"},    {"5", "Java", "a", "4"},
+             {"5", "Java", "a", "5"},   {"5", "Java", "a", "6"},   {"5", "Java", "b", "4"},   {"5", "Java", "b", "5"},
+             {"5", "Java", "b", "6"},   {"5", "Java", "c", "4"},   {"5", "Java", "c", "5"},   {"5", "Java", "c", "6"},
+             {"5", "Java", "d", "4"},   {"5", "Java", "d", "5"},   {"5", "Java", "d", "6"},   {"5", "Java", "e", "4"},
+             {"5", "Java", "e", "5"},   {"5", "Java", "e", "6"},   {"5", "Python", "a", "4"}, {"5", "Python", "a", "5"},
+             {"5", "Python", "a", "6"}, {"5", "Python", "b", "4"}, {"5", "Python", "b", "5"}, {"5", "Python", "b", "6"},
+             {"5", "Python", "c", "4"}, {"5", "Python", "c", "5"}, {"5", "Python", "c", "6"}, {"5", "Python", "d", "4"},
+             {"5", "Python", "d", "5"}, {"5", "Python", "d", "6"}, {"5", "Python", "e", "4"}, {"5", "Python", "e", "5"},
+             {"5", "Python", "e", "6"}, {"5", "Rust", "a", "4"},   {"5", "Rust", "a", "5"},   {"5", "Rust", "a", "6"},
+             {"5", "Rust", "b", "4"},   {"5", "Rust", "b", "5"},   {"5", "Rust", "b", "6"},   {"5", "Rust", "c", "4"},
+             {"5", "Rust", "c", "5"},   {"5", "Rust", "c", "6"},   {"5", "Rust", "d", "4"},   {"5", "Rust", "d", "5"},
+             {"5", "Rust", "d", "6"},   {"5", "Rust", "e", "4"},   {"5", "Rust", "e", "5"},   {"5", "Rust", "e", "6"},
+             {"6", "Cpp", "a", "4"},    {"6", "Cpp", "a", "5"},    {"6", "Cpp", "a", "6"},    {"6", "Cpp", "b", "4"},
+             {"6", "Cpp", "b", "5"},    {"6", "Cpp", "b", "6"},    {"6", "Cpp", "c", "4"},    {"6", "Cpp", "c", "5"},
+             {"6", "Cpp", "c", "6"},    {"6", "Cpp", "d", "4"},    {"6", "Cpp", "d", "5"},    {"6", "Cpp", "d", "6"},
+             {"6", "Cpp", "e", "4"},    {"6", "Cpp", "e", "5"},    {"6", "Cpp", "e", "6"},    {"6", "Java", "a", "4"},
+             {"6", "Java", "a", "5"},   {"6", "Java", "a", "6"},   {"6", "Java", "b", "4"},   {"6", "Java", "b", "5"},
+             {"6", "Java", "b", "6"},   {"6", "Java", "c", "4"},   {"6", "Java", "c", "5"},   {"6", "Java", "c", "6"},
+             {"6", "Java", "d", "4"},   {"6", "Java", "d", "5"},   {"6", "Java", "d", "6"},   {"6", "Java", "e", "4"},
+             {"6", "Java", "e", "5"},   {"6", "Java", "e", "6"},   {"6", "Python", "a", "4"}, {"6", "Python", "a", "5"},
+             {"6", "Python", "a", "6"}, {"6", "Python", "b", "4"}, {"6", "Python", "b", "5"}, {"6", "Python", "b", "6"},
+             {"6", "Python", "c", "4"}, {"6", "Python", "c", "5"}, {"6", "Python", "c", "6"}, {"6", "Python", "d", "4"},
+             {"6", "Python", "d", "5"}, {"6", "Python", "d", "6"}, {"6", "Python", "e", "4"}, {"6", "Python", "e", "5"},
+             {"6", "Python", "e", "6"}, {"6", "Rust", "a", "4"},   {"6", "Rust", "a", "5"},   {"6", "Rust", "a", "6"},
+             {"6", "Rust", "b", "4"},   {"6", "Rust", "b", "5"},   {"6", "Rust", "b", "6"},   {"6", "Rust", "c", "4"},
+             {"6", "Rust", "c", "5"},   {"6", "Rust", "c", "6"},   {"6", "Rust", "d", "4"},   {"6", "Rust", "d", "5"},
+             {"6", "Rust", "d", "6"},   {"6", "Rust", "e", "4"},   {"6", "Rust", "e", "5"},   {"6", "Rust", "e", "6"}});
     }
 }

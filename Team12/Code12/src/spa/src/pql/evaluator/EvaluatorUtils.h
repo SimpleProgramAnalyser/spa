@@ -18,6 +18,13 @@ typedef std::string Value;
 
 typedef Vector<Pair<String, String>> PairedResult;
 
+typedef Vector<Vector<String>> NtupledResult;
+
+// A hash function for a n-tuple (Vector<String>)
+struct NtupleHasher {
+    std::size_t operator()(const Vector<String>& tuple) const;
+};
+
 // Foreward declaration of SynonymWithValue
 class SynonymWithValue;
 
@@ -76,6 +83,29 @@ public:
 // A hash function for SynonymWithValue
 struct SynonymWithValueHasher {
     std::size_t operator()(const SynonymWithValue& swv) const;
+};
+
+// Helper class to merge pairs of strings
+class ResultsRelation {
+public:
+    String value1;
+    String value2;
+
+    ResultsRelation(String v1, String v2): value1(std::move(v1)), value2(std::move(v2)) {}
+    bool operator==(const ResultsRelation& rr) const
+    {
+        return this->value1 == rr.value1 && this->value2 == rr.value2;
+    }
+};
+
+// Hash function for ResultsRelation
+struct ResultsRelationHasher {
+    std::size_t operator()(const ResultsRelation& rr) const
+    {
+        std::hash<std::string> stringHasher;
+        std::size_t hashedA = stringHasher(rr.value1);
+        return (hashedA ^ (stringHasher(rr.value2) + uint32_t(2654435769) + (hashedA * 64) + (hashedA / 4)));
+    }
 };
 
 /*

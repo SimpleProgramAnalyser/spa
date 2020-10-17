@@ -38,9 +38,11 @@ private:
     AffectsEvaluator* affectsEvaluator;
     NextEvaluator* nextEvaluator;
 
-    Boolean checkIfSynonymInMap(const Synonym& syn);
+    Boolean checkIfSynonymInMap(const Synonym& syn) const;
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
     ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
+    NtupledResult calculateMatchingTuples(const Vector<Synonym>& synonyms);
+    NtupledResult joinAllSynonyms(const Vector<Synonym>& syns);
 
     /**
      * Creates a evaluation closure for one synonym's results.
@@ -84,7 +86,7 @@ private:
      * @param syn The synonym to look up.
      * @return List of results for the synonym.
      */
-    ClauseResult get(const Synonym& syn);
+    ClauseResult get(const Synonym& syn) const;
 
     /**
      * Removes all relationships between the leftValue of synonym left
@@ -227,7 +229,7 @@ public:
      * @return The type of the synonym. If the synonym is
      *         not in the table, return NonExistentType.
      */
-    DesignEntityType getTypeOfSynonym(const Synonym& syn);
+    DesignEntityType getTypeOfSynonym(const Synonym& syn) const;
 
     /**
      * Checks if a synonym has been restricted to only match a
@@ -236,7 +238,7 @@ public:
      *
      * @return True, if synonym has been restricted.
      */
-    Boolean doesSynonymHaveConstraints(const Synonym& syn);
+    Boolean doesSynonymHaveConstraints(const Synonym& syn) const;
 
     /**
      * Checks the relationship table for two synonyms, to
@@ -248,12 +250,14 @@ public:
      * @return True, if some clause has restricted the
      *         left and right to certain relationships.
      */
-    Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym);
+    Boolean hasRelationships(const Synonym& leftSynonym, const Synonym& rightSynonym) const;
 
     /**
      * Forces the merging of the results queue.
+     *
+     * @return Whether this results table contains any results.
      */
-    Void getResultsZero();
+    Boolean getResultsZero();
 
     /**
      * Initiates merging of the results queue, unless
@@ -275,6 +279,31 @@ public:
      * @return The result pairs for (syn1, syn2).
      */
     PairedResult getResultsTwo(const Synonym& syn1, const Synonym& syn2);
+
+    /**
+     * Initiates merging of the results queue, unless a certain
+     * result in the queue was empty. Afterwards, returns the
+     * results for all synonyms in the vector, as a vector
+     * of n-tuples for each synonym. The order of the results
+     * depends on the order of the synonyms.
+     *
+     * Note that this method assumes the synonyms vector to have
+     * at least two synonyms (size > 1).
+     *
+     * @param syns The synonyms to get results for.
+     *
+     * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
+     */
+    NtupledResult getResultsN(const Vector<Synonym>& syns);
+
+    /**
+     * Stores the result for a clause with no synonyms.
+     * If true, nothing happens. But if false, the entire
+     * results table is invalidated.
+     *
+     * @param hasResults Whether a clause has results.
+     */
+    Void storeResultsZero(Boolean hasResults);
 
     /**
      * Adds the result for a single synonym into a queue.
@@ -521,7 +550,20 @@ public:
      * @return List of all other potential values that are
      *         related to it.
      */
-    std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value);
+    std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value) const;
+
+    /**
+     * Given a vector of synonyms, retrieve all entries in the
+     * RelationshipsGraph matching these synonyms, and return
+     * them in the same order within a vector of rows.
+     *
+     * This method assumes that the names in the synonyms
+     * list are all different from each other.
+     *
+     * @param synonyms The synonyms to retrieve the rows of.
+     * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
+     */
+    NtupledResult retrieveUniqueRowsMatching(const Vector<Synonym>& synonyms) const;
 };
 
 #endif // SPA_PQL_RESULTS_TABLE_H

@@ -19,10 +19,56 @@ std::string getErrorMessage()
     return "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.";
 }
 
+TEST_CASE("convertToTupleString works for pairs")
+{
+    Vector<String> converted
+        = convertToTupleString(std::vector<std::pair<std::string, std::string>>{{"4", "sengkang"},
+                                                                                {"4", "outrampark"},
+                                                                                {"19", "sengkang"},
+                                                                                {"19", "outrampark"},
+                                                                                {"10", "sengkang"},
+                                                                                {"10", "outrampark"},
+                                                                                {"E1", "sengkang"},
+                                                                                {"E1", "outrampark"}});
+    REQUIRE(converted
+            == std::vector<std::string>{{"4 sengkang"},
+                                        {"4 outrampark"},
+                                        {"19 sengkang"},
+                                        {"19 outrampark"},
+                                        {"10 sengkang"},
+                                        {"10 outrampark"},
+                                        {"E1 sengkang"},
+                                        {"E1 outrampark"}});
+}
+
+TEST_CASE("convertToTupleString works for n-tuples")
+{
+    Vector<String> converted = convertToTupleString({{"ns1", "ew24", "16", "sengkang", "marymount", "4", "15"},
+                                                     {"ns1", "ew24", "16", "outrampark", "marymount", "4", "15"},
+                                                     {"ns25", "ew13", "3", "outrampark", "esplanade", "4", "15"},
+                                                     {"ns1", "ew24", "16", "sengkang", "marymount", "19", "9"},
+                                                     {"ns1", "ew24", "16", "outrampark", "marymount", "19", "9"},
+                                                     {"ns25", "ew13", "3", "outrampark", "esplanade", "19", "9"},
+                                                     {"ns1", "ew24", "16", "sengkang", "marymount", "10", "26"},
+                                                     {"ns1", "ew24", "16", "outrampark", "marymount", "10", "26"},
+                                                     {"ns25", "ew13", "3", "outrampark", "esplanade", "10", "26"},
+                                                     {"ns1", "ew24", "16", "sengkang", "marymount", "E1", "16"},
+                                                     {"ns1", "ew24", "16", "outrampark", "marymount", "E1", "16"},
+                                                     {"ns25", "ew13", "3", "outrampark", "esplanade", "E1", "16"}});
+    REQUIRE(converted
+            == std::vector<std::string>{
+                "ns1 ew24 16 sengkang marymount 4 15", "ns1 ew24 16 outrampark marymount 4 15",
+                "ns25 ew13 3 outrampark esplanade 4 15", "ns1 ew24 16 sengkang marymount 19 9",
+                "ns1 ew24 16 outrampark marymount 19 9", "ns25 ew13 3 outrampark esplanade 19 9",
+                "ns1 ew24 16 sengkang marymount 10 26", "ns1 ew24 16 outrampark marymount 10 26",
+                "ns25 ew13 3 outrampark esplanade 10 26", "ns1 ew24 16 sengkang marymount E1 16",
+                "ns1 ew24 16 outrampark marymount E1 16", "ns25 ew13 3 outrampark esplanade E1 16"});
+}
+
 TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntatically) PQL query returns empty")
 {
     // === Test set-up ===
-    AbstractQuery abstractQuery = AbstractQuery::invalidAbstractQuery();
+    AbstractQuery abstractQuery = AbstractQuery(QuerySyntaxError, "Syntactically invalid AbstractQuery");
 
     // === Execute test method ===
     RawQueryResult rawQueryResult = evaluateQuery(abstractQuery);

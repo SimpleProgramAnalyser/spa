@@ -6,10 +6,8 @@ StringVector splitByFirstConsecutiveWhitespace(const String& str);
 Boolean containsOpenParentheses(const String& str);
 StringPair splitDeclarationAndSelectClause(const String& query);
 std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
-std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
-                                                                    DeclarationTable& declarationTable);
-std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString,
-                                                       DeclarationTable& declarationTable);
+ResultSynonymVector processSelectResultString(String selectResultString, DeclarationTable& declarationTable);
+ResultSynonym processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable);
 StringVector splitResultAndClauses(String& s);
 
 /**
@@ -34,10 +32,13 @@ AbstractQuery Preprocessor::processQuery(const String& query)
     String declarationString = trimWhitespace(splitQuery.first);
     String synonymAndClausesString = trimWhitespace(splitQuery.second);
 
-    // Process declarations into declaration table
-    DeclarationTable declarationTable = processDeclarations(declarationString);
-    if (declarationTable.isInvalid()) {
-        return AbstractQuery(true);
+    DeclarationTable declarationTable;
+    if (!declarationString.empty()) {
+        // Process declarations into declaration table
+        declarationTable = processDeclarations(declarationString);
+        if (declarationTable.isSyntacticallyInvalid()) {
+            return AbstractQuery(QuerySyntaxError, declarationTable.getErrorMessage());
+        }
     }
 
     // Extract select keyword
@@ -45,12 +46,12 @@ AbstractQuery Preprocessor::processQuery(const String& query)
 
     // No select clause
     if (selectAndClausesVector.size() < 2) {
-        return AbstractQuery(true);
+        return AbstractQuery(QuerySyntaxError, "No Select Clause");
     }
 
     String possibleSelectKeyword = selectAndClausesVector.at(0);
     if (possibleSelectKeyword != "Select") {
-        return AbstractQuery(true);
+        return AbstractQuery(QuerySyntaxError, "No Select keyword");
     }
 
     String synonymAndClauses = selectAndClausesVector.at(1);
@@ -58,112 +59,119 @@ AbstractQuery Preprocessor::processQuery(const String& query)
 
     // No synonym
     if (selectAndClausesVector.empty()) {
-        return AbstractQuery(true);
+        return AbstractQuery(QuerySyntaxError, "No Result Synonym");
     }
 
     String selectResultString = synonymAndClausesVector.at(0);
 
-    std::pair<Boolean, Vector<ResultSynonym>> processedResults
-        = processSelectResultString(selectResultString, declarationTable);
+    ResultSynonymVector resultSynonymVector = processSelectResultString(selectResultString, declarationTable);
 
-    if (processedResults.first) {
-        return AbstractQuery(true);
+    if (resultSynonymVector.isInvalid()) {
+        return AbstractQuery(resultSynonymVector.getErrorType(), resultSynonymVector.getErrorMessage());
     }
 
-    Vector<ResultSynonym> resultSynonyms = processedResults.second;
+    // Return false if Declarations is semantically invalid and Select BOOLEAN
+    if (declarationTable.isSemanticallyInvalid()) {
+        return AbstractQuery(QuerySemanticsError, declarationTable.getErrorMessage(),
+                             resultSynonymVector.isSelectBoolean());
+    }
 
     // Only select a synonym, with no other clauses
     if (synonymAndClausesVector.size() == 1) {
-        AbstractQuery abstractQuery(resultSynonyms, declarationTable);
+        AbstractQuery abstractQuery(resultSynonymVector, declarationTable);
         return abstractQuery;
     }
 
     // Process clauses into ClauseList
     String clausesString = synonymAndClausesVector.at(1);
     ClauseVector clausesVector = processClauses(clausesString, declarationTable);
-    if (clausesVector.isInvalid()) {
-        return AbstractQuery(true);
+    if (clausesVector.isSyntacticallyInvalid()) {
+        return AbstractQuery(QuerySyntaxError, clausesVector.getErrorMessage());
+    } else if (clausesVector.isSemanticallyInvalid()) {
+        // Return false if Declarations is semantically invalid and Select BOOLEAN
+        return AbstractQuery(QuerySemanticsError, clausesVector.getErrorMessage(),
+                             resultSynonymVector.isSelectBoolean());
     }
 
-    AbstractQuery abstractQuery(resultSynonyms, declarationTable, clausesVector);
+    AbstractQuery abstractQuery(resultSynonymVector, declarationTable, clausesVector);
     return abstractQuery;
 }
 
-std::pair<Boolean, Vector<ResultSynonym>> processSelectResultString(String selectResultString,
-                                                                    DeclarationTable& declarationTable)
+ResultSynonymVector processSelectResultString(String selectResultString, DeclarationTable& declarationTable)
 {
     // BOOLEAN result
     if (selectResultString == "BOOLEAN") {
         if (!declarationTable.hasSynonym(selectResultString)) {
             // Empty Vector means result is of type BOOLEAN
-            return std::make_pair(false, Vector<ResultSynonym>());
+            return ResultSynonymVector();
         }
 
-        return std::make_pair(false, Vector<ResultSynonym>{ResultSynonym{selectResultString}});
+        return ResultSynonymVector{ResultSynonym{selectResultString}};
     }
 
     // Single Synonym result
     if (selectResultString.at(0) != '<') {
-        std::pair<Boolean, ResultSynonym> processedResultSynonym
-            = processResultSynonym(selectResultString, declarationTable);
-        if (processedResultSynonym.first) {
-            return std::make_pair(true, Vector<ResultSynonym>{});
+        ResultSynonym processedResultSynonym = processResultSynonym(selectResultString, declarationTable);
+        if (processedResultSynonym.isInvalid()) {
+            return ResultSynonymVector(processedResultSynonym.getErrorType(), processedResultSynonym.getErrorMessage());
         }
 
-        return std::make_pair(false, Vector<ResultSynonym>{processedResultSynonym.second});
+        return ResultSynonymVector{processedResultSynonym};
     }
 
     // Tuple result
     String removeTupleString = selectResultString.substr(1);
     StringVector resultSynonymStrings = splitByDelimiter(removeTupleString, ",");
-    Vector<ResultSynonym> resultSynonyms;
-    for (auto& resultSynonymString : resultSynonymStrings) {
-        String trimmedResultSynonymString = trimWhitespace(resultSynonymString);
-        std::pair<Boolean, ResultSynonym> processedResultSynonym
-            = processResultSynonym(trimmedResultSynonymString, declarationTable);
-        if (processedResultSynonym.first) {
-            return std::make_pair(true, Vector<ResultSynonym>{});
-        }
-
-        resultSynonyms.push_back(processedResultSynonym.second);
+    if (resultSynonymStrings.size() == 0
+        || (resultSynonymStrings.size() == 1 && isAllWhitespaces(resultSynonymStrings.at(0)))) {
+        return ResultSynonymVector(QuerySyntaxError, "Result Synonym tuple does not have any Synonym");
     }
 
-    return std::make_pair(false, resultSynonyms);
+    ResultSynonymVector resultSynonyms;
+    for (auto& resultSynonymString : resultSynonymStrings) {
+        String trimmedResultSynonymString = trimWhitespace(resultSynonymString);
+        ResultSynonym processedResultSynonym = processResultSynonym(trimmedResultSynonymString, declarationTable);
+        if (processedResultSynonym.isInvalid()) {
+            return ResultSynonymVector(processedResultSynonym.getErrorType(), processedResultSynonym.getErrorMessage());
+        }
+
+        resultSynonyms.add(processedResultSynonym);
+    }
+
+    return resultSynonyms;
 }
 
-std::pair<Boolean, ResultSynonym> processResultSynonym(const String& resultSynonymString,
-                                                       DeclarationTable& declarationTable)
+ResultSynonym processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable)
 {
     StringVector splitByFullStop = splitByDelimiter(resultSynonymString, ".");
-    std::pair<Boolean, ResultSynonym> invalidResult = std::make_pair(true, ResultSynonym(true));
     if (splitByFullStop.size() > 2) {
-        return invalidResult;
+        return ResultSynonym(QuerySyntaxError, "More than one full stop in Synonym " + resultSynonymString);
     }
 
     // Synonym without attributes
     if (splitByFullStop.size() == 1) {
-        if (!isValidSynonym(resultSynonymString) || !declarationTable.hasSynonym(resultSynonymString)) {
-            return invalidResult;
+        if (!isValidSynonym(resultSynonymString)) {
+            return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
+        } else if (!declarationTable.hasSynonym(resultSynonymString)) {
+            return ResultSynonym(QuerySemanticsError, "Synonym " + resultSynonymString + " is not declared");
         }
 
-        return std::make_pair(false, ResultSynonym(resultSynonymString));
+        return ResultSynonym(resultSynonymString);
     }
 
     Synonym synonym = splitByFullStop[0];
     String attribute = splitByFullStop[1];
 
-    if (!isValidSynonym(synonym) || !declarationTable.hasSynonym(synonym)) {
-        return invalidResult;
+    if (!isValidSynonym(synonym)) {
+        return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
+    } else if (!declarationTable.hasSynonym(synonym)) {
+        return ResultSynonym(QuerySemanticsError, "Synonym " + synonym + " is not declared");
     }
 
     DesignEntity designEntityOfSynonym = declarationTable.getDesignEntityOfSynonym(synonym);
-
     ResultSynonym resultSynonym(synonym, attribute, designEntityOfSynonym);
-    if (resultSynonym.isInvalid()) {
-        return invalidResult;
-    }
 
-    return std::make_pair(false, resultSynonym);
+    return resultSynonym;
 }
 
 /**
@@ -252,7 +260,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
         if (!hasCurrentClause) {
             if (token != "such" && token != "pattern" && token != "with") {
-                return ClauseVector::invalidClauseVector();
+                return ClauseVector(QuerySyntaxError, "Invalid Clause Type: " + token);
             }
 
             if (token == "such") {
@@ -270,7 +278,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
         if (isPreviousTokenSuch) {
             if (token != "that") {
-                return ClauseVector::invalidClauseVector();
+                return ClauseVector(QuerySyntaxError, "Keyword such is not followed by keyword that");
             }
 
             isPreviousTokenSuch = false;
@@ -311,7 +319,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
                 Clause* clause = WithClause::createWithClause(currentClauseConstraint, declarationTable);
                 if (clause->isInvalid()) {
-                    return ClauseVector::invalidClauseVector();
+                    return ClauseVector(clause->getErrorType(), clause->getErrorMessage());
                 }
 
                 clauseVector.add(clause);
@@ -333,7 +341,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
 
         std::pair<Boolean, Integer> result = countNumOfOpenParentheses(token, numOfOpenedParentheses);
         if (!result.first) {
-            return ClauseVector::invalidClauseVector();
+            return ClauseVector(QuerySyntaxError, "Incorrect number of parentheses");
         }
 
         numOfOpenedParentheses = result.second;
@@ -343,7 +351,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
         }
 
         if (numOfOpenedParentheses < 0) {
-            return ClauseVector::invalidClauseVector();
+            return ClauseVector(QuerySyntaxError, "Close parentheses appears before open parentheses");
         } else if (numOfOpenedParentheses == 0) {
             if (!hasOpenParentheses) {
                 if (token != "*") {
@@ -351,7 +359,8 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
                 }
 
                 if (numOfTokensWithoutOpenParentheses >= 2) {
-                    return ClauseVector::invalidClauseVector();
+                    return ClauseVector(QuerySyntaxError,
+                                        "Too many tokens after parsing Relationship: " + currentClauseConstraint);
                 }
             } else {
                 Clause* clause;
@@ -363,7 +372,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
                 }
 
                 if (clause->isInvalid()) {
-                    return ClauseVector::invalidClauseVector();
+                    return ClauseVector(clause->getErrorType(), clause->getErrorMessage());
                 }
 
                 clauseVector.add(clause);
@@ -380,7 +389,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
     }
 
     if (!currentClauseConstraint.empty() || isInProcessOfCreatingClause) {
-        return ClauseVector::invalidClauseVector();
+        return ClauseVector(QuerySyntaxError, "Extra incomplete tokens at end of query");
     }
 
     return clauseVector;
@@ -421,7 +430,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             if (token == "_") {
                 if (!isPotentialProgLineDesignEntity) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable(QuerySyntaxError, DesignEntity::INVALID_DESIGN_ENTITY + "prog");
                 }
 
                 isPotentialProgLineDesignEntity = false;
@@ -431,7 +440,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             if (token == "line") {
                 if (!isHighPotentialProgLineDesignEntity) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable(QuerySyntaxError, DesignEntity::INVALID_DESIGN_ENTITY + "prog_");
                 }
 
                 currentDesignEntity = DesignEntity(Prog_LineType);
@@ -442,14 +451,14 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
             currentDesignEntity = DesignEntity(token);
             if (currentDesignEntity.getType() == NonExistentType) {
-                return DeclarationTable::invalidDeclarationTable();
+                return DeclarationTable(QuerySyntaxError, DesignEntity::INVALID_DESIGN_ENTITY + token);
             }
 
             hasCurrentDesignEntity = true;
         } else {
             if (token == ";") {
                 if (!isPreviousTokenASynonym) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
                 }
 
                 hasCurrentDesignEntity = false;
@@ -457,17 +466,19 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 continue;
             } else if (token == ",") {
                 if (!isPreviousTokenASynonym) {
-                    return DeclarationTable::invalidDeclarationTable();
+                    return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
                 }
 
                 isPreviousTokenASynonym = false;
                 continue;
             } else if (isPreviousTokenASynonym) {
                 // Syntax error e.g. while w w1;
-                return DeclarationTable::invalidDeclarationTable();
+                return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
             } else {
-                if (!isValidSynonym(token) || newDeclarations.hasSynonym(token)) {
-                    return DeclarationTable::invalidDeclarationTable();
+                if (!isValidSynonym(token)) {
+                    return DeclarationTable(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + token);
+                } else if (newDeclarations.hasSynonym(token)) {
+                    return DeclarationTable(QuerySemanticsError, "Synonym " + token + " has already been declared");
                 }
 
                 newDeclarations.addDeclaration(token, currentDesignEntity);
@@ -493,15 +504,12 @@ StringPair splitDeclarationAndSelectClause(const String& query)
 {
     StringPair stringVector;
     std::size_t indexOfLastDelimiter = query.find_last_of(';', query.size() - 1);
-    if (indexOfLastDelimiter == static_cast<std::size_t>(-1)) {
-        return std::make_pair("", "");
+    if (indexOfLastDelimiter == String::npos) {
+        // No declarations
+        return std::make_pair("", query);
     }
 
     String leftToken = query.substr(0, indexOfLastDelimiter + 1);
-
-    if (indexOfLastDelimiter >= query.size()) {
-        return std::make_pair(leftToken, "");
-    }
 
     String rightToken = query.substr(indexOfLastDelimiter + 1, query.size() - indexOfLastDelimiter - 1);
 
