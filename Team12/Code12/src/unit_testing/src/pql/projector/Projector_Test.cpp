@@ -7,10 +7,8 @@
 
 #include "Ui.h"
 #include "catch.hpp"
-#include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/FormattedQueryResult.h"
 #include "pql/projector/Projector.h"
-#include "pql/projector/RawQueryResult.h"
 
 class UiStub: public Ui {
     Void postUiError(InputError err) override {}
@@ -171,7 +169,7 @@ TEST_CASE(
 TEST_CASE("Projector::formatUI(RawQueryResult rawQueryResult) -> with syntax error")
 {
     // === Test set-up ===
-    String errorMessage = "SIGSEGV";
+    String errorMessage = "";
     RawQueryResult rawQueryResult = RawQueryResult::getSyntaxError(errorMessage);
     Projector projector;
     UiStub ui;

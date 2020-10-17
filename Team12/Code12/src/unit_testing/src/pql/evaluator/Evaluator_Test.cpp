@@ -68,7 +68,9 @@ TEST_CASE("convertToTupleString works for n-tuples")
 TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntatically) PQL query returns empty")
 {
     // === Test set-up ===
-    AbstractQuery abstractQuery = AbstractQuery(QuerySyntaxError, "Syntactically invalid AbstractQuery");
+    AbstractQuery abstractQuery = AbstractQuery(
+        QuerySyntaxError,
+        "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.");
 
     // === Execute test method ===
     RawQueryResult rawQueryResult = evaluateQuery(abstractQuery);
