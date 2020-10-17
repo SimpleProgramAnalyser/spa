@@ -344,7 +344,10 @@ ParserReturnType<std::unique_ptr<Expression>> parseExpression(frontend::TokenLis
     if (programTokens->at(startIndex).tokenTag == frontend::BracketOpenTag
         && getBracketEnd(programTokens, startIndex) == endIndex) {
 
-        return parseExpression(programTokens, startIndex + 1, endIndex - 1, isUpdatingPkb);
+        ParserReturnType<std::unique_ptr<Expression>> expr
+            = parseExpression(programTokens, startIndex + 1, endIndex - 1, isUpdatingPkb);
+        // need to increment nextUnparsedToken by 1 because of the last bracket
+        return ParserReturnType<std::unique_ptr<Expression>>(std::move(expr.astNode), expr.nextUnparsedToken + 1);
     }
 
     ParserReturnType<std::unique_ptr<ArithmeticExpression>> arithExp
