@@ -1132,6 +1132,17 @@ TEST_CASE("Follows**")
 /*  Select BOOLEAN                                                                  */
 /************************************************************************************/
 
+TEST_CASE("Select BOOLEAN only")
+{
+    AbstractQuery abstractQuery = processQuery("Select BOOLEAN");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create().build();
+
+    bool equal = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equal);
+}
+
 TEST_CASE("Select BOOLEAN with no Clauses")
 {
     AbstractQuery abstractQuery = processQuery("stmt s; Select BOOLEAN");
@@ -1164,6 +1175,7 @@ TEST_CASE("Select BOOLEAN semantically incorrect query")
 
     REQUIRE(abstractQuery.toReturnFalseResult());
 }
+
 //
 // TEST_CASE("Select BOOLEAN semantically then syntactically incorrect query")
 //{
