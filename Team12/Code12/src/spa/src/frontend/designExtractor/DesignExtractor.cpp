@@ -4,15 +4,15 @@
 #include <iostream>
 #include <utility>
 
-#include "FollowsExtractor.h"
-#include "ModifiesExtractor.h"
-#include "ParentExtractor.h"
-#include "SemanticErrorsValidator.h"
-#include "NextExtractor.h"
-#include "UsesExtractor.h"
-#include "CallsExtractor.h"
 #include "../src/cfg/CfgBuilder.h"
 #include "./pkb/PKB.h"
+#include "CallsExtractor.h"
+#include "FollowsExtractor.h"
+#include "ModifiesExtractor.h"
+#include "NextExtractor.h"
+#include "ParentExtractor.h"
+#include "SemanticErrorsValidator.h"
+#include "UsesExtractor.h"
 
 Boolean extractDesign(ProgramNode& rootNode)
 {

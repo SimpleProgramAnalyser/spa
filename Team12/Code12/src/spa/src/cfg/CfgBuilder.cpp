@@ -3,16 +3,17 @@
  */
 
 #include "CfgBuilder.h"
+
 #include "pkb/PKB.h"
 
 /**
-* Creates a CFG node.
-* 
-* @param stmtListSize The size of the current statement list 
-* @param currentNumberOfNodes The current number of nodes in the CFG
-* @return The pointer to the CFGNode created
-*/
-CfgNode* createCfgNode(size_t stmtListSize, size_t &currentNumberOfNodes)
+ * Creates a CFG node.
+ *
+ * @param stmtListSize The size of the current statement list
+ * @param currentNumberOfNodes The current number of nodes in the CFG
+ * @return The pointer to the CFGNode created
+ */
+CfgNode* createCfgNode(size_t stmtListSize, size_t& currentNumberOfNodes)
 {
     List<StatementNode>* statements = new List<StatementNode>();
     List<CfgNode>* children = new List<CfgNode>();
@@ -21,7 +22,7 @@ CfgNode* createCfgNode(size_t stmtListSize, size_t &currentNumberOfNodes)
     // At least the size of the statement list, in case the whole
     // statement list belongs to this node
     statements->reserve(stmtListSize);
-    // Reserve 2 spaces for a node's children as a node has 2 children or less 
+    // Reserve 2 spaces for a node's children as a node has 2 children or less
     children->reserve(2);
     currentNumberOfNodes++;
 
@@ -29,39 +30,39 @@ CfgNode* createCfgNode(size_t stmtListSize, size_t &currentNumberOfNodes)
 }
 
 /**
-* Checks is a Cfg node is empty (i.e. does not have statements or children)
-* 
-* @param node A CfgNode
-* @return A boolean to indicate if the CfgNode is empty
-*/
-Boolean cfgNodeIsEmpty(CfgNode* node) {
+ * Checks is a Cfg node is empty (i.e. does not have statements or children)
+ *
+ * @param node A CfgNode
+ * @return A boolean to indicate if the CfgNode is empty
+ */
+Boolean cfgNodeIsEmpty(CfgNode* node)
+{
     return node->childrenNodes->size() == 0 && node->statementNodes->size() == 0;
 }
 
 /**
-* Builds on the current CFG, given a StatementNode.
-*
-* @param statementNodePtr Pointer to the StatementNode
-* @param currentCfgNode Pointer to the CfgNode that we will continue building on
-* @param currentNumberOfNodes The current number of nodes in the CFG 
-* @param wholeStmtListSize The size of the statement list of the current procedure
-* @return Pointer to the CfgNode that is the next to be built on
-*/
-CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* currentCfgNode, size_t &currentNumberOfNodes, size_t wholeStmtListSize)
-{   
+ * Builds on the current CFG, given a StatementNode.
+ *
+ * @param statementNodePtr Pointer to the StatementNode
+ * @param currentCfgNode Pointer to the CfgNode that we will continue building on
+ * @param currentNumberOfNodes The current number of nodes in the CFG
+ * @param wholeStmtListSize The size of the statement list of the current procedure
+ * @return Pointer to the CfgNode that is the next to be built on
+ */
+CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* currentCfgNode,
+                                   size_t& currentNumberOfNodes, size_t wholeStmtListSize)
+{
     StatementType stmtType = statementNodePtr->getStatementType();
     switch (stmtType) {
     case AssignmentStatement:
     case ReadStatement:
     case PrintStatement:
-    case CallStatement:
-    {
-        (*currentCfgNode->statementNodes).push_back(std::unique_ptr<StatementNode> (statementNodePtr));
+    case CallStatement: {
+        (*currentCfgNode->statementNodes).push_back(std::unique_ptr<StatementNode>(statementNodePtr));
         return currentCfgNode;
         break;
     }
-    case WhileStatement: 
-    {
+    case WhileStatement: {
         WhileStatementNode* whileStmt = dynamic_cast<WhileStatementNode*>(statementNodePtr);
         const StmtlstNode& whileStmtListNode = *(whileStmt->statementList);
         const List<StatementNode>& stmtList = whileStmtListNode.statementList;
@@ -78,7 +79,7 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         }
 
         CfgNode* whileNode = createCfgNode(stmtListSize, currentNumberOfNodes);
-        (*whileNewNode->statementNodes).push_back(std::unique_ptr<StatementNode> (statementNodePtr));
+        (*whileNewNode->statementNodes).push_back(std::unique_ptr<StatementNode>(statementNodePtr));
         (*whileNewNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileNode));
 
         // Loop through the statement list of the While Statement
@@ -134,7 +135,8 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         for (size_t n = 0; n < elseStmtListSize; n++) {
             StatementNode* stmtNode = elseStmtList.at(n).get();
             // Recurse
-            currentCfgNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes , elseStmtListSize);
+            currentCfgNode
+                = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, elseStmtListSize);
         }
 
         // To complete the if-else diamond shape of the CFG
@@ -153,25 +155,23 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
 }
 
 /**
-* Builds the CFG of a given program.
-* 
-* @param stmtListNode Statement List Node of a procedure
-* @return Pointer to the root CfgNode so that we can access the whole CFG
-*/
+ * Builds the CFG of a given program.
+ *
+ * @param stmtListNode Statement List Node of a procedure
+ * @return Pointer to the root CfgNode so that we can access the whole CFG
+ */
 Pair<CfgNode*, size_t> buildCfg(const StmtlstNode* const stmtListNode)
 {
-    // We want the Cfg node number to start from 0 
+    // We want the Cfg node number to start from 0
     size_t currentNumber = -1;
     size_t stmtListSize = stmtListNode->statementList.size();
     CfgNode* cfgRootNode = createCfgNode(stmtListSize, currentNumber);
     CfgNode* currentCfgNode = cfgRootNode;
 
     // Go through statement nodes in the statement list
-    for (size_t j = 0; j < stmtListSize; j++) 
-    {
+    for (size_t j = 0; j < stmtListSize; j++) {
         StatementNode* stmtNode = (stmtListNode->statementList).at(j).get();
         currentCfgNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumber, stmtListSize);
     }
     return Pair<CfgNode*, size_t>(cfgRootNode, currentNumber);
 }
-
