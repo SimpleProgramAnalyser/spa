@@ -3,13 +3,15 @@
  * for Parent and Parent* relationships.
  */
 #include "../../unit_testing/src/ast_utils/AstUtils.cpp"
+#include "Utils.h"
 #include "catch.hpp"
 #include "frontend/FrontendManager.h"
 #include "pkb/PKB.h"
 
 TEST_CASE("Multiple procedures Spheresdf Parent")
 {
-    parseSimple(getProgram20String_multipleProceduresSpheresdf());
+    UiStub ui;
+    parseSimple(getProgram20String_multipleProceduresSpheresdf(), ui);
     SECTION("Parent relationships stored correctly for test program - getAllParentStatementsTyped")
     {
         // Parent - AnyStatement type, Child - AnyStatement type

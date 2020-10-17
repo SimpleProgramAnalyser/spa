@@ -4,13 +4,28 @@
 #include "frontend/FrontendManager.h"
 #include "pql/PqlManager.h"
 
+class CmdLineUi: public Ui {
+public:
+    bool hasError = false;
+    Void postUiError(InputError err) override
+    {
+        hasError = true;
+        std::cout << err.getMessage() << std::endl;
+    }
+};
+
 /*
  * Passes the SIMPLE source program to the SPA
  * frontend for evaluation and processing.
+ *
+ * @return True, if parsing succeeded.
+ *         False, if there is an error.
  */
-void parse(const String& program)
+bool parse(const String& program)
 {
-    parseSimple(program);
+    CmdLineUi ui;
+    parseSimple(program, ui);
+    return !ui.hasError;
 }
 
 /*
@@ -18,16 +33,14 @@ void parse(const String& program)
  * this method feeds (a single) PQL query to the SPA PQL
  * component.
  */
-void evaluate(String query)
+void evaluate(const String& query)
 {
     // call your evaluator to evaluate the query here
     // ...code to evaluate query...
 
     // store the answers to the query in the results list (it is initially empty)
     // each result must be a string.
-    PqlManager pqlManager;
-
-    FormattedQueryResult result = pqlManager.executeQuery(std::move(query), UiFormat);
+    FormattedQueryResult result = PqlManager::executeQuery(query, UiFormat);
     std::cout << result.getResults() << std::endl;
 }
 
@@ -75,6 +88,7 @@ int main(int argv, char** args)
     const String GreetMsg = "Welcome to our SIMPLE SPA!";
     const String SimpleProgramPromptMsg
         = "Please enter a SIMPLE source program (when done, enter a '\\' on a new line):";
+    const String TryAgainMsg = "\nPlease check your program and try again.";
     const String DoneFeedbackMsg = "Done...";
     const String PqlQueryPromptMsg = "Please enter a PQL query (enter '\\' on a new line when done, or 'exit' to end):";
     const String ByeMsg = "Thank you for using our SIMPLE SPA!";
@@ -84,14 +98,23 @@ int main(int argv, char** args)
     const String PqlExitStr = "exit";
 
     std::cout << GreetMsg << std::endl;
-    std::cout << SimpleProgramPromptMsg << std::endl;
+    bool parsingNotYetSucceeded = true;
+    while (parsingNotYetSucceeded) {
+        std::cout << SimpleProgramPromptMsg << std::endl;
 
-    String program = readProgram();
+        String program = readProgram();
 
-    std::cout << std::endl << std::endl;
-    std::cout << SimpleProgramProcessingMsg << std::endl;
+        std::cout << std::endl << std::endl;
+        std::cout << SimpleProgramProcessingMsg << std::endl;
 
-    parse(program);
+        bool parsingSucceeded = parse(program);
+        if (parsingSucceeded) {
+            parsingNotYetSucceeded = false;
+        } else {
+            std::cout << TryAgainMsg << std::endl;
+        }
+    }
+
     std::cout << DoneFeedbackMsg << std::endl;
 
     std::cout << PqlQueryPromptMsg << std::endl;

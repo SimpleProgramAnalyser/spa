@@ -9,8 +9,17 @@
 #ifndef SPA_FRONTEND_MANAGER_H
 #define SPA_FRONTEND_MANAGER_H
 
-#include <Types.h>
+#include "Types.h"
+#include "Ui.h"
 
-Void parseSimple(const String& rawProgram);
+/**
+ * Parses a SIMPLE program string and stores the result
+ * in the Program Knowledge Base. If there is any error,
+ * call the UI to display the error to the user.
+ *
+ * @param rawProgram Raw SIMPLE program string.
+ * @param ui UI to display errors.
+ */
+Void parseSimple(const String& rawProgram, Ui& ui);
 
 #endif // SPA_FrontendManager_H

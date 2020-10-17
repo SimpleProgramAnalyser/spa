@@ -4,6 +4,7 @@
  */
 
 #include "../../unit_testing/src/ast_utils/AstUtils.h"
+#include "Utils.h"
 #include "catch.hpp"
 #include "frontend/FrontendManager.h"
 #include "pkb/PKB.h"
@@ -11,8 +12,8 @@
 TEST_CASE("Multiple procedures Spheresdf Tables")
 {
     resetPKB();
-
-    parseSimple(getProgram20String_multipleProceduresSpheresdf());
+    UiStub ui;
+    parseSimple(getProgram20String_multipleProceduresSpheresdf(), ui);
     SECTION("Procedure Table stored program correctly for test program")
     {
         std::vector<String> actualProcedures = getAllProcedures();

@@ -9,18 +9,19 @@
 #include "SemanticErrorsValidator.h"
 #include "UsesExtractor.h"
 
-Void extractDesign(ProgramNode& rootNode)
+Boolean extractDesign(ProgramNode& rootNode)
 {
     SemanticErrorsValidator seValidator(rootNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
 
     if (!isSemanticallyValid) {
-        // Terminate Program
-        throw std::runtime_error("Semantically invalid program!!"); // TODO: more elegant way to handle
+        // Terminate program
+        return false;
+    } else {
+        extractFollows(rootNode);
+        extractParent(rootNode);
+        extractUses(rootNode, seValidator);
+        extractModifies(rootNode, seValidator);
+        return true;
     }
-
-    extractFollows(rootNode);
-    extractParent(rootNode);
-    extractUses(rootNode, seValidator);
-    extractModifies(rootNode, seValidator);
 }
