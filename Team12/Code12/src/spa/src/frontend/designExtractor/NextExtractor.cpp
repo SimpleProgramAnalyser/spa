@@ -45,10 +45,6 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
     List<StatementNode>* stmtList = cfgNode->statementNodes;
     List<CfgNode>* childrenList = cfgNode->childrenNodes;
 
-    // Dummy node with no statement nodes
-    if (stmtList->empty() && childrenList->size() == 1) {
-        addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0).get()->statementNodes->at(0).get(), nextRelationships);
-    }
     // If the statement list is empty, we mark the current CFG as visited and terminate early
     if (stmtList->empty()) {
         visitedArray->at(cfgNode->nodeNumber) = true;

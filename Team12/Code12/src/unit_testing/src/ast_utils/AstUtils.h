@@ -127,9 +127,4 @@ String getProgram20String_multipleProceduresSpheresdf();
 // Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
 ProgramNode* getProgram20Tree_multipleProceduresSpheresdf();
 
-// Program 21: program with if, while, read, print, call, assign
-String getProgram21String_endWithIf();
-// Program 21: program with if, while, read, print, call, assign
-ProgramNode* getProgram21Tree_endWithIf();
-
 #endif // UNIT_TESTING_AST_UTILS_H
