@@ -16,25 +16,15 @@
  * @return FormattedQueryResult, which respresents the result
  * in a foramt ready for the autotester/UI.
  */
-FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
+FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult, Ui& ui)
 {
     String formattedResults;
-
+    if (rawQueryResult.hasError) {
+        ui.postUiError(rawQueryResult.errorMessage);
+    }
     if (rawQueryResult.isEmpty()) {
         return FormattedQueryResult::emptyFormattedQueryResult();
     }
-
-    /*
-     * TODO: For iteration 2, we need to handle this better (in a
-     * more general manner), as there could be multiple entries in
-     * the RawQueryResult (instead of just 1). More specifically,
-     * we need a method which generates the Cartesian product
-     * between the Strings in each Vector<String> for all entries
-     * in Vector<Vector<String>>.
-     *
-     * For now, we will just iterate through all RawResultFromClauses
-     * in RawQueryResult and concatenate them together.
-     */
 
     Integer len = rawQueryResult.count();
 
@@ -53,29 +43,18 @@ FormattedQueryResult Projector::formatAutotester(RawQueryResult rawQueryResult)
          */
         formattedResults.append(result).append(CommaStr);
     }
-    formattedResults.append(rawQueryResult.get(len - 1));
+    formattedResults.append(rawQueryResult.get(len - 1) /* remove trailing comma */);
     return FormattedQueryResult(formattedResults);
 }
 
-FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
+FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult, Ui& ui)
 {
-    if (rawQueryResult.isSyntaxError) {
-        // TODO: call Error API in future iterations
-        return FormattedQueryResult(rawQueryResult.errorMessage);
-    } else if (rawQueryResult.isEmpty()) {
+    if (rawQueryResult.hasError) {
+        ui.postUiError(rawQueryResult.errorMessage);
+    }
+    if (rawQueryResult.isEmpty()) {
         return FormattedQueryResult::emptyFormattedQueryResult();
     }
-    /*
-     * TODO: For iteration 2, we need to handle this better (in a
-     * more general manner), as there could be multiple entries in
-     * the RawQueryResult (instead of just 1). More specifically,
-     * we need a method which generates the Cartesian product
-     * between the Strings in each Vector<String> for all entries
-     * in Vector<Vector<String>>.
-     *
-     * For now, we will just iterate through all RawResultFromClauses
-     * in RawQueryResult and concatenate them together.
-     */
     Integer len = rawQueryResult.count();
     String formattedResults;
     rawQueryResult.sort();
@@ -93,6 +72,6 @@ FormattedQueryResult Projector::formatUI(RawQueryResult rawQueryResult)
          */
         formattedResults.append(result).append(CommaStr);
     }
-    formattedResults.append(rawQueryResult.get(len - 1));
+    formattedResults.append(rawQueryResult.get(len - 1) /* remove trailing comma */);
     return FormattedQueryResult(formattedResults);
 }

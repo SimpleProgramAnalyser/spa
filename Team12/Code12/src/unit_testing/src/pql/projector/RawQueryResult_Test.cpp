@@ -35,7 +35,7 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> empty resul
     REQUIRE(rawQueryResult.count() == expectedCount);
     REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
 
-    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.hasError == expectedIsSyntaxError);
     REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
@@ -67,7 +67,7 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> single item
     REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
     REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
 
-    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.hasError == expectedIsSyntaxError);
     REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
@@ -103,18 +103,18 @@ TEST_CASE("RawQueryResult::RawQueryResult(Vector<String> results) -> multiple it
     REQUIRE(rawQueryResult.get(0) == expectedGetFirstItem);
     REQUIRE(rawQueryResult.get(1) == expectedGetSecondItem);
 
-    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.hasError == expectedIsSyntaxError);
     REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
-TEST_CASE("RawQueryResult::getSyntaxError() -> ")
+TEST_CASE("RawQueryResult::getError() -> ")
 {
     // === Test set-up ===
     String errorMessage = "SIGSEV";
 
 
     // === Execute test method ===
-    RawQueryResult rawQueryResult = RawQueryResult::getSyntaxError(errorMessage);
+    RawQueryResult rawQueryResult = RawQueryResult::getError(errorMessage);
 
 
     // === Expected test results ===
@@ -129,7 +129,7 @@ TEST_CASE("RawQueryResult::getSyntaxError() -> ")
     REQUIRE(rawQueryResult.count() == expectedCount);
     REQUIRE(rawQueryResult.isEmpty() == expectedIsEmpty);
 
-    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.hasError == expectedIsSyntaxError);
     REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
@@ -171,7 +171,7 @@ TEST_CASE("RawQueryResult::sort() -> alphabets only")
     REQUIRE(rawQueryResult.get(1) == expectedGetSecondItem);
     REQUIRE(rawQueryResult.get(2) == expectedGetThirdItem);
 
-    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.hasError == expectedIsSyntaxError);
     REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
@@ -213,7 +213,7 @@ TEST_CASE("RawQueryResult::sort() -> digits only")
     REQUIRE(rawQueryResult.get(1) == expectedGetSecondItem);
     REQUIRE(rawQueryResult.get(2) == expectedGetThirdItem);
 
-    REQUIRE(rawQueryResult.isSyntaxError == expectedIsSyntaxError);
+    REQUIRE(rawQueryResult.hasError == expectedIsSyntaxError);
     REQUIRE(rawQueryResult.errorMessage == expectedErrorMessage);
 }
 
@@ -337,11 +337,11 @@ TEST_CASE(
     // === Test set-up ===
     String errorMessage1 = "SIGSEV";
 
-    RawQueryResult rawQueryResult1 = RawQueryResult::getSyntaxError(errorMessage1);
+    RawQueryResult rawQueryResult1 = RawQueryResult::getError(errorMessage1);
 
     String errorMessage2 = "SIGSEV";
 
-    RawQueryResult rawQueryResult2 = RawQueryResult::getSyntaxError(errorMessage2);
+    RawQueryResult rawQueryResult2 = RawQueryResult::getError(errorMessage2);
 
 
     // === Execute test method ===
@@ -380,11 +380,11 @@ TEST_CASE(
     // === Test set-up ===
     String errorMessage1 = "SIGSEV";
 
-    RawQueryResult rawQueryResult1 = RawQueryResult::getSyntaxError(errorMessage1);
+    RawQueryResult rawQueryResult1 = RawQueryResult::getError(errorMessage1);
 
     String errorMessage2 = "SEGFAULT";
 
-    RawQueryResult rawQueryResult2 = RawQueryResult::getSyntaxError(errorMessage2);
+    RawQueryResult rawQueryResult2 = RawQueryResult::getError(errorMessage2);
 
 
     // === Execute test method ===

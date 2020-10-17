@@ -95,7 +95,7 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> with sy
     // === Test set-up ===
     String errorMessage = "SIGSEV";
 
-    RawQueryResult rawQueryResult = RawQueryResult::getSyntaxError(errorMessage);
+    RawQueryResult rawQueryResult = RawQueryResult::getError(errorMessage);
 
     Projector projector;
 
@@ -197,7 +197,7 @@ TEST_CASE("Projector::formatUI(RawQueryResult rawQueryResult) -> with syntax err
     // === Test set-up ===
     String errorMessage = "SIGSEV";
 
-    RawQueryResult rawQueryResult = RawQueryResult::getSyntaxError(errorMessage);
+    RawQueryResult rawQueryResult = RawQueryResult::getError(errorMessage);
 
     Projector projector;
 

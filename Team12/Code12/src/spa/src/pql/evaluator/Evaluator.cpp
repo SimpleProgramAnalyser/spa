@@ -57,24 +57,27 @@ RawQueryResult Evaluator::evaluateQuery()
 {
     /*
      * First check if PQL query is semantically valid.
-     * If invalid, don't continue evaluating query.
+     * If invalid and Select BOOLEAN, we return FALSE.
+     * If invalid and not Select BOOLEAN, stop evaluating query.
      */
-    if (query.isInvalid()) {
-        // TODO: Check query.toReturnFalseResult() for Semantically invalid query but Select BOOLEAN
-        return RawQueryResult::getSyntaxError(
-            "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.");
+    if (query.toReturnFalseResult() || (query.isSemanticallyInvalid() && query.getSelectSynonym().empty())) {
+        return RawQueryResult::getFalseResultWithSemanticError(query.getErrorMessage());
+    } else if (query.isSyntacticallyInvalid()) {
+        return RawQueryResult::getSyntaxError(query.getErrorMessage());
+    } else if (query.isSemanticallyInvalid()) {
+        return RawQueryResult::getSemanticError(query.getErrorMessage());
     }
-    return evaluateSyntacticallyValidQuery();
+    return evaluateValidQuery();
 }
 
 /*
  * Processes a PQL query and interacts with PKB if needed,
  * to obtain the results to a query that was determined
- * to be syntactically valid.
+ * to be syntactically and semanticallt valid.
  *
  * @return The list of query results for the Select synonym.
  */
-RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
+RawQueryResult Evaluator::evaluateValidQuery()
 {
     // initiate Affects and Next evaluators
     resultsTable.manageEvaluator(new NextEvaluator(resultsTable));
@@ -128,7 +131,7 @@ RawQueryResult Evaluator::evaluateSelectSynonym()
         resultsWithAttributes = convertToTupleString(mapAttributesN(resultsTable, resultsForSynonym, selectedSynonyms));
     }
     }
-    return RawQueryResult(resultsWithAttributes);
+    return RawQueryResult(std::move(resultsWithAttributes));
 }
 
 void evaluateAndCastSuchThat(Clause* cl, ResultsTable* resultsTable)

@@ -774,7 +774,7 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
         // find end of assign expression (semicolon)
         TokenListIndex tokenPointer = startIndex + 2;
         frontend::Tag currentToken = programTokens->at(tokenPointer).tokenTag;
-        while (tokenPointer < numberOfTokens && currentToken != frontend::SemicolonTag) {
+        while (tokenPointer < numberOfTokens - 1 && currentToken != frontend::SemicolonTag) {
             tokenPointer++;
             currentToken = programTokens->at(tokenPointer).tokenTag;
         }

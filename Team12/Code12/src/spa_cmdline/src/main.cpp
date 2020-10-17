@@ -10,7 +10,7 @@ public:
     Void postUiError(InputError err) override
     {
         hasError = true;
-        std::cout << err.getMessage() << std::endl;
+        std::cout << err.getSourceString() << " " << err.getTypeString() << ": " << err.getMessage() << std::endl;
     }
 };
 
@@ -21,9 +21,8 @@ public:
  * @return True, if parsing succeeded.
  *         False, if there is an error.
  */
-bool parse(const String& program)
+bool parse(const String& program, CmdLineUi& ui)
 {
-    CmdLineUi ui;
     parseSimple(program, ui);
     return !ui.hasError;
 }
@@ -33,14 +32,9 @@ bool parse(const String& program)
  * this method feeds (a single) PQL query to the SPA PQL
  * component.
  */
-void evaluate(const String& query)
+void evaluate(const String& query, CmdLineUi& ui)
 {
-    // call your evaluator to evaluate the query here
-    // ...code to evaluate query...
-
-    // store the answers to the query in the results list (it is initially empty)
-    // each result must be a string.
-    FormattedQueryResult result = PqlManager::executeQuery(query, UiFormat);
+    FormattedQueryResult result = PqlManager::executeQuery(query, UiFormat, ui);
     std::cout << result.getResults() << std::endl;
 }
 
@@ -97,6 +91,9 @@ int main(int argv, char** args)
     const String PqlEndStr = "\\";
     const String PqlExitStr = "exit";
 
+    // UI to print messages to
+    CmdLineUi ui;
+
     std::cout << GreetMsg << std::endl;
     bool parsingNotYetSucceeded = true;
     while (parsingNotYetSucceeded) {
@@ -107,11 +104,12 @@ int main(int argv, char** args)
         std::cout << std::endl << std::endl;
         std::cout << SimpleProgramProcessingMsg << std::endl;
 
-        bool parsingSucceeded = parse(program);
+        bool parsingSucceeded = parse(program, ui);
         if (parsingSucceeded) {
             parsingNotYetSucceeded = false;
         } else {
             std::cout << TryAgainMsg << std::endl;
+            ui.hasError = false;
         }
     }
 
@@ -129,7 +127,7 @@ int main(int argv, char** args)
         } else if (current == PqlExitStr) {
             break;
         } else if (current == PqlEndStr) {
-            evaluate(query);
+            evaluate(query, ui);
             query.clear();
             std::cout << PqlQueryPromptMsg << std::endl;
         } else {

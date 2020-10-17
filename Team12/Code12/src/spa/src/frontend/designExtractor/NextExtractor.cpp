@@ -102,7 +102,6 @@ std::vector<Pair<Integer, Integer>> extractNext(std::pair<CfgNode*, size_t> cfgI
 
     CfgNode* rootNode = cfgInfo.first;
     size_t numberOfNodes = cfgInfo.second;
-    List<StatementNode>* stmtList = rootNode->statementNodes;
     Vector<Boolean> visitedArray;
 
     // Initialise the visitedArray to false

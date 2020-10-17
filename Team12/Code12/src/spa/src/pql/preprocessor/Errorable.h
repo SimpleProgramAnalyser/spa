@@ -16,15 +16,15 @@ protected:
     ErrorMessage errorMessage;
 
 public:
-    Boolean isSyntacticallyInvalid();
-    Boolean isSemanticallyInvalid();
+    Boolean isSyntacticallyInvalid() const;
+    Boolean isSemanticallyInvalid() const;
     Boolean isInvalid() const;
     Void setSemanticsError();
     Void setSyntaxError();
     Void setError(QueryErrorType queryErrorType);
     Void setError(QueryErrorType queryErrorType, ErrorMessage message);
-    String getErrorMessage();
-    QueryErrorType getErrorType();
+    String getErrorMessage() const;
+    QueryErrorType getErrorType() const;
 };
 
 #endif // SPA_QUERYERROR_H
