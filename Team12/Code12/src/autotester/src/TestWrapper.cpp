@@ -46,7 +46,9 @@ void TestWrapper::parse(std::string filename)
     std::ifstream fileStream(filename);
     std::string program((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
     std::cout << program << std::endl;
-    parseSimple(program, AutotesterUi());
+
+    AutotesterUi ui;
+    parseSimple(program, ui);
 }
 
 // method to evaluating a query
