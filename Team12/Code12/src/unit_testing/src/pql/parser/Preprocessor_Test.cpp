@@ -1173,6 +1173,29 @@ TEST_CASE("Select BOOLEAN semantically incorrect query")
 //    REQUIRE(!abstractQuery.toReturnFalseResult());
 //}
 
+TEST_CASE("No declarations Select BOOLEAN")
+{
+    AbstractQuery abstractQuery = processQuery("Select BOOLEAN");
+
+    REQUIRE(!abstractQuery.isInvalid());
+    REQUIRE(!abstractQuery.toReturnFalseResult());
+}
+
+TEST_CASE("No declarations Select BOOLEAN with clauses")
+{
+    AbstractQuery abstractQuery = processQuery("Select BOOLEAN with 5 = 5");
+
+    AbstractQuery expectedAbstractQuery
+        = AbstractQueryBuilder::create()
+            .addWithClause(IntegerRefType, "5", NonExistentType, NoAttributeType,
+                           IntegerRefType, "5", NonExistentType, NoAttributeType)
+            .build();
+
+    bool equals = abstractQuery == expectedAbstractQuery;
+
+    REQUIRE(equals);
+}
+
 /************************************************************************************/
 /*  Select Tuple                                                                    */
 /************************************************************************************/
