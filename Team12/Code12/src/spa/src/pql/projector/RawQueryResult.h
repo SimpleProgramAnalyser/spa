@@ -15,9 +15,8 @@
 #ifndef SPA_PQL_RAW_QUERY_RESULT_H
 #define SPA_PQL_RAW_QUERY_RESULT_H
 
-#include "error/InputError.h"
-
 #include "Types.h"
+#include "error/InputError.h"
 #include "pkb/PkbTypes.h"
 
 class RawQueryResult {
