@@ -127,6 +127,111 @@ ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, cons
 }
 
 /**
+ * Given a vector of synonym which may contain duplicates,
+ * iterate through the possible results and based on the
+ * edges in RelationshipsGraph, create tuples that match
+ * the list of (non-unique) synonyms.
+ *
+ * This method is more general than RelationshipsGraph::
+ * retrieveUniqueRowsMatching, but it is less efficient,
+ * as retrieveUniqueRowsMatching has an asymptotic time
+ * complexity linear to the number of edges in the graph,
+ * while this method calculateMatchingTuples potentially
+ * runs in exponential time in the worst case.
+ *
+ * The worst case is when all synonyms are the same, in which
+ * calculateMatchingTuples will generate multiple Cartesian
+ * products and be O((number of results) ^ n) where n is the
+ * total number of synonyms in the vector of synonyms.
+ *
+ * @param synonyms The synonyms to retrieve the rows of.
+ * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
+ */
+NtupledResult ResultsTable::calculateMatchingTuples(const Vector<Synonym>& synonyms)
+{
+    if (synonyms.size() < 2) {
+        return NtupledResult();
+    }
+
+    // a hash map to store the tuples
+    std::unordered_map<Integer, Vector<String>> tuples;
+    Integer tupleIndex = 0;
+    // map to store the previous synonym results, and which tuple it relates to
+    auto* previousResultsMap = new std::unordered_map<String, std::vector<Integer>>();
+    // map to store the current synonym results, and which tuple it relates to
+    auto* currentResultsMap = new std::unordered_map<String, std::vector<Integer>>();
+
+    // first run, get the relationships for the first two synonyms
+    Vector<Pair<String, String>> firstAndSecondPairs = getResultsTwo(synonyms[0], synonyms[1]);
+    for (const Pair<String, String>& pair : firstAndSecondPairs) {
+        Vector<String> newTuple;
+        newTuple.push_back(pair.first);
+        newTuple.push_back(pair.second);
+        tuples.insert(std::pair<Integer, Vector<String>>(tupleIndex, newTuple));
+        if (previousResultsMap->find(pair.second) == previousResultsMap->end()) {
+            previousResultsMap->insert(std::pair<String, std::vector<Integer>>(pair.second, std::vector<Integer>()));
+        }
+        (*previousResultsMap)[pair.second].push_back(tupleIndex);
+        tupleIndex++;
+    }
+
+    size_t length = synonyms.size();
+    for (size_t i = 1; i < length - 1; i++) {
+        Vector<Pair<String, String>> pairs = getResultsTwo(synonyms[i], synonyms[i + 1]);
+        // keep track of results that we never see,
+        // so we can remove them at the end
+        std::unordered_set<String> prevResultsNotYetSeen;
+        // indexes to delete at the end
+        std::unordered_set<Integer> tuplesToDelete;
+        for (const std::pair<String, std::vector<Integer>> prevResult : *previousResultsMap) {
+            prevResultsNotYetSeen.insert(prevResult.first);
+        }
+        for (const Pair<String, String>& p : pairs) {
+            auto prevResultPosition = previousResultsMap->find(p.first);
+            if (prevResultPosition != previousResultsMap->end()) {
+                // add p.second to p.first's tuples
+                for (Integer index : prevResultPosition->second) {
+                    // copy over old tuple
+                    tuplesToDelete.insert(index);
+                    tuples[tupleIndex] = tuples[index];
+                    tuples[tupleIndex].push_back(p.second);
+                    // store the new tuple for current synonym
+                    if (currentResultsMap->find(p.second) == currentResultsMap->end()) {
+                        currentResultsMap->insert(
+                            std::pair<String, std::vector<Integer>>(p.second, std::vector<Integer>()));
+                    }
+                    (*currentResultsMap)[p.second].push_back(tupleIndex);
+                    tupleIndex++;
+                }
+                prevResultsNotYetSeen.erase(p.first);
+            }
+        }
+        // remove tuples for values that were not seen in pairs
+        for (const String& unseenValue : prevResultsNotYetSeen) {
+            for (Integer index : (*previousResultsMap)[unseenValue]) {
+                tuples.erase(index);
+            }
+        }
+        // remove old tuples with one less synonym result
+        for (Integer index : tuplesToDelete) {
+            tuples.erase(index);
+        }
+        // swap previousResultMap and currentResultMap for next pair
+        std::unordered_map<String, std::vector<Integer>>* tempMapPtr = previousResultsMap;
+        previousResultsMap = currentResultsMap;
+        currentResultsMap = tempMapPtr;
+        currentResultsMap->clear();
+    }
+    delete previousResultsMap;
+    delete currentResultsMap;
+    NtupledResult tuplesVector;
+    for (const std::pair<Integer, Vector<String>> indexTuplePair : tuples) {
+        tuplesVector.push_back(indexTuplePair.second);
+    }
+    return tuplesVector;
+}
+
+/**
  * For a list of synonyms, check the relationships between
  * every synonym to ensure that rows across every synonym
  * exists in the table, and then return these rows.
@@ -141,19 +246,25 @@ ResultsSet ResultsTable::findCommonElements(const ClauseResult& newResults, cons
 NtupledResult ResultsTable::joinAllSynonyms(const Vector<Synonym>& syns)
 {
     size_t length = syns.size();
+    bool allDifferent = true;
+    std::unordered_set<std::string> seenSynonyms;
     for (size_t i = 0; i < length - 1; i++) {
         Synonym firstSyn = syns[i];
         Synonym secondSyn = syns[i + 1];
-        if (!hasRelationships(firstSyn, secondSyn)) {
+        if (!hasRelationships(firstSyn, secondSyn) && firstSyn != secondSyn) {
             bool firstSynNewInGraph = !relationships->hasSeenBefore(firstSyn);
             bool secondSynNewInGraph = !relationships->hasSeenBefore(secondSyn);
             Vector<Pair<String, String>> tuples
                 = generateCartesianProduct(getResultsOne(firstSyn), getResultsOne(secondSyn));
             // do joining to combine the tables
             relationships->insertRelationships(tuples, firstSyn, firstSynNewInGraph, secondSyn, secondSynNewInGraph);
+        } else if (firstSyn == secondSyn || seenSynonyms.find(secondSyn) != seenSynonyms.end()) {
+            allDifferent = false;
         }
+        seenSynonyms.insert(firstSyn);
+        seenSynonyms.insert(secondSyn);
     }
-    return relationships->retrieveUniqueRowsMatching(syns);
+    return allDifferent ? relationships->retrieveUniqueRowsMatching(syns) : calculateMatchingTuples(syns);
 }
 
 std::function<void()> ResultsTable::createEvaluatorOne(ResultsTable* table, const Synonym& syn,

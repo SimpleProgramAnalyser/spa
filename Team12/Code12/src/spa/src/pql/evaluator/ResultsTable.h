@@ -41,6 +41,7 @@ private:
     Boolean checkIfSynonymInMap(const Synonym& syn) const;
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
     ResultsSet findCommonElements(const ClauseResult& newResults, const Synonym& synonym);
+    NtupledResult calculateMatchingTuples(const Vector<Synonym>& synonyms);
     NtupledResult joinAllSynonyms(const Vector<Synonym>& syns);
 
     /**
@@ -552,9 +553,12 @@ public:
     std::vector<PotentialValue> retrieveRelationships(const PotentialValue& value) const;
 
     /**
-     * Given a vector of synonym, retrieve all entries in the
+     * Given a vector of synonyms, retrieve all entries in the
      * RelationshipsGraph matching these synonyms, and return
      * them in the same order within a vector of rows.
+     *
+     * This method assumes that the names in the synonyms
+     * list are all different from each other.
      *
      * @param synonyms The synonyms to retrieve the rows of.
      * @return The result n-tuples for (syns[0], syns[1], ..., syns[n]).
