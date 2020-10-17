@@ -74,7 +74,7 @@ TEST_CASE("Evaluator::evaluateQuery(AbstractQuery query) -> invalid (syntaticall
     RawQueryResult rawQueryResult = evaluateQuery(abstractQuery);
 
     // === Expected test results ===
-    RawQueryResult expectedRawQueryResult = RawQueryResult::getError(getErrorMessage());
+    RawQueryResult expectedRawQueryResult = RawQueryResult::getSyntaxError(getErrorMessage());
 
     REQUIRE(rawQueryResult == expectedRawQueryResult);
 }

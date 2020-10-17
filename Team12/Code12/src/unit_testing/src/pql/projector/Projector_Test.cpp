@@ -5,30 +5,31 @@
  * method; getResults(), is implemented correctly.
  */
 
+#include "Ui.h"
 #include "catch.hpp"
 #include "pql/preprocessor/AqTypes.h"
 #include "pql/projector/FormattedQueryResult.h"
 #include "pql/projector/Projector.h"
 #include "pql/projector/RawQueryResult.h"
 
+class UiStub: public Ui {
+    Void postUiError(InputError err) override {}
+};
+
 TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> empty results list")
 {
     // === Test set-up ===
     Vector<String> results;
-
     RawQueryResult rawQueryResult(results);
-
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult, ui);
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -38,30 +39,26 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-emp
 {
     // === Test set-up ===
     Vector<String> results;
-
     String result = "a";
-
     results.push_back(result);
 
     RawQueryResult rawQueryResult(results);
-
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult, ui);
 
     // === Expected test results ===
     String expectedResultsStr = result;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
-
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty results list, with multiple items, should not sort")
+TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-empty results list, with multiple items, "
+          "should not sort")
 {
     // === Test set-up ===
     Vector<String> results;
@@ -73,18 +70,15 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-emp
     results.push_back(result2);
 
     RawQueryResult rawQueryResult(results);
-
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult, ui);
 
     // === Expected test results ===
     String expectedResultsStr = result1 + ", " + result2;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -93,44 +87,35 @@ TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> non-emp
 TEST_CASE("Projector::formatAutotester(RawQueryResult rawQueryResult) -> with syntax error")
 {
     // === Test set-up ===
-    String errorMessage = "SIGSEV";
-
-    RawQueryResult rawQueryResult = RawQueryResult::getError(errorMessage);
-
+    String errorMessage = "SIGSEGV";
+    RawQueryResult rawQueryResult = RawQueryResult::getSyntaxError(errorMessage);
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatAutotester(rawQueryResult, ui);
 
     // === Expected test results ===
     FormattedQueryResult expectedFormattedQueryResults = FormattedQueryResult::emptyFormattedQueryResult();
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-
 TEST_CASE("Projector::formatUI(RawQueryResult rawQueryResult) -> empty results list")
 {
     // === Test set-up ===
     Vector<String> results;
-
     RawQueryResult rawQueryResult(results);
-
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult, ui);
 
     // === Expected test results ===
     String expectedResultsStr;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -140,53 +125,44 @@ TEST_CASE("Projector::formatUI(RawQueryResult rawQueryResult) -> non-empty resul
 {
     // === Test set-up ===
     Vector<String> results;
-
     String result = "a";
-
     results.push_back(result);
 
     RawQueryResult rawQueryResult(results);
-
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult, ui);
 
     // === Expected test results ===
     String expectedResultsStr = result;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
-
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("Projector::formatUI(RawQueryResult rawQueryResult) -> non-empty results list, with multiple items, should sort")
+TEST_CASE(
+    "Projector::formatUI(RawQueryResult rawQueryResult) -> non-empty results list, with multiple items, should sort")
 {
     // === Test set-up ===
     Vector<String> results;
-
     String result1 = "b";
     String result2 = "a";
-
     results.push_back(result1);
     results.push_back(result2);
 
     RawQueryResult rawQueryResult(results);
-
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult, ui);
 
     // === Expected test results ===
     String expectedResultsStr = result2 + ", " + result1;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
@@ -195,21 +171,17 @@ TEST_CASE("Projector::formatUI(RawQueryResult rawQueryResult) -> non-empty resul
 TEST_CASE("Projector::formatUI(RawQueryResult rawQueryResult) -> with syntax error")
 {
     // === Test set-up ===
-    String errorMessage = "SIGSEV";
-
-    RawQueryResult rawQueryResult = RawQueryResult::getError(errorMessage);
-
+    String errorMessage = "SIGSEGV";
+    RawQueryResult rawQueryResult = RawQueryResult::getSyntaxError(errorMessage);
     Projector projector;
-
+    UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult);
-
+    FormattedQueryResult formattedQueryResult = projector.formatUI(rawQueryResult, ui);
 
     // === Expected test results ===
     String expectedResultsStr = errorMessage;
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
-
 
     // === Check expected test results ===
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
