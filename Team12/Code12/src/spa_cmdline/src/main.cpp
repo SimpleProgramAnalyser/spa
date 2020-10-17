@@ -3,7 +3,6 @@
 
 #include "frontend/FrontendManager.h"
 #include "pql/PqlManager.h"
-#include "pkb/PKB.h"
 
 class CmdLineUi: public Ui {
 public:
@@ -113,7 +112,7 @@ int main(int argv, char** args)
             ui.hasError = false;
         }
     }
-    extern PKB pkb;
+
     std::cout << DoneFeedbackMsg << std::endl;
 
     std::cout << PqlQueryPromptMsg << std::endl;
