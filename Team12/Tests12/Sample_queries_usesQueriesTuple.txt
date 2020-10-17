@@ -106,7 +106,7 @@ mainPrint mainPrint, readPoint mainPrint, computeCentroid mainPrint, mainPrint r
 22 - Uses statement with 1 unknown synonym, Select based on LHS that is relavant to Query
 stmt s; procedure p;
 Select <s, p> such that Uses (s, "y")
-2 mainPrint, 2 readPoint, 2 computeCentroid, 3 mainPrint, 3 readPoint, 3 computeCentroid, 6 mainPrint, 6 readPoint, 6 computeCentroid, 7 mainPrint, 7 readPoint, 7 computeCentroid, 8 mainPrint, 8 readPoint, 8 computeCentroid, 9 mainPrint, 9 readPoint, 9 computeCentroid, 10 mainPrint, 10 readPoint, 10 computeCentroid, 13 mainPrint, 13 readPoint, l3 computeCentroid, 16 mainPrint, 16 readPoint, 16 computeCentroid, 17 mainPrint, 17 readPoint, 17 computeCentroid, 18 mainPrint, 18 readPoint, 18 computeCentroid, 23 mainPrint, 23 readPoint, 23 computeCentroid, 24 mainPrint, 24 readPoint, 24 computeCentroid, 26 mainPrint, 26 readPoint, 26 computeCentroid,  29 mainPrint, 29 readPoint, 29 computeCentroid,  30 mainPrint, 30 readPoint, 30 computeCentroid, 31 mainPrint, 31 readPoint, 31 computeCentroid
+2 mainPrint, 2 readPoint, 2 computeCentroid, 3 mainPrint, 3 readPoint, 3 computeCentroid, 6 mainPrint, 6 readPoint, 6 computeCentroid, 7 mainPrint, 7 readPoint, 7 computeCentroid, 8 mainPrint, 8 readPoint, 8 computeCentroid, 9 mainPrint, 9 readPoint, 9 computeCentroid, 10 mainPrint, 10 readPoint, 10 computeCentroid, 13 mainPrint, 13 readPoint, 13 computeCentroid, 16 mainPrint, 16 readPoint, 16 computeCentroid, 17 mainPrint, 17 readPoint, 17 computeCentroid, 18 mainPrint, 18 readPoint, 18 computeCentroid, 23 mainPrint, 23 readPoint, 23 computeCentroid, 24 mainPrint, 24 readPoint, 24 computeCentroid, 26 mainPrint, 26 readPoint, 26 computeCentroid,  29 mainPrint, 29 readPoint, 29 computeCentroid,  30 mainPrint, 30 readPoint, 30 computeCentroid, 31 mainPrint, 31 readPoint, 31 computeCentroid
 5000
 23 - Uses statement with 1 unknown synonym, Select based on LHS that is relavant to Query
 stmt s; procedure p;
@@ -266,12 +266,12 @@ Select <s> such that Uses(s,S)
 54 - Uses with 2 synonyms (Procedure)
 procedure p; variable v;
 Select <p, v> such that Uses(p,v)
-mainPrint specialRead, mainPrint y, readPoint x, readPoint y, readPoint z, readPoint readPoint, readPoint cenX, readPoint normSq, readPoint specialRead, computeCentroid x, computeCentroid y, computeCentroid z, computeCentroid readPoint, computeCentroid cenX, computeCentroid normSq, computeCentroid specialRead, computeCentroid count, commputeCentroid cenY
+mainPrint specialRead, mainPrint y, readPoint x, readPoint y, readPoint z, readPoint readPoint, readPoint cenX, readPoint normSq, readPoint specialRead, computeCentroid x, computeCentroid y, computeCentroid z, computeCentroid readPoint, computeCentroid cenX, computeCentroid normSq, computeCentroid specialRead, computeCentroid count, computeCentroid cenY
 5000
 55 - Uses with 2 synonyms (Procedure)
 procedure p; variable v;
 Select <v, p> such that Uses(p,v)
-specialRead mainPrint, y mainPrint, x readPoint, y readPoint, z readPoint, readPoint readPoint, cenX readPoint, normSq readPoint, specialRead readPoint, x computeCentroid, y computeCentroid, z computeCentroid, readPoint computeCentroid, cenX computeCentroid, normSq computeCentroid, specialRead computeCentroid, count computeCentroid, cenY commputeCentroid
+specialRead mainPrint, y mainPrint, x readPoint, y readPoint, z readPoint, readPoint readPoint, cenX readPoint, normSq readPoint, specialRead readPoint, x computeCentroid, y computeCentroid, z computeCentroid, readPoint computeCentroid, cenX computeCentroid, normSq computeCentroid, specialRead computeCentroid, count computeCentroid, cenY computeCentroid
 5000
 56 - Uses with 2 synonyms (Print)
 print p; variable v;
