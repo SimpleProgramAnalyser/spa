@@ -43,6 +43,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/ErrorMessages.cpp
 
     # frontend manager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h

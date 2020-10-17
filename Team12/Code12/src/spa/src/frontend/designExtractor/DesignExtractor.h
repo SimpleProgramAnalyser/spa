@@ -12,6 +12,16 @@
 #include "ast/AstTypes.h"
 #include "error/InputError.h"
 
-Void extractDesign(ProgramNode& rootNode);
+/**
+ * Attempts to extract relationships from an Abstract
+ * Syntax Tree and store the relationships in the
+ * Program Knowledge Base. If there is a semantic
+ * error, false is returned. Otherwise, true.
+ *
+ * @param rootNode Root node of the AST.
+ * @return True, if the extraction is successful.
+ *         Otherwise, false.
+ */
+Boolean extractDesign(ProgramNode& rootNode);
 
 #endif // SPA_FRONTEND_DESIGN_EXTRACTOR_H
