@@ -3,6 +3,8 @@
  * The error codes correspond to the index of the message in the array.
  */
 
+#include <array>
+
 #include "Parser.h"
 
 std::array<String, maxErrorCode> errorMessages
