@@ -16,6 +16,7 @@ CfgNode::~CfgNode()
     delete statementNodes;
     delete childrenNodes;
 }
+
 /**
  * Helper method for equals to check if the statement ndoes and children
  * nodes in 2 CFG node are equal.

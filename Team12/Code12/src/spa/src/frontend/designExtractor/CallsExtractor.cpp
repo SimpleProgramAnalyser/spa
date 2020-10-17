@@ -3,7 +3,6 @@
  */
 #include "CallsExtractor.h"
 
-#include <iostream>
 #include <stdexcept>
 #include <unordered_set>
 

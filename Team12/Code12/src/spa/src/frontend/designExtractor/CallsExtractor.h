@@ -11,4 +11,5 @@
 #include "SemanticErrorsValidator.h"
 
 std::vector<std::pair<String, String>> extractCalls(const ProgramNode& rootNode, Matrix adjacencyMatrix);
+
 #endif // SPA_FRONTEND_CALLS_EXTRACTOR_H
