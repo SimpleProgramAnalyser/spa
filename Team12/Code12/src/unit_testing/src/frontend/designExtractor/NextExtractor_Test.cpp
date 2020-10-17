@@ -5,8 +5,8 @@
 
 #include "../../ast_utils/AstUtils.h"
 #include "catch.hpp"
-#include "frontend/designExtractor/NextExtractor.h"
 #include "cfg/CfgBuilder.h"
+#include "frontend/designExtractor/NextExtractor.h"
 
 TEST_CASE("Next extractor works for if and else statements nested in while - factorials")
 {
@@ -16,9 +16,9 @@ TEST_CASE("Next extractor works for if and else statements nested in while - fac
     const StmtlstNode* const stmtListNode = procedureList->at(0)->statementListNode;
     std::pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtListNode);
     std::vector<std::pair<Integer, Integer>> actualNextRelationships = extractNext(cfgInfo);
-    
+
     // Expected
-    std::vector<std::pair<Integer, Integer>> expectedNextRelationships;  
+    std::vector<std::pair<Integer, Integer>> expectedNextRelationships;
     expectedNextRelationships.push_back(std::make_pair(1, 2));
     expectedNextRelationships.push_back(std::make_pair(2, 3));
     expectedNextRelationships.push_back(std::make_pair(3, 4));
@@ -30,7 +30,7 @@ TEST_CASE("Next extractor works for if and else statements nested in while - fac
     expectedNextRelationships.push_back(std::make_pair(8, 4));
     expectedNextRelationships.push_back(std::make_pair(4, 9));
 
-    REQUIRE(actualNextRelationships.size() == expectedNextRelationships.size());     
+    REQUIRE(actualNextRelationships.size() == expectedNextRelationships.size());
 
     std::sort(actualNextRelationships.begin(), actualNextRelationships.end());
     std::sort(expectedNextRelationships.begin(), expectedNextRelationships.end());

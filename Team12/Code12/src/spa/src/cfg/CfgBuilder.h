@@ -8,7 +8,7 @@
 
 #include "CfgTypes.h"
 
-CfgNode* createCfgNode(size_t stmtListSize, size_t &currentNumberOfNodes);
+CfgNode* createCfgNode(size_t stmtListSize, size_t& currentNumberOfNodes);
 std::pair<CfgNode*, size_t> buildCfg(const StmtlstNode* const rootNode);
 
 #endif // SPA_CFG_BUILDER_H

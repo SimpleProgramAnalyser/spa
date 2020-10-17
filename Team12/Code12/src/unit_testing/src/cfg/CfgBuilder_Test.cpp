@@ -3,11 +3,11 @@
  * of the Design Extractor in SPA Frontend
  */
 
-#include "catch.hpp"
-#include "cfg/CfgBuilder.cpp"
-#include "ast/AstLibrary.h"
 #include "../ast_utils/AstUtils.h"
 #include "../cfg_utils/CfgUtils.h"
+#include "ast/AstLibrary.h"
+#include "catch.hpp"
+#include "cfg/CfgBuilder.cpp"
 
 TEST_CASE("Cfg Builder works for basic program with read, assign, print - program1, compute")
 {
@@ -27,13 +27,13 @@ TEST_CASE("Cfg Builder works for basic program with read, assign, print - progra
 
 TEST_CASE("Cfg Builder works for if and else statements nested in while - program2, factorials")
 {
-    // Actual 
+    // Actual
     const List<ProcedureNode>* procedureList = &(getProgram2Tree_factorials()->procedureList);
     const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
     Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
     CfgNode* cfgRootNode = cfgInfo.first;
-    
-    //Expected
+
+    // Expected
     std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram2Cfg_factorials();
     CfgNode* expectedCfg = expectedCfgInfo.first;
 
@@ -64,7 +64,6 @@ TEST_CASE("CfgBuilder works for if and else statements - program4, printAscendin
     const StmtlstNode* const stmtLstNode = procedureList->at(0)->statementListNode;
     Pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtLstNode);
     CfgNode* cfgRootNode = cfgInfo.first;
-
 
     // Expected
     std::pair<CfgNode*, size_t> expectedCfgInfo = getProgram4Cfg_printAscending();
@@ -201,7 +200,8 @@ TEST_CASE("CfgBuilder works for program with complicated conditional in while - 
     REQUIRE(isEqual == true);
 }
 
-TEST_CASE("CfgBuilder works for program with procedure ending with while statement, with multiple assign - program18, endWithWhile")
+TEST_CASE("CfgBuilder works for program with procedure ending with while statement, with multiple assign - program18, "
+          "endWithWhile")
 {
     // Actual
     const List<ProcedureNode>* procedureList = &(getProgram18Tree_endWithWhile()->procedureList);
