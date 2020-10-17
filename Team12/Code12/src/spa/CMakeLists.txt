@@ -22,6 +22,12 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/error/InputError.cpp
 
+    # cfg library
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.cpp
+
     # design extractor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
@@ -35,6 +41,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.cpp
 
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
