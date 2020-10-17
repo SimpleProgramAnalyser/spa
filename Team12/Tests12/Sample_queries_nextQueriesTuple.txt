@@ -356,12 +356,12 @@ Select <w, s> such that Next(w, s)
 72 - PnC 2 Synonyms
 prog_line s; read r;
 Select <s, r> such that Next(s, r)
-23 25, 24 25
+23 25, 24 25, 25 26
 5000
 73 - PnC 2 Synonyms
 prog_line s; read r;
 Select <r, s> such that Next(s, r)
-25 23, 25 24
+25 23, 25 24, 26 25
 5000
 74 - PnC 2 Synonyms
 prog_line s; read r;
