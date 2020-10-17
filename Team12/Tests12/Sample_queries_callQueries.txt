@@ -26,7 +26,7 @@ FALSE
 6 - Calls statement with 1 unknown synonym, Select based on LHS
 procedure p;
 Select p such that Calls (p, "computeKernel")
-computeQuotientGroup
+computeOrderOfSylowSubgroup, computeQuotientGroup
 5000
 7 - Calls statement with 1 unknown synonym, Select based on RHS
 procedure p;
