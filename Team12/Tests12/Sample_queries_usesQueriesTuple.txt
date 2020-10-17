@@ -86,22 +86,22 @@ mainPrint, readPoint, computeCentroid
 18 - Uses procedure with 1 unknown synonym, Select based on LHS, Return All
 procedure p1, p2;
 Select <p1, p2> such that Uses (p1, "y")
-mainPrint mainPrint, mainPrint readPrint, mainPrint computeCentroid, readPoint mainPrint, readPoint readPoint, readPoint computeCentroid, computeCentroid mainPrint, computeCentroid readPoint, computeCentroid computeCentroid
+mainPrint mainPrint, mainPrint readPoint, mainPrint computeCentroid, readPoint mainPrint, readPoint readPoint, readPoint computeCentroid, computeCentroid mainPrint, computeCentroid readPoint, computeCentroid computeCentroid
 5000
 19 - Uses procedure with 1 unknown synonym, Select based on LHS, Return All
 procedure p1, p2;
 Select <p2, p1> such that Uses (p1, "y")
-mainPrint mainPrint, readPrint mainPrint, computeCentroid mainPrint, mainPrint readPrint, readPoint readPoint, computeCentroid readPrint, mainPrint computeCentroid, readPoint computeCentroid, computeCentroid computeCentroid
+mainPrint mainPrint, readPoint mainPrint, computeCentroid mainPrint, mainPrint readPoint, readPoint readPoint, computeCentroid readPoint, mainPrint computeCentroid, readPoint computeCentroid, computeCentroid computeCentroid
 5000
 20 - Uses procedure with 1 unknown synonym, Select based on LHS, Variable is unique only to Proc while others call, Return All
 procedure p1, p2; 
 Select <p1, p2> such that Uses (p1, "specialRead")
-mainPrint mainPrint, mainPrint readPrint, mainPrint computeCentroid, readPoint mainPrint, readPoint readPoint, readPoint computeCentroid, computeCentroid mainPrint, computeCentroid readPoint, computeCentroid computeCentroid
+mainPrint mainPrint, mainPrint readPoint, mainPrint computeCentroid, readPoint mainPrint, readPoint readPoint, readPoint computeCentroid, computeCentroid mainPrint, computeCentroid readPoint, computeCentroid computeCentroid
 5000
 21 - Uses procedure with 1 unknown synonym, Select based on LHS, Variable is unique only to Proc while others call, Return All
 procedure p1, p2; 
 Select <p1, p2> such that Uses (p1, "specialRead")
-mainPrint mainPrint, readPrint mainPrint, computeCentroid mainPrint, mainPrint readPrint, readPoint readPoint, computeCentroid readPrint, mainPrint computeCentroid, readPoint computeCentroid, computeCentroid computeCentroid
+mainPrint mainPrint, readPoint mainPrint, computeCentroid mainPrint, mainPrint readPoint, readPoint readPoint, computeCentroid readPoint, mainPrint computeCentroid, readPoint computeCentroid, computeCentroid computeCentroid
 5000
 22 - Uses statement with 1 unknown synonym, Select based on LHS that is relavant to Query
 stmt s; procedure p;
