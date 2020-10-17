@@ -124,12 +124,12 @@ ReferenceValue Reference::getValue() const
     return referenceValue;
 }
 
-DesignEntity Reference::getDesignEntity()
+DesignEntity Reference::getDesignEntity() const
 {
     return designEntity;
 }
 
-Attribute Reference::getAttribute()
+Attribute Reference::getAttribute() const
 {
     return attribute;
 }
@@ -155,7 +155,7 @@ AttributeValueType Reference::getAttributeValueType()
     return NameValueType;
 }
 
-Boolean Reference::operator==(const Reference& reference)
+Boolean Reference::operator==(const Reference& reference) const
 {
     return this->referenceType == reference.referenceType && this->referenceValue == reference.referenceValue
            && this->designEntity == reference.designEntity;

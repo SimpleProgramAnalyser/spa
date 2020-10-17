@@ -52,7 +52,7 @@ public:
     explicit DesignEntity(DesignEntityType designEntityType);
     explicit DesignEntity(const String& stringType);
     DesignEntityType getType();
-    Boolean operator==(const DesignEntity& designEntity);
+    Boolean operator==(const DesignEntity& designEntity) const;
 };
 
 // Hash function for DesignEntityType
@@ -217,13 +217,13 @@ public:
                   designEnt); // TODO: Refactor to remove refType parameter (not needed, will always be SynonymRefType)
     Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute attr);
     ReferenceType getReferenceType() const;
-    DesignEntity getDesignEntity();
+    DesignEntity getDesignEntity() const;
     ReferenceValue getValue() const;
-    Attribute getAttribute();
+    Attribute getAttribute() const;
     AttributeValueType getAttributeValueType();
     Boolean isProcedure();
     Boolean isWildCard() const;
-    Boolean operator==(const Reference& reference);
+    Boolean operator==(const Reference& reference) const;
 };
 
 enum RelationshipReferenceType : char {

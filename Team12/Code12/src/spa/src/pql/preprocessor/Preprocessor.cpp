@@ -32,10 +32,13 @@ AbstractQuery Preprocessor::processQuery(const String& query)
     String declarationString = trimWhitespace(splitQuery.first);
     String synonymAndClausesString = trimWhitespace(splitQuery.second);
 
-    // Process declarations into declaration table
-    DeclarationTable declarationTable = processDeclarations(declarationString);
-    if (declarationTable.isSyntacticallyInvalid()) {
-        return AbstractQuery(QuerySyntaxError, declarationTable.getErrorMessage());
+    DeclarationTable declarationTable;
+    if (!declarationString.empty()) {
+        // Process declarations into declaration table
+        declarationTable = processDeclarations(declarationString);
+        if (declarationTable.isSyntacticallyInvalid()) {
+            return AbstractQuery(QuerySyntaxError, declarationTable.getErrorMessage());
+        }
     }
 
     // Extract select keyword
@@ -501,15 +504,12 @@ StringPair splitDeclarationAndSelectClause(const String& query)
 {
     StringPair stringVector;
     std::size_t indexOfLastDelimiter = query.find_last_of(';', query.size() - 1);
-    if (indexOfLastDelimiter == static_cast<std::size_t>(-1)) {
-        return std::make_pair("", "");
+    if (indexOfLastDelimiter == String::npos) {
+        // No declarations
+        return std::make_pair("", query);
     }
 
     String leftToken = query.substr(0, indexOfLastDelimiter + 1);
-
-    if (indexOfLastDelimiter >= query.size()) {
-        return std::make_pair(leftToken, "");
-    }
 
     String rightToken = query.substr(indexOfLastDelimiter + 1, query.size() - indexOfLastDelimiter - 1);
 

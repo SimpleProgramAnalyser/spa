@@ -58,7 +58,7 @@ inline Vector<Integer> getAllParentStatements(Integer child, StatementType stmtT
  */
 inline Boolean canMatchMultiple(const ReferenceType& refType)
 {
-    return (refType == SynonymRefType || refType == WildcardRefType);
+    return (refType == SynonymRefType || refType == WildcardRefType || refType == AttributeRefType);
 }
 
 /**

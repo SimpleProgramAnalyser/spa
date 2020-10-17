@@ -1,13 +1,16 @@
 /**
- * Stub for SPA UI component.
+ * Interface for SPA UI component.
  */
 
 #ifndef SPA_UI_H
 #define SPA_UI_H
 
-#include "Error.h"
 #include "Types.h"
+#include "error/InputError.h"
 
-Void postUiError(InputError err);
+class Ui {
+public:
+    virtual Void postUiError(InputError err) = 0;
+};
 
 #endif // SPA_UI_H

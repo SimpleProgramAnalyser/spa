@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "attribute/AttributeMap.h"
-#include "attribute/WithQualifier.h"
+#include "attribute/WithUnifier.h"
 #include "pattern/PatternMatcher.h"
 #include "relationships/AffectsEvaluator.h"
 #include "relationships/NextEvaluator.h"

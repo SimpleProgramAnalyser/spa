@@ -54,6 +54,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Token.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher_Impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/StringMatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/ErrorMessages.cpp
 
     # frontend manager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/FrontendManager.h
@@ -146,8 +147,8 @@ add_library(spa
     # pql/evaluator/attribute
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/AttributeMap.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithQualifier.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/attribute/WithUnifier.cpp
 
     # pql/projector
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/projector/FormattedQueryResult.cpp

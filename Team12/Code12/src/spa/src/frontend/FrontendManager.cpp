@@ -3,19 +3,28 @@
  */
 #include "FrontendManager.h"
 
-#include <stdexcept>
-
+#include "Ui.h"
 #include "designExtractor/DesignExtractor.h"
 #include "parser/Parser.h"
 #include "pkb/PKB.h"
 
-Void parseSimple(const String& rawProgram)
+Void parseSimple(const String& rawProgram, Ui& ui)
 {
-    ProgramNode* abstractSyntaxTree = parseSimpleReturnNode(rawProgram);
-    if (abstractSyntaxTree == nullptr) {
-        throw std::runtime_error("Syntax error. Code at 0x065f2c6e has no effect. Terminating");
+    ParserReturnType<ProgramNode*> parsedProgram = parseSimpleReturnNode(rawProgram);
+    if (parsedProgram.hasError()) {
+        ui.postUiError(InputError(parsedProgram.getErrorString(), 1, 1, SimpleProgram, Syntax));
+        resetPKB();
+        return;
     }
-    extractDesign(*abstractSyntaxTree);
-    // pass AST to PKB, if no error
+    // if no error, we get the root node
+    ProgramNode* abstractSyntaxTree = parsedProgram.astNode;
+    // populate Program Knowledge Base with Design Extractor
+    Boolean hasSemanticError = !extractDesign(*abstractSyntaxTree);
+    if (hasSemanticError) {
+        ui.postUiError(InputError("Semantic Error: Check called procedures.", 1, 1, SimpleProgram, Semantic));
+        resetPKB();
+        return;
+    }
+    // if no error, store root node in Program Knowledge Base
     assignRootNode(abstractSyntaxTree);
 }

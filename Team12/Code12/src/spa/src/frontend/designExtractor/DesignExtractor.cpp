@@ -14,33 +14,33 @@
 #include "../src/cfg/CfgBuilder.h"
 #include "./pkb/PKB.h"
 
-Void extractDesign(ProgramNode& rootNode)
+Boolean extractDesign(ProgramNode& rootNode)
 {
     SemanticErrorsValidator seValidator(rootNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
 
     if (!isSemanticallyValid) {
-        // Terminate Program
-        throw std::runtime_error("Semantically invalid program!!"); // TODO: more elegant way to handle
-    }
+        // Terminate program
+        return false;
+    } else {
+        extractFollows(rootNode);
+        extractParent(rootNode);
+        extractUses(rootNode, seValidator);
+        extractModifies(rootNode, seValidator);
+        extractCalls(rootNode, seValidator.adjacencyMatrixOfCalls);
 
-    extractFollows(rootNode);
-    extractParent(rootNode);
-    extractUses(rootNode, seValidator);
-    extractModifies(rootNode, seValidator);
-    extractCalls(rootNode, seValidator.adjacencyMatrixOfCalls);
+        // Build Cfg for each procedure  + extract Next relationships
+        const List<ProcedureNode>* procedureList = &(rootNode.procedureList);
+        for (size_t i = 0; i < procedureList->size(); i++) {
+            Name procName = procedureList->at(i)->procedureName;
+            const StmtlstNode* const stmtListNode = procedureList->at(i)->statementListNode;
+            std::pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtListNode);
+            // Add CFG root node into PKB
+            storeCFG(cfgInfo.first, procName);
 
-    
-    // Build Cfg for each procedure  + extract Next relationships  
-    const List<ProcedureNode>* procedureList = &(rootNode.procedureList);
-    for (size_t i = 0; i < procedureList->size(); i++) {
-        Name procName = procedureList->at(i)->procedureName;
-        const StmtlstNode* const stmtListNode = procedureList->at(i)->statementListNode;
-        std::pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtListNode);
-        // Add CFG root node into PKB
-        storeCFG(cfgInfo.first, procName);
-        
-        // Extract Next relationships
-        extractNext(cfgInfo);
+            // Extract Next relationships
+            extractNext(cfgInfo);
+        }
+        return true;
     }
 }
