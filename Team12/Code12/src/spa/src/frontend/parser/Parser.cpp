@@ -365,7 +365,7 @@ parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex sta
         currentToken = programTokens->at(relationalOperator).tokenTag;
     }
     // check if found
-    if (relationalOperator >= numberOfTokens) {
+    if (relationalOperator < startIndex || relationalOperator >= endIndex) {
         // error, name or constant without relational operator
         return getSyntaxError<RelationalExpression>(25);
     }
@@ -471,6 +471,12 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
         case frontend::LteTag:
         case frontend::NeqTag:
         case frontend::EqTag:
+        // try to parse relational if arithmetic
+        case frontend::PlusTag:
+        case frontend::MinusTag:
+        case frontend::DivideTag:
+        case frontend::TimesTag:
+        case frontend::ModuloTag:
             isRelational = true;
             break;
         default:
