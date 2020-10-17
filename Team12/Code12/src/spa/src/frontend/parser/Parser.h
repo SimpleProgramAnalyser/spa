@@ -55,7 +55,7 @@ public:
             if (errorCode > maxErrorCode) {
                 return "Syntax Error: Unknown syntax error #" + std::to_string(errorCode);
             } else {
-                return "Syntax Error #" + std::to_string(errorCode) + ": " + errorMessages[errorCode];
+                return "Syntax Error #" + std::to_string(errorCode) + ": " + errorMessages.at(errorCode);
             }
         } else {
             return "";
