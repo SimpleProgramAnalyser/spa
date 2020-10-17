@@ -29,7 +29,7 @@ void NextTable::addIntoCollectionTables(Integer previous, StatementType previous
                                         StatementType nextType)
 {
     tryAdd(previousType, nextType, next, stmtPreviousType, stmtPreviousTypeSet);
-    tryAdd(nextType, previousType, previous, stmtPreviousType, stmtPreviousTypeSet);
+    tryAdd(nextType, previousType, previous, stmtNextType, stmtNextTypeSet);
 }
 
 /**
