@@ -21,12 +21,12 @@ none
 5 - Calls statement with 1 unknown synonym, Select based on LHS
 procedure p1, p2;
 Select <p1, p2> such that Calls (p1, "computeKernel")
-computeQuotientGroup mainPrint, computeQuotientGroup readPoint, computeQuotientGroup computeCentroid, computeQuotientGroup computeOrderOfSylowSubgroup, computeQuotientGroup computeXNormalSubgroup, computeQuotientGroup computeQuotientGroup, computeQuotientGroup computeKernel, computeQuotientGroup returnIdentityElement
+computeOrderOfSylowSubgroup mainPrint, computeOrderOfSylowSubgroup readPoint, computeOrderOfSylowSubgroup computeCentroid, computeOrderOfSylowSubgroup computeOrderOfSylowSubgroup, computeOrderOfSylowSubgroup computeXNormalSubgroup, computeOrderOfSylowSubgroup computeQuotientGroup, computeOrderOfSylowSubgroup computeKernel, computeOrderOfSylowSubgroup returnIdentityElement, computeQuotientGroup mainPrint, computeQuotientGroup readPoint, computeQuotientGroup computeCentroid, computeQuotientGroup computeOrderOfSylowSubgroup, computeQuotientGroup computeXNormalSubgroup, computeQuotientGroup computeQuotientGroup, computeQuotientGroup computeKernel, computeQuotientGroup returnIdentityElement
 5000
 6 - Calls statement with 1 unknown synonym, Select based on LHS
 procedure p1, p2;
 Select <p2, p1> such that Calls (p1, "computeKernel")
-mainPrint computeQuotientGroup, readPoint computeQuotientGroup, computeCentroid computeQuotientGroup, computeOrderOfSylowSubgroup computeQuotientGroup, computeXNormalSubgroup computeQuotientGroup, computeQuotientGroup computeQuotientGroup, computeKernel computeQuotientGroup, returnIdentityElement computeQuotientGroup
+mainPrint computeOrderOfSylowSubgroup, mainPrint computeQuotientGroup, readPoint computeOrderOfSylowSubgroup, readPoint computeQuotientGroup, computeCentroid computeOrderOfSylowSubgroup, computeCentroid computeQuotientGroup, computeOrderOfSylowSubgroup computeOrderOfSylowSubgroup, computeOrderOfSylowSubgroup computeQuotientGroup, computeXNormalSubgroup computeOrderOfSylowSubgroup, computeXNormalSubgroup computeQuotientGroup, computeQuotientGroup computeOrderOfSylowSubgroup, computeQuotientGroup computeQuotientGroup, computeKernel computeOrderOfSylowSubgroup, computeKernel computeQuotientGroup, returnIdentityElement computeOrderOfSylowSubgroup, returnIdentityElement computeQuotientGroup
 5000
 7 - Calls statement with 1 unknown synonym, Select based on RHS
 procedure p;
@@ -69,7 +69,7 @@ Select p1 such that Calls* (p1, p2)
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup
 5000
 15 - PnC 2 Synonyms
-procedure p;
+procedure p1, p2;
 Select p1 such that Calls* (p2, p1)
 readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel
 5000
