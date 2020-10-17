@@ -13,152 +13,152 @@ prog_line s;
 Select s
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-2 - Select All Procedures
+4 - Select All Procedures
 procedure p; 
 Select p
 main, raymarch, spheresdf
 5000
-3 - Select All Procedures (using attr name)
+5 - Select All Procedures (using attr name)
 procedure p; 
 Select p.procName
 main, raymarch, spheresdf
 5000
-4 - Select All Variables
+6 - Select All Variables
 variable v;
 Select v
 steps, depth, ro, rd, count, dist, epsilon, done, x, p, y, z, po
 5000
-5 - Select All Variables (using attr name)
+7 - Select All Variables (using attr name)
 variable v;
 Select v.varName
 steps, depth, ro, rd, count, dist, epsilon, done, x, p, y, z, po
 5000
-6 - Select All Read Statements
+8 - Select All Read Statements
 read r;
 Select r
 1, 6, 18
 5000
-7 - Select All Read Statements (using attr name)
+9 - Select All Read Statements (using attr name)
 read r;
 Select r.stmt#
 1, 6, 18
 5000
-7 - Select All Read Statements (using attr name)
+10 - Select All Read Statements (using attr name)
 read r;
 Select r.varName
 steps, depth, p
 5000
-8 - Select All Print Statements
+11 - Select All Print Statements
 print r;
 Select r
 3, 8
 5000
-9 - Select All Print Statements (using attr name)
+12 - Select All Print Statements (using attr name)
 print r;
 Select r.stmt#
 3, 8
 5000
-9 - Select All Print Statements (using attr name)
+13 - Select All Print Statements (using attr name)
 print r;
 Select r.varName
 depth
 5000
-10 - Select All Call Statements
+14 - Select All Call Statements
 call r;
 Select r
 2, 10
 5000
-11 - Select All Call Statements (using attr name)
+15 - Select All Call Statements (using attr name)
 call r;
 Select r.stmt#
 2, 10
 5000
-11 - Select All Call Statements (using attr name)
+16 - Select All Call Statements (using attr name)
 call r;
 Select r.procName
 raymarch, spheresdf
 5000
-12 - Select All While Statements
+17 - Select All While Statements
 while r;
 Select r
 7, 19
 5000
-13 - Select All While Statements (using attr name)
+18 - Select All While Statements (using attr name)
 while r;
 Select r.stmt#
 7, 19
 5000
-14 - Select All If Statements
+19 - Select All If Statements
 if r;
 Select r
 11
 5000
-15 - Select All If Statements (using attr name)
+20 - Select All If Statements (using attr name)
 if r;
 Select r.stmt#
 11
 5000
-16 - Select All Assign Statements
+21 - Select All Assign Statements
 assign r;
 Select r
 4, 5, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23
 5000
-17 - Select All Assign Statements (using attr name)
+22 - Select All Assign Statements (using attr name)
 assign r;
 Select r.stmt#
 4, 5, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23
 5000
-18 - Select All Constants
+23 - Select All Constants
 constant r;
 Select r
 1, 2, 13, 19
 5000
-19 - Select All Constants (using attr name)
+24 - Select All Constants (using attr name)
 constant r;
 Select r.value
 1, 2, 13, 19
 5000
-20 - Select Boolean, with declarations
+25 - Select Boolean, with declarations
 constant c;
 Select BOOLEAN
 TRUE
 5000
-21 - Select Boolean, no declarations
+26 - Select Boolean, no declarations
 constant c;
 Select BOOLEAN
 TRUE
 5000
-22 - Select Boolean, invalid query (semantic)
+27 - Select Boolean, invalid query (semantic)
 constant c; call c;
 Select BOOLEAN with c.value = 5
 FALSE
 5000
-23 - Select Boolean, invalid query (syntatic)
+28 - Select Boolean, invalid query (syntatic)
 constant c;
 Select BOOLEAN with c.value =
 none
 5000
-24 - Multiple Spaces
+29 - Multiple Spaces
 stmt  s1;	stmt         s2;
 Select s1
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-25 - Multiple Tabs
+30 - Multiple Tabs
 stmt  		s1;	stmt         		s2;					
 Select s1
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-26 - Invalid Queries (Select statement wrong)
+31 - Invalid Queries (Select statement wrong)
 stmt s; variable v;
 Selec s
 none
 5000
-27 - Invalid Queries (no semicolon)
+32 - Invalid Queries (no semicolon)
 stmt stmt
 Select stmt
 none
 5000
-28 - Same keyword name
+33 - Same keyword name
 stmt  s1, Select;
 Select Select
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
