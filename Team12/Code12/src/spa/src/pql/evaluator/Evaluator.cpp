@@ -60,7 +60,7 @@ RawQueryResult Evaluator::evaluateQuery()
      * If invalid and Select BOOLEAN, we return FALSE.
      * If invalid and not Select BOOLEAN, stop evaluating query.
      */
-    if (query.toReturnFalseResult() || (query.isSemanticallyInvalid() && query.getSelectSynonym().empty())) {
+    if (query.toReturnFalseResult()) {
         return RawQueryResult::getFalseResultWithSemanticError(query.getErrorMessage());
     } else if (query.isSyntacticallyInvalid()) {
         return RawQueryResult::getSyntaxError(query.getErrorMessage());
