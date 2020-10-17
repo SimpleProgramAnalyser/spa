@@ -4,12 +4,12 @@
 /** Instance Methods    */
 /************************/
 
-Boolean Errorable::isSyntacticallyInvalid()
+Boolean Errorable::isSyntacticallyInvalid() const
 {
     return errorType == QuerySyntaxError;
 }
 
-Boolean Errorable::isSemanticallyInvalid()
+Boolean Errorable::isSemanticallyInvalid() const
 {
     return errorType == QuerySemanticsError;
 }
@@ -49,12 +49,12 @@ Void Errorable::setError(QueryErrorType queryErrorType)
     }
 }
 
-String Errorable::getErrorMessage()
+String Errorable::getErrorMessage() const
 {
     return errorMessage;
 }
 
-QueryErrorType Errorable::getErrorType()
+QueryErrorType Errorable::getErrorType() const
 {
     return errorType;
 }

@@ -18,7 +18,7 @@ private:
     const AbstractQuery& query;
     ResultsTable resultsTable;
 
-    RawQueryResult evaluateSyntacticallyValidQuery();
+    RawQueryResult evaluateValidQuery();
     RawQueryResult evaluateSelectSynonym();
     Void evaluateClause(Clause* clause);
 

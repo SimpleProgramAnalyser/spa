@@ -53,9 +53,9 @@ public:
         if (hasError()) {
             std::size_t errorCode = -nextUnparsedToken;
             if (errorCode > maxErrorCode) {
-                return "Syntax Error: Unknown syntax error #" + std::to_string(errorCode);
+                return "Unknown error #" + std::to_string(errorCode);
             } else {
-                return "Syntax Error #" + std::to_string(errorCode) + ": " + errorMessages.at(errorCode);
+                return "#" + std::to_string(errorCode) + ", " + errorMessages.at(errorCode);
             }
         } else {
             return "";
