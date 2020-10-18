@@ -9,6 +9,7 @@
 
 #include "ast/AstTypes.h"
 #include "error/InputError.h"
+#include <array>
 
 typedef Integer TokenListIndex;
 

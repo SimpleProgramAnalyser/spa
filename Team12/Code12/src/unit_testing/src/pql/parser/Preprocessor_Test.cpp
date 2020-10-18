@@ -15,9 +15,16 @@ TEST_CASE("Only Declarations without Select Clause returns Invalid Abstract Quer
     REQUIRE(abstractQuery.isInvalid());
 }
 
-TEST_CASE("Only Select Clause without Declarations return Invalid Abstract Query")
+TEST_CASE("Only Select non-BOOLEAN clause")
 {
     AbstractQuery abstractQuery = processQuery("Select s");
+
+    REQUIRE(abstractQuery.isInvalid());
+}
+
+TEST_CASE("Only Select keyword")
+{
+    AbstractQuery abstractQuery = processQuery("Select");
 
     REQUIRE(abstractQuery.isInvalid());
 }
