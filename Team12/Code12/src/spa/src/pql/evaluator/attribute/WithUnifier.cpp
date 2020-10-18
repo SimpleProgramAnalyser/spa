@@ -215,7 +215,7 @@ Void unifyLeftKnown(const Reference& literalRef, const Reference& varRef, Result
         // try to find a substitution that matches
         if (comparisonFunction(pair.attributeResult, rawLiteral)) {
             matchingResults.push_back(pair.synonymResult);
-            break;
+           // break;
         }
     }
     resultsTable->storeResultsOne(varRef.getValue(), matchingResults);
