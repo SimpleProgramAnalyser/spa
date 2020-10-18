@@ -55,6 +55,9 @@ AbstractQuery Preprocessor::processQuery(const String& query)
     }
 
     String synonymAndClauses = selectAndClausesVector.at(1);
+    if (synonymAndClauses.empty()) {
+        return AbstractQuery(QuerySyntaxError, "No Select synonym");
+    }
     StringVector synonymAndClausesVector = splitResultAndClauses(synonymAndClauses);
 
     // No synonym

@@ -7,6 +7,8 @@
 #ifndef SPA_FRONTEND_PARSER_H
 #define SPA_FRONTEND_PARSER_H
 
+#include <array>
+
 #include "ast/AstTypes.h"
 #include "error/InputError.h"
 

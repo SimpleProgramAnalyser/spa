@@ -26,7 +26,7 @@ FALSE
 6 - Calls statement with 1 unknown synonym, Select based on LHS
 procedure p;
 Select p such that Calls (p, "computeKernel")
-computeQuotientGroup
+computeOrderOfSylowSubgroup, computeQuotientGroup
 5000
 7 - Calls statement with 1 unknown synonym, Select based on RHS
 procedure p;
@@ -49,7 +49,7 @@ Select p1 such that Calls (p1, p2)
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup
 5000
 11 - PnC 2 Synonyms
-procedure p;
+procedure p1, p2;
 Select p1 such that Calls (p2, p1)
 readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel
 5000
@@ -59,7 +59,7 @@ Select p1 such that Calls* (p1, p2)
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup
 5000
 13 - PnC 2 Synonyms
-procedure p;
+procedure p1, p2;
 Select p1 such that Calls* (p2, p1)
 readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel
 5000

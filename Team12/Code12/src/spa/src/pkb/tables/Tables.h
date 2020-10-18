@@ -46,14 +46,16 @@ public:
     Vector<String> getProcedureCalled(Integer callStmtNum);
     Vector<Integer> getAllCallStatementsByProcedure(const String& procName);
     Vector<String> getAllProceduresCalled();
+    StatementType getStatementType(StatementNumber stmtNum);
 
 private:
-    StatementNumVectorsByType listOfAllStatement;       // getAllStmt
-    StatementNumSetsByType setOfAllStatement;           // getAllStmt
-    HashSet<Integer> setOfStatements;                   // isStatementInProgram
-    HashMap<StatementNumber, ProcedureName> procCalled; // getProcedureCalled
-    Vector<ProcedureName> allProcCalled;                // getAllProc
-    HashSet<ProcedureName> allProcCalledSet;            // de-duplication
+    StatementNumVectorsByType listOfAllStatement;           // getAllStmt
+    StatementNumSetsByType setOfAllStatement;               // getAllStmt
+    HashSet<Integer> setOfStatements;                       // isStatementInProgram
+    HashMap<StatementNumber, StatementType> statementTypes; // getStatementType
+    HashMap<StatementNumber, ProcedureName> procCalled;     // getProcedureCalled
+    Vector<ProcedureName> allProcCalled;                    // getAllProc
+    HashSet<ProcedureName> allProcCalledSet;                // de-duplication
 
     HashMap<ProcedureName, Vector<StatementNumber>> stmtsCalling;     // getAllCallStatementsByProcedure
     HashMap<ProcedureName, HashSet<StatementNumber>> stmtsCallingSet; // de-duplication
