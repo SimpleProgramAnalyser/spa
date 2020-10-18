@@ -53,3 +53,6 @@ build/
 
 # Test output
 Team12/Code12/tests/output
+
+# Scripts output
+Team12/Code12/scripts/enumerate-test-cases

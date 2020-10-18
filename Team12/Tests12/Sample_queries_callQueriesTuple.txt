@@ -3,72 +3,72 @@ procedure p;
 Select <p> such that Calls ("computeXNormalSubgroup", "computeQuotientGroup")
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel, returnIdentityElement
 5000
-1 - Calls statement with 0 unknown synonym (using attr name), Return All Procedures
+2 - Calls statement with 0 unknown synonym (using attr name), Return All Procedures
 procedure p;
 Select <p.procName> such that Calls ("computeXNormalSubgroup", "computeQuotientGroup")
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel, returnIdentityElement
 5000
-2 - Calls statement with 0 unknown synonym With Spaces, Return All Procedures
+3 - Calls statement with 0 unknown synonym With Spaces, Return All Procedures
 procedure p;
 Select <p> such that Calls           ("mainPrint"   , 	"computeCentroid")
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel, returnIdentityElement
 5000
-3 - Calls statement with 0 unknown synonym, Return None
+4 - Calls statement with 0 unknown synonym, Return None
 procedure p;
 Select <p> such that Calls ("computeXNormalSubgroup", "mainPrint")
 none
 5000
-4 - Calls statement with 1 unknown synonym, Select based on LHS
+5 - Calls statement with 1 unknown synonym, Select based on LHS
 procedure p1, p2;
 Select <p1, p2> such that Calls (p1, "computeKernel")
 computeQuotientGroup mainPrint, computeQuotientGroup readPoint, computeQuotientGroup computeCentroid, computeQuotientGroup computeOrderOfSylowSubgroup, computeQuotientGroup computeXNormalSubgroup, computeQuotientGroup computeQuotientGroup, computeQuotientGroup computeKernel, computeQuotientGroup returnIdentityElement
 5000
-4 - Calls statement with 1 unknown synonym, Select based on LHS
+6 - Calls statement with 1 unknown synonym, Select based on LHS
 procedure p1, p2;
 Select <p2, p1> such that Calls (p1, "computeKernel")
 mainPrint computeQuotientGroup, readPoint computeQuotientGroup, computeCentroid computeQuotientGroup, computeOrderOfSylowSubgroup computeQuotientGroup, computeXNormalSubgroup computeQuotientGroup, computeQuotientGroup computeQuotientGroup, computeKernel computeQuotientGroup, returnIdentityElement computeQuotientGroup
 5000
-5 - Calls statement with 1 unknown synonym, Select based on RHS
+7 - Calls statement with 1 unknown synonym, Select based on RHS
 procedure p;
 Select p such that Calls ("computeOrderOfSylowSubgroup", p)
 computeXNormalSubgroup, computeKernel
 5000
-6 -  statement with 1 unknown synonym, Select based on LHS
+8 -  statement with 1 unknown synonym, Select based on LHS
 procedure p;
 Select p such that Calls* (p, "computeKernel")
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup
 5000
-7 - Calls statement with 1 unknown synonym, Select based on RHS
+9 - Calls statement with 1 unknown synonym, Select based on RHS
 procedure p;
 Select p such that Calls* ("mainPrint", p)
 readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel
 5000
-8 - PnC 2 Synonyms
+10 - PnC 2 Synonyms
 procedure p1, p2;
 Select <p1, p2> such that Calls (p1, p2)
 mainPrint readPoint, mainPrint computeCentroid, readPoint computeCentroid, computeCentroid computeOrderOfSylowSubgroup, computeOrderOfSylowSubgroup computeXNormalSubgroup, computeOrderOfSylowSubgroup computeKernel, computeXNormalSubgroup computeQuotientGroup, computeQuotientGroup computeKernel
 5000
-8 - PnC 2 Synonyms
+11 - PnC 2 Synonyms
 procedure p1, p2;
 Select <p2, p1> such that Calls (p1, p2)
 readPoint mainPrint, computeCentroid mainPrint, computeCentroid readPoint, computeOrderOfSylowSubgroup computeCentroid, computeXNormalSubgroup computeOrderOfSylowSubgroup, computeKernel computeOrderOfSylowSubgroup, computeQuotientGroup computeXNormalSubgroup, computeKernel computeQuotientGroup
 5000
-9 - PnC 2 Synonyms
+12 - PnC 2 Synonyms
 procedure p1, p2;
 Select <p1, p2> such that Calls (p2, p1)
 readPoint mainPrint, computeCentroid mainPrint, computeCentroid readPoint, computeOrderOfSylowSubgroup computeCentroid, computeXNormalSubgroup computeOrderOfSylowSubgroup, computeQuotientGroup computeXNormalSubgroup, computeKernel computeQuotientGroup, computeKernel computeOrderOfSylowSubgroup
 5000
-9 - PnC 2 Synonyms
+13 - PnC 2 Synonyms
 procedure p1, p2;
 Select <p2, p1> such that Calls (p2, p1)
 mainPrint readPoint, mainPrint computeCentroid, readPoint computeCentroid, computeCentroid computeOrderOfSylowSubgroup, computeOrderOfSylowSubgroup computeXNormalSubgroup, computeXNormalSubgroup computeQuotientGroup, computeQuotientGroup computeKernel, computeOrderOfSylowSubgroup computeKernel
 5000
-10 - PnC 2 Synonyms
+14 - PnC 2 Synonyms
 procedure p1, p2;
 Select p1 such that Calls* (p1, p2)
 mainPrint, readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup
 5000
-9 - PnC 2 Synonyms
+15 - PnC 2 Synonyms
 procedure p;
 Select p1 such that Calls* (p2, p1)
 readPoint, computeCentroid, computeOrderOfSylowSubgroup, computeXNormalSubgroup, computeQuotientGroup, computeKernel

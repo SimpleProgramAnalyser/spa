@@ -8,642 +8,642 @@ stmt s;
 Select <s> such that Parent (8,9)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
-2 - Select All Statements (using attr name), Return All
+3 - Select All Statements (using attr name), Return All
 stmt s;
 Select <s.stmt#> such that Parent (8,9)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
-2 - Select All Statements (using prog_line Design Entity Type), Return All
+4 - Select All Statements (using prog_line Design Entity Type), Return All
 prog_line s;
 Select <s> such that Parent (8,9)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
-3 - Select All Statements with Spaces
+5 - Select All Statements with Spaces
 stmt s;
 Select <s> such that Parent 		(8,9)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
-4 - Select All Statements Parent*
+6 - Select All Statements Parent*
 stmt s;
 Select <s> such that Parent*(8,10)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
-5 - Select All Assignments
+7 - Select All Assignments
 assign a;
 Select <a> such that Parent(8,9)
 4, 5, 6, 7, 10, 11, 17, 18, 20, 21, 23
 5000
-6 - Select All Read
+8 - Select All Read
 read r;
 Select <r> such that Parent(8,9)
 1, 13, 29, 33
 5000
-7 - Select All Print
+9 - Select All Print
 print p;
 Select <p> such that Parent(8,9)
 3, 14, 28
 5000
-8 - Select All Call
+10 - Select All Call
 call c;
 Select <c> such that Parent(8,9)
 2, 25
 5000
-9 - Select All While
+11 - Select All While
 while w;
 Select <w> such that Parent(8,9)
 16, 19, 22, 24, 26, 30, 31, 32
 5000
-10 - Select All If
+12 - Select All If
 if i;
 Select <i> such that Parent(8,9)
 8, 9, 12, 15, 27
 5000
-11 - Select All Varialbe
+13 - Select All Varialbe
 variable v;
 Select <v> such that Parent(8,9)
 depth, dist, epsilon, main, notdepth, p, raymarch, rd, ro, steps, x, y, z
 5000
-12 - Select All Constant
+14 - Select All Constant
 constant c;
 Select <c> such that Parent(8,9)
 2, 13, 19
 5000
-13 - Select All Procedure
+15 - Select All Procedure
 procedure c;
 Select <c> such that Parent(8,9)
 main, raymarch, sphere
 5000
-14 - Select All Assignments Parent*
+16 - Select All Assignments Parent*
 assign a;
 Select <a> such that Parent*(8,9)
 4, 5, 6, 7, 10, 11, 17, 18, 20, 21, 23
 5000
-15 - Select All Read Parent*
+17 - Select All Read Parent*
 read r;
 Select <r> such that Parent*(8,9)
 1, 13, 29, 33
 5000
-16 - Select All Print Parent*
+18 - Select All Print Parent*
 print p;
 Select <p> such that Parent*(8,9)
 3, 14, 28
 5000
-17 - Select All Call
+19 - Select All Call
 call c;
 Select <c> such that Parent*(8,9)
 2, 25
 5000
-18 - Select All While
+20 - Select All While
 while w;
 Select <w> such that Parent*(8,9)
 16, 19, 22, 24, 26, 30, 31, 32
 5000
-19 - Select All If
+21 - Select All If
 if i;
 Select <i> such that Parent*(8,9)
 8, 9, 12, 15, 27
 5000
-20 - Select All Variables
+22 - Select All Variables
 variable v;
 Select <v> such that Parent*(8,9)
 depth, dist, epsilon, main, notdepth, p, raymarch, rd, ro, steps, x, y, z
 5000
-20 - Select All Constant
+23 - Select All Constant
 constant c;
 Select <c> such that Parent*(8,9)
 2, 13, 19
 5000
-21 - Select All Procedure
+24 - Select All Procedure
 procedure c;
 Select <c> such that Parent*(8,9)
 main, raymarch, sphere
 5000
-22 - Select Based on RHS (Statement)
+25 - Select Based on RHS (Statement)
 stmt s1, s2;
 Select <s1, s2> such that Parent(8,s1)
 9 1, 9 2, 9 3, 9 4, 9 5, 9 6, 9 7, 9 8, 9 9, 9 10, 9 11, 9 12, 9 13, 9 14, 9 15, 9 16, 9 17, 9 18, 9 19, 9 20, 9 21, 9 22, 9 23, 9 24, 9 25, 9 26, 9 27, 9 28, 9 29, 9 30, 9 31, 9 32, 9 33, 12 1, 12 2, 12 3, 12 4, 12 5, 12 6, 12 7, 12 8, 12 9, 12 10, 12 11, 12 12, 12 13, 12 14, 12 15, 12 16, 12 17, 12 18, 12 19, 12 20, 12 21, 12 22, 12 23, 12 24, 12 25, 12 26, 12 27, 12 28, 12 29, 12 30, 12 31, 12 32, 12 33
 5000
-22 - Select Based on RHS (Statement)
+26 - Select Based on RHS (Statement)
 stmt s1, s2;
 Select <s2, s1> such that Parent(8,s1)
 1 9, 2 9, 3 9, 4 9, 5 9, 6 9, 7 9, 8 9, 9 9, 10 9, 11 9, 12 9, 13 9, 14 9, 15 9, 16 9, 17 9, 18 9, 19 9, 20 9, 21 9, 22 9, 23 9, 24 9, 25 9, 26 9, 27 9, 28 9, 29 9, 30 9, 31 9, 32 9, 33 9, 1 12, 2 12, 3 12, 4 12, 5 12, 6 12, 7 12, 8 12, 9 12, 10 12, 11 12, 12 12, 13 12, 14 12, 15 12, 16 12, 17 12, 18 12, 19 12, 20 12, 21 12, 22 12, 23 12, 24 12, 25 12, 26 12, 27 12, 28 12, 29 12, 30 12, 31 12, 32 12, 33 12
 5000
-23 - Select Based on RHS (Assign)
+27 - Select Based on RHS (Assign)
 assign a; stmt s;
 Select <a, s> such that Parent(22,a)
 23 1, 23 2, 23 3, 23 4, 23 5, 23 6, 23 7, 23 8, 23 9, 23 10, 23 11, 23 12, 23 13, 23 14, 23 15, 23 16, 23 17, 23 18, 23 19, 23 20, 23 21, 23 22, 23 23, 23 24, 23 25, 23 26, 23 27, 23 28, 23 29, 23 30, 23 31, 23 32, 23 33
 5000
-23 - Select Based on RHS (Assign)
+28 - Select Based on RHS (Assign)
 assign a; stmt s;
 Select <a, s> such that Parent(22,a)
 1 23, 2 23, 3 23, 4 23, 5 23, 6 23, 7 23, 8 23, 9 23, 10 23, 11 23, 12 23, 13 23, 14 23, 15 23, 16 23, 17 23, 18 23, 19 23, 20 23, 21 23, 22 23, 23 23, 24 23, 25 23, 26 23, 27 23, 28 23, 29 23, 30 23, 31 23, 32 23, 33 23 
 5000
-24 - Select Based on RHS (Read)
+29 - Select Based on RHS (Read)
 read r; stmt s;
 Select <r, s> such that Parent(27,r)
 29 1, 29 2, 29 3, 29 4, 29 5, 29 6, 29 7, 29 8, 29 9, 29 10, 29 11, 29 12, 29 13, 29 14, 29 15, 29 16, 29 17, 29 18, 29 19, 29 20, 29 21, 29 22, 29 29, 29 24, 29 25, 29 26, 29 27, 29 28, 29 29, 29 30, 29 31, 29 32, 29 33
 5000
-24 - Select Based on RHS (Read)
+30 - Select Based on RHS (Read)
 read r; stmt s;
 Select <s, r> such that Parent(27,r)
 1 29, 2 29, 3 29, 4 29, 5 29, 6 29, 7 29, 8 29, 9 29, 10 29, 11 29, 12 29, 13 29, 14 29, 15 29, 16 29, 17 29, 18 29, 19 29, 20 29, 21 29, 22 29, 29 29, 24 29, 25 29, 26 29, 27 29, 28 29, 29 29, 30 29, 31 29, 32 29, 33 29
 5000
-25 - Select Based on RHS (Print)
+31 - Select Based on RHS (Print)
 print p; stmt s;
 Select <p, s> such that Parent(27,p)
 28 1, 28 2, 28 3, 28 4, 28 5, 28 6, 28 7, 28 8, 28 9, 28 10, 28 11, 28 12, 28 13, 28 14, 28 15, 28 16, 28 17, 28 18, 28 19, 28 20, 28 21, 28 22, 28 28, 28 24, 28 25, 28 26, 28 27, 28 28, 28 28, 28 30, 28 31, 28 32, 28 33
 5000
-25 - Select Based on RHS (Print)
+32 - Select Based on RHS (Print)
 print p; stmt s;
 Select <s, p> such that Parent(27,p)
 1 28, 2 28, 3 28, 4 28, 5 28, 6 28, 7 28, 8 28, 9 28, 10 28, 11 28, 12 28, 13 28, 14 28, 15 28, 16 28, 17 28, 18 28, 19 28, 20 28, 21 28, 22 28, 28 28, 24 28, 25 28, 26 28, 27 28, 28 28, 28 28, 30 28, 31 28, 32 28, 33 28
 5000
-26 - Select Based on RHS (Call)
+33 - Select Based on RHS (Call)
 call c; stmt s;
 Select <c, s> such that Parent(24,c)
 25 1, 25 2, 25 3, 25 4, 25 5, 25 6, 25 7, 25 8, 25 9, 25 10, 25 11, 25 12, 25 13, 25 14, 25 15, 25 16, 25 17, 25 18, 25 19, 25 20, 25 21, 25 22, 25 25, 25 24, 25 25, 25 26, 25 27, 25 25, 25 25, 25 30, 25 31, 25 32, 25 33
 5000
-26 - Select Based on RHS (Call)
+34 - Select Based on RHS (Call)
 call c; stmt s;
 Select <s, c> such that Parent(24,c)
 1 25, 2 25, 3 25, 4 25, 5 25, 6 25, 7 25, 8 25, 9 25, 10 25, 11 25, 12 25, 13 25, 14 25, 15 25, 16 25, 17 25, 18 25, 19 25, 20 25, 21 25, 22 25, 28 25, 24 25, 25 25, 26 25, 27 25, 28 25, 28 25, 30 25, 31 25, 32 25, 33 25
 5000
-27 - Select Based on RHS (While)
+35 - Select Based on RHS (While)
 while w; stmt s;
 Select <w, s> such that Parent(15,w)
 16 1, 16 2, 16 3, 16 4, 16 5, 16 6, 16 7, 16 8, 16 9, 16 10, 16 11, 16 12, 16 13, 16 14, 16 15, 16 16, 16 17, 16 18, 16 19, 16 20, 16 21, 16 22, 16 16, 16 24, 16 16, 16 26, 16 27, 16 16, 16 16, 16 30, 16 31, 16 32, 16 33, 19 1, 19 2, 19 3, 19 4, 19 5, 19 6, 19 7, 19 8, 19 9, 19 10, 19 11, 19 12, 19 13, 19 14, 19 15, 19 19, 19 17, 19 18, 19 19, 19 20, 19 21, 19 22, 19 19, 19 24, 19 19, 19 26, 19 27, 19 19, 19 19, 19 30, 19 31, 19 32, 19 33
 5000
-27 - Select Based on RHS (While)
+36 - Select Based on RHS (While)
 while w; stmt s;
 Select <s, w> such that Parent(15,w)
 1 16, 2 16, 3 16, 4 16, 5 16, 6 16, 7 16, 8 16, 9 16, 10 16, 11 16, 12 16, 13 16, 14 16, 15 16, 16 16, 17 16, 18 16, 19 16, 20 16, 21 16, 22 16, 28 16, 24 16, 25 16, 26 16, 27 16, 28 16, 28 16, 30 16, 31 16, 32 16, 33 16, 1 19, 2 19, 3 19, 4 19, 5 19, 6 19, 7 19, 8 19, 9 19, 10 19, 11 19, 12 19, 13 19, 14 19, 15 19, 16 19, 17 19, 18 19, 19 19, 20 19, 21 19, 22 19, 28 19, 24 19, 25 19, 26 19, 27 19, 28 19, 28 19, 30 19, 31 19, 32 19, 33 19
 5000
-28 - Select Based on RHS (If)
+37 - Select Based on RHS (If)
 if i; stmt s;
 Select <i, s> such that Parent(8,i)
 9 1, 9 2, 9 3, 9 4, 9 5, 9 6, 9 7, 9 8, 9 9, 9 10, 9 11, 9 12, 9 13, 9 14, 9 15, 9 16, 9 17, 9 18, 9 19, 9 20, 9 21, 9 22, 9 9, 9 24, 9 9, 9 26, 9 27, 9 9, 9 9, 9 30, 9 31, 9 32, 9 33, 12 1, 12 2, 12 3, 12 4, 12 5, 12 6, 12 7, 12 8, 12 12, 12 10, 12 11, 12 12, 12 13, 12 14, 12 15, 12 16, 12 17, 12 18, 12 112, 12 20, 12 21, 12 22, 12 12, 12 24, 12 12, 12 26, 12 27, 12 12, 12 12, 12 30, 12 31, 12 32, 12 33
 5000
-28 - Select Based on RHS (If)
+38 - Select Based on RHS (If)
 if i; stmt s;
 Select <s, i> such that Parent(8,i)
 1 9, 2 9, 3 9, 4 9, 5 9, 6 9, 7 9, 8 9, 9 9, 10 9, 11 9, 9 9, 13 9, 14 9, 15 9, 16 9, 17 9, 18 9, 19 9, 20 9, 21 9, 22 9, 28 9, 24 9, 9 9, 26 9, 27 9, 28 9, 28 9, 30 9, 31 9, 32 9, 33 9, 1 12, 2 12, 3 12, 4 12, 5 12, 6 12, 7 12, 8 12, 9 12, 10 12, 11 12, 12 12, 13 12, 14 12, 15 12, 16 12, 17 12, 18 12, 19 12, 20 12, 21 12, 22 12, 28 12, 24 12, 12 12, 26 12, 27 12, 28 12, 28 12, 30 12, 31 12, 32 12, 33 12
 5000
-29 - Select Based on LHS (Statement)
+39 - Select Based on LHS (Statement)
 stmt s;
 Select <s> such that Parent(s, 33)
 32
 5000
-30 - Select Based on LHS (Assign)
+40 - Select Based on LHS (Assign)
 assign s;
 Select <s> such that Parent(s, 33)
 none
 5000
-31 - Select Based on LHS (Read)
+41 - Select Based on LHS (Read)
 read s;
 Select <s> such that Parent(s, 33)
 none
 5000
-32 - Select Based on LHS (Print) 
+42 - Select Based on LHS (Print) 
 print s;
 Select <s> such that Parent(s, 33)
 none
 5000
-33 - Select Based on LHS (Call) 
+43 - Select Based on LHS (Call) 
 call s;
 Select <s> such that Parent(s, 33)
 none
 5000
-34 - Select Based on LHS (While) 
+44 - Select Based on LHS (While) 
 while s;
 Select <s> such that Parent(s, 33)
 32
 5000
-35 - Select Based on LHS (If)
+45 - Select Based on LHS (If)
 if s;
 Select <s> such that Parent(s, 28)
 27
 5000
-36 - Select Based on RHS (Statement)
+46 - Select Based on RHS (Statement)
 stmt s;
 Select <s> such that Parent*(8,s)
 9, 10, 11, 12, 13, 14
 5000
-37 - Select Based on RHS (Assign)
+47 - Select Based on RHS (Assign)
 assign s;
 Select <s> such that Parent*(8,s)
 10, 11
 5000
-38 - Select Based on RHS (Read)
+48 - Select Based on RHS (Read)
 read s;
 Select <s> such that Parent*(26,s)
 29
 5000
-39 - Select Based on RHS (Print)
+49 - Select Based on RHS (Print)
 print s;
 Select <s> such that Parent*(8,s)
 14
 5000
-40 - Select Based on RHS (Call)
+50 - Select Based on RHS (Call)
 call s;
 Select <s> such that Parent*(15,s)
 none
 5000
-41 - Select Based on RHS (While)
+51 - Select Based on RHS (While)
 while s;
 Select <s> such that Parent*(30,s)
 31, 32
 5000
-42 - Select Based on RHS (If)
+52 - Select Based on RHS (If)
 if s;
 Select <s> such that Parent*(8,s)
 9, 12
 5000
-43 - Select Based on LHS (Statement)
+53 - Select Based on LHS (Statement)
 stmt s;
 Select <s> such that Parent*(s, 33)
 30, 31, 32
 5000
-44 - Select Based on LHS (Assign)
+54 - Select Based on LHS (Assign)
 assign s;
 Select <s> such that Parent*(s, 33)
 none
 5000
-45 - Select Based on LHS (Read)
+55 - Select Based on LHS (Read)
 read s;
 Select <s> such that Parent*(s, 33)
 none
 5000
-46 - Select Based on LHS (Print) 
+56 - Select Based on LHS (Print) 
 print s;
 Select <s> such that Parent*(s, 33)
 none
 5000
-47 - Select Based on LHS (Call)
+57 - Select Based on LHS (Call)
 call s;
 Select <s> such that Parent*(s, 33)
 none
 5000
-48 - Select Based on LHS (While) 
+58 - Select Based on LHS (While) 
 while s;
 Select <s> such that Parent*(s, 33)
 30, 31, 32
 5000
-49 - Select Based on LHS (If)
+59 - Select Based on LHS (If)
 if s;
 Select <s> such that Parent*(s, 10)
 8, 9
 5000
-50 - 2 Unknown Synonyms Basic Query
+60 - 2 Unknown Synonyms Basic Query
 stmt s, s2;
 Select <s> such that Parent(s, s2)
 8, 9, 12, 15, 16, 19, 22, 24, 26, 27, 30, 31, 32
 5000
-51 - 2 Unknown Synonyms Basic Query
+61 - 2 Unknown Synonyms Basic Query
 stmt s, s2;
 Select <s> such that Parent*(s, s2)
 8, 9, 12, 15, 16, 19, 22, 24, 26, 27, 30, 31, 32
 5000
-52 - 2 Unknown Synonym Basic Query Declared but not used
+62 - 2 Unknown Synonym Basic Query Declared but not used
 stmt s, s2;
 Select <s> such that Parent(s, s2)
 8, 9, 12, 15, 16, 19, 22, 24, 26, 27, 30, 31, 32
 5000
-53 - 2 Unknown Synonyms Basic Query Case Sensitive
+63 - 2 Unknown Synonyms Basic Query Case Sensitive
 stmt s, S;
 Select <s> such that Parent(s, S)
 8, 9, 12, 15, 16, 19, 22, 24, 26, 27, 30, 31, 32
 5000
-54 - PnC 2 Synonyms
+64 - PnC 2 Synonyms
 stmt s; if i;
 Select <s, i> such that Parent(i, s)
 9 8, 10 9, 11 9, 12 8, 13 12, 14 12, 16 15, 19 15, 28 27, 29 27
 5000
-54 - PnC 2 Synonyms
+65 - PnC 2 Synonyms
 stmt s; if i;
 Select <i, s> such that Parent(i, s)
 8 9, 9 10, 9 11, 8 12, 12 13, 12 14, 15 16, 15 19, 27 28, 27 29
 5000
-55 - PnC 2 Synonyms
+66 - PnC 2 Synonyms
 stmt s; if i;
 Select <s, i> such that Parent(s, i)
 8 9, 26 27
 5000
-55 - PnC 2 Synonyms
+67 - PnC 2 Synonyms
 stmt s; if i;
 Select <i, s> such that Parent(s, i)
 9 8, 27 26
 5000
-56 - PnC 2 Synonyms
+68 - PnC 2 Synonyms
 stmt s; while w;
 Select <s, w> such that Parent(s, w)
 15 16, 22 24, 30 31, 31 32
 5000
-56 - PnC 2 Synonyms
+69 - PnC 2 Synonyms
 stmt s; while w;
 Select <w, s> such that Parent(s, w)
 16 15, 24 22, 31 30, 32 31
 5000
-57 - PnC 2 Synonyms
+70 - PnC 2 Synonyms
 stmt s; while w;
 Select <s, w> such that Parent(w, s)
 17 16, 18 16, 20 19, 21 29, 23 22, 24 22, 25 24, 27 26, 31 30, 32 31, 33 32
 5000
-57 - PnC 2 Synonyms
+71 - PnC 2 Synonyms
 stmt s; while w;
 Select <w, s> such that Parent(w, s)
 16 17, 16 18, 19 20, 29 21, 22 23, 22 24, 24 25, 26 27, 30 31, 31 32, 32 33
 5000
-58 - PnC 2 Synonyms
+72 - PnC 2 Synonyms
 stmt s; read r;
 Select <s, r> such that Parent(s, r)
 12 13, 27 29, 32 33
 5000
-58 - PnC 2 Synonyms
+73 - PnC 2 Synonyms
 stmt s; read r;
 Select <r, s> such that Parent(s, r)
 13 12, 29 27, 33 32
 5000
-59 - PnC 2 Synonyms
+74 - PnC 2 Synonyms
 stmt s; read r;
 Select <s, r> such that Parent(r, s)
 none
 5000
-59 - PnC 2 Synonyms
+75 - PnC 2 Synonyms
 stmt s; read r;
 Select <r, s> such that Parent(r, s)
 none
 5000
-60 - PnC 2 Synonyms
+76 - PnC 2 Synonyms
 stmt s; print p;
 Select <s, p> such that Parent(s, p)
 12 14, 27 28
 5000
-60 - PnC 2 Synonyms
+77 - PnC 2 Synonyms
 stmt s; print p;
 Select <p, s> such that Parent(s, p)
 14 12, 28 27
 5000
-61 - PnC 2 Synonyms
+78 - PnC 2 Synonyms
 stmt s; print p;
 Select <s, p> such that Parent(p, s)
 none
 5000
-61 - PnC 2 Synonyms
+79 - PnC 2 Synonyms
 stmt s; print p;
 Select <p, s> such that Parent(p, s)
 none
 5000
-62 - PnC 2 Synonyms
+80 - PnC 2 Synonyms
 stmt s; call c;
 Select <s, c> such that Parent(s, c)
 24 25
 5000
-62 - PnC 2 Synonyms
+81 - PnC 2 Synonyms
 stmt s; call c;
 Select <c, s> such that Parent(s, c)
 25 24
 5000
-63 - PnC 2 Synonyms
+82 - PnC 2 Synonyms
 stmt s; call c;
 Select <s, c> such that Parent(c, s)
 none
 5000
-63 - PnC 2 Synonyms
+83 - PnC 2 Synonyms
 stmt s; call c;
 Select <c, s> such that Parent(c, s)
 none
 5000
-64 - PnC 2 Synonyms
+84 - PnC 2 Synonyms
 stmt s; assign a;
 Select <s, a> such that Parent(s, a)
 9 10, 9 11, 16 17, 16 18, 19 20, 19 21, 22 23
 5000
-64 - PnC 2 Synonyms
+85 - PnC 2 Synonyms
 stmt s; assign a;
 Select <a, s> such that Parent(s, a)
 10 9, 11 9, 17 16, 18 16, 20 19, 21 19, 23 22
 5000
-65 - PnC 2 Synonyms
+86 - PnC 2 Synonyms
 stmt s; assign a;
 Select <s, a> such that Parent(a, s)
 none
 5000
-65 - PnC 2 Synonyms
+87 - PnC 2 Synonyms
 stmt s; assign a;
 Select <a, s> such that Parent(a, s)
 none
 5000
-66 - PnC 2 Synonyms
+88 - PnC 2 Synonyms
 if i,i2;
 Select <i> such that Parent(i, i2)
 8
 5000
-67 - PnC 2 Synonyms
+89 - PnC 2 Synonyms
 if s; while w;
 Select <s> such that Parent(s, w)
 15
 5000
-68 - PnC 2 Synonyms
+90 - PnC 2 Synonyms
 if s; while w;
 Select <s> such that Parent(w, s)
 27
 5000
-69 - PnC 2 Synonyms
+91 - PnC 2 Synonyms
 if i; read r;
 Select <i> such that Parent(i, r)
 12, 27
 5000
-70 - PnC 2 Synonyms
+92 - PnC 2 Synonyms
 if i; print p;
 Select <i> such that Parent(i, p)
 12, 27
 5000
-71 - PnC 2 Synonyms
-if i; call p;
-Select <i> such that Parent(i, p)
-none
-5000
-72 - PnC 2 Synonyms
-if i; assign p;
-Select <i> such that Parent(i, p)
-9
-5000
-73 - PnC 2 Synonyms
-while w,w2;
-Select <w> such that Parent(w, w2)
-22, 30, 31
-5000
-73 - PnC 2 Synonyms
-while w; read r;
-Select <w> such that Parent(w, r)
-32
-5000
-73 - PnC 2 Synonyms
-while w; print p;
-Select <w> such that Parent(w, p)
-none
-5000
-74 - PnC 2 Synonyms
-while w; call p;
-Select <w> such that Parent(w, p)
-24
-5000
-75 - PnC 2 Synonyms
-while w; assign a;
-Select <w> such that Parent(w, a)
-16, 19, 22
-5000
-76 - PnC 2 Synonyms
-stmt s; if i;
-Select <s> such that Parent*(i, s)
-9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 28, 29
-5000
-77 - PnC 2 Synonyms
-stmt s; if i;
-Select <s> such that Parent*(s, i)
-8, 26
-5000
-78 - PnC 2 Synonyms
-stmt s; while w;
-Select <s> such that Parent*(s, w)
-15, 22, 30, 31
-5000
-79 - PnC 2 Synonyms
-stmt s; while w;
-Select <s> such that Parent*(w, s)
-17, 18, 20, 21, 23, 24, 25, 27, 28, 29, 31, 32, 33
-5000
-80 - PnC 2 Synonyms
-stmt s; read r;
-Select <s> such that Parent*(s, r)
-8, 12, 26, 27, 30, 31, 32
-5000
-81 - PnC 2 Synonyms
-stmt s; read r;
-Select <s> such that Parent*(r, s)
-none
-5000
-82 - PnC 2 Synonyms
-stmt s; print p;
-Select <s> such that Parent*(s, p)
-8, 12, 26, 27
-5000
-83 - PnC 2 Synonyms
-stmt s; print p;
-Select <s> such that Parent*(p, s)
-none
-5000
-84  - PnC 2 Synonyms
-stmt s; call p;
-Select <s> such that Parent*(s, p)
-22, 24
-5000
-85 - PnC 2 Synonyms
-stmt s; call p;
-Select <s> such that Parent*(p, s)
-none
-5000
-86 - PnC 2 Synonyms
-stmt s; assign a;
-Select <s> such that Parent*(s, a)
-8, 9, 15, 16, 19, 22
-5000
-87 - PnC 2 Synonyms
-stmt s; assign a;
-Select <s> such that Parent*(a, s)
-none
-5000
-88 - PnC 2 Synonyms
-if i,i2;
-Select <i> such that Parent*(i, i2)
-8
-5000
-89 - PnC 2 Synonyms
-if s; while w;
-Select <s> such that Parent*(s, w)
-15
-5000
-90 - PnC 2 Synonyms
-if s; while w;
-Select <s> such that Parent*(w, s)
-27
-5000
-91 - PnC 2 Synonyms
-if i; read r;
-Select <i> such that Parent*(i, r)
-8, 12, 27
-5000
-92 - PnC 2 Synonyms
-if i; print p;
-Select <i> such that Parent*(i, p)
-8, 12, 27
-5000
 93 - PnC 2 Synonyms
 if i; call p;
-Select <i> such that Parent*(i, p)
+Select <i> such that Parent(i, p)
 none
 5000
 94 - PnC 2 Synonyms
 if i; assign p;
-Select <i> such that Parent*(i, p)
-8, 9, 15
+Select <i> such that Parent(i, p)
+9
 5000
 95 - PnC 2 Synonyms
 while w,w2;
-Select <w> such that Parent*(w, w2)
+Select <w> such that Parent(w, w2)
 22, 30, 31
 5000
 96 - PnC 2 Synonyms
 while w; read r;
+Select <w> such that Parent(w, r)
+32
+5000
+97 - PnC 2 Synonyms
+while w; print p;
+Select <w> such that Parent(w, p)
+none
+5000
+98 - PnC 2 Synonyms
+while w; call p;
+Select <w> such that Parent(w, p)
+24
+5000
+99 - PnC 2 Synonyms
+while w; assign a;
+Select <w> such that Parent(w, a)
+16, 19, 22
+5000
+100 - PnC 2 Synonyms
+stmt s; if i;
+Select <s> such that Parent*(i, s)
+9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 28, 29
+5000
+101 - PnC 2 Synonyms
+stmt s; if i;
+Select <s> such that Parent*(s, i)
+8, 26
+5000
+102 - PnC 2 Synonyms
+stmt s; while w;
+Select <s> such that Parent*(s, w)
+15, 22, 30, 31
+5000
+103 - PnC 2 Synonyms
+stmt s; while w;
+Select <s> such that Parent*(w, s)
+17, 18, 20, 21, 23, 24, 25, 27, 28, 29, 31, 32, 33
+5000
+104 - PnC 2 Synonyms
+stmt s; read r;
+Select <s> such that Parent*(s, r)
+8, 12, 26, 27, 30, 31, 32
+5000
+105 - PnC 2 Synonyms
+stmt s; read r;
+Select <s> such that Parent*(r, s)
+none
+5000
+106 - PnC 2 Synonyms
+stmt s; print p;
+Select <s> such that Parent*(s, p)
+8, 12, 26, 27
+5000
+107 - PnC 2 Synonyms
+stmt s; print p;
+Select <s> such that Parent*(p, s)
+none
+5000
+108 - PnC 2 Synonyms
+stmt s; call p;
+Select <s> such that Parent*(s, p)
+22, 24
+5000
+109 - PnC 2 Synonyms
+stmt s; call p;
+Select <s> such that Parent*(p, s)
+none
+5000
+110 - PnC 2 Synonyms
+stmt s; assign a;
+Select <s> such that Parent*(s, a)
+8, 9, 15, 16, 19, 22
+5000
+111 - PnC 2 Synonyms
+stmt s; assign a;
+Select <s> such that Parent*(a, s)
+none
+5000
+112 - PnC 2 Synonyms
+if i,i2;
+Select <i> such that Parent*(i, i2)
+8
+5000
+113 - PnC 2 Synonyms
+if s; while w;
+Select <s> such that Parent*(s, w)
+15
+5000
+114 - PnC 2 Synonyms
+if s; while w;
+Select <s> such that Parent*(w, s)
+27
+5000
+115 - PnC 2 Synonyms
+if i; read r;
+Select <i> such that Parent*(i, r)
+8, 12, 27
+5000
+116 - PnC 2 Synonyms
+if i; print p;
+Select <i> such that Parent*(i, p)
+8, 12, 27
+5000
+117 - PnC 2 Synonyms
+if i; call p;
+Select <i> such that Parent*(i, p)
+none
+5000
+118 - PnC 2 Synonyms
+if i; assign p;
+Select <i> such that Parent*(i, p)
+8, 9, 15
+5000
+119 - PnC 2 Synonyms
+while w,w2;
+Select <w> such that Parent*(w, w2)
+22, 30, 31
+5000
+120 - PnC 2 Synonyms
+while w; read r;
 Select <w> such that Parent*(w, r)
 26, 30, 31, 32
 5000
-97 - PnC 2 Synonyms
+121 - PnC 2 Synonyms
 while w; print p;
 Select <w> such that Parent*(w, p)
 26
 5000
-98 - PnC 2 Synonyms
+122 - PnC 2 Synonyms
 while w; call p;
 Select <w> such that Parent*(w, p)
 22, 24
 5000
-99 - PnC 2 Synonyms
+123 - PnC 2 Synonyms
 while w; assign a;
 Select <w> such that Parent*(w, a)
 16, 19, 22
 5000
-100 - Synonym Declared but Not Used
+124 - Synonym Declared but Not Used
 while w; assign a;
 Select <w> such that Parent*(w, 32)
 30, 31
 5000
-101 - WildCard for Parent
+125 - WildCard for Parent
 stmt s;
 Select <s> such that Parent(s, _)
 8, 9, 12, 15, 16, 19, 22, 24, 26, 27, 30, 31, 32
 5000
-102 - WildCard for Parent
+126 - WildCard for Parent
 stmt s;
 Select <s> such that Parent(_, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
-103 - WildCard for Parent
+127 - WildCard for Parent
 stmt s;
 Select <s> such that Parent(_, s)
 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 27, 28, 29, 31, 32, 33
 5000
-104 - WildCard for Parent*
+128 - WildCard for Parent*
 stmt s;
 Select <s> such that Parent*(s, _)
 8, 9, 12, 15, 16, 19, 22, 24, 26, 27, 30, 31, 32
 5000
-105 - WildCard for Parent*
+129 - WildCard for Parent*
 stmt s;
 Select <s> such that Parent*(_, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
-106 - WildCard for Parent
+130 - WildCard for Parent
 stmt s;
 Select <s> such that Parent*(_, s)
 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 27, 28, 29, 31, 32, 33
