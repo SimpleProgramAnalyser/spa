@@ -301,7 +301,7 @@ Select s such that Next(s, w)
 61 - PnC 2 Synonyms
 prog_line s; while w;
 Select s such that Next(w, s)
-8, 11, 12, 18, 20, 33, 38, 39, 40
+7, 8, 11, 12, 18, 20, 33, 38, 39, 40
 5000
 62 - PnC 2 Synonyms
 prog_line s; read r;
@@ -401,7 +401,7 @@ Select i such that Next(p, i)
 81 - PnC 2 Synonyms
 while w,w2;
 Select w such that Next(w, w2)
-none
+10
 5000
 82 - PnC 2 Synonyms
 while w; read r;
