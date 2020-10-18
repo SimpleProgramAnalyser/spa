@@ -163,9 +163,11 @@ SynonymTypeToClosureMap getSynonymTypeMap()
              []() {
                  return convertToWithPairs(getAllConstants());
              }},
-            {ProcedureType, []() {
+            {ProcedureType,
+             []() {
                  return convertToWithPairs(getAllProcedures());
-             }}};
+             }},
+            {Prog_LineType, createGetStatementsFunction(AnyStatement)}};
 }
 
 SynonymTypeToClosureMap synonymTypeMap = getSynonymTypeMap();
