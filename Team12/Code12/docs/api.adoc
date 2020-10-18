@@ -312,6 +312,7 @@ of their own, hence they are also known as "container statements".
 * <<getAllCallStatementsByProcedure>>
 * <<getAllProceduresCalled>>
 * <<insertIntoStatementTable>>
+* <<getStatementType>>
 
 '''
 
@@ -368,6 +369,15 @@ If a same `stmtNum` already exists in the table, the old record will be overwrit
 *Description*: This is the insertion method for *Calls Statements* only.
 Inserts a *Call Statement* with `stmtNum` with the name of the *Procedure* it calls into the Statement Table.
 If a same `stmtNum` already exists in the table, any attributes associated with that statement will be overwritten.
+
+'''
+
+[#getStatementType]
+`*STATEMENT_TYPE* getStatementType(INTEGER stmtNum);`
+
+*Requires*: `stmtNum` must be a valid statement number in SIMPLE program.
+
+*Description*: Returns the *STATEMENT_TYPE* of `stmtNum`.
 
 === Variable Table API
 
