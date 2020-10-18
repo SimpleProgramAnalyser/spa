@@ -27,9 +27,9 @@ procedure pattern {
 
 procedure pattern2 {
 	specialPatternAssignment = x + y % (z * x - y);
-	while (x + 3 * y < v * 9) {
-		if (100 + 10000 % 1000 < 90) then {
-			while (x + 3 * (y - 3) < v * 9) {
+	while (x + 3 * y > v * 9) {
+		if (100 + 10000 % 1000 >= 90) then {
+			while (x + 3 * (y - 3) == v * 9) {
 				call pattern;
 				constAssignmentWithBrackets = (10 - 1000 * 34) % 300;
 			}
@@ -37,12 +37,12 @@ procedure pattern2 {
 			y = y - 3;
 		}
 	}
-	if ( 100 + 10000 < y) then {
+	if ( 100 + 10000 != y) then {
 		basicAss = 3 * y;
 	} else {
 		while (3 * y < 0) {
 			specialPatternAssignment = x + y % (z * x - y);	
-			while (z * x - y > 0) {
+			while ((!(z * x - y > 0))) {
 				call pattern;
 			}
 		}
@@ -50,9 +50,33 @@ procedure pattern2 {
 }
 
 procedure pattern3 {
-	specialPattern = 100 + (10000 % 1000);
-	while (100 + 10000 < 0 && z * x < 3) {
+	specialCondition = 100 + (10000 % 1000);
+	while ((!((100 + 10000) % 1000 <= 0)) && ((z * x) / 4 < 3)) {
+		read y;
+	}
+	if ((100 + 10000 > 0) && ((!(z * x >= 3)) && (specialPatternAssignment < 9))) then {
+		print x;
+	} else {
+		print pattern;
+		while (!(3 * y == 0)) {
+			print pattern;
+			while ((!(z * x - y != 0))) {
+				call pattern;
+			}
+		}
+	}
+	while ((!(100 + 10000 == 0)) || (z * x != 3)) {
+		print pattern;
+		x = 10 * y;
+	}
+	if ((100 + 10000 != 0) || (!(y >= 0 ))) then {
 		print pattern;
 		specialPatternAssignment = x + y % z * (x - y);
+	} else {
+		print pattern;
+		y = y;
+	}
+	while ((!(a <= 0)  ) && (  (!(  b == 3  )) || (!  (c * 3 != 3)))) {
+		print pattern;
 	}
 }
