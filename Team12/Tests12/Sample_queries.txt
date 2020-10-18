@@ -86,7 +86,7 @@ x, z
 18 - comment
 procedure p, q;
 Select BOOLEAN such that Calls(p, q) with q.procName = "p" and p.procName = "Example"
-true
+TRUE
 5000
 19 - comment
 if ifs; assign a1, a2; variable v1, v2;
@@ -111,7 +111,7 @@ Example p i, Example p x, Example p y, Example p z, Example q i, Example q x, Ex
 23 - comment
 call c; assign a1, a2;
 Select BOOLEAN such that Follows*(_, c) and Affects(a1, a2) and Uses(a2, _)
-true
+TRUE
 5000
 24 - comment
 assign a1, a2; variable v;

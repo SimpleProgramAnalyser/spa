@@ -8,11 +8,12 @@
 
 #include "FormattedQueryResult.h"
 #include "RawQueryResult.h"
+#include "Ui.h"
 
 class Projector {
 public:
-    FormattedQueryResult formatAutotester(RawQueryResult rawQueryResult);
-    FormattedQueryResult formatUI(RawQueryResult rawQueryResult);
+    FormattedQueryResult formatAutotester(RawQueryResult rawQueryResult, Ui& ui);
+    FormattedQueryResult formatUI(RawQueryResult rawQueryResult, Ui& ui);
 
 private:
     const String CommaStr = ", ";

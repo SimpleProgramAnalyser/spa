@@ -9,19 +9,7 @@
 #include "pql/preprocessor/Preprocessor.h"
 #include "pql/projector/Projector.h"
 
-/**
- * Executes a PQL query, and interacts with the PKB,
- * for the results of that query.
- *
- * @param query The PQL query.
- * @param format The format, to format the results.
- *
- * @return FormattedQueryResult, representing the PQL
- * query results (Note: If either PQL query invalid, or is
- * valid but yields no result, an empty FormattedQueryResult
- * would be returned).
- */
-FormattedQueryResult PqlManager::executeQuery(const String& query, QueryResultFormatType format)
+FormattedQueryResult PqlManager::executeQuery(const String& query, QueryResultFormatType format, Ui& ui)
 {
     // Call the Preprocessor to parse the query
     AbstractQuery abstractQuery = Preprocessor::processQuery(query);
@@ -40,9 +28,9 @@ FormattedQueryResult PqlManager::executeQuery(const String& query, QueryResultFo
     FormattedQueryResult formattedQueryResult = FormattedQueryResult::emptyFormattedQueryResult();
 
     if (format == AutotesterFormat) {
-        formattedQueryResult = projector.formatAutotester(rawQueryResult);
+        formattedQueryResult = projector.formatAutotester(rawQueryResult, ui);
     } else if (format == UiFormat) {
-        formattedQueryResult = projector.formatUI(rawQueryResult);
+        formattedQueryResult = projector.formatUI(rawQueryResult, ui);
     }
 
     // Finally, return the formatted result

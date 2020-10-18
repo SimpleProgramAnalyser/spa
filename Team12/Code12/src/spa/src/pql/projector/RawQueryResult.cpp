@@ -23,7 +23,7 @@
  * @return A new instance of this class.
  *
  */
-RawQueryResult::RawQueryResult(Vector<String> results): isSyntaxError(false), results{std::move(results)} {}
+RawQueryResult::RawQueryResult(Vector<String> results): hasError(false), results{std::move(results)} {}
 
 /*
  * Constructs a RawQueryResult instance that represents a
@@ -34,8 +34,21 @@ RawQueryResult::RawQueryResult(Vector<String> results): isSyntaxError(false), re
  *
  * @return A new instance of this class.
  */
-RawQueryResult::RawQueryResult(String errorMessage):
-    isSyntaxError(true), errorMessage(std::move(errorMessage)), results()
+RawQueryResult::RawQueryResult(String errorMessage, Boolean isSyntaxError):
+    hasError(true), errorMessage(InputError(std::move(errorMessage), 0, 0, ErrorSource::Query,
+                                            isSyntaxError ? ErrorType::Syntax : ErrorType::Semantic)),
+    results()
+{}
+
+/*
+ * Constructs a RawQueryResult instance that represents a
+ * semantic error with Select BOOLEAN in the Query Preprocessor.
+ *
+ * @return A new instance of this class.
+ */
+RawQueryResult::RawQueryResult(String errorMessage, Vector<String> results):
+    hasError(true), errorMessage(InputError(std::move(errorMessage), 0, 0, ErrorSource::Query, ErrorType::Semantic)),
+    results(std::move(results))
 {}
 
 /*
@@ -46,7 +59,29 @@ RawQueryResult::RawQueryResult(String errorMessage):
  */
 RawQueryResult RawQueryResult::getSyntaxError(String errorMessage)
 {
-    return RawQueryResult(std::move(errorMessage));
+    return RawQueryResult(std::move(errorMessage), true);
+}
+
+/*
+ * Returns a RawQueryResult that represents a semantic error
+ * in the Query Preprocessor.
+ *
+ * @return RawQueryResult representing semantic error
+ */
+RawQueryResult RawQueryResult::getSemanticError(String errorMessage)
+{
+    return RawQueryResult(std::move(errorMessage), false);
+}
+
+/*
+ * Returns a RawQueryResult that represents a semantic error
+ * in the Query Preprocessor. This query should return FALSE.
+ *
+ * @return RawQueryResult representing syntax error
+ */
+RawQueryResult RawQueryResult::getFalseResultWithSemanticError(String errorMessage)
+{
+    return RawQueryResult(std::move(errorMessage), Vector<String>({"FALSE"}));
 }
 
 /*
@@ -104,7 +139,7 @@ Boolean RawQueryResult::operator==(const RawQueryResult& rawQueryResult) const
     std::vector<std::string> sortedOther = rawQueryResult.results;
     std::sort(sortedThis.begin(), sortedThis.end());
     std::sort(sortedOther.begin(), sortedOther.end());
-    return sortedThis == sortedOther && this->isSyntaxError == rawQueryResult.isSyntaxError
+    return sortedThis == sortedOther && this->hasError == rawQueryResult.hasError
            && this->errorMessage == rawQueryResult.errorMessage;
 }
 
