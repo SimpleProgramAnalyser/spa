@@ -58,7 +58,8 @@ Void NextEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rig
     resultsTable.storeResultsOne(leftRef, filteredResults);
 }
 
-Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) {
+Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef)
+{
     // get the DesignEntityType of prev synonym and next synonym
     StatementType prevRefStmtType
         = leftRef.isWildCard() ? AnyStatement : mapToStatementType(leftRef.getDesignEntity().getType());
