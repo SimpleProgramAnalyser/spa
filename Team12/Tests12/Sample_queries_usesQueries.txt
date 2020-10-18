@@ -20,7 +20,7 @@ none
 5000
 5 - Uses statement with 0 unknown synonym, Return FALSE
 stmt s;
-Select BOOLEAN that Uses (2, "x")
+Select BOOLEAN such that Uses (2, "x")
 FALSE
 5000
 6 - Uses statement with 0 unknown synonym With Spaces, Return All Statements

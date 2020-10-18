@@ -32,10 +32,10 @@ Vector<String> convertToTupleString(const NtupledResult& resultTuples)
     for (const std::vector<std::string>& tuple : resultTuples) {
         std::ostringstream stringStream;
         size_t length = tuple.size();
-        for (size_t i = 0; i < length - 1; i++) {
+        for (size_t i = 0; i + 1 < length; i++) {
             stringStream << tuple[i] << delimiter;
         }
-        if (length - 1 >= 0) {
+        if (length > 0) {
             stringStream << tuple[length - 1];
         }
         tupleStrings.emplace_back(stringStream.str());
@@ -60,7 +60,7 @@ RawQueryResult Evaluator::evaluateQuery()
      * If invalid and Select BOOLEAN, we return FALSE.
      * If invalid and not Select BOOLEAN, stop evaluating query.
      */
-    if (query.toReturnFalseResult() || (query.isSemanticallyInvalid() && query.getSelectSynonym().empty())) {
+    if (query.toReturnFalseResult()) {
         return RawQueryResult::getFalseResultWithSemanticError(query.getErrorMessage());
     } else if (query.isSyntacticallyInvalid()) {
         return RawQueryResult::getSyntaxError(query.getErrorMessage());
@@ -73,7 +73,7 @@ RawQueryResult Evaluator::evaluateQuery()
 /*
  * Processes a PQL query and interacts with PKB if needed,
  * to obtain the results to a query that was determined
- * to be syntactically and semanticallt valid.
+ * to be syntactically and semantically valid.
  *
  * @return The list of query results for the Select synonym.
  */

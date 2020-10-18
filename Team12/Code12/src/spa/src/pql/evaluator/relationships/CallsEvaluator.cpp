@@ -44,14 +44,14 @@ Void CallsEvaluator::evaluateLeftKnown() const
 {
     Vector<ProcedureName> (*function)(const ProcedureName&) = getAllCallees;
     Vector<ProcedureName> (*starFunction)(const ProcedureName&) = getAllCalleesStar;
-    resultsTable->storeResultsOne(rightRef, (isStar ? function : starFunction)(leftRef.getValue()));
+    resultsTable->storeResultsOne(rightRef, (isStar ? starFunction : function)(leftRef.getValue()));
 }
 
 Void CallsEvaluator::evaluateRightKnown() const
 {
     Vector<ProcedureName> (*function)(const ProcedureName&) = getAllCallers;
     Vector<ProcedureName> (*starFunction)(const ProcedureName&) = getAllCallersStar;
-    resultsTable->storeResultsOne(leftRef, (isStar ? function : starFunction)(rightRef.getValue()));
+    resultsTable->storeResultsOne(leftRef, (isStar ? starFunction : function)(rightRef.getValue()));
 }
 
 Void CallsEvaluator::evaluateBothAny() const
@@ -60,13 +60,13 @@ Void CallsEvaluator::evaluateBothAny() const
     ClauseResult rightResults;
     PairedResult tuples;
     if (isStar) {
-        leftResults = getAllCallees();
-        rightResults = getAllCallers();
-        tuples = getAllCallsTuple();
-    } else {
         leftResults = getAllCalleesStar();
         rightResults = getAllCallersStar();
         tuples = getAllCallsTupleStar();
+    } else {
+        leftResults = getAllCallees();
+        rightResults = getAllCallers();
+        tuples = getAllCallsTuple();
     }
     resultsTable->storeResultsTwo(leftRef, leftResults, rightRef, rightResults, tuples);
 }

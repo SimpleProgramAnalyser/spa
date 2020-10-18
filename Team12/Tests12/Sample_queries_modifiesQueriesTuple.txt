@@ -91,7 +91,7 @@ readPoint mainPrint, readPoint readPoint, readPoint computeCentroid, computeCent
 19 - Modifies procedure with 1 unknown synonym, Select based on LHS, Return All
 procedure p1, p2;
 Select <p2, p1> such that Modifies (p1, "y")
-mainPrint readPoint, readPoint readPoint, computeCentroid readPoint, mainPrint computeCentroid, readpoint computeCentroid, computeCentroid computeCentroid
+mainPrint readPoint, readPoint readPoint, computeCentroid readPoint, mainPrint computeCentroid, readPoint computeCentroid, computeCentroid computeCentroid
 5000
 20 - Modifies statement with 1 unknown synonym, Select based on LHS, Select Relavant Statements
 stmt s; procedure p;
@@ -130,7 +130,7 @@ Select <c, p> such that Modifies (c, "y")
 5000
 27 - Modifies statement with 1 unknown synonym, Select based on LHS
 call c; procedure p;
-Select <s, p> such that Modifies (c, "y")
+Select <p, c> such that Modifies (c, "y")
 mainPrint 23, readPoint 23, computeCentroid 23, mainPrint 31, readPoint 31, computeCentroid 31
 5000
 28 - Modifies statement with 1 unknown synonym, Select based on LHS
@@ -306,12 +306,12 @@ cenX, normSq, x, y
 62 - Modifies with 2 synonyms, Select based on LHS (if)
 if i; variable v;
 Select <i, v> such that Modifies(i,v)
-3 cenX, 3 cenY, 7 normSq, 7 x, 7 y, 26 cenX, 26 count, 26 cenY, 33 flag, 33 cenX, 33 cenY, 33 readPoint, 37 readPoint
+3 cenX, 3 y, 7 normSq, 7 x, 7 y, 26 cenX, 26 count, 26 cenY, 33 flag, 33 cenX, 33 cenY, 33 readPoint, 37 readPoint
 5000
 63 - Modifies with 2 synonyms, Select based on LHS (if)
 if i; variable v;
 Select <v, i> such that Modifies(i,v)
-cenX 3, cenY 3, normSq 7, x 7, y 7, cenX 26, count 26, cenY 26, flag 33, cenX 33, cenY 33, readPoint 33, readPoint 37
+cenX 3, y 3, normSq 7, x 7, y 7, cenX 26, count 26, cenY 26, flag 33, cenX 33, cenY 33, readPoint 33, readPoint 37
 5000
 64 - Modifies with 2 synonyms, Select based on RHS (if)
 if i; variable v;
@@ -341,7 +341,7 @@ Select <a, v> such that Modifies(a,v)
 69 - Modifies with 2 synonyms, Select based on LHS (assign)
 assign a; variable v;
 Select <v, a> such that Modifies(a,v)
-cenX 4, y 5, y 6, normSq 8, normSq 10, y 13, x 18, y 19, count 20, cenX 21, cenY 22, count 25, cenX 27, cenY 29, cenY 32, flag 34, cenX 35, cenY 36, readPoint 38, readPoint 38, normSq 40
+cenX 4, y 5, y 6, normSq 8, normSq 10, y 13, x 18, y 19, count 20, cenX 21, cenY 22, count 25, cenX 27, cenY 29, cenY 32, flag 34, cenX 35, cenY 36, readPoint 38, readPoint 39, normSq 40
 5000
 70 - Modifies with 2 synonyms, Select based on RHS (assign)
 assign a; variable v;
