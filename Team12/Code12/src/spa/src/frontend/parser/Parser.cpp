@@ -548,8 +548,9 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in second sub-conditional expression
             return secondCondition;
         }
-        assert(secondCondition.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-               == endIndex);
+        if (secondCondition.nextUnparsedToken != endIndex) {
+            return getSyntaxError<ConditionalExpression>(33);
+        }
         // finally, create the conditional expression
         if (programTokens->at(firstCondition.nextUnparsedToken + 1).tokenTag == frontend::AndConditionalTag) {
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(

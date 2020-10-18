@@ -12,7 +12,7 @@
 
 typedef Integer TokenListIndex;
 
-const std::size_t maxErrorCode = 33;
+const std::size_t maxErrorCode = 34;
 
 // An array to map error codes to error messages
 extern std::array<String, maxErrorCode> errorMessages;
