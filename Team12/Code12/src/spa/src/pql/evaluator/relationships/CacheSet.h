@@ -2,8 +2,8 @@
 // Created by Chester Sim on 17/10/20.
 //
 
-#ifndef AUTOTESTER_CACHESET_H
-#define AUTOTESTER_CACHESET_H
+#ifndef SPA_CACHESET_H
+#define SPA_CACHESET_H
 
 #include "../EvaluatorUtils.h"
 
@@ -53,4 +53,4 @@ public:
     ClauseResult filterStatementType(StatementType stmtType) const;
 };
 
-#endif // AUTOTESTER_CACHESET_H
+#endif // SPA_CACHESET_H

@@ -58,9 +58,75 @@ Void NextEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rig
     resultsTable.storeResultsOne(leftRef, filteredResults);
 }
 
-Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) const {}
+Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) {
+    // get the DesignEntityType of prev synonym and next synonym
+    StatementType prevRefStmtType
+        = leftRef.isWildCard() ? AnyStatement : mapToStatementType(leftRef.getDesignEntity().getType());
+    StatementType nextRefStmtType
+        = rightRef.isWildCard() ? AnyStatement : mapToStatementType(rightRef.getDesignEntity().getType());
 
-Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) const {}
+    if (leftRef.isWildCard() && rightRef.isWildCard()) {
+        // check if NextTable has at least one Next Relationship
+        Vector<StatementNumber> allStatements = getAllStatements(AnyStatement);
+        for (StatementNumber stmtNum : allStatements) {
+            if (!getAllNextStatements(stmtNum, AnyStatement).empty()) {
+                resultsTable.storeResultsZero(true);
+                return;
+            }
+        }
+
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+
+    if (leftRef.isWildCard()) {
+        Vector<StatementNumber> nextTypeStatements = getAllStatements(nextRefStmtType);
+        Vector<StatementNumber> results;
+
+        for (StatementNumber stmtNum : nextTypeStatements) {
+            // if it has any normal Previous relationship, add to results
+            Vector<StatementNumber> allPrevStatements = getAllPreviousStatements(stmtNum, AnyStatement);
+            if (!allPrevStatements.empty()) {
+                results.push_back(stmtNum);
+            }
+        }
+
+        ClauseResult clauseResults = convertToClauseResult(results);
+        resultsTable.storeResultsOne(rightRef, clauseResults);
+        return;
+    }
+
+    if (rightRef.isWildCard()) {
+        Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
+        Vector<StatementNumber> results;
+
+        for (StatementNumber stmtNum : prevTypeStatements) {
+            // if it has any normal Next relationship, add to results
+            Vector<StatementNumber> allNextStatements = getAllNextStatements(stmtNum, AnyStatement);
+            if (!allNextStatements.empty()) {
+                results.push_back(stmtNum);
+            }
+        }
+
+        ClauseResult clauseResults = convertToClauseResult(results);
+        resultsTable.storeResultsOne(leftRef, clauseResults);
+        return;
+    }
+
+    // Both are Synonyms
+    Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
+    for (StatementNumber stmtNum : prevTypeStatements) {
+        CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
+        ClauseResult filteredResults = nextStarAnyStmtResults.filterStatementType(nextRefStmtType);
+        /** Store result */
+    }
+}
+
+Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
+{
+    CacheSet nextStarAnyStmtResults = getCacheNextStatement(leftRefVal);
+    resultsTable.storeResultsZero(nextStarAnyStmtResults.isCached(rightRefVal));
+}
 
 NextEvaluator::NextEvaluator(ResultsTable& resultsTable): resultsTable(resultsTable) {}
 

@@ -29,8 +29,8 @@ private:
 
     Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
     Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
-    Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) const;
-    Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) const;
+    Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
+    Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
     // DFS method to search and cache all Next* relationship for stmtNum
     CacheSet getCacheNextStatement(StatementNumber stmtNum);
     CacheSet getCachePrevStatement(StatementNumber stmtNum);
