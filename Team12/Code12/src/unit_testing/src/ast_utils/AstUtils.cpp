@@ -1994,3 +1994,86 @@ ProgramNode* getProgram21Tree_endWithIf() {
 
     return programNode;
 }
+
+
+String getProgram22String_whileNestedInWhile()
+{
+    String readPoints = "\
+        procedure readPoint {\n\
+        if ((x < y) && (y < z)) then {\n\
+          y = z + x;\n\
+        } else {\n\
+            y = x + y; }\n\
+        while (x > z) { \n\
+            x = y;\n\
+            y = normSq + 3;\n\
+            while (normSq > 3) {\n\
+               print normSq;\n\
+            }\n\
+        }\n\
+        normSq = y;\n\
+    }\n\
+";
+    return readPoints;
+}
+
+/*
+* Annotated with statement numbers:
+procedure readPoint {
+1    if ((x < y) && (y < z)) then {
+2        y = z + x;
+    } else {
+3        y = x + y;}
+4    while (x > z) {
+5        x = y;
+6        y = normSq + 3;
+7        while (normSq > 3) {
+8            print normSq;}}
+9    normSq = y;}
+*/
+
+ProgramNode* getProgram22Tree_whileNestedInWhile()
+{
+    List<ProcedureNode> procedureList;
+    List<StatementNode> readPointStmts;
+
+    // procedure readPoint if & whiles 
+    List<StatementNode> readPointIfStatements;
+    List<StatementNode> readPointElseStatements;
+    List<StatementNode> readPointOuterWhileStatements;
+    List<StatementNode> readPointInnerWhileStatements;
+
+    readPointIfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("y"), createPlusExpr(createRefExpr("z"), createRefExpr("x")))));
+    readPointElseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(3, Variable("y"), createPlusExpr(createRefExpr("x"), createRefExpr("y")))));
+
+    readPointInnerWhileStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("normSq"))));
+
+    readPointOuterWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        5, Variable("x"), createRefExpr("y"))));
+    readPointOuterWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(6, Variable("y"), createPlusExpr(createRefExpr("normSq"), createRefExpr(3)))));
+    readPointOuterWhileStatements.push_back(std::unique_ptr<WhileStatementNode>(
+        createWhileNode(7, createGtExpr(createRefExpr("normSq"), createRefExpr("3")),
+                     createStmtlstNode(readPointInnerWhileStatements))));
+
+    // procedure redPoint
+   readPointStmts.push_back(std::unique_ptr<IfStatementNode>(
+       createIfNode(1,
+                        createAndExpr(createLtExpr(createRefExpr("x"), createRefExpr("y")),
+                                      createLtExpr(createRefExpr("y"), createRefExpr("z"))),
+                        createStmtlstNode(readPointIfStatements), createStmtlstNode(readPointElseStatements))));
+   readPointStmts.push_back(
+        std::unique_ptr<WhileStatementNode>(createWhileNode(4, createGtExpr(createRefExpr("x"), createRefExpr("y")), createStmtlstNode(readPointOuterWhileStatements))));
+   readPointStmts.push_back(
+       std::unique_ptr<AssignmentStatementNode>(
+       createAssignNode(9, Variable("normSq"), createRefExpr("y"))));
+
+    StmtlstNode* readPointStmtLstNode = createStmtlstNode(readPointStmts);
+   ProcedureNode* readPointProc = createProcedureNode("raymarch", readPointStmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(readPointProc));
+    ProgramNode* programNode = createProgramNode("main", procedureList, 9);
+
+    return programNode;
+}

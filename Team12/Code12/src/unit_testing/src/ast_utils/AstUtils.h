@@ -132,4 +132,10 @@ String getProgram21String_endWithIf();
 // Program 21: program with if, while, read, print, call, assign
 ProgramNode* getProgram21Tree_endWithIf();
 
+// Program 22: program with if, nested whiles, read, print, call, assign
+String getProgram22String_whileNestedInWhile();
+// Program 22: program with if, nested whiles, read, print, call, assign
+ProgramNode* getProgram22Tree_whileNestedInWhile();
+
+
 #endif // UNIT_TESTING_AST_UTILS_H
