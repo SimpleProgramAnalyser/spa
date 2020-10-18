@@ -115,11 +115,17 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
 
     // Both are Synonyms
     Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
+    Vector<Pair<Integer, String>> pairedResults;
     for (StatementNumber stmtNum : prevTypeStatements) {
         CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
         ClauseResult filteredResults = nextStarAnyStmtResults.filterStatementType(nextRefStmtType);
         /** Store result */
+        for (const String& result : filteredResults) {
+            Pair<Integer, String> pairResult = std::make_pair(stmtNum, result);
+            pairedResults.push_back(pairResult);
+        }
     }
+    resultsTable.storeResultsTwo(leftRef.getValue(), rightRef.getValue(), convertToPairedResult(pairedResults));
 }
 
 Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)

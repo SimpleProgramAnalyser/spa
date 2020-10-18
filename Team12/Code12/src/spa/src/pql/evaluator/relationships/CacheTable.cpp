@@ -4,7 +4,6 @@
 
 #include "CacheTable.h"
 
-
 Boolean CacheTable::isCached(StatementNumber num) const
 {
     return table.find(num) != table.end();
