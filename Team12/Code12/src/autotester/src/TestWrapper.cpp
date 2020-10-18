@@ -35,8 +35,10 @@ TestWrapper::TestWrapper()
 class AutotesterUi: public Ui {
     Void postUiError(InputError err) override
     {
-        std::cout << err.getMessage() << std::endl;
-        throw std::runtime_error("Invalid source program. Terminating.");
+        std::cout << err.getTypeString() << ": " << err.getMessage() << std::endl;
+        if (err.getSource() == ErrorSource::SimpleProgram) {
+            throw std::runtime_error("Invalid source program. Terminating.");
+        }
     }
 };
 
@@ -56,10 +58,10 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
 {
     // call your evaluator to evaluate the query here
     // ...code to evaluate query...
-
+    AutotesterUi ui;
     // store the answers to the query in the results list (it is initially empty)
     // each result must be a string.
-    FormattedQueryResult result = PqlManager::executeQuery(query, AutotesterFormat);
+    FormattedQueryResult result = PqlManager::executeQuery(query, AutotesterFormat, ui);
     printf("result : %s", result.getResults().c_str());
 
     // retrieve String and perform split operation by delimiter "," to add into results

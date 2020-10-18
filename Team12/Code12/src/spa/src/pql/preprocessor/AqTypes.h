@@ -407,7 +407,7 @@ public:
     const Vector<ResultSynonym> getSynonyms() const;
     const ClauseVector& getClauses() const;
     DeclarationTable getDeclarationTable() const;
-    Boolean toReturnFalseResult();
+    Boolean toReturnFalseResult() const;
     Boolean operator==(const AbstractQuery& abstractQuery);
 };
 
