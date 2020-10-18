@@ -26,6 +26,13 @@ Void NextEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRe
 
 Void NextEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef) const
 {
+    if (!leftRef.isWildCard() && leftRef.getValue() == rightRef.getValue()) {
+        // If left == right, Next(s, s) will always be false.
+        //
+        // This is because of SIMPLE rules where a while loop must
+        // have at least 1 statement in its statement list.
+        resultsTable.storeResultsZero(false);
+    }
     // get the DesignEntityType of prev synonym and next synonym
     StatementType prevRefStmtType
         = leftRef.isWildCard() ? AnyStatement : mapToStatementType(resultsTable.getTypeOfSynonym(leftRef.getValue()));
