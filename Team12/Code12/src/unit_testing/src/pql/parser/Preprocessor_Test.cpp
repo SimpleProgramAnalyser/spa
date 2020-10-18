@@ -33,7 +33,6 @@ TEST_CASE("Select Synonym without Clauses")
 {
     AbstractQuery abstractQuery = processQuery("stmt s; Select s");
 
-    //    AbstractQueryBuilder abstractQueryBuilder;
     AbstractQuery expectedAbstractQuery
         = AbstractQueryBuilder::create().addSelectSynonym("s").addDeclaration("s", "stmt").build();
 
@@ -1192,11 +1191,10 @@ TEST_CASE("No declarations Select BOOLEAN with clauses")
 {
     AbstractQuery abstractQuery = processQuery("Select BOOLEAN with 5 = 5");
 
-    AbstractQuery expectedAbstractQuery
-        = AbstractQueryBuilder::create()
-            .addWithClause(IntegerRefType, "5", NonExistentType, NoAttributeType,
-                           IntegerRefType, "5", NonExistentType, NoAttributeType)
-            .build();
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addWithClause(IntegerRefType, "5", NonExistentType, NoAttributeType,
+                                                             IntegerRefType, "5", NonExistentType, NoAttributeType)
+                                              .build();
 
     bool equals = abstractQuery == expectedAbstractQuery;
 
