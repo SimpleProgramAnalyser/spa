@@ -200,7 +200,7 @@ Void NextEvaluator::evaluateNextStarClause(const Reference& leftRef, const Refer
 CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
-    if (isNextExplored(stmtNum)) {
+    if (exploredNextStatements.isCached(stmtNum)) {
         return cacheNextStarTable.get(stmtNum);
     }
 
@@ -261,7 +261,7 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
 CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
-    if (isPrevExplored(stmtNum)) {
+    if (exploredPrevStatements.isCached(stmtNum)) {
         return cachePrevStarTable.get(stmtNum);
     }
 
@@ -318,16 +318,6 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
     return currentCacheSet;
 }
 
-Boolean NextEvaluator::isNextExplored(StatementNumber stmtNum) const
-{
-    return exploredNextStatements.isCached(stmtNum);
-}
-
-Boolean NextEvaluator::isPrevExplored(StatementNumber stmtNum) const
-{
-    return exploredPrevStatements.isCached(stmtNum);
-}
-
 /**
  * Retrieves the last statement number of the given while loop.
  * @param currentStmtNum    Current statement number to evaluate.
@@ -339,20 +329,28 @@ StatementNumber getLastStatementNumberInWhileLoop(StatementNumber currentStmtNum
     Vector<StatementNumber> nextStatementList = getAllNextStatements(currentStmtNum, AnyStatement);
     StatementNumber nextNonWhileStatementNumber;
 
-    if (getStatementType(currentStmtNum) == WhileStatement && nextStatementList.size() == 1) {
-        StatementNumber nextWhileStatementNumber = currentStmtNum + 1;
-        return getLastStatementNumberInWhileLoop(nextWhileStatementNumber, currentStmtNum);
-    } else {
-        // For any other statements inside the while loop,
-        // we take the first Next relationship that exist.
-        // In the case of IfStatement, we take the statement
-        // number of the if portion.
-        nextNonWhileStatementNumber = nextStatementList.at(0);
+    if (getStatementType(currentStmtNum) == WhileStatement) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        assert(nextStatementList.size() == 2);
+
+        StatementNumber nextStmtNum = currentStmtNum + 1;
+        StatementNumber nextNonWhileStatementNumber =  nextStatementList.at(0) == nextStmtNum
+                                                       ? nextStatementList.at(1)
+                                                       : nextStatementList.at(0);
+        if (nextNonWhileStatementNumber == whileStmtNum) {
+            // if nested while loop is the last list of statements in the parent while loop,
+            // get the last statement number of this nested while loop instead
+            return getLastStatementNumberInWhileLoop(nextStmtNum, currentStmtNum);
+        } else {
+            // skip the entire nested while loop
+            return getLastStatementNumberInWhileLoop(nextNonWhileStatementNumber, whileStmtNum);
+        }
     }
 
-    if (nextNonWhileStatementNumber == whileStmtNum) {
+    StatementNumber maxNextStmtNum = *std::max_element(nextStatementList.begin(), nextStatementList.end());
+    if (maxNextStmtNum == whileStmtNum) {
         return currentStmtNum;
     } else {
-        return getLastStatementNumberInWhileLoop(nextNonWhileStatementNumber, whileStmtNum);
+        return getLastStatementNumberInWhileLoop(maxNextStmtNum, whileStmtNum);
     }
 }

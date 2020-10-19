@@ -36,8 +36,6 @@ private:
     // currently not operating on a statement in a while statement list.
     CacheSet getCacheNextStatement(StatementNumber stmtNum);
     CacheSet getCachePrevStatement(StatementNumber stmtNum);
-    Boolean isNextExplored(StatementNumber stmtNum) const;
-    Boolean isPrevExplored(StatementNumber stmtNum) const;
 
 public:
     explicit NextEvaluator(ResultsTable& resultsTable);
