@@ -240,14 +240,15 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
 
         // TODO: Currently commented out since it may be unnecessary to set the results for all the statements in
         // while's statement list. Can be used to test optimisation
-        //        // Add while statement's cache set to all statements
-        //        // in statement list. This is done on the basis that
-        //        // all the statements in the statement list should
-        //        // have the same set of Next* Relationships.
-        //        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
-        //            cacheNextStarTable.insert(i, currentCacheSet);
-        //            exploredNextStatements.insert(i);
-        //        }
+
+        // Add while statement's cache set to all statements
+        // in statement list. This is done on the basis that
+        // all the statements in the statement list should
+        // have the same set of Next* Relationships.
+        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
+            cacheNextStarTable.insert(i, currentCacheSet);
+            exploredNextStatements.insert(i);
+        }
 
         cacheNextStarTable.insert(stmtNum, currentCacheSet);
         exploredNextStatements.insert(stmtNum);
@@ -312,14 +313,14 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
         //            currentCacheSet.insert(i);
         //        }
         //
-        //        // Add while statement's cache set to all statements
-        //        // in statement list. This is done on the basis that
-        //        // all the statements in the statement list should
-        //        // have the same set of Next* Relationships.
-        //        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
-        //            cachePrevStarTable.insert(i, currentCacheSet);
-        //            exploredPrevStatements.insert(i);
-        //        }
+        // Add while statement's cache set to all statements
+        // in statement list. This is done on the basis that
+        // all the statements in the statement list should
+        // have the same set of Next* Relationships.
+        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
+            cachePrevStarTable.insert(i, currentCacheSet);
+            exploredPrevStatements.insert(i);
+        }
         //
         //        cachePrevStarTable.insert(stmtNum, currentCacheSet);
         //        exploredPrevStatements.insert(stmtNum);
@@ -344,30 +345,12 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
  */
 StatementNumber getLastStatementNumberInWhileLoop(StatementNumber currentStmtNum, StatementNumber whileStmtNum)
 {
-    Vector<StatementNumber> nextStatementList = getAllNextStatements(currentStmtNum, AnyStatement);
-    StatementNumber nextNonWhileStatementNumber;
+    Vector<StatementNumber> prevStatementList = getAllPreviousStatements(whileStmtNum, AnyStatement);
+    StatementNumber maxNextStmtNum = *std::max_element(prevStatementList.begin(), prevStatementList.end());
 
-    if (getStatementType(currentStmtNum) == WhileStatement) {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-        assert(nextStatementList.size() == 2);
-
-        StatementNumber nextStmtNum = currentStmtNum + 1;
-        StatementNumber nextNonWhileStatementNumber
-            = nextStatementList.at(0) == nextStmtNum ? nextStatementList.at(1) : nextStatementList.at(0);
-        if (nextNonWhileStatementNumber == whileStmtNum) {
-            // if nested while loop is the last list of statements in the parent while loop,
-            // get the last statement number of this nested while loop instead
-            return getLastStatementNumberInWhileLoop(nextStmtNum, currentStmtNum);
-        } else {
-            // skip the entire nested while loop
-            return getLastStatementNumberInWhileLoop(nextNonWhileStatementNumber, whileStmtNum);
-        }
+    if (getStatementType(maxNextStmtNum) == WhileStatement) {
+        return getLastStatementNumberInWhileLoop(currentStmtNum, maxNextStmtNum);
     }
 
-    StatementNumber maxNextStmtNum = *std::max_element(nextStatementList.begin(), nextStatementList.end());
-    if (maxNextStmtNum == whileStmtNum) {
-        return currentStmtNum;
-    } else {
-        return getLastStatementNumberInWhileLoop(maxNextStmtNum, whileStmtNum);
-    }
+    return maxNextStmtNum;
 }
