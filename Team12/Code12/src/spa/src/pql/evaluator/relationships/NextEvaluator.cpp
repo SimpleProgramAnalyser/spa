@@ -4,6 +4,7 @@
  */
 #include "NextEvaluator.h"
 
+#include <algorithm>
 #include <stdexcept>
 
 #include "RelationshipsUtil.h"
