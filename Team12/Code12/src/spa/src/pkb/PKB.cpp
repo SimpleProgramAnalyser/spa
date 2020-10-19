@@ -310,6 +310,11 @@ Vector<String> getAllProceduresCalled()
     return pkb.statementTable.getAllProceduresCalled();
 }
 
+StatementType getStatementType(StatementNumber stmtNum)
+{
+    return pkb.statementTable.getStatementType(stmtNum);
+}
+
 // RootNode
 void assignRootNode(ProgramNode* rootNodeToAssign)
 {

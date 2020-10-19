@@ -19,12 +19,17 @@ public:
     const ErrorSource source;
     const ErrorType type;
 
+    explicit InputError();
     InputError(String msg, Integer lineNumber, Integer columnNumber, ErrorSource src, ErrorType errorType);
 
-    String getMessage();
+    bool operator==(const InputError& error) const;
+
+    String getMessage() const;
     InputLocation getLocation() const;
     ErrorSource getSource() const;
     ErrorType getType() const;
+    String getSourceString() const;
+    String getTypeString() const;
 };
 
 #endif // SPA_INPUT_ERROR_H

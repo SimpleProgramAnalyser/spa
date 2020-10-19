@@ -117,6 +117,7 @@ void StatementTable::insertIntoStatementTable(Integer stmtNum, StatementType stm
     assert(stmtNum >= 1 && "Statement number must be a natural number between 1 and 2^31-1");
     if (setOfStatements.find(stmtNum) == setOfStatements.end()) {
         setOfStatements.insert(stmtNum);
+        statementTypes.insert({stmtNum, stmtType});
         listOfAllStatement.byType[stmtType].push_back(stmtNum);
         listOfAllStatement.byType[AnyStatement].push_back(stmtNum);
         setOfAllStatement.byType[stmtType].insert(stmtNum);
@@ -148,6 +149,7 @@ void StatementTable::insertIntoStatementTable(Integer stmtNum, const ProcedureNa
     // general statement table
     if (setOfStatements.find(stmtNum) == setOfStatements.end()) {
         setOfStatements.insert(stmtNum);
+        statementTypes.insert({stmtNum, CallStatement});
         listOfAllStatement.byType[CallStatement].push_back(stmtNum);
         listOfAllStatement.byType[AnyStatement].push_back(stmtNum);
         setOfAllStatement.byType[CallStatement].insert(stmtNum);
@@ -205,6 +207,21 @@ Vector<Integer> StatementTable::getAllCallStatementsByProcedure(const String& pr
 Vector<String> StatementTable::getAllProceduresCalled()
 {
     return allProcCalled;
+}
+
+/**
+ * Returns the StatementType of statement stmtNum.
+ *
+ * @param stmtNum   StatementNumber of statement. StatementNumber
+ *                  must be valid.
+ * @return
+ */
+StatementType StatementTable::getStatementType(StatementNumber stmtNum)
+{
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(statementTypes.find(stmtNum) != statementTypes.end());
+
+    return statementTypes.find(stmtNum)->second;
 }
 
 // Constant Table

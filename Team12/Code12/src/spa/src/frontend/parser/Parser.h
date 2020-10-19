@@ -7,12 +7,14 @@
 #ifndef SPA_FRONTEND_PARSER_H
 #define SPA_FRONTEND_PARSER_H
 
+#include <array>
+
 #include "ast/AstTypes.h"
 #include "error/InputError.h"
 
 typedef Integer TokenListIndex;
 
-const std::size_t maxErrorCode = 33;
+const std::size_t maxErrorCode = 34;
 
 // An array to map error codes to error messages
 extern std::array<String, maxErrorCode> errorMessages;
@@ -53,9 +55,9 @@ public:
         if (hasError()) {
             std::size_t errorCode = -nextUnparsedToken;
             if (errorCode > maxErrorCode) {
-                return "Syntax Error: Unknown syntax error #" + std::to_string(errorCode);
+                return "Unknown error #" + std::to_string(errorCode);
             } else {
-                return "Syntax Error #" + std::to_string(errorCode) + ": " + errorMessages.at(errorCode);
+                return "#" + std::to_string(errorCode) + ", " + errorMessages.at(errorCode);
             }
         } else {
             return "";

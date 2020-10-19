@@ -43,3 +43,27 @@ TEST_CASE("Next extractor works for if and else statements nested in while - fac
 
     REQUIRE(isEqual == true);
 }
+
+TEST_CASE("Next extractor works for program with if, nested whiles, read, print, call, assign - readPoints")
+{
+    const List<ProcedureNode>* procedureList = &(getProgram22Tree_whileNestedInWhile()->procedureList);
+    std::vector<std::pair<Integer, Integer>> actualNextRelationships = getActualNextRelationships(procedureList);
+
+    // Expected
+    std::vector<std::pair<Integer, Integer>> expectedNextRelationships;
+    expectedNextRelationships.push_back(std::make_pair(1, 2));
+    expectedNextRelationships.push_back(std::make_pair(1, 3));
+    expectedNextRelationships.push_back(std::make_pair(2, 4));
+    expectedNextRelationships.push_back(std::make_pair(3, 4));
+    expectedNextRelationships.push_back(std::make_pair(4, 5));
+    expectedNextRelationships.push_back(std::make_pair(5, 6));
+    expectedNextRelationships.push_back(std::make_pair(6, 7));
+    expectedNextRelationships.push_back(std::make_pair(7, 8));
+    expectedNextRelationships.push_back(std::make_pair(8, 7));
+
+    expectedNextRelationships.push_back(std::make_pair(7, 4));
+    expectedNextRelationships.push_back(std::make_pair(4, 9));
+
+    bool isEqual = checkIfNextRelationshipsAreEqual(actualNextRelationships, expectedNextRelationships);
+    REQUIRE(isEqual == true);
+}

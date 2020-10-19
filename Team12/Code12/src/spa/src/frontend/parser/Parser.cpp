@@ -365,7 +365,7 @@ parseRelationalExpression(frontend::TokenList* programTokens, TokenListIndex sta
         currentToken = programTokens->at(relationalOperator).tokenTag;
     }
     // check if found
-    if (relationalOperator >= numberOfTokens) {
+    if (relationalOperator < startIndex || relationalOperator >= endIndex) {
         // error, name or constant without relational operator
         return getSyntaxError<RelationalExpression>(25);
     }
@@ -471,6 +471,12 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
         case frontend::LteTag:
         case frontend::NeqTag:
         case frontend::EqTag:
+        // try to parse relational if arithmetic
+        case frontend::PlusTag:
+        case frontend::MinusTag:
+        case frontend::DivideTag:
+        case frontend::TimesTag:
+        case frontend::ModuloTag:
             isRelational = true;
             break;
         default:
@@ -542,8 +548,9 @@ parseConditionalExpression(frontend::TokenList* programTokens, TokenListIndex st
             // syntax error in second sub-conditional expression
             return secondCondition;
         }
-        assert(secondCondition.nextUnparsedToken // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-               == endIndex);
+        if (secondCondition.nextUnparsedToken != endIndex) {
+            return getSyntaxError<ConditionalExpression>(33);
+        }
         // finally, create the conditional expression
         if (programTokens->at(firstCondition.nextUnparsedToken + 1).tokenTag == frontend::AndConditionalTag) {
             return ParserReturnType<std::unique_ptr<ConditionalExpression>>(
@@ -774,7 +781,7 @@ ParserReturnType<std::unique_ptr<AssignmentStatementNode>> parseAssignStmt(front
         // find end of assign expression (semicolon)
         TokenListIndex tokenPointer = startIndex + 2;
         frontend::Tag currentToken = programTokens->at(tokenPointer).tokenTag;
-        while (tokenPointer < numberOfTokens && currentToken != frontend::SemicolonTag) {
+        while (tokenPointer < numberOfTokens - 1 && currentToken != frontend::SemicolonTag) {
             tokenPointer++;
             currentToken = programTokens->at(tokenPointer).tokenTag;
         }
