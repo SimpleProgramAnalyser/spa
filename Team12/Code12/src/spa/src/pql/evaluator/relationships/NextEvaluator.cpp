@@ -284,7 +284,7 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
         }
 
         StatementNumber lastStatementNumberInWhileLoop = getLastStatementNumberInWhileLoop(stmtNum + 1, stmtNum);
-        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
+        for (int i = stmtNum; i <= lastStatementNumberInWhileLoop; i++) {
             currentCacheSet.insert(i);
         }
 
