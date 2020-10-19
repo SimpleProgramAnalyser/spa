@@ -62,18 +62,16 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
     // store the answers to the query in the results list (it is initially empty)
     // each result must be a string.
     FormattedQueryResult result = PqlManager::executeQuery(query, AutotesterFormat, ui);
-    printf("result : %s", result.getResults().c_str());
 
     // retrieve String and perform split operation by delimiter "," to add into results
     std::string::size_type pos_begin, pos_end = 0;
     std::string input = result.getResults();
-
+    const char* ws = " \t\n\r\f\v";
     while ((pos_begin = input.find_first_not_of(',', pos_end)) != std::string::npos) {
         pos_end = input.find_first_of(',', pos_begin);
         if (pos_end == std::string::npos)
             pos_end = input.length();
         // std::string::iterator end_pos = std::remove(input.begin(), input.end(), ' ');
-        const char* ws = " \t\n\r\f\v";
 
         // input.erase(end_pos, input.end());
         // retrieve String and perform split operation by delimiter "," to add into results
