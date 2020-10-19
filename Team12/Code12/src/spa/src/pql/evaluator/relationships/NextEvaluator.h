@@ -15,8 +15,8 @@ private:
     // caching of intermediate Next* clauses results
     CacheTable cacheNextStarTable;
     CacheTable cachePrevStarTable;
-    CacheSet visitedNextStatements;
-    CacheSet visitedPrevStatements;
+    CacheSet exploredNextStatements;
+    CacheSet exploredPrevStatements;
 
     // case where left is known (integer), right is variable
     Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef) const;
@@ -31,11 +31,11 @@ private:
     Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
     Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
     Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
-    // DFS method to search and cache all Next* relationship for stmtNum
+    // DFS method to search and cache all Next* relationship for stmtNum.
+    // If currentWhileStmtNum is set to -1, that means the function is
+    // currently not operating on a statement in a while statement list.
     CacheSet getCacheNextStatement(StatementNumber stmtNum);
     CacheSet getCachePrevStatement(StatementNumber stmtNum);
-    Boolean isNextVisited(StatementNumber stmtNum) const;
-    Boolean isPrevVisited(StatementNumber stmtNum) const;
 
 public:
     explicit NextEvaluator(ResultsTable& resultsTable);
