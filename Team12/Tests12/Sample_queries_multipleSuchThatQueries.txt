@@ -783,3 +783,163 @@ if s; variable v; procedure p; while s1;
 Select < p ,s,  p> such that Modifies(s, v) such that Uses(p,v) such that Uses(s1, v)
 doNothing 10 doNothing, doNothing 10 doNothing2, doNothing 10 doNothing3, doNothing 10 doNothing4, doNothing 10 doSomething, doNothing 10 mainPrint, doNothing 10 procedure, doNothing 105 doNothing, doNothing 105 doNothing2, doNothing 105 doNothing3, doNothing 105 doNothing4, doNothing 105 doSomething, doNothing 105 mainPrint, doNothing 105 procedure, doNothing 25 doNothing, doNothing 25 doNothing2, doNothing 25 doNothing3, doNothing 25 doNothing4, doNothing 25 doSomething, doNothing 25 mainPrint, doNothing 25 procedure, doNothing 29 doNothing, doNothing 29 doNothing2, doNothing 29 doNothing3, doNothing 29 doNothing4, doNothing 29 doSomething, doNothing 29 mainPrint, doNothing 29 procedure, doNothing 36 doNothing, doNothing 36 doNothing2, doNothing 36 doNothing3, doNothing 36 doNothing4, doNothing 36 doSomething, doNothing 36 mainPrint, doNothing 36 procedure, doNothing 54 doNothing, doNothing 54 doNothing2, doNothing 54 doNothing3, doNothing 54 doNothing4, doNothing 54 doSomething, doNothing 54 mainPrint, doNothing 54 procedure, doNothing 57 doNothing, doNothing 57 doNothing2, doNothing 57 doNothing3, doNothing 57 doNothing4, doNothing 57 doSomething, doNothing 57 mainPrint, doNothing 57 procedure, doNothing 71 doNothing, doNothing 71 doNothing2, doNothing 71 doNothing3, doNothing 71 doNothing4, doNothing 71 doSomething, doNothing 71 mainPrint, doNothing 71 procedure, doNothing 86 doNothing, doNothing 86 doNothing2, doNothing 86 doNothing3, doNothing 86 doNothing4, doNothing 86 doSomething, doNothing 86 mainPrint, doNothing 86 procedure, doNothing2 10 doNothing, doNothing2 10 doNothing2, doNothing2 10 doNothing3, doNothing2 10 doNothing4, doNothing2 10 doSomething, doNothing2 10 mainPrint, doNothing2 10 procedure, doNothing2 105 doNothing, doNothing2 105 doNothing2, doNothing2 105 doNothing3, doNothing2 105 doNothing4, doNothing2 105 doSomething, doNothing2 105 mainPrint, doNothing2 105 procedure, doNothing2 25 doNothing, doNothing2 25 doNothing2, doNothing2 25 doNothing3, doNothing2 25 doNothing4, doNothing2 25 doSomething, doNothing2 25 mainPrint, doNothing2 25 procedure, doNothing2 29 doNothing, doNothing2 29 doNothing2, doNothing2 29 doNothing3, doNothing2 29 doNothing4, doNothing2 29 doSomething, doNothing2 29 mainPrint, doNothing2 29 procedure, doNothing2 36 doNothing, doNothing2 36 doNothing2, doNothing2 36 doNothing3, doNothing2 36 doNothing4, doNothing2 36 doSomething, doNothing2 36 mainPrint, doNothing2 36 procedure, doNothing2 54 doNothing, doNothing2 54 doNothing2, doNothing2 54 doNothing3, doNothing2 54 doNothing4, doNothing2 54 doSomething, doNothing2 54 mainPrint, doNothing2 54 procedure, doNothing2 57 doNothing, doNothing2 57 doNothing2, doNothing2 57 doNothing3, doNothing2 57 doNothing4, doNothing2 57 doSomething, doNothing2 57 mainPrint, doNothing2 57 procedure, doNothing2 71 doNothing, doNothing2 71 doNothing2, doNothing2 71 doNothing3, doNothing2 71 doNothing4, doNothing2 71 doSomething, doNothing2 71 mainPrint, doNothing2 71 procedure, doNothing2 86 doNothing, doNothing2 86 doNothing2, doNothing2 86 doNothing3, doNothing2 86 doNothing4, doNothing2 86 doSomething, doNothing2 86 mainPrint, doNothing2 86 procedure, doNothing3 10 doNothing, doNothing3 10 doNothing2, doNothing3 10 doNothing3, doNothing3 10 doNothing4, doNothing3 10 doSomething, doNothing3 10 mainPrint, doNothing3 10 procedure, doNothing3 105 doNothing, doNothing3 105 doNothing2, doNothing3 105 doNothing3, doNothing3 105 doNothing4, doNothing3 105 doSomething, doNothing3 105 mainPrint, doNothing3 105 procedure, doNothing3 25 doNothing, doNothing3 25 doNothing2, doNothing3 25 doNothing3, doNothing3 25 doNothing4, doNothing3 25 doSomething, doNothing3 25 mainPrint, doNothing3 25 procedure, doNothing3 29 doNothing, doNothing3 29 doNothing2, doNothing3 29 doNothing3, doNothing3 29 doNothing4, doNothing3 29 doSomething, doNothing3 29 mainPrint, doNothing3 29 procedure, doNothing3 36 doNothing, doNothing3 36 doNothing2, doNothing3 36 doNothing3, doNothing3 36 doNothing4, doNothing3 36 doSomething, doNothing3 36 mainPrint, doNothing3 36 procedure, doNothing3 54 doNothing, doNothing3 54 doNothing2, doNothing3 54 doNothing3, doNothing3 54 doNothing4, doNothing3 54 doSomething, doNothing3 54 mainPrint, doNothing3 54 procedure, doNothing3 57 doNothing, doNothing3 57 doNothing2, doNothing3 57 doNothing3, doNothing3 57 doNothing4, doNothing3 57 doSomething, doNothing3 57 mainPrint, doNothing3 57 procedure, doNothing3 71 doNothing, doNothing3 71 doNothing2, doNothing3 71 doNothing3, doNothing3 71 doNothing4, doNothing3 71 doSomething, doNothing3 71 mainPrint, doNothing3 71 procedure, doNothing3 86 doNothing, doNothing3 86 doNothing2, doNothing3 86 doNothing3, doNothing3 86 doNothing4, doNothing3 86 doSomething, doNothing3 86 mainPrint, doNothing3 86 procedure, doNothing4 10 doNothing, doNothing4 10 doNothing2, doNothing4 10 doNothing3, doNothing4 10 doNothing4, doNothing4 10 doSomething, doNothing4 10 mainPrint, doNothing4 10 procedure, doNothing4 105 doNothing, doNothing4 105 doNothing2, doNothing4 105 doNothing3, doNothing4 105 doNothing4, doNothing4 105 doSomething, doNothing4 105 mainPrint, doNothing4 105 procedure, doNothing4 25 doNothing, doNothing4 25 doNothing2, doNothing4 25 doNothing3, doNothing4 25 doNothing4, doNothing4 25 doSomething, doNothing4 25 mainPrint, doNothing4 25 procedure, doNothing4 29 doNothing, doNothing4 29 doNothing2, doNothing4 29 doNothing3, doNothing4 29 doNothing4, doNothing4 29 doSomething, doNothing4 29 mainPrint, doNothing4 29 procedure, doNothing4 36 doNothing, doNothing4 36 doNothing2, doNothing4 36 doNothing3, doNothing4 36 doNothing4, doNothing4 36 doSomething, doNothing4 36 mainPrint, doNothing4 36 procedure, doNothing4 54 doNothing, doNothing4 54 doNothing2, doNothing4 54 doNothing3, doNothing4 54 doNothing4, doNothing4 54 doSomething, doNothing4 54 mainPrint, doNothing4 54 procedure, doNothing4 57 doNothing, doNothing4 57 doNothing2, doNothing4 57 doNothing3, doNothing4 57 doNothing4, doNothing4 57 doSomething, doNothing4 57 mainPrint, doNothing4 57 procedure, doNothing4 71 doNothing, doNothing4 71 doNothing2, doNothing4 71 doNothing3, doNothing4 71 doNothing4, doNothing4 71 doSomething, doNothing4 71 mainPrint, doNothing4 71 procedure, doNothing4 86 doNothing, doNothing4 86 doNothing2, doNothing4 86 doNothing3, doNothing4 86 doNothing4, doNothing4 86 doSomething, doNothing4 86 mainPrint, doNothing4 86 procedure, doSomething 10 doNothing, doSomething 10 doNothing2, doSomething 10 doNothing3, doSomething 10 doNothing4, doSomething 10 doSomething, doSomething 10 mainPrint, doSomething 10 procedure, doSomething 105 doNothing, doSomething 105 doNothing2, doSomething 105 doNothing3, doSomething 105 doNothing4, doSomething 105 doSomething, doSomething 105 mainPrint, doSomething 105 procedure, doSomething 25 doNothing, doSomething 25 doNothing2, doSomething 25 doNothing3, doSomething 25 doNothing4, doSomething 25 doSomething, doSomething 25 mainPrint, doSomething 25 procedure, doSomething 29 doNothing, doSomething 29 doNothing2, doSomething 29 doNothing3, doSomething 29 doNothing4, doSomething 29 doSomething, doSomething 29 mainPrint, doSomething 29 procedure, doSomething 36 doNothing, doSomething 36 doNothing2, doSomething 36 doNothing3, doSomething 36 doNothing4, doSomething 36 doSomething, doSomething 36 mainPrint, doSomething 36 procedure, doSomething 54 doNothing, doSomething 54 doNothing2, doSomething 54 doNothing3, doSomething 54 doNothing4, doSomething 54 doSomething, doSomething 54 mainPrint, doSomething 54 procedure, doSomething 57 doNothing, doSomething 57 doNothing2, doSomething 57 doNothing3, doSomething 57 doNothing4, doSomething 57 doSomething, doSomething 57 mainPrint, doSomething 57 procedure, doSomething 71 doNothing, doSomething 71 doNothing2, doSomething 71 doNothing3, doSomething 71 doNothing4, doSomething 71 doSomething, doSomething 71 mainPrint, doSomething 71 procedure, doSomething 86 doNothing, doSomething 86 doNothing2, doSomething 86 doNothing3, doSomething 86 doNothing4, doSomething 86 doSomething, doSomething 86 mainPrint, doSomething 86 procedure, mainPrint 10 doNothing, mainPrint 10 doNothing2, mainPrint 10 doNothing3, mainPrint 10 doNothing4, mainPrint 10 doSomething, mainPrint 10 mainPrint, mainPrint 10 procedure, mainPrint 105 doNothing, mainPrint 105 doNothing2, mainPrint 105 doNothing3, mainPrint 105 doNothing4, mainPrint 105 doSomething, mainPrint 105 mainPrint, mainPrint 105 procedure, mainPrint 25 doNothing, mainPrint 25 doNothing2, mainPrint 25 doNothing3, mainPrint 25 doNothing4, mainPrint 25 doSomething, mainPrint 25 mainPrint, mainPrint 25 procedure, mainPrint 29 doNothing, mainPrint 29 doNothing2, mainPrint 29 doNothing3, mainPrint 29 doNothing4, mainPrint 29 doSomething, mainPrint 29 mainPrint, mainPrint 29 procedure, mainPrint 36 doNothing, mainPrint 36 doNothing2, mainPrint 36 doNothing3, mainPrint 36 doNothing4, mainPrint 36 doSomething, mainPrint 36 mainPrint, mainPrint 36 procedure, mainPrint 54 doNothing, mainPrint 54 doNothing2, mainPrint 54 doNothing3, mainPrint 54 doNothing4, mainPrint 54 doSomething, mainPrint 54 mainPrint, mainPrint 54 procedure, mainPrint 57 doNothing, mainPrint 57 doNothing2, mainPrint 57 doNothing3, mainPrint 57 doNothing4, mainPrint 57 doSomething, mainPrint 57 mainPrint, mainPrint 57 procedure, mainPrint 71 doNothing, mainPrint 71 doNothing2, mainPrint 71 doNothing3, mainPrint 71 doNothing4, mainPrint 71 doSomething, mainPrint 71 mainPrint, mainPrint 71 procedure, mainPrint 86 doNothing, mainPrint 86 doNothing2, mainPrint 86 doNothing3, mainPrint 86 doNothing4, mainPrint 86 doSomething, mainPrint 86 mainPrint, mainPrint 86 procedure, procedure 10 doNothing, procedure 10 doNothing2, procedure 10 doNothing3, procedure 10 doNothing4, procedure 10 doSomething, procedure 10 mainPrint, procedure 10 procedure, procedure 105 doNothing, procedure 105 doNothing2, procedure 105 doNothing3, procedure 105 doNothing4, procedure 105 doSomething, procedure 105 mainPrint, procedure 105 procedure, procedure 25 doNothing, procedure 25 doNothing2, procedure 25 doNothing3, procedure 25 doNothing4, procedure 25 doSomething, procedure 25 mainPrint, procedure 25 procedure, procedure 29 doNothing, procedure 29 doNothing2, procedure 29 doNothing3, procedure 29 doNothing4, procedure 29 doSomething, procedure 29 mainPrint, procedure 29 procedure, procedure 36 doNothing, procedure 36 doNothing2, procedure 36 doNothing3, procedure 36 doNothing4, procedure 36 doSomething, procedure 36 mainPrint, procedure 36 procedure, procedure 54 doNothing, procedure 54 doNothing2, procedure 54 doNothing3, procedure 54 doNothing4, procedure 54 doSomething, procedure 54 mainPrint, procedure 54 procedure, procedure 57 doNothing, procedure 57 doNothing2, procedure 57 doNothing3, procedure 57 doNothing4, procedure 57 doSomething, procedure 57 mainPrint, procedure 57 procedure, procedure 71 doNothing, procedure 71 doNothing2, procedure 71 doNothing3, procedure 71 doNothing4, procedure 71 doSomething, procedure 71 mainPrint, procedure 71 procedure, procedure 86 doNothing, procedure 86 doNothing2, procedure 86 doNothing3, procedure 86 doNothing4, procedure 86 doSomething, procedure 86 mainPrint, procedure 86 procedure, doSomething 74 doSomething, doSomething 88 doSomething
 5000
+158 - Calls 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select <p1, p2, p3> such that Calls(p1, p2) such that Calls(p2, p3)
+doNothing doNothing2 doNothing3, doSomething doNothing doNothing2, doSomething doNothing doNothing3, doSomething doNothing2 doNothing3, doSomething procedure doNothing3, mainPrint doNothing doNothing2, mainPrint doNothing doNothing3
+5000
+159 - Calls* 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select <p1, p2, p3> such that Calls(p1, p2) such that Calls*(p2, p3)
+doNothing doNothing2 doNothing3, doSomething doNothing doNothing2, doSomething doNothing doNothing3, doSomething doNothing2 doNothing3, doSomething procedure doNothing3, mainPrint doNothing doNothing2, mainPrint doNothing doNothing3
+5000
+160 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls(p1, p2) such that Next*(i, w)
+TRUE
+5000
+161 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls(p1, p2) such that Next(i, w)
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+162 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls(p1, p2) such that Follows*(i, w)
+TRUE
+5000
+163 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls(p1, p2) such that Follows(w, i)
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+164 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls(p1, p2) such that Parent*(i, w)
+TRUE
+5000
+165 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls(p1, p2) such that Parent(w, i)
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+166 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls(p1, p2) such that Uses(i, v)
+TRUE
+5000
+167 - Calls* 2 Select 1 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls(p1, p2) such that Uses(p1, "constantAssignment")
+doSomething
+5000
+168 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls(p1, p2) such that Modifies(i, v)
+TRUE
+5000
+169 - Calls* 2 Select 1 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls(p1, p2) such that Modifies(p1, "constantAssignment")
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+170 - Calls* 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select <p1, p2, p3> such that Calls*(p1, p2) such that Calls(p2, p3)
+doNothing doNothing2 doNothing3, doSomething doNothing doNothing2, doSomething doNothing doNothing3, doSomething doNothing2 doNothing3, doSomething procedure doNothing3, mainPrint doNothing doNothing2, mainPrint doNothing doNothing3, mainPrint doNothing2 doNothing3
+5000
+171- 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls*(p1, p2) such that Next*(i, w)
+TRUE
+5000
+172 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls*(p1, p2) such that Next(i, w)
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+173 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls*(p1, p2) such that Follows*(i, w)
+TRUE
+5000
+174 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls*(p1, p2) such that Follows(w, i)
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+175 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls*(p1, p2) such that Parent*(i, w)
+TRUE
+5000
+176 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls*(p1, p2) such that Parent(w, i)
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+177 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls*(p1, p2) such that Uses(i, v)
+TRUE
+5000
+178 - Calls* 2 Select 1 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls*(p1, p2) such that Uses(p1, "constantAssignment")
+doSomething
+5000
+179 - Calls* 2 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; 
+Select BOOLEAN such that Calls*(p1, p2) such that Modifies(i, v)
+TRUE
+5000
+180 - Calls* 2 Select 1 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls*(p1, p2) such that Modifies(p1, "constantAssignment")
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+181 - Calls* 3 Select 1 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select <p1,v > such that Calls*(p1, p2) such that Modifies(p1, v) such that Uses(p1, v)
+doNothing TryingToMakeLongVariableNamesToTestLimits, doNothing a, doNothing doNothing, doNothing x, doNothing y, doNothing z, doNothing2 TryingToMakeLongVariableNamesToTestLimits, doNothing2 doNothing, doNothing2 x, doNothing2 y, doNothing2 z, doNothing4 doNothing, doNothing4 x, doNothing4 y, doSomething TryingToMakeLongVariableNamesToTestLimits, doSomething a, doSomething b, doSomething c, doSomething constantAssignment, doSomething d, doSomething doNothing, doSomething procedure, doSomething read, doSomething x, doSomething y, doSomething z, mainPrint TryingToMakeLongVariableNamesToTestLimits, mainPrint a, mainPrint b, mainPrint doNothing, mainPrint x, mainPrint y, mainPrint z, procedure procedure, procedure x, procedure y
+5000
+182 - Calls* 3 Select 1 common synonym 2, 3/ 1, 3/ 1, 2
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select <p1,p2> such that Calls*(p1, p2) such that Modifies(p1, v) such that Modifies(p2, v)
+doNothing doNothing2, doNothing doNothing3, doNothing2 doNothing3, doNothing4 doNothing3, doSomething doNothing, doSomething doNothing2, doSomething doNothing3, doSomething procedure, mainPrint doNothing, mainPrint doNothing2, mainPrint doNothing3, procedure doNothing3
+5000
+183 - Calls* 3 Select 1 common synonym 2, 3/ 1, 3/ 1, 2
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3, p4;
+Select <p1,p2,p3,p4> such that Calls*(p1, p2) such that Calls (p2, p3) such that Calls*(p3,p4)
+doSomething doNothing doNothing2 doNothing3, mainPrint doNothing doNothing2 doNothing3
+5000
+184 - Calls* 3 Select 0 common synonym bet Calls
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select p1 such that Calls(p1, p2) such that Modifies(w, v) such that Uses(i, v)
+doNothing, doNothing2, doNothing4, doSomething, mainPrint, procedure
+5000
+185 - Calls* 3 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select BOOLEAN such that Calls*(p1, p2) such that Modifies(w, v) such that Next(i,w)
+TRUE
+5000
+186 - Calls* 3 Select 0 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3;
+Select <p1,p2> such that Calls*(p1, p2) such that Follows(w, i) such that Parent*(w, i)
+none
+5000
+187 - Next 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, n1> such that Next(n, n1) such that Next(n1, n2)
+1 2, 10 11, 10 15, 100 101, 101 102, 102 103, 102 105, 103 104, 104 102, 105 106, 105 108, 106 107, 107 99, 108 109, 109 99, 11 12, 11 19, 12 13, 13 14, 14 12, 15 16, 16 17, 17 18, 18 19, 19 20, 2 3, 2 6, 20 21, 21 22, 22 20, 24 25, 25 26, 25 28, 28 29, 29 30, 29 33, 3 4, 30 31, 33 34, 36 37, 36 40, 37 38, 38 39, 39 42, 4 5, 40 41, 41 42, 42 43, 43 44, 44 45, 45 43, 49 50, 5 2, 50 51, 51 52, 54 55, 54 81, 55 56, 55 70, 55 83, 56 57, 57 58, 57 61, 58 59, 59 60, 6 7, 60 64, 61 62, 62 63, 63 64, 64 65, 65 55, 65 66, 66 67, 67 68, 68 69, 69 65, 70 71, 71 72, 71 77, 72 73, 73 74, 77 78, 78 79, 79 80, 80 79, 81 82, 82 83, 83 84, 84 85, 85 86, 86 87, 86 92, 87 88, 87 98, 88 89, 88 90, 9 10, 92 93, 93 94, 94 95, 94 98, 95 96, 96 97, 97 95, 98 99, 99 100, 99 85
+5000
+188 - Next 2 Select 1 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <i, w> such that Next(i, n1) such that Next*(n1, w)
+10 12, 10 20, 36 43, 54 55, 54 65, 54 79, 54 85, 54 95, 54 99, 54 102, 57 102, 57 55, 57 65, 57 79, 57 85, 57 95, 57 99, 71 79, 71 85, 71 95, 71 99, 71 102, 86 102, 86 85, 86 95, 86 99, 88 102, 88 85, 88 95, 88 99, 105 102, 105 85, 105 95, 105 99
+5000
+189 - Next 2 Select 1 common synonym
+while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <c, r> such that Next*(c, r) such that Next*(r, w) and Next(w, i)
+63 103, 63 98, 63 108, 63 109, 83 103, 83 98, 83 108,83 109 , 94 98, 94 103,94 108,94 109, 68 98, 68 103, 63 108, 63 109, 72 98, 72 103, 72 108, 72 109, 101 103, 101 108,101 109,101 98
+5000

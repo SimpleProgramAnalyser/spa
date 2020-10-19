@@ -451,7 +451,7 @@ doNothing, doSomething
 87 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows) ###
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r; print print;
 Select <w, a> such that Modifies(w, v) and Next*(w, a) pattern a (v, _) with v.varName = "constantAssignment"
-100 101, 55 101, 55 87, 55 89, 55 93, 55 97, 65 101, 65 87, 65 89, 65 93, 65 97, 85 101, 85 87, 85 89, 85 93, 85 97, 96 97
+100 101, 55 101, 55 87, 55 89, 55 93, 55 97, 65 101, 65 87, 65 89, 65 93, 65 97, 85 101, 85 87, 85 89, 85 93, 85 97, 96 97, 100 87,100 89,100 93,100 97
 5000
 88 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
@@ -471,7 +471,7 @@ Select <w, i, v> such that Modifies(i, v) and Modifies(w, v) and Calls(p1, p2) p
 91 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1;
 Select <w, i, v> such that Modifies(i, v) and Modifies(w, v) and Next*(i,w) pattern w (v, _) pattern i ("constantAssignment", _, _) with v.varName = "constantAssignment" with i.stmt# = n1
-85 86 constantAssignment
+85 86 constantAssignment, 85 88 constantAssignment
 5000
 92 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; prog_line n, n1; procedure p1, p2;
@@ -496,7 +496,7 @@ Select i such that Uses(proc1, v) and Calls(proc1, proc2) pattern i (v,_, _) wit
 96 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
 Select i such that Uses(i, v) and Next*(i, w) pattern i (v,_, _) with v.varName = "constantAssignment"
-86
+86, 88
 5000
 97 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure p1, p2;
@@ -511,7 +511,7 @@ Select <w, i, v> such that Uses(i, v) and Uses(p1, v) and Next(i, w) pattern i (
 99 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1; procedure p1, p2;
 Select <p2, v> such that Uses(p2, v) and Calls*(p1, p2) and Next*(i,w) pattern w (v, _) pattern i ("TryingToMakeLongVariableNamesToTestLimits", _, _) with v.varName = p2.procName
-procedure procedure
+procedure procedure, doNothing doNothing
 5000
 100 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2, proc3;
@@ -541,7 +541,7 @@ none
 106 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern false (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n, n1; procedure p1, p2, p3;
 Select <w,a,i> such that Next*(w, a) and Next(a, i) and Next*(i, w) pattern i (v, _, _) pattern i (v1, _, _) with w.stmt# = n with i.stmt# = n1
-65 56 57, 55 56 57
+65 56 57, 55 56 57, 100 87 88,103 87 88,85 87 88
 5000
 107 - 2 such taht specified integer 1 pattern if  1 with all share common pattern true with Int swap seq
 stmt s; assign a; while w; if i; call c; constant p; variable v; read r; print print;
@@ -856,7 +856,7 @@ doNothing, doSomething
 169 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows) ###
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r; print print;
 Select <w, a> such that Next*(w, a) such that Modifies(w, v) pattern a (v, _) with v.varName = "constantAssignment"
-100 101, 55 101, 55 87, 55 89, 55 93, 55 97, 65 101, 65 87, 65 89, 65 93, 65 97, 85 101, 85 87, 85 89, 85 93, 85 97, 96 97
+100 101, 55 101, 55 87, 55 89, 55 93, 55 97, 65 101, 65 87, 65 89, 65 93, 65 97, 85 101, 85 87, 85 89, 85 93, 85 97, 96 97, 100 87,100 89,100 93,100 97
 5000
 170 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
@@ -876,7 +876,7 @@ Select <w, i, v> such that Calls(p1, p2) such that Modifies(i, v) such that Modi
 173 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1;
 Select <w, i, v> with i.stmt# = n1 such that Modifies(i, v) and Modifies(w, v) and Next*(i,w) pattern w (v, _) pattern i ("constantAssignment", _, _) with v.varName = "constantAssignment"
-85 86 constantAssignment
+85 86 constantAssignment, 85 88 constantAssignment
 5000
 174 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; prog_line n, n1; procedure p1, p2;
@@ -901,7 +901,7 @@ Select i with i.stmt# = 107 such that Uses(proc1, v) and Calls(proc1, proc2) pat
 178 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
 Select i such that Uses(i, v) with v.varName = "constantAssignment" such that Next*(i, w) pattern i (v,_, _)
-86
+86, 88
 5000
 179 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure p1, p2;
@@ -916,7 +916,7 @@ Select <w, i, v> such that Next(i, w) pattern i (v, _, _) pattern i (v1, _, _) s
 181 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1; procedure p1, p2;
 Select <p2, v> such that Next*(i,w) and Uses(p2, v) and Calls*(p1, p2) pattern w (v, _)  with v.varName = p2.procName pattern i ("TryingToMakeLongVariableNamesToTestLimits", _, _)
-procedure procedure
+procedure procedure, doNothing doNothing
 5000
 182 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2, proc3;
