@@ -28,6 +28,11 @@ stmt s; whIle w; print p;
 Select s
 none
 5000
+6 - Invalid Basic Queries Boolean wrong spelling
+stmt s;
+Select BOOLeAN
+none
+5000
 7 - Invalid Query with such that and
 stmt s;
 Select s such that and Parent(2,3)
@@ -41,6 +46,26 @@ none
 9 - Invalid Query without clause
 stmt s;
 Select s such that
+none
+5000
+9 - Invalid Query With Clause comparing empty strings
+stmt s;
+Select s with '' = 'a'
+none
+5000
+9 - Invalid Query With Clause comparing empty strings
+stmt s;
+Select BOOLEAN '' = 'a'
+FALSE
+5000
+9 - Invalid Query With Tuple no closing brackets
+stmt s;
+Select <s such that Next*(s, s)
+none
+5000
+9 - Invalid Query with Boolean in tuple
+stmt s;
+Select <BOOLEAN>
 none
 5000
 10 - Invalid Query Parent Query incorrect statement number
