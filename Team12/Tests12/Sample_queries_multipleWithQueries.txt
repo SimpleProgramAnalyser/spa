@@ -220,7 +220,7 @@ Select a with a.procName = pro.procName with pro.procName = var.varName with var
 5000
 39 - 3 with 1 common synonyms
 stmt s, s1; constant p, p1; read r; procedure pro; call a, a1; variable var; print pr;
-Select <a.procName, pro, var> with a.procName = pro.procName with pro.procName = var.varName with var.varName = pr.varName
+Select <a, pro, var> with a.procName = pro.procName with pro.procName = var.varName with var.varName = pr.varName
 7 doNothing doNothing, 72 doNothing doNothing
 5000
 40 - 3 with 1 common synonyms 1, 2 common true, 2, 3 common true

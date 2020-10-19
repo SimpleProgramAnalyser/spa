@@ -186,12 +186,12 @@ Select <a, a1> such that Follows*(a, a1) such that Parent(w, c) and Modifies(a, 
 38 - 3 such taht 2 pattern a, a  2 with all share common pattern true with IDENT true
 stmt s; print a; assign a1; while w; if i; call c; constant p; variable v, v1; read r; prog_line n;
 Select a such that Follows(a, a1) such that Parent*(i, a1) and Uses(a1, v) pattern a1 (v,_"y"_) pattern i (v,_,_) with a.varName = "x"
-none
+37
 5000
 39 - 3 such taht 2 pattern a, a  2 with all share common pattern true with IDENT false
 stmt s; assign a; while w; if i; call c; constant p; variable v; print pr; prog_line pl, pl1;
 Select w such that Parent*(w, a) such that Uses(w, v) such that Next*(w, pl1) pattern a (v, _"x * y"_) with a.stmt# = w.stmt#
-37
+none
 5000
 40 - 3 such taht 1 pattern assign 1 with all share common synonym pattern true tuple, with is comparing Integer
 stmt s; assign a; while w; if i; call c; constant p; variable v; print pr; prog_line pl, pl1;
@@ -540,6 +540,6 @@ none
 5000
 106 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern false (Follows)
 stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n, n1; procedure p1, p2, p3;
-Select <w,a,i> such that Next*(w, a) and Next(a, i) and Next*(i, w) pattern i ("impossible pattern", _, _) pattern i (v1, _, _) with w.stmt# = n with i.stmt# = n1
+Select <w,a,i> such that Next*(w, a) and Next(a, i) and Next*(i, w) pattern i (v, _, _) pattern i (v1, _, _) with w.stmt# = n with i.stmt# = n1
 65 56 57, 55 56 57
 5000
