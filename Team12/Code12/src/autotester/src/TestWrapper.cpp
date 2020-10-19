@@ -78,7 +78,6 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
         std::string substring = input.substr(pos_begin, pos_end - pos_begin);
         substring.erase(substring.find_last_not_of(ws) + 1);
         substring.erase(0, substring.find_first_not_of(ws));
-        printf("result %s c\n", substring.c_str());
         results.push_back(substring);
     }
 }
