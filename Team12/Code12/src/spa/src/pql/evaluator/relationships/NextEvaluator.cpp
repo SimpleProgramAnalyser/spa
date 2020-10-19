@@ -279,8 +279,8 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
         // the while loop.
         if (prevStatementList.size() > 1) {
             StatementNumber otherNonWhileStatementNumber = prevStatementList.at(0) == nextWhileStatementNumber
-                                                          ? prevStatementList.at(1)
-                                                          : prevStatementList.at(0);
+                                                               ? prevStatementList.at(1)
+                                                               : prevStatementList.at(0);
             CacheSet prevCacheSet = getCachePrevStatement(otherNonWhileStatementNumber);
             currentCacheSet.combine(prevCacheSet);
         }

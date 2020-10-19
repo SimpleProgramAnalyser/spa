@@ -1918,7 +1918,6 @@ ProgramNode* getProgram20Tree_multipleProceduresSpheresdf()
     return programNode;
 }
 
-
 String getProgram21String_endWithIf()
 {
     String raymarch= "\

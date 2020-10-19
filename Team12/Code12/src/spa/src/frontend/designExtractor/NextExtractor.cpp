@@ -50,6 +50,7 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
         addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0).get()->statementNodes->at(0).get(),
                                         nextRelationships);
     }
+
     // If the statement list is empty, we mark the current CFG as visited and terminate early
     if (stmtList->empty()) {
         visitedArray->at(cfgNode->nodeNumber) = true;
