@@ -235,7 +235,7 @@ none
 5000
 48 - Invalid Modifies Query Wrong Spelling
 stmt s;
-Select s such that Modifies(2, "v")
+Select s such that modifies(2, "v")
 none
 5000
 49 - Invalid Modifies Query Wrong Invalid Variable
@@ -366,6 +366,76 @@ none
 31 - Invalid Query Variable Const Proc Used in Next
 stmt s; procedure v;
 Select v such that Next*(2, v)
+none
+5000
+48 - Invalid Calls Query Wrong Spelling
+procedure p;
+Select p such that calls("computeCentroid", "mainPrint")
+none
+5000
+49 - Invalid Calls Query Wrong Invalid Procedure
+procedure p;
+Select p such that Calls("computeCentroid", "InvalidProc")
+none
+5000
+53 - Invalid Calls Query Invalid first Argument
+procedure p; constant c;
+Select p such that Calls(c, "mainPrint")
+none
+5000
+54 - Invalid Calls Query Invalid first Argument
+procedure p; variable v;
+Select p such that Calls(v, "mainPrint")
+none
+5000
+55 - Invalid Calls Query Invalid second Argument
+procedure p;
+Select p such that Calls(p, 4)
+none
+5000
+58 - Invalid Calls Query Invalid second Argument
+procedure p; constant c;
+Select p such that Calls(p, c)
+none
+5000
+59 - Invalid Calls Query Invalid second Argument
+procedure p; read r;
+Select p such that Calls(p, r)
+none
+5000
+60 - Invalid Calls Query Invalid second Argument
+procedure p; if i;
+Select p such that Calls(p, i)
+none
+5000
+61 - Invalid Calls Query Invalid second Argument
+procedure p; print pr;
+Select p such that Calls(p, pr)
+none
+5000
+62 - Invalid Calls Query Invalid second Argument
+procedure p; call c;
+Select p such that Calls(p, c)
+none
+5000
+63 - Invalid Calls Query Invalid second Argument
+procedure p; while w;
+Select p such that Calls(p, w)
+none
+5000
+61 - Invalid Calls* Query Invalid second Argument
+procedure p; print pr;
+Select p such that Calls*(p, pr)
+none
+5000
+62 - Invalid Calls* Query Invalid second Argument
+procedure p; call c;
+Select p such that Calls*(p, c)
+none
+5000
+63 - Invalid Calls* Query Invalid second Argument
+procedure p; while w;
+Select p such that Calls*(p, w)
 none
 5000
 64 - Invalid Assign Pattern Query read as pattern
