@@ -149,6 +149,7 @@ void StatementTable::insertIntoStatementTable(Integer stmtNum, const ProcedureNa
     // general statement table
     if (setOfStatements.find(stmtNum) == setOfStatements.end()) {
         setOfStatements.insert(stmtNum);
+        statementTypes.insert({stmtNum, CallStatement});
         listOfAllStatement.byType[CallStatement].push_back(stmtNum);
         listOfAllStatement.byType[AnyStatement].push_back(stmtNum);
         setOfAllStatement.byType[CallStatement].insert(stmtNum);
