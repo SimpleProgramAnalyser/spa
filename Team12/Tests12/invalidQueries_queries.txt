@@ -55,7 +55,7 @@ none
 5000
 9 - Invalid Query With Clause comparing empty strings
 stmt s;
-Select BOOLEAN '' = 'a'
+Select BOOLEAN with '' = 'a'
 FALSE
 5000
 9 - Invalid Query With Tuple no closing brackets
@@ -66,6 +66,11 @@ none
 9 - Invalid Query with Boolean in tuple
 stmt s;
 Select <BOOLEAN>
+none
+5000
+9 - Invalid Query With Empty Tuple
+stmt s;
+Select <> such that Next*(s, s)
 none
 5000
 10 - Invalid Query Parent Query incorrect statement number
