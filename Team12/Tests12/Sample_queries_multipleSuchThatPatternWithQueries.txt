@@ -543,3 +543,388 @@ stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n
 Select <w,a,i> such that Next*(w, a) and Next(a, i) and Next*(i, w) pattern i (v, _, _) pattern i (v1, _, _) with w.stmt# = n with i.stmt# = n1
 65 56 57, 55 56 57
 5000
+107 - 2 such taht specified integer 1 pattern if  1 with all share common pattern true with Int swap seq
+stmt s; assign a; while w; if i; call c; constant p; variable v; read r; print print;
+Select w with w.stmt# = 103 such that Parent*(103, r) and Follows*(r, 105) pattern w ("constantAssignment",_) 
+103
+5000
+108 - 2 such taht 1 pattern if  1 with all share common pattern true with Int 
+stmt s; assign a; while w; if i; call c; constant p; variable v; read r; print print;
+Select w pattern w ("constantAssignment",_) with w.stmt# = s.stmt# such that Parent*(w, r) and Follows*(r, print) 
+85, 103
+5000
+109 - 2 such taht 1 pattern if  1 with all share common pattern true with IDENT 
+stmt s; assign a; while w; if i; call c; constant p; variable v;
+Select w such that Parent(w, c) pattern w (v,_)  such that Follows*(i, c) with c.procName = "doNothing3"
+85
+5000
+110 - 2 such taht 1 pattern if  1 with all share common pattern true with IDENT false
+stmt s; assign a; while w; if i; call c; constant p; variable v; read r;
+Select w such that Parent(w, c) with c.procName = r.varName such that Follows*(i, c) pattern w (v,_) 
+none
+5000
+111 - 2 such taht specified integer 1 pattern if  1 with all share common pattern true with Int 
+stmt s; assign a; while w; if i; call c; constant p; variable v; read r; print print;
+Select w such that Parent*(103, r) pattern w ("constantAssignment",_) such that Follows*(r, 105) with w.stmt# = 103 
+103
+5000
+112 - 2 such taht 1 pattern if  1 with all share common pattern true with Int 
+stmt s; assign a; while w; if i; call c; constant p; variable v; read r; print print;
+Select w with w.stmt# = s.stmt# such that Parent*(w, r) and Follows*(r, print) pattern w ("constantAssignment",_) 
+85, 103
+5000
+113 - 2 such taht 1 pattern if  1 with all share common pattern true with IDENT 
+stmt s; assign a; while w; if i; call c; constant p; variable v;
+Select w pattern w (v,_)  with c.procName = "doNothing3" such that Parent(w, c) such that Follows*(i, c) 
+85
+5000
+114 - 2 such taht 1 pattern if  1 with all share common pattern true with IDENT false
+stmt s; assign a; while w; if i; call c; constant p; variable v; read r;
+Select w such that Follows*(i, c) and Parent(w, c) with c.procName = r.varName pattern w (v,_) 
+none
+5000
+115 - 3 such taht 2 pattern a, a  2 with all share common pattern true with IDENT true
+stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; read r; prog_line n;
+Select <a, a1> pattern a1 (v1,_"10 * 100"_) such that Modifies(a, "constantAssignment")  with a.stmt# = n such that Parent(w, c) and Follows*(a, a1) pattern a (v,_"(10 * 100) - 100 / 1000"_)  with a1.stmt# = p.value
+93 94
+5000
+116 - 3 such taht 2 pattern a, a  2 with all share common pattern true with IDENT true
+stmt s; print a; assign a1; while w; if i; call c; constant p; variable v, v1; read r; prog_line n;
+Select a such that Uses(a1, v) with a.varName = "x" such that Parent*(i, a1) and Follows(a, a1) pattern a1 (v,_"y"_) pattern i (v,_,_) 
+37
+5000
+117 - 3 such taht 2 pattern a, a  2 with all share common pattern true with IDENT false
+stmt s; assign a; while w; if i; call c; constant p; variable v; print pr; prog_line pl, pl1;
+Select w with a.stmt# = w.stmt# such that Parent*(w, a) such that Uses(w, v) such that Next*(w, pl1) pattern a (v, _"x * y"_) 
+none
+5000
+118 - 3 such taht 1 pattern assign 1 with all share common synonym pattern true tuple, with is comparing Integer
+stmt s; assign a; while w; if i; call c; constant p; variable v; print pr; prog_line pl, pl1;
+Select <w, v> with w.stmt# = 65 pattern w ("doNothing", _) pattern a (_, _"x * y"_) such that Parent*(w, a) and Uses(w, v) and Next*(w, pl1) 
+65 a, 65 doNothing, 65 procedure, 65 x, 65 y, 65 z
+5000
+119 - 3 such taht 1 pattern assign 1 with all share common synonym false pattern true tuple, with is comparing Integer
+stmt s; assign a; while w; if i; call c; constant p; variable v; print pr; prog_line pl, pl1;
+Select w such that Parent*(w, a) and Next*(w, pl1) such that Uses(w, v) pattern w ("doNothing", _)  with w.stmt# = 65 pattern a (_, _"y * x"_)
+none
+5000
+120 - 3 such taht 1 pattern assign 1 with all share common synonym false pattern true tuple, with is comparing Integer
+stmt s; assign a; while w; if i; call c; constant p; variable v; print pr; prog_line pl, pl1;
+Select BOOLEAN with w.stmt# = 65 such that Uses(w, v) such that Next*(w, pl1) pattern w ("doNothing", _) such that Parent*(w, a) pattern a (_, _"y * x"_) 
+FALSE
+5000
+121 - 3 such taht 1 pattern assign 1 with all share common synonym false pattern true tuple, with is comparing IDENT
+stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; read r; prog_line n; procedure proc1, proc2;
+Select proc1 such that Parent(w, a) and Modifies(proc1, "constantAssignment") pattern a (v,_"(10 * 100) - 100 / 1000"_) pattern a1 (v1,_"10 * 100"_)  with proc1.procName = "doNothing" such that Calls*(proc1, "doNothing3") 
+doNothing
+5000
+122 - 3 such taht 1 pattern assign 1 pattern while 1 with all share common synonym false pattern true tuple, with is comparing IDENT
+stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; read r; prog_line n; procedure proc1, proc2;
+Select a such that Parent(w, a) and Calls*(proc1, "doNothing3") and Next(n, a) pattern a(_, _"x * y * 100"_) with proc1.procName = "doSomething" pattern w("d",_) 
+101
+5000
+123 - 3 such taht 1 pattern assign 1 pattern while with all share common synonym false pattern true tuple, with is comparing Integer
+stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; read r; prog_line n; procedure proc1, proc2;
+Select a such that Parent(w, a) and Calls*(proc1, "doNothing3") pattern a(_, _"x * y * 100"_) such that Next(n, a) pattern w("d",_) with 12 = 12
+101
+5000
+124 - 3 such taht 1 pattern assign 1 pattern if with all share common synonym false pattern true tuple, with is comparing Integer
+stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; read r; prog_line n; procedure proc1, proc2;
+Select a pattern i("a",_, _) with 12 = 12 such that Parent(i, a) such that Calls(proc1, "doNothing3") and Next*(n, a) pattern a(_, _"20 + y + 10"_) 
+11
+5000
+125 - 3 such taht 1 pattern assign 1 pattern if with all share common synonym false pattern true tuple, with is comparing Integer + IDENT
+stmt s; assign a, a1; while w; if i; call c; constant p; variable var, v1; read r; prog_line n; procedure proc1, proc2;
+Select a with proc1.procName = var.varName such that Parent(i, a) and Next*(n, a) pattern a(_, _"20 + y + 10"_) pattern i("a",_, _) with n = s.stmt# such that Calls(proc1, "doNothing3") 
+11
+5000
+126 - 3 such taht 1 pattern assign 1 pattern if with all share common synonym false pattern true tuple, with is comparing Integer + IDENT, false
+stmt s; assign a, a1; while w; if i; call c; constant p; variable var, v1; read r; prog_line n; procedure proc1, proc2;
+Select <a, i> with n = s.stmt# such that Parent(i, a) with proc1.procName = "falseVaraNAem" such that Calls(proc1, "doNothing3") such that Next*(n, a) pattern a(_, _"20 + y + 10"_) pattern i("a",_, _)  
+none
+5000
+127 - 3 such taht 1 pattern assign 1 pattern if with all share common synonym false pattern true tuple, with is comparing Integer + IDENT, false
+stmt s; assign a, a1; while w; if i; call c; constant p; variable var, v1; read r; prog_line n; procedure proc1, proc2;
+Select BOOLEAN  such that Parent(i, a) such that Calls(proc1, "doNothing3") and Next*(n, a) pattern a(_, _"20 + y + 10"_) pattern i("a",_, _) with n = s.stmt# with proc1.procName = "falseVaraNAem"
+FALSE
+5000
+128 - 3 such taht 1 pattern assign 1 pattern if with all share common synonym false pattern true tuple, with is comparing Integer + IDENT, false
+stmt s; assign a, a1; while w; if i; call c; constant p; variable var, v1; read r; prog_line n; procedure proc1, proc2;
+Select BOOLEAN pattern a(_, _"20 + y + 10"_) such that Parent(i, a) with proc1.procName = "falseVaraNAem" such that Calls(proc1, "doNothing3") and Next*(n, a) pattern i("a",_, _) with n = s.stmt#
+FALSE
+5000
+129 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select w such that Follows*(i, w) pattern w (v, _) with w.stmt# = n such that Modifies(w, v) 
+20, 43, 65, 85
+5000
+130 - 2 such taht 1 pattern while 1 with Integer all share common pattern true(Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select <w, v> pattern w (v, _) with w.stmt# = n such that Modifies(w, v) such that Follows*(i, w)  
+20 doNothing, 43 doNothing, 65 doNothing, 85 constantAssignment
+5000
+131 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select w such that Follows*(i, w) and Modifies(w, v) with v.varName = "doNothing" pattern i (v, _, _) 
+65
+5000
+132 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select BOOLEAN with v.varName = "doNothing" such that Modifies(w, v) and Follows*(i, w) pattern i (v, _, _) 
+TRUE
+5000
+133 -  2 such taht 1 pattern assign 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc; read r;
+Select i pattern a (v, _) such that Follows(i,a) and Modifies(proc, v) with v.varName = "a"
+36, 57
+5000
+134 -  2 such taht 1 pattern assign 1 with INTEGER all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc; read r;
+Select i with a.stmt# = n such that Follows(i,a) and Modifies(proc, v) pattern a (v, _"y * 100"_) 
+57
+5000
+135 -  2 such taht 1 pattern assign 1 with INTEGER all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc; read r;
+Select i pattern a (v, _"(y * 100) * 1000"_) such that Follows(i,a) and Modifies(proc, v) with a.stmt# = n
+none
+5000
+136 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select <w, v> such that Uses(w, v) and Follows*(i, w) pattern w (v, _) with w.stmt# = n
+100 d, 20 doNothing, 43 doNothing, 65 doNothing, 85 constantAssignment
+5000
+137 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select <i,v> such that Follows*(i, c) such that Uses(i, v) pattern i (v, _, _) with v.varName = "TryingToMakeLongVariableNamesToTestLimits"
+54 TryingToMakeLongVariableNamesToTestLimits
+5000
+138 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select BOOLEAN pattern i (v, _, _) such that Follows*(i, c) and Uses(i, v) with v.varName = "TryingToMakeLongVariableNamesToTestLimits"
+TRUE
+5000
+139 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; read r;
+Select i with i.stmt# = n such that Follows*(i, r) and Uses(i, v) pattern i (v, _, _) 
+86, 88
+5000
+140 - 2 such taht 1 pattern if 1 with IDENT all share common pattern false (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; read r;
+Select BOOLEAN pattern a (v, _"100 + y"_) such that Follows*(i, a) and Uses(i, v) with i.stmt# = n
+FALSE
+5000
+141 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; read r;
+Select <i,v> such that Follows*(i, a) with i.stmt# = n such that Uses(i, v) pattern a (v, _"y * x"_)
+10 y, 54 b
+5000
+142 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
+Select <w, v> such that Follows*(i, r) and Calls(proc1, proc1) with r.varName = proc1.procName pattern w (v, _) 
+none
+5000
+143 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
+Select <i, r> such that Calls(proc1, proc2) and Follows*(i, r) pattern i (v, _, _) with r.varName = v.varName
+88 92
+5000
+144 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; print print; prog_line n; procedure proc1, proc2; read r;
+Select <print, a, v> such that Calls(proc1, proc2) with a.stmt# = n such that Follows*(print, a) pattern a (v, _"x"_) 
+3 4 a, 3 5 b, 33 35 constantAssignment, 51 52 constantAssignment
+5000
+145 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; print print; prog_line n; procedure proc1, proc2; read r;
+Select <print.varName, a, v> such that Calls*(proc1, proc2) pattern a (v, _"x"_) with a.stmt# = n such that Follows*(print, a)
+b 4 a, b 5 b, x 35 constantAssignment, y 52 constantAssignment
+5000
+146 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; print print; prog_line n; procedure proc1, proc2; read r;
+Select BOOLEAN pattern a (v, _"x"_) with a.stmt# = n such that Follows*(print, a) and Calls*(proc1, "doSomething")
+FALSE
+5000
+147 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; print print; prog_line n; procedure proc1, proc2; read r;
+Select <print.varName, a, v> with print.stmt# = 51 such that Follows*(51, a) and Calls*(proc1, proc2) pattern a (v, _"x"_) 
+y 52 constantAssignment
+5000
+148 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows) ###
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r; print print;
+Select <r, print, a> with r.varName = proc1.procName such that Follows(r, print) such that Next*(print, a) pattern a (v, _"y * x * (y * 100)"_) 
+59 60 64, 61 62 64
+5000
+149 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
+Select <i, r> with n = 87 such that Follows(i, r) and Next*(n, r) pattern i (v, _, _) 
+86 99
+5000
+150 - 2 such taht 1 pattern while 1 with Ident all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; print print; prog_line n; procedure proc1, proc2; read r;
+Select <print, w>  such that Next*(w, 80) pattern w (v, _) with v.varName = "d" such that Follows*(print, w)
+78 79
+5000
+151 - 2 such taht 1 pattern while 1 with Ident all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; print print; prog_line n; procedure proc1, proc2; read r;
+Select <r, w> with v.varName = "d" such that Next(w, 101) pattern w (v, _) such that Follows*(r, w) 
+99 100
+5000
+152 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select BOOLEAN  with w.stmt# = n such that Follows*(i, w) and Uses(i,v) pattern w (v, _) such that Modifies(w, v) pattern i ("a", _, _) with i.stmt# = n
+FALSE
+5000
+153 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1;
+Select <w, i, v> pattern w (v, _) such that Follows*(i, w)  with w.stmt# = n such that Modifies(w, v) and Uses(i,v) pattern i ("a", _, _) with i.stmt# = n1
+20 10 doNothing
+5000
+154 - 3 such taht 1 pattern w 1 pattern i 1 with IDENT 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1; procedure proc;
+Select <w, i, v> such that Follows*(i, w)  with proc.procName = "doNothing" pattern w (v, _) such that Modifies(w, v) and Uses(proc,v) pattern i ("a", _, _) with w.stmt# = n
+20 10 doNothing
+5000
+155 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select w such that Follows*(i, w) and Modifies(w, v) with proc1.procName = "doSomehthing" such that Calls*(proc1,proc2) pattern a ("a", "wrongPattern") with w.stmt# = n  pattern w (v, _) 
+none
+5000
+156 - 3 such taht 1 pattern a 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n, n1;
+Select <a, i, v> such that Modifies(a, v) and Next*(a, 77)  such that Follows*(i, a) pattern a (v, _)  with w.stmt# = n with v.varName = "a" pattern i (v1, _, _)
+64 57 a
+5000
+157 - 3 such taht 1 pattern wa 1 pattern a 1 with IDENT 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1;
+Select <w, i, v> such that Next*(12, 14) pattern w (v, _)  such that Follows*(i, w) and Modifies(w, v)pattern i ("a", _, _) with w.stmt# = n with i.stmt# = n1
+20 10 doNothing
+5000
+158 - 3 such taht 1 pattern a 1 pattern a 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; prog_line n; procedure proc1, proc2;
+Select <a,v> pattern a (v, _) pattern a1 (v1, _"x * y % z"_) with v1.varName = "constantAssignment" with n = s.stmt# such that Follows*(a, a1) and Uses(a1, v) and Calls*(proc1,proc2) 
+50 x
+5000
+159 - 3 such taht 1 pattern a 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n, n1;
+Select <a, i, v> such that Uses(a, v) pattern a (v1, _) pattern i ("read", _, _) with i.stmt# = n such that Follows*(a, i) and Next*(a, n)  with n = 107
+101 107 x, 101 107 y
+5000
+160 - 3 such taht 1 pattern wa 1 pattern a 1 with IDENT 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c, c1; constant p; variable v; prog_line n, n1; procedure p1, p2;
+Select c1 such that Calls*(p1, "doNothing") and Next*(c, c1) pattern w (v, _) pattern i ("a", _, _) with w.stmt# = n with i.stmt# = n1 such that Follows*(c, c1) 
+117
+5000
+161 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select <i, w, v> with w.stmt# = n such that Modifies(i, v) and Uses(w, v) pattern w ("specialPattern", _) 
+10 103 constantAssignment, 25 103 constantAssignment, 29 103 constantAssignment, 36 103 constantAssignment, 54 103 constantAssignment, 57 103 constantAssignment, 71 103 constantAssignment, 86 103 constantAssignment, 88 103 constantAssignment
+5000
+162 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select <i,v> pattern i (v, _, _) such that Modifies(i, v) and Uses(i, v) with v.varName = "TryingToMakeLongVariableNamesToTestLimits"
+25 TryingToMakeLongVariableNamesToTestLimits, 54 TryingToMakeLongVariableNamesToTestLimits
+5000
+163 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select BOOLEAN such that Modifies(w, v) pattern a (v, "nonExistentPattern * e") such that Uses(w, v) with a.stmt# = 34
+FALSE
+5000
+164 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select <i, w, v> pattern w ("specialPattern", _) such that Modifies(w, v) and Modifies(i, v) with w.stmt# = n
+107 103 read
+5000
+165 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n;
+Select <i, w, v> with v.varName = v1.varName such that Modifies(w, v) and Modifies(i, v1) pattern i ("a", _, _) 
+10 100 constantAssignment, 10 100 doNothing, 10 100 x, 10 100 y, 10 12 TryingToMakeLongVariableNamesToTestLimits, 10 12 constantAssignment, 10 12 doNothing, 10 12 x, 10 12 y, 10 12 z, 10 2 a, 10 20 doNothing, 10 43 doNothing, 10 55 a, 10 55 constantAssignment, 10 55 doNothing, 10 55 x, 10 55 y, 10 65 a, 10 65 constantAssignment, 10 65 doNothing, 10 65 x, 10 65 y, 10 79 doNothing, 10 85 constantAssignment, 10 85 doNothing, 10 85 x, 10 85 y, 10 96 constantAssignment, 74 55 c
+5000
+166 - 2 such taht 1 pattern if 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select BOOLEAN with a.stmt# = 34 such that Modifies(w, v) and Modifies(w, v) pattern a (v, "nonExistentPattern * e") 
+FALSE
+5000
+167 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
+Select proc1 such that Calls(proc1, "doNothing2") such that Modifies(proc1, v) pattern i (v, _, _) with proc1.procName = v.varName
+doNothing
+5000
+168 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
+Select proc1 such that Modifies(proc1, v) and Calls(proc1, "doNothing2") with i.stmt# = n pattern i (v, _, _) 
+doNothing, doSomething
+5000
+169 - 2 such taht 1 pattern while 1 with IDENT all share common pattern true (Follows) ###
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r; print print;
+Select <w, a> such that Next*(w, a) such that Modifies(w, v) pattern a (v, _) with v.varName = "constantAssignment"
+100 101, 55 101, 55 87, 55 89, 55 93, 55 97, 65 101, 65 87, 65 89, 65 93, 65 97, 85 101, 85 87, 85 89, 85 93, 85 97, 96 97
+5000
+170 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2; read r;
+Select <proc1, a> pattern a (v,_"x * y"_) with r.stmt# = n such that Next*(r, a) such that Modifies(proc1, v) 
+doNothing 101, doNothing 52, doNothing 66, doNothing2 101, doNothing2 52, doNothing3 101, doNothing3 52, doNothing4 101, doNothing4 52, doNothing4 66, doSomething 101, doSomething 52, doSomething 66, mainPrint 101, mainPrint 52, mainPrint 66, procedure 101, procedure 52
+5000
+171 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select BOOLEAN with w.stmt# = n with i.stmt# = n such that Uses(i,v) pattern w (v, _) pattern i ("a", _, _) such that Modifies(i, v) and Modifies(w, v) 
+FALSE
+5000
+172 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1; procedure p1, p2;
+Select <w, i, v> such that Calls(p1, p2) such that Modifies(i, v) such that Modifies(w, v) pattern i (v, _, _) with w.stmt# = n with i.stmt# = n1 pattern i ("a", _, _)
+2 10 a, 55 10 a, 65 10 a
+5000
+173 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1;
+Select <w, i, v> with i.stmt# = n1 such that Modifies(i, v) and Modifies(w, v) and Next*(i,w) pattern w (v, _) pattern i ("constantAssignment", _, _) with v.varName = "constantAssignment"
+85 86 constantAssignment
+5000
+174 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a, a1; while w; if i; call c; constant p; variable v, v1; prog_line n, n1; procedure p1, p2;
+Select <a, a1, v> such that Uses(a1, v) and Calls(p1, p2) such that Modifies(a, v)  pattern a1 (v1, _) pattern a (v1, _) with v1.varName = "x"
+50 50 x
+5000
+175 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1; procedure p1, p2;
+Select w such that Next*(i,w) pattern w (v, _) pattern i ("constantAssignment", _, _) with v.varName = "constantAssignment" with i.stmt# = n1 such that Calls(p1, p2) and Modifies(i, v) 
+85, 103
+5000
+176 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n;
+Select <i, w, v> such that Uses(i, v) such that Uses(w, v) pattern w ("specialPattern", _) with w.stmt# = n
+107 103 print, 54 103 constantAssignment, 86 103 constantAssignment, 86 103 print, 88 103 constantAssignment
+5000
+177 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select i with i.stmt# = 107 such that Uses(proc1, v) and Calls(proc1, proc2) pattern i (v,_, _) 
+107
+5000
+178 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select i such that Uses(i, v) with v.varName = "constantAssignment" such that Next*(i, w) pattern i (v,_, _)
+86
+5000
+179 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure p1, p2;
+Select <p1,w,v> such that Uses(p1, v) such that Uses(w, v) and Calls(p1,p2) pattern w (v, _) with v.varName = "procedure" pattern i ("a", _, _) with p1.procName = v.varName
+procedure 55 procedure
+5000
+180 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n, n1; procedure p1, p2;
+Select <w, i, v> such that Next(i, w) pattern i (v, _, _) pattern i (v1, _, _) such that Uses(i, v) and Uses(p1, v) with w.stmt# = n with i.stmt# = n1
+55 54 TryingToMakeLongVariableNamesToTestLimits
+5000
+181 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1; procedure p1, p2;
+Select <p2, v> such that Next*(i,w) and Uses(p2, v) and Calls*(p1, p2) pattern w (v, _)  with v.varName = p2.procName pattern i ("TryingToMakeLongVariableNamesToTestLimits", _, _)
+procedure procedure
+5000
+182 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2, proc3;
+Select <proc1, proc2, proc3> such that Calls(proc1, proc2) such that Calls(proc2, proc3) pattern i (v,_, _) with proc3.procName = "doNothing3"
+doNothing doNothing2 doNothing3, doSomething doNothing doNothing3, doSomething doNothing2 doNothing3, doSomething procedure doNothing3, mainPrint doNothing doNothing3
+5000
+183 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select proc2 such that Next*(i, w) pattern i (v,_, _) with v.varName = "constantAssignment" such that Calls*(proc1, proc2)
+doNothing, doNothing2, doNothing3, procedure
+5000
