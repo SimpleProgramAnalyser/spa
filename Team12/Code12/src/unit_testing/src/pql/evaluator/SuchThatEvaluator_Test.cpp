@@ -922,5 +922,13 @@ TEST_CASE("Next* clauses are evaluated correctly")
                 resTable.getResultsTwo("re", "a"),
                 Vector<Pair<String, String>>({{"1", "4"}, {"1", "5"}, {"1", "8"}, {"7", "8"}}));
         }
+
+        SECTION("Left and right is synonym (statement)")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"6", "7", "8"}));
+        }
     }
 }

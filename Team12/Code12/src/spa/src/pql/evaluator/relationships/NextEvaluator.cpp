@@ -121,7 +121,23 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
         return;
     }
 
-    // Both are Synonyms
+    // Both are same Synonyms
+    if (leftRef == rightRef) {
+        Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
+        Vector<StatementNumber> results;
+        for (StatementNumber stmtNum : prevTypeStatements) {
+            CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
+            if (nextStarAnyStmtResults.isCached(stmtNum)) {
+                results.push_back(stmtNum);
+            }
+        }
+
+        ClauseResult clauseResults = convertToClauseResult(results);
+        resultsTable.storeResultsOne(leftRef, clauseResults);
+        return;
+    }
+
+    // Both are different Synonyms
     Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
     Vector<Pair<Integer, String>> pairedResults;
     for (StatementNumber stmtNum : prevTypeStatements) {
