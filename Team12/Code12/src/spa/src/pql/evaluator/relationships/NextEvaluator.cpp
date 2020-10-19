@@ -209,25 +209,28 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
     CacheSet currentCacheSet(nextStatementList);
 
     if (getStatementType(stmtNum) == WhileStatement) {
-        StatementNumber nextWhileStatementNumber = stmtNum + 1;
+        StatementNumber nextStatementNumber = stmtNum + 1;
 
-        // Evaluate the statement that has a Next
-        // relationship with the current statement
+        // First evaluate the statement that the current
+        // statement has a Next relationship with
         // and is not in the current while's statement
-        // list first, before evaluating the while loop.
+        // list, before evaluating the while loop.
         // This allows the statements in the while loop
         // to get the Next* statements that are after
-        // the while loop.
+        // the while loop. If there is only one Next
+        // relationship, that means this while is the
+        // last statement (other than its statement list)
+        // in the procedure, then there is no need to
+        // evaluate any other Next relationship first
         if (nextStatementList.size() == 2) {
-            StatementNumber nextNonWhileStatementNumber = nextStatementList.at(0) == nextWhileStatementNumber
-                                                              ? nextStatementList.at(1)
-                                                              : nextStatementList.at(0);
+            StatementNumber nextNonWhileStatementNumber
+                = nextStatementList.at(0) == nextStatementNumber ? nextStatementList.at(1) : nextStatementList.at(0);
             CacheSet nextCacheSet = getCacheNextStatement(nextNonWhileStatementNumber);
             currentCacheSet.combine(nextCacheSet);
         }
 
         StatementNumber lastStatementNumberInWhileLoop
-            = getLastStatementNumberInWhileLoop(nextWhileStatementNumber, stmtNum);
+            = getLastStatementNumberInWhileLoop(nextStatementNumber, stmtNum);
 
         // Add all the statements in while statement's
         // statement list to the cache set of while statement
@@ -235,14 +238,16 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
             currentCacheSet.insert(i);
         }
 
-        // Add while statement's cache set to all statements
-        // in statement list. This is done on the basis that
-        // all the statements in the statement list should
-        // have the same set of Next* Relationships.
-        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
-            cacheNextStarTable.insert(i, currentCacheSet);
-            exploredNextStatements.insert(i);
-        }
+        // TODO: Currently commented out since it may be unnecessary to set the results for all the statements in
+        // while's statement list. Can be used to test optimisation
+        //        // Add while statement's cache set to all statements
+        //        // in statement list. This is done on the basis that
+        //        // all the statements in the statement list should
+        //        // have the same set of Next* Relationships.
+        //        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
+        //            cacheNextStarTable.insert(i, currentCacheSet);
+        //            exploredNextStatements.insert(i);
+        //        }
 
         cacheNextStarTable.insert(stmtNum, currentCacheSet);
         exploredNextStatements.insert(stmtNum);
@@ -268,45 +273,57 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
 
     Vector<StatementNumber> prevStatementList = getAllPreviousStatements(stmtNum, AnyStatement);
     CacheSet currentCacheSet(prevStatementList);
-    if (getStatementType(stmtNum) == WhileStatement) {
-        StatementNumber nextWhileStatementNumber = stmtNum + 1;
+    StatementNumber prevStatementNumber = stmtNum - 1;
 
-        // Evaluate the statement that has a Next
-        // relationship with the current statement
-        // and is not in the current while's statement
-        // list first, before evaluating the while loop.
-        // This allows the statements in the while loop
-        // to get the Next* statements that are after
-        // the while loop.
-        if (prevStatementList.size() > 1) {
-            StatementNumber otherNonWhileStatementNumber = prevStatementList.at(0) == nextWhileStatementNumber
-                                                               ? prevStatementList.at(1)
-                                                               : prevStatementList.at(0);
-            CacheSet prevCacheSet = getCachePrevStatement(otherNonWhileStatementNumber);
-            currentCacheSet.combine(prevCacheSet);
+    if (getStatementType(stmtNum) == WhileStatement) {
+        if (prevStatementList.size() != 1) {
+            // this while statement is NOT the first statement in the procedure
+            CacheSet prevNonWhileStatement = getCachePrevStatement(prevStatementNumber);
+            currentCacheSet.combine(prevNonWhileStatement);
         }
 
-        StatementNumber lastStatementNumberInWhileLoop
-            = getLastStatementNumberInWhileLoop(nextWhileStatementNumber, stmtNum);
-
-        // Add all the statements in while statement's
-        // statement list to the cache set of while statement
-        for (int i = stmtNum; i <= lastStatementNumberInWhileLoop; i++) {
+        StatementNumber lastStatementNumberInWhileLoop = getLastStatementNumberInWhileLoop(stmtNum + 1, stmtNum);
+        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
             currentCacheSet.insert(i);
         }
 
-        // Add while statement's cache set to all statements
-        // in statement list. This is done on the basis that
-        // all the statements in the statement list should
-        // have the same set of Next* Relationships.
-        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
-            cachePrevStarTable.insert(i, currentCacheSet);
-            exploredPrevStatements.insert(i);
-        }
-
-        cachePrevStarTable.insert(stmtNum, currentCacheSet);
-        exploredPrevStatements.insert(stmtNum);
-        return currentCacheSet;
+        //        // Evaluate the statement that has a Next
+        //        // relationship with the current statement
+        //        // and is not in the current while's statement
+        //        // list first, before evaluating the while loop.
+        //        // This allows the statements in the while loop
+        //        // to get the Next* statements that are after
+        //        // the while loop.
+        //        if (prevStatementList.size() > 1) {
+        //            StatementNumber lastWhileStatementNumber = prevStatementList.at(0) == prevWhileStatementNumber
+        //                                                           ? prevStatementList.at(1)
+        //                                                           : prevStatementList.at(0);
+        //            CacheSet prevCacheSet = getCachePrevStatement(prevWhileStatementNumber);
+        //            currentCacheSet.combine(prevCacheSet);
+        //        }
+        //
+        //        StatementNumber lastStatementNumberInWhileLoop = getLastStatementNumberInWhileLoop(
+        //            prevWhileStatementNumber,
+        //            stmtNum); // TODO: Possible double evaluation here, can think of how to improve complexity
+        //
+        //        // Add all the statements in while statement's
+        //        // statement list to the cache set of while statement
+        //        for (int i = stmtNum; i <= lastStatementNumberInWhileLoop; i++) {
+        //            currentCacheSet.insert(i);
+        //        }
+        //
+        //        // Add while statement's cache set to all statements
+        //        // in statement list. This is done on the basis that
+        //        // all the statements in the statement list should
+        //        // have the same set of Next* Relationships.
+        //        for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
+        //            cachePrevStarTable.insert(i, currentCacheSet);
+        //            exploredPrevStatements.insert(i);
+        //        }
+        //
+        //        cachePrevStarTable.insert(stmtNum, currentCacheSet);
+        //        exploredPrevStatements.insert(stmtNum);
+        //        return currentCacheSet;
     } else {
         for (auto prevStmtNum : prevStatementList) {
             CacheSet prevCacheSet = getCachePrevStatement(prevStmtNum);
