@@ -313,43 +313,168 @@ stmt s; while p;
 Select s such that Modifies(s, p)
 none
 5000
-64 - Invalid Pattern Query read as pattern
+21 - Invalid Query Next Query incorrect statement number
+prog_line s;
+Select s such that Next(2,100000)
+none
+5000
+22 - Invalid Query Next Unknown Synonym
+prog_line s;
+Select s3 such that Next(2, 3)
+none
+5000
+23 - Invalid Query Next Variable evaluated
+prog_line s; variable v, v1;
+Select s such that Next(v, v1)
+none
+5000
+24 - Invalid Query Next Variable evaluated
+prog_line s; variable v;
+Select s such that Next(v, _)
+none
+5000
+25 - Invalid Query Next Variable evaluated
+prog_line s; variable v;
+Select s such that Next(_, v)
+none
+5000
+26 - Invalid Query Variable Const Proc Used in Next
+prog_line s; variable v;
+Select v such that Next(2, v)
+none
+5000
+27 - Invalid Query Variable Const Proc Used in Next
+prog_line s; constant v;
+Select v such that Next(2, v)
+none
+5000
+28 - Invalid Query Variable Const Proc Used in Next
+prog_line s; procedure v;
+Select v such that Next(2, v)
+none
+5000
+29 - Invalid Query Variable Const Proc Used in Next
+prog_line s; variable v;
+Select v such that Next*(2, v)
+none
+5000
+30 - Invalid Query Variable Const Proc Used in Next
+prog_line s; constant v;
+Select v such that Next*(2, v)
+none
+5000
+31 - Invalid Query Variable Const Proc Used in Next
+stmt s; procedure v;
+Select v such that Next*(2, v)
+none
+5000
+64 - Invalid Assign Pattern Query read as pattern
 stmt s; read a;
 Select s pattern a("x", _)
 none
 5000
-65 - Invalid Pattern Query LHS wildcard
+65 - Invalid Assign Pattern Query LHS wildcard
 stmt s; assign a;
 Select s pattern a(_"x"_, _)
 none
 5000
-66 - Invalid Pattern Query RHS variable
+66 - Invalid Assign Pattern Query RHS variable
 stmt s; assign a; variable v1;
 Select s pattern a("x", v1)
 none
 5000
-67 - Invalid Pattern Query RHS variable
+67 - Invalid Assign Pattern Query RHS variable
 stmt s; assign a; variable v1;
 Select s pattern a("x", v1)
 none
 5000
-68 - Invalid Pattern Query stmtNumber used
+68 - Invalid Assign Pattern Query stmtNumber used
 stmt s; assign a;
 Select s pattern a(3, _)
 none
 5000
-69 - Invalid Pattern Query stmtNumber used
+69 - Invalid Assign Pattern Query stmtNumber used
 stmt s; assign a;
 Select s pattern a("x", 3)
 none
 5000
-70 - Invalid Pattern Query and
+70 - Invalid Assign Pattern Query and
 stmt s; assign a;
 Select s and pattern a("x", _)
 none
 5000
-71 - Invalid Pattern Query and
+71 - Invalid Assign Pattern Query and
 stmt s; assign a;
 Select s such that pattern a("x", _)
+none
+5000
+64 - Invalid If Pattern Query read as pattern
+stmt s; read a;
+Select s pattern a("x", _, _)
+none
+5000
+65 - Invalid If Pattern Query LHS wildcard
+stmt s; if ifs;
+Select s pattern ifs(_"x"_, _, _)
+none
+5000
+66 - Invalid If Pattern Query RHS non-wildcard
+stmt s; if ifs ; variable v1;
+Select s pattern ifs("x", _, v1)
+none
+5000
+66 - Invalid If Pattern Query RHS non-wildcard
+stmt s; if ifs ;
+Select s pattern ifs("x", _, 3)
+none
+5000
+68 - Invalid If Pattern Query stmtNumber used
+stmt s; if ifs;
+Select s pattern ifs(3, _, _)
+none
+5000
+70 - Invalid If Pattern Query and
+stmt s; if ifs;
+Select s and pattern ifs("x", _, _)
+none
+5000
+71 - Invalid If Pattern Query and
+stmt s; if ifs;
+Select s such that pattern ifs("x", _, _)
+none
+5000
+71 - Invalid If Pattern Query, 2 operands supplied
+stmt s; if ifs;
+Select s pattern ifs("x", _)
+none
+5000
+65 - Invalid While Pattern Query LHS wildcard
+stmt s; while w;
+Select s pattern w(_"x"_, _)
+none
+5000
+66 - Invalid While Pattern Query RHS non-wildcard
+stmt s; while w ; variable v1;
+Select s pattern w("x", v1)
+none
+5000
+66 - Invalid While Pattern Query RHS non-wildcard
+stmt s; while w;
+Select s pattern w("x", 3)
+none
+5000
+68 - Invalid While Pattern Query stmtNumber used
+stmt s; while w;
+Select s pattern w(3, _)
+none
+5000
+70 - Invalid While Pattern Query and
+stmt s; while w;
+Select s and pattern w("x", _)
+none
+5000
+71 - Invalid While Pattern Query and
+stmt s; while w;
+Select s such that pattern w("x", _)
 none
 5000
