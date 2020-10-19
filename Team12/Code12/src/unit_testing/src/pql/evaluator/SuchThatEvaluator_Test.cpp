@@ -770,6 +770,14 @@ TEST_CASE("Next* clauses are evaluated correctly")
             NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
         }
+
+        SECTION("Left synonym (statement), right integer in while statement")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(IntegerRefType, "7");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
+        }
     }
 
     SECTION("Left integer, right integer")
