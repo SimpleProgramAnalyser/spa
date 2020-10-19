@@ -334,9 +334,8 @@ StatementNumber getLastStatementNumberInWhileLoop(StatementNumber currentStmtNum
         assert(nextStatementList.size() == 2);
 
         StatementNumber nextStmtNum = currentStmtNum + 1;
-        StatementNumber nextNonWhileStatementNumber =  nextStatementList.at(0) == nextStmtNum
-                                                       ? nextStatementList.at(1)
-                                                       : nextStatementList.at(0);
+        StatementNumber nextNonWhileStatementNumber
+            = nextStatementList.at(0) == nextStmtNum ? nextStatementList.at(1) : nextStatementList.at(0);
         if (nextNonWhileStatementNumber == whileStmtNum) {
             // if nested while loop is the last list of statements in the parent while loop,
             // get the last statement number of this nested while loop instead
