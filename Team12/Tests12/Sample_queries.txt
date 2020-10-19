@@ -111,7 +111,7 @@ Example p i, Example p x, Example p y, Example p z, Example q i, Example q x, Ex
 23 - comment
 call c; assign a1, a2;
 Select BOOLEAN such that Follows*(_, c) and Affects(a1, a2) and Uses(a2, _)
-true
+TRUE
 5000
 24 - comment
 assign a1, a2; variable v;
