@@ -770,6 +770,14 @@ TEST_CASE("Next* clauses are evaluated correctly")
             NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
         }
+
+        SECTION("Left synonym (statement), right integer in while statement")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(IntegerRefType, "7");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
+        }
     }
 
     SECTION("Left integer, right integer")
@@ -921,6 +929,14 @@ TEST_CASE("Next* clauses are evaluated correctly")
             requireVectorsHaveSameElements(
                 resTable.getResultsTwo("re", "a"),
                 Vector<Pair<String, String>>({{"1", "4"}, {"1", "5"}, {"1", "8"}, {"7", "8"}}));
+        }
+
+        SECTION("Left and right is synonym (statement)")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"6", "7", "8"}));
         }
     }
 }
