@@ -1,0 +1,70 @@
+procedure mainPrint {
+1	a = x;
+2	b = v;
+	
+3	a = x + 3;
+4	a = 3 + x;
+5	a =  x - 3;
+6	b = x * 3;
+7	b = x / 3;
+8	b = x % 3;
+
+9	a = x + 3 + 4;
+10	b = x * 3 + 4;
+11	a = x - 3 - 4;
+
+12	a = x + y;
+13	a = X + Y;
+14	b = x + y;
+15	a = x - y;
+16	b = x * y;
+17	c = x / y;
+18	c = x % y;
+
+19	a = x + y + z;
+20	a = z + x + y;
+21	b = x + y - z;
+
+22	a = x + y * z;
+23	b = z * x + y;
+	
+24	a = x + y / z;
+25	a = x + y % z;
+	
+26	b = x * y + z;
+27	b = x * y - z;
+28	c = x * y / z;
+29	d = x * y * z;
+30	d = z * x * y;
+31	c = x * y % z;
+32	c = z % x * y;
+
+33	a = x / y * z;
+34	b = z * x / y;
+35	a = x % y / z;
+36	a = z % x % y;
+37	b = z + x % y;
+}
+
+procedure mainPrint2{
+
+38	b = x + y + z + m;
+39	b = m + x + y * z;
+40	b = m * x + y + z;
+41	a = m + x * y + z;
+42	b = m + x + y + z;
+43	b = x * y * z + m;
+
+44	e = m + x * y + z * t;
+
+45	if (x < y) then {
+46		e = m + x * y + z * t;
+	} else {
+47		a = x + y / z;
+48		while ( x > y) {
+49			b = z * x + y;
+		}
+	}
+
+
+}

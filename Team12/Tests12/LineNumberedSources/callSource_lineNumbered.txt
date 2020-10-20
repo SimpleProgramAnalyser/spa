@@ -1,0 +1,46 @@
+procedure mainPrint {
+1   read x;
+2   call readPoint;
+3   print y;
+4   call computeCentroid;
+}
+procedure readPoint {
+5   if ((x < y) && (y < z)) then {
+6       while (y < z) {
+7           normSq = z + y;
+8           print z;
+        }
+    } else {
+9       y = x + y;
+10      read y;
+11      call computeCentroid;
+    }
+}
+procedure computeCentroid {
+12  count = 0;
+13  cenX = 0;
+14  call computeOrderOfSylowSubgroup;
+15  cenY = 0;
+}
+procedure computeOrderOfSylowSubgroup {
+16  indexOfH = 2;
+17  finiteIndexG = 7;
+18  call computeXNormalSubgroup;
+19  order = indexOfH / finiteIndexG;
+20  call computeKernel;
+}
+procedure computeXNormalSubgroup {
+21  cenY = 0;
+22  call computeQuotientGroup;
+}
+
+procedure computeQuotientGroup {
+23  call computeKernel;
+}
+
+procedure computeKernel {
+24  cenY = 0;
+}
+procedure returnIdentityElement {
+25  e = 1;
+}
