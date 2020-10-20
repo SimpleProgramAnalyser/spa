@@ -8,14 +8,14 @@ procedure raymarch {
     rd = 19;     
     read depth; 
     while (count < steps) {
-    print depth;
-    po = ro + rd * depth;
-    call spheresdf;
-    if (dist < epsilon) then {
-        done = depth; }
-    else {
-        depth = depth + dist;} 
-        count = count + 1; }}
+        print depth;
+        po = ro + rd * depth;
+        call spheresdf;
+        if (dist < epsilon) then {
+            done = depth; }
+        else {
+            depth = depth + dist;} 
+            count = count + 1; }}
 
 procedure spheresdf {
     dist = x * x + y * y + z * z;
