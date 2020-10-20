@@ -525,7 +525,11 @@ NtupledResult ResultsTable::getResultsN(const Vector<Synonym>& syns)
 {
     assert(syns.size() > 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     mergeResults();
-    return joinAllSynonyms(syns);
+    if (!hasResults()) {
+        return std::vector<std::vector<String>>();
+    } else {
+        return joinAllSynonyms(syns);
+    }
 }
 
 Void ResultsTable::storeResultsZero(Boolean hasResults)
