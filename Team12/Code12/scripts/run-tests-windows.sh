@@ -3,7 +3,7 @@ set -euo pipefail
 # usage: run with argument no-build to skip building, skip-tests to skip tests
 
 rootdir="$(git rev-parse --show-toplevel)"
-builddir="${rootdir}/Team12/Code12/build"
+builddir="${rootdir}/Team12/Code12/build_win/x86-Debug"
 testdir="${rootdir}/Team12/Tests12"
 BUILD_TYPE="${BUILD_TYPE:-RELEASE}"
 
