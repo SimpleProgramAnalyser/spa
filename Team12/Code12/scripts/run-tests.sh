@@ -88,13 +88,28 @@ cp "${rootdir}/Team12/Code12/tests/analysis.xsl" "${outdir}/analysis.xsl"
 # run tests
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b") # ignore spaces in filename
+TESTSFAILED=0
 for sourcefile in ${testdir}/*_source.txt; do
   queryfile="$(dirname "$sourcefile")/$(basename "$sourcefile" | sed -e 's/source/queries/g' -e 's/Source/Queries/g')"
   testdescription=$(basename -s .txt $sourcefile | sed 's/Sample_source_/output_/g')
   outfile="${outdir}/${testdescription}.XML"
   echo "Running AutoTester for $testdescription..."
   DUMMY=$("$autotester" "$sourcefile" "$queryfile" "$outfile")
+
+  # Check if all test passed
+  if grep -q "<failed>" "$outfile"; then
+      echo "System test failed: ${testdescription} :("
+      ((TESTSFAILED=TESTSFAILED+1))
+  fi
 done
+
+if [ $TESTSFAILED == 0 ];
+then
+    echo "All System test passed!"
+else
+    echo "$TESTSFAILED System test(s) failed :("
+fi
+
 # restore $IFS
 IFS=$SAVEIFS
 

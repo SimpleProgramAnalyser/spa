@@ -94,7 +94,21 @@ for sourcefile in ${testdir}/*_source.txt; do
   outfile="${outdir}/${testdescription}.XML"
   echo "Running AutoTester for $testdescription..."
   DUMMY=$("$autotester" "$sourcefile" "$queryfile" "$outfile")
+
+  # Check if all test passed
+  if grep -q "<failed>" "$outfile"; then
+      echo "System test failed: ${testdescription} :("
+      ((TESTSFAILED=TESTSFAILED+1))
+  fi
 done
+
+if [ $TESTSFAILED == 0 ];
+then
+    echo "All System test passed!"
+else
+    echo "$TESTSFAILED System test(s) failed :("
+fi
+
 # restore $IFS
 IFS=$SAVEIFS
 
