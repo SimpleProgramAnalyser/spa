@@ -128,15 +128,14 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         for (size_t m = 0; m < ifStmtListSize; m++) {
             StatementNode* stmtNode = ifStmtList.at(m).get();
             // Recurse
-            currentCfgNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, ifStmtListSize);
+            ifNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, ifStmtListSize);
         }
 
         currentCfgNode = elseNode;
         for (size_t n = 0; n < elseStmtListSize; n++) {
             StatementNode* stmtNode = elseStmtList.at(n).get();
             // Recurse
-            currentCfgNode
-                = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, elseStmtListSize);
+            elseNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, elseStmtListSize);
         }
 
         // To complete the if-else diamond shape of the CFG
