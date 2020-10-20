@@ -6,7 +6,7 @@
 
 #include "pkb/PKB.h"
 
-CacheSet::CacheSet(Vector<StatementNumber> nonStarRelationshipResults)
+CacheSet::CacheSet(const Vector<StatementNumber>& nonStarRelationshipResults)
 {
     for (auto stmtNum : nonStarRelationshipResults) {
         set.insert(stmtNum);

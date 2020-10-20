@@ -14,20 +14,22 @@ private:
 public:
     CacheSet() = default;
 
-    /** Uses the non star version of the relationship
-     *  to initialize the CacheSet.
+    /**
+     * Uses the non star version of the relationship
+     * to initialize the CacheSet.
      *
-     *  E.g. The initial state of Next*(1, _) will be
-     *  the results of getAllNextStatements(1, AnyType).
-     *  It is important that the second argument is
-     *  AnyType, so that we cache all Next* statements
-     *  without the filtering of the Statement Type.
+     * E.g. The initial state of Next*(1, _) will be
+     * the results of getAllNextStatements(1, AnyType).
+     * It is important that the second argument is
+     * AnyType, so that we cache all Next* statements
+     * without the filtering of the Statement Type.
      */
-    CacheSet(Vector<StatementNumber> nonStarRelationshipResults);
+    explicit CacheSet(const Vector<StatementNumber>& nonStarRelationshipResults);
 
     /**
      * Inserts a StatementNumber into the set.
      * Duplicates will not be added again.
+     *
      * @param stmtNum StatementNumber to be inserted.
      */
     Void insert(StatementNumber stmtNum);
@@ -35,6 +37,7 @@ public:
     /**
      * Adds another CacheSet to the current CacheSet,
      * mutating the original CacheSet.
+     *
      * @param otherSet Other CacheSet to combine with.
      */
     Void combine(CacheSet otherSet);
@@ -42,6 +45,7 @@ public:
     /**
      * Converts the encapsulated set into a
      * ClauseResult.
+     *
      * @return ClauseResult format of the set.
      */
     ClauseResult toClauseResult() const;

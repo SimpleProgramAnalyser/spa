@@ -5,19 +5,36 @@
 #ifndef SPA_PQL_AFFECTS_EVALUATOR_H
 #define SPA_PQL_AFFECTS_EVALUATOR_H
 
+#include "CacheTable.h"
 #include "pql/evaluator/ResultsTable.h"
 
 class AffectsEvaluator {
 private:
     ResultsTable& resultsTable;
-    // case where left is known (integer), right is variable
-    Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef) const;
-    // case where left is variable, right is known (integer)
-    Void evaluateRightKnown(const Reference& leftRef, Integer rightRefVal) const;
-    // case where both are variable
-    Void evaluateBothAny(const Reference& leftRef, const Reference& rightRef) const;
-    // case where both are known
-    Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
+
+    // Cache for Affects(modifier, user)
+    CacheTable cacheUserTable;
+    CacheTable cacheModifierTable;
+    CacheSet exploredUserAssigns;
+    CacheSet exploredModifierAssigns;
+
+    // Cache for Affects*(modifierStar, userStar)
+    CacheTable cacheUserStarTable;
+    CacheTable cacheModifierStarTable;
+    CacheSet exploredUserStarAssigns;
+    CacheSet exploredModifierStarAssigns;
+
+    // Methods for Affects
+    Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef);
+    Void evaluateRightKnown(const Reference& leftRef, Integer rightRefVal);
+    Void evaluateBothAny(const Reference& leftRef, const Reference& rightRef);
+    Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal);
+
+    // Methods for Affects*
+    Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
+    Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
+    Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
+    Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
 
 public:
     explicit AffectsEvaluator(ResultsTable& resultsTable);
