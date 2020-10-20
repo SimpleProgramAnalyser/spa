@@ -28,552 +28,552 @@ stmt s; whIle w; print p;
 Select s
 none
 5000
-6 - Invalid Basic Queries Boolean wrong spelling
+7 - Invalid Basic Queries Boolean wrong spelling
 stmt s;
 Select BOOLeAN
 none
 5000
-7 - Invalid Query with such that and
+8 - Invalid Query with such that and
 stmt s;
 Select s such that and Parent(2,3)
 none
 5000
-8 - Invalid Query with such that and
+9 - Invalid Query with such that and
 stmt s;
 Select s and Parent(2,3)
 none
 5000
-9 - Invalid Query without clause
+10 - Invalid Query without clause
 stmt s;
 Select s such that
 none
 5000
-9 - Invalid Query With Clause comparing empty strings
+11 - Invalid Query With Clause comparing empty strings
 stmt s;
 Select s with '' = 'a'
 none
 5000
-9 - Invalid Query With Clause comparing empty strings
+12 - Invalid Query With Clause comparing empty strings
 stmt s;
 Select BOOLEAN with '' = 'a'
 FALSE
 5000
-9 - Invalid Query With Tuple no closing brackets
+13 - Invalid Query With Tuple no closing brackets
 stmt s;
 Select <s such that Next*(s, s)
 none
 5000
-9 - Invalid Query with Boolean in tuple
+14 - Invalid Query with Boolean in tuple
 stmt s;
 Select <BOOLEAN>
 none
 5000
-9 - Invalid Query With Empty Tuple
+15 - Invalid Query With Empty Tuple
 stmt s;
 Select <> such that Next*(s, s)
 none
 5000
-10 - Invalid Query Parent Query incorrect statement number
+16 - Invalid Query Parent Query incorrect statement number
 stmt s;
 Select s such that Parent(2,100000)
 none
 5000
-11 - Invalid Query Parent Unknown Synonym
+17 - Invalid Query Parent Unknown Synonym
 stmt s;
 Select s3 such that Parent(2, 3)
 none
 5000
-12 - Invalid Query Parent Variable evaluated
+18 - Invalid Query Parent Variable evaluated
 stmt s; variable v, v1;
 Select s such that Parent(v, v1)
 none
 5000
-13 - Invalid Query Parent Variable evaluated
+19 - Invalid Query Parent Variable evaluated
 stmt s; variable v;
 Select s such that Parent(v, _)
 none
 5000
-14 - Invalid Query Parent Variable evaluated
+20 - Invalid Query Parent Variable evaluated
 stmt s; variable v;
 Select s such that Parent(_, v)
 none
 5000
-15 - Invalid Query Variable Const Proc Used in Parent
+21 - Invalid Query Variable Const Proc Used in Parent
 stmt s; variable v;
 Select v such that Parent(2, v)
 none
 5000
-16 - Invalid Query Variable Const Proc Used in Parent
+22 - Invalid Query Variable Const Proc Used in Parent
 stmt s; constant v;
 Select v such that Parent(2, v)
 none
 5000
-17 - Invalid Query Variable Const Proc Used in Parent
+23 - Invalid Query Variable Const Proc Used in Parent
 stmt s; procedure v;
 Select v such that Parent(2, v)
 none
 5000
-18 - Invalid Query Variable Const Proc Used in Parent
+24 - Invalid Query Variable Const Proc Used in Parent
 stmt s; variable v;
 Select v such that Parent*(2, v)
 none
 5000
-19 - Invalid Query Variable Const Proc Used in Parent
+25 - Invalid Query Variable Const Proc Used in Parent
 stmt s; constant v;
 Select v such that Parent*(2, v)
 none
 5000
-20 - Invalid Query Variable Const Proc Used in Parent
+26 - Invalid Query Variable Const Proc Used in Parent
 stmt s; procedure v;
 Select v such that Parent*(2, v)
 none
 5000
-21 - Invalid Query Follows Query incorrect statement number
+27 - Invalid Query Follows Query incorrect statement number
 stmt s;
 Select s such that Follows(2,100000)
 none
 5000
-22 - Invalid Query Follows Unknown Synonym
+28 - Invalid Query Follows Unknown Synonym
 stmt s;
 Select s3 such that Follows(2, 3)
 none
 5000
-23 - Invalid Query Follows Variable evaluated
+29 - Invalid Query Follows Variable evaluated
 stmt s; variable v, v1;
 Select s such that Follows(v, v1)
 none
 5000
-24 - Invalid Query Follows Variable evaluated
+30 - Invalid Query Follows Variable evaluated
 stmt s; variable v;
 Select s such that Follows(v, _)
 none
 5000
-25 - Invalid Query Follows Variable evaluated
+31 - Invalid Query Follows Variable evaluated
 stmt s; variable v;
 Select s such that Follows(_, v)
 none
 5000
-26 - Invalid Query Variable Const Proc Used in Follows
+32 - Invalid Query Variable Const Proc Used in Follows
 stmt s; variable v;
 Select v such that Follows(2, v)
 none
 5000
-27 - Invalid Query Variable Const Proc Used in Follows
+33 - Invalid Query Variable Const Proc Used in Follows
 stmt s; constant v;
 Select v such that Follows(2, v)
 none
 5000
-28 - Invalid Query Variable Const Proc Used in Follows
+34 - Invalid Query Variable Const Proc Used in Follows
 stmt s; procedure v;
 Select v such that Follows(2, v)
 none
 5000
-29 - Invalid Query Variable Const Proc Used in Follows
+35 - Invalid Query Variable Const Proc Used in Follows
 stmt s; variable v;
 Select v such that Follows*(2, v)
 none
 5000
-30 - Invalid Query Variable Const Proc Used in Follows
+36 - Invalid Query Variable Const Proc Used in Follows
 stmt s; constant v;
 Select v such that Follows*(2, v)
 none
 5000
-31 - Invalid Query Variable Const Proc Used in Follows
+37 - Invalid Query Variable Const Proc Used in Follows
 stmt s; procedure v;
 Select v such that Follows*(2, v)
 none
 5000
-32 - Invalid Uses Query Wrong Spelling
+38 - Invalid Uses Query Wrong Spelling
 stmt s;
 Select s such that uses(2, "v")
 none
 5000
-33 - Invalid Uses Query Wrong Invalid Variable
+39 - Invalid Uses Query Wrong Invalid Variable
 stmt s;
 Select s such that Uses(2, "InvalidVariable")
 none
 5000
-34 - Invalid Uses Query Wrong Invalid Variable
+40 - Invalid Uses Query Wrong Invalid Variable
 stmt s; variable v3
 Select s such that Uses(2, v3)
 none
 5000
-35 - Invalid Uses Query Wrong Invalid Statement Number
+41 - Invalid Uses Query Wrong Invalid Statement Number
 stmt s;
 Select s such that Uses(20000000, "v")
 none
 5000
-36 - Invalid Uses Query WildCard used on LHS
+42 - Invalid Uses Query WildCard used on LHS
 stmt s;
 Select s such that Uses(_, "x")
 none
 5000
-37 - Invalid Uses Query WildCard Invalid first Argument
+43 - Invalid Uses Query WildCard Invalid first Argument
 stmt s; constant c;
 Select s such that Uses(c, "x")
 none
 5000
-38 - Invalid Uses Query WildCard Invalid first Argument
+44 - Invalid Uses Query WildCard Invalid first Argument
 stmt s; variable v;
 Select s such that Uses(v, "x")
 none
 5000
-39 - Invalid Uses Query WildCard Invalid second Argument
+45 - Invalid Uses Query WildCard Invalid second Argument
 stmt s; variable v;
 Select s such that Uses(s, 4)
 none
 5000
-40 - Invalid Uses Query WildCard Invalid second Argument
-stmt s; procedure p;
-Select s such that Uses(s, p)
-none
-5000
-41 - Invalid Uses Query WildCard Invalid second Argument
-stmt s, p;
-Select s such that Uses(s, p)
-none
-5000
-42 - Invalid Uses Query WildCard Invalid second Argument
-stmt s; constant p;
-Select s such that Uses(s, p)
-none
-5000
-43 - Invalid Uses Query WildCard Invalid second Argument
-stmt s; read p;
-Select s such that Uses(s, p)
-none
-5000
-44 - Invalid Uses Query WildCard Invalid second Argument
-stmt s; if p;
-Select s such that Uses(s, p)
-none
-5000
-45 - Invalid Uses Query WildCard Invalid second Argument
-stmt s; print p;
-Select s such that Uses(s, p)
-none
-5000
 46 - Invalid Uses Query WildCard Invalid second Argument
-stmt s; call p;
+stmt s; procedure p;
 Select s such that Uses(s, p)
 none
 5000
 47 - Invalid Uses Query WildCard Invalid second Argument
+stmt s, p;
+Select s such that Uses(s, p)
+none
+5000
+48 - Invalid Uses Query WildCard Invalid second Argument
+stmt s; constant p;
+Select s such that Uses(s, p)
+none
+5000
+49 - Invalid Uses Query WildCard Invalid second Argument
+stmt s; read p;
+Select s such that Uses(s, p)
+none
+5000
+50 - Invalid Uses Query WildCard Invalid second Argument
+stmt s; if p;
+Select s such that Uses(s, p)
+none
+5000
+51 - Invalid Uses Query WildCard Invalid second Argument
+stmt s; print p;
+Select s such that Uses(s, p)
+none
+5000
+52 - Invalid Uses Query WildCard Invalid second Argument
+stmt s; call p;
+Select s such that Uses(s, p)
+none
+5000
+53 - Invalid Uses Query WildCard Invalid second Argument
 stmt s; while p;
 Select s such that Uses(s, p)
 none
 5000
-48 - Invalid Modifies Query Wrong Spelling
+54 - Invalid Modifies Query Wrong Spelling
 stmt s;
 Select s such that modifies(2, "v")
 none
 5000
-49 - Invalid Modifies Query Wrong Invalid Variable
+55 - Invalid Modifies Query Wrong Invalid Variable
 stmt s;
 Select s such that Modifies(2, "InvalidVariable")
 none
 5000
-50 - Invalid Modifies Query Wrong Invalid Variable
+56 - Invalid Modifies Query Wrong Invalid Variable
 stmt s; variable v3
 Select s such that Modifies(2, v3)
 none
 5000
-51 - Invalid Modifies Query Wrong Invalid Statement Number
+57 - Invalid Modifies Query Wrong Invalid Statement Number
 stmt s;
 Select s such that Modifies(20000000, "v")
 none
 5000
-52 - Invalid Modifies Query WildCard used on LHS
+58 - Invalid Modifies Query WildCard used on LHS
 stmt s;
 Select s such that Modifies(_, "x")
 none
 5000
-53 - Invalid Modifies Query WildCard Invalid first Argument
+59 - Invalid Modifies Query WildCard Invalid first Argument
 stmt s; constant c;
 Select s such that Modifies(c, "x")
 none
 5000
-54 - Invalid Modifies Query WildCard Invalid first Argument
+60 - Invalid Modifies Query WildCard Invalid first Argument
 stmt s; variable v;
 Select s such that Modifies(v, "x")
 none
 5000
-55 - Invalid Modifies Query WildCard Invalid second Argument
+61 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; variable v;
 Select s such that Modifies(s, 4)
 none
 5000
-56 - Invalid Modifies Query WildCard Invalid second Argument
+62 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; procedure p;
 Select s such that Modifies(s, p)
 none
 5000
-57 - Invalid Modifies Query WildCard Invalid second Argument
+63 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s, p;
 Select s such that Modifies(s, p)
 none
 5000
-58 - Invalid Modifies Query WildCard Invalid second Argument
+64 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; constant p;
 Select s such that Modifies(s, p)
 none
 5000
-59 - Invalid Modifies Query WildCard Invalid second Argument
+65 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; read p;
 Select s such that Modifies(s, p)
 none
 5000
-60 - Invalid Modifies Query WildCard Invalid second Argument
+66 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; if p;
 Select s such that Modifies(s, p)
 none
 5000
-61 - Invalid Modifies Query WildCard Invalid second Argument
+67 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; print p;
 Select s such that Modifies(s, p)
 none
 5000
-62 - Invalid Modifies Query WildCard Invalid second Argument
+68 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; call p;
 Select s such that Modifies(s, p)
 none
 5000
-63 - Invalid Modifies Query WildCard Invalid second Argument
+69 - Invalid Modifies Query WildCard Invalid second Argument
 stmt s; while p;
 Select s such that Modifies(s, p)
 none
 5000
-21 - Invalid Query Next Query incorrect statement number
+70 - Invalid Query Next Query incorrect statement number
 prog_line s;
 Select s such that Next(2,100000)
 none
 5000
-22 - Invalid Query Next Unknown Synonym
+71 - Invalid Query Next Unknown Synonym
 prog_line s;
 Select s3 such that Next(2, 3)
 none
 5000
-23 - Invalid Query Next Variable evaluated
+72 - Invalid Query Next Variable evaluated
 prog_line s; variable v, v1;
 Select s such that Next(v, v1)
 none
 5000
-24 - Invalid Query Next Variable evaluated
+73 - Invalid Query Next Variable evaluated
 prog_line s; variable v;
 Select s such that Next(v, _)
 none
 5000
-25 - Invalid Query Next Variable evaluated
+74 - Invalid Query Next Variable evaluated
 prog_line s; variable v;
 Select s such that Next(_, v)
 none
 5000
-26 - Invalid Query Variable Const Proc Used in Next
+75 - Invalid Query Variable Const Proc Used in Next
 prog_line s; variable v;
 Select v such that Next(2, v)
 none
 5000
-27 - Invalid Query Variable Const Proc Used in Next
+76 - Invalid Query Variable Const Proc Used in Next
 prog_line s; constant v;
 Select v such that Next(2, v)
 none
 5000
-28 - Invalid Query Variable Const Proc Used in Next
+77 - Invalid Query Variable Const Proc Used in Next
 prog_line s; procedure v;
 Select v such that Next(2, v)
 none
 5000
-29 - Invalid Query Variable Const Proc Used in Next
+78 - Invalid Query Variable Const Proc Used in Next
 prog_line s; variable v;
 Select v such that Next*(2, v)
 none
 5000
-30 - Invalid Query Variable Const Proc Used in Next
+79 - Invalid Query Variable Const Proc Used in Next
 prog_line s; constant v;
 Select v such that Next*(2, v)
 none
 5000
-31 - Invalid Query Variable Const Proc Used in Next
+80 - Invalid Query Variable Const Proc Used in Next
 stmt s; procedure v;
 Select v such that Next*(2, v)
 none
 5000
-48 - Invalid Calls Query Wrong Spelling
+81 - Invalid Calls Query Wrong Spelling
 procedure p;
 Select p such that calls("computeCentroid", "mainPrint")
 none
 5000
-49 - Invalid Calls Query Wrong Invalid Procedure
+82 - Invalid Calls Query Wrong Invalid Procedure
 procedure p;
 Select p such that Calls("computeCentroid", "InvalidProc")
 none
 5000
-53 - Invalid Calls Query Invalid first Argument
+83 - Invalid Calls Query Invalid first Argument
 procedure p; constant c;
 Select p such that Calls(c, "mainPrint")
 none
 5000
-54 - Invalid Calls Query Invalid first Argument
+84 - Invalid Calls Query Invalid first Argument
 procedure p; variable v;
 Select p such that Calls(v, "mainPrint")
 none
 5000
-55 - Invalid Calls Query Invalid second Argument
+85 - Invalid Calls Query Invalid second Argument
 procedure p;
 Select p such that Calls(p, 4)
 none
 5000
-58 - Invalid Calls Query Invalid second Argument
+86 - Invalid Calls Query Invalid second Argument
 procedure p; constant c;
 Select p such that Calls(p, c)
 none
 5000
-59 - Invalid Calls Query Invalid second Argument
+87 - Invalid Calls Query Invalid second Argument
 procedure p; read r;
 Select p such that Calls(p, r)
 none
 5000
-60 - Invalid Calls Query Invalid second Argument
+88 - Invalid Calls Query Invalid second Argument
 procedure p; if i;
 Select p such that Calls(p, i)
 none
 5000
-61 - Invalid Calls Query Invalid second Argument
+89 - Invalid Calls Query Invalid second Argument
 procedure p; print pr;
 Select p such that Calls(p, pr)
 none
 5000
-62 - Invalid Calls Query Invalid second Argument
+90 - Invalid Calls Query Invalid second Argument
 procedure p; call c;
 Select p such that Calls(p, c)
 none
 5000
-63 - Invalid Calls Query Invalid second Argument
+91 - Invalid Calls Query Invalid second Argument
 procedure p; while w;
 Select p such that Calls(p, w)
 none
 5000
-61 - Invalid Calls* Query Invalid second Argument
+92 - Invalid Calls* Query Invalid second Argument
 procedure p; print pr;
 Select p such that Calls*(p, pr)
 none
 5000
-62 - Invalid Calls* Query Invalid second Argument
+93 - Invalid Calls* Query Invalid second Argument
 procedure p; call c;
 Select p such that Calls*(p, c)
 none
 5000
-63 - Invalid Calls* Query Invalid second Argument
+94 - Invalid Calls* Query Invalid second Argument
 procedure p; while w;
 Select p such that Calls*(p, w)
 none
 5000
-64 - Invalid Assign Pattern Query read as pattern
+95 - Invalid Assign Pattern Query read as pattern
 stmt s; read a;
 Select s pattern a("x", _)
 none
 5000
-65 - Invalid Assign Pattern Query LHS wildcard
+96 - Invalid Assign Pattern Query LHS wildcard
 stmt s; assign a;
 Select s pattern a(_"x"_, _)
 none
 5000
-66 - Invalid Assign Pattern Query RHS variable
+97 - Invalid Assign Pattern Query RHS variable
 stmt s; assign a; variable v1;
 Select s pattern a("x", v1)
 none
 5000
-67 - Invalid Assign Pattern Query RHS variable
+98 - Invalid Assign Pattern Query RHS variable
 stmt s; assign a; variable v1;
 Select s pattern a("x", v1)
 none
 5000
-68 - Invalid Assign Pattern Query stmtNumber used
+99 - Invalid Assign Pattern Query stmtNumber used
 stmt s; assign a;
 Select s pattern a(3, _)
 none
 5000
-69 - Invalid Assign Pattern Query stmtNumber used
+100 - Invalid Assign Pattern Query stmtNumber used
 stmt s; assign a;
 Select s pattern a("x", 3)
 none
 5000
-70 - Invalid Assign Pattern Query and
+101 - Invalid Assign Pattern Query and
 stmt s; assign a;
 Select s and pattern a("x", _)
 none
 5000
-71 - Invalid Assign Pattern Query and
+102 - Invalid Assign Pattern Query and
 stmt s; assign a;
 Select s such that pattern a("x", _)
 none
 5000
-64 - Invalid If Pattern Query read as pattern
+103 - Invalid If Pattern Query read as pattern
 stmt s; read a;
 Select s pattern a("x", _, _)
 none
 5000
-65 - Invalid If Pattern Query LHS wildcard
+104 - Invalid If Pattern Query LHS wildcard
 stmt s; if ifs;
 Select s pattern ifs(_"x"_, _, _)
 none
 5000
-66 - Invalid If Pattern Query RHS non-wildcard
+105 - Invalid If Pattern Query RHS non-wildcard
 stmt s; if ifs ; variable v1;
 Select s pattern ifs("x", _, v1)
 none
 5000
-66 - Invalid If Pattern Query RHS non-wildcard
+106 - Invalid If Pattern Query RHS non-wildcard
 stmt s; if ifs ;
 Select s pattern ifs("x", _, 3)
 none
 5000
-68 - Invalid If Pattern Query stmtNumber used
+107 - Invalid If Pattern Query stmtNumber used
 stmt s; if ifs;
 Select s pattern ifs(3, _, _)
 none
 5000
-70 - Invalid If Pattern Query and
+108 - Invalid If Pattern Query and
 stmt s; if ifs;
 Select s and pattern ifs("x", _, _)
 none
 5000
-71 - Invalid If Pattern Query and
+109 - Invalid If Pattern Query and
 stmt s; if ifs;
 Select s such that pattern ifs("x", _, _)
 none
 5000
-71 - Invalid If Pattern Query, 2 operands supplied
+110 - Invalid If Pattern Query, 2 operands supplied
 stmt s; if ifs;
 Select s pattern ifs("x", _)
 none
 5000
-65 - Invalid While Pattern Query LHS wildcard
+111 - Invalid While Pattern Query LHS wildcard
 stmt s; while w;
 Select s pattern w(_"x"_, _)
 none
 5000
-66 - Invalid While Pattern Query RHS non-wildcard
+112 - Invalid While Pattern Query RHS non-wildcard
 stmt s; while w ; variable v1;
 Select s pattern w("x", v1)
 none
 5000
-66 - Invalid While Pattern Query RHS non-wildcard
+113 - Invalid While Pattern Query RHS non-wildcard
 stmt s; while w;
 Select s pattern w("x", 3)
 none
 5000
-68 - Invalid While Pattern Query stmtNumber used
+114 - Invalid While Pattern Query stmtNumber used
 stmt s; while w;
 Select s pattern w(3, _)
 none
 5000
-70 - Invalid While Pattern Query and
+115 - Invalid While Pattern Query and
 stmt s; while w;
 Select s and pattern w("x", _)
 none
 5000
-71 - Invalid While Pattern Query and
+116 - Invalid While Pattern Query and
 stmt s; while w;
 Select s such that pattern w("x", _)
 none
