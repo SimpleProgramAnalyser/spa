@@ -1,0 +1,64 @@
+procedure main {    
+1    read steps;
+2    call raymarch;
+3    print depth; }
+
+procedure raymarch {
+4   ro = 13;
+5   rd = 19;     
+6   dist = x * x + y * y + z * z;
+7   depth = depth;
+
+8   if (ro < rd) then {
+9       if (x < y) then {
+10          depth = notdepth;
+        } else {
+11          depth = depth;
+        }
+    } else {
+12      if (x < y) then {
+13          read depth;
+        } else {
+14          print depth;
+        }
+    }
+
+15  if (dist < epsilon) then {
+16      while (x != p) {
+17          p = x;
+18          x = (dist / x + x) / 2; 
+        } 
+    } else {
+19      while (x != p) {
+20          p = x;
+21          x = (dist / x + x) / 2; 
+        } 
+    }
+
+22  while (raymarch != main) {
+23      x = p;
+24      while (x > main) {
+25          call sphere;
+        }
+    }
+
+26  while (raymarch != main) {
+27      if (dist < epsilon) then {
+28          print dist;
+        } else {
+29          read dist;
+        }
+    }
+
+
+}
+
+procedure sphere {
+30  while (raymarch != main) {
+31       while (x > main) {
+32          while (x < main) {
+33              read y;
+            }
+        }
+    }
+}
