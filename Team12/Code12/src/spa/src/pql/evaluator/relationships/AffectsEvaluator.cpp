@@ -170,8 +170,7 @@ const CfgNode* depthFirstSearch(const CfgNode* cfg, std::unordered_map<String, s
             const CfgNode* afterElse = depthFirstSearch(cfg->childrenNodes->at(1), elseCopy, resultsLists);
             // if and else should eventually point to
             while (afterIf != afterElse) {
-                bool isIfFurtherBehind = !afterIf->statementNodes->empty()
-                                         && afterElse->statementNodes->empty(); // else path is possibly end node
+                bool isIfFurtherBehind = afterIf->nodeNumber < afterElse->nodeNumber; // else path is possibly end node
                 if (isIfFurtherBehind) {
                     afterIf = depthFirstSearch(afterIf, affectsMap, resultsLists);
                 } else {
@@ -220,6 +219,10 @@ const CfgNode* depthFirstSearch(const CfgNode* cfg, std::unordered_map<String, s
             // PrintStatement, do nothing
         }
         }
+    }
+    if (cfg->statementNodes->empty() && !cfg->childrenNodes->empty()) {
+        assert(cfg->childrenNodes->size() == 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        nextNode = cfg->childrenNodes->at(0);
     }
     return nextNode;
 }
