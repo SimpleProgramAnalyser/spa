@@ -168,12 +168,10 @@ const CfgNode* depthFirstSearch(const CfgNode* cfg, std::unordered_map<String, s
             assert(cfg->childrenNodes->size() == 2); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             const CfgNode* afterIf = depthFirstSearch(cfg->childrenNodes->at(0), affectsMap, resultsLists);
             const CfgNode* afterElse = depthFirstSearch(cfg->childrenNodes->at(1), elseCopy, resultsLists);
-            // if and else should eventually point to the same node
+            // if and else should eventually point to
             while (afterIf != afterElse) {
-                bool isIfFurtherBehind = (!afterIf->statementNodes->empty() && !afterElse->statementNodes->empty()
-                                          && afterIf->statementNodes->at(0)->getStatementNumber()
-                                                 < afterElse->statementNodes->at(0)->getStatementNumber())
-                                         || afterElse->statementNodes->empty(); // else path is possibly end node
+                bool isIfFurtherBehind = !afterIf->statementNodes->empty()
+                                         && afterElse->statementNodes->empty(); // else path is possibly end node
                 if (isIfFurtherBehind) {
                     afterIf = depthFirstSearch(afterIf, affectsMap, resultsLists);
                 } else {
@@ -258,7 +256,9 @@ Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer righ
 
 Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef)
 {
-    if (!isAffectable(leftRef.getDesignEntity().getType()) || !isAffectable(rightRef.getDesignEntity().getType())) {
+    if (leftRef.getReferenceType() == SynonymRefType && rightRef.getReferenceType() == SynonymRefType
+        && (!isAffectable(leftRef.getDesignEntity().getType())
+            || !isAffectable(rightRef.getDesignEntity().getType()))) {
         resultsTable.storeResultsZero(false);
         return;
     }
@@ -272,9 +272,20 @@ Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference
             end = depthFirstSearch(end, modifiedVariablesMap, resultsLists);
         }
     }
-    resultsTable.storeResultsTwo(leftRef, convertToClauseResult(resultsLists.getModifyingStatements()), rightRef,
-                                 convertToClauseResult(resultsLists.getUsingStatements()),
-                                 convertToPairedResult(resultsLists.getAffects()));
+    if (leftRef.getReferenceType() == SynonymRefType && leftRef == rightRef) {
+        // case where both synonyms the same, e.g. Affects(a, a)
+        Vector<Integer> selfAffected;
+        for (std::pair<Integer, Integer> affectsRelation : resultsLists.getAffects()) {
+            if (affectsRelation.first == affectsRelation.second) {
+                selfAffected.push_back(affectsRelation.first);
+            }
+        }
+        resultsTable.storeResultsOne(leftRef.getValue(), convertToClauseResult(selfAffected));
+    } else {
+        resultsTable.storeResultsTwo(leftRef, convertToClauseResult(resultsLists.getModifyingStatements()), rightRef,
+                                     convertToClauseResult(resultsLists.getUsingStatements()),
+                                     convertToPairedResult(resultsLists.getAffects()));
+    }
 }
 
 Void AffectsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal)
