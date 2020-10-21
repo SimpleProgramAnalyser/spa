@@ -28,7 +28,7 @@ void NextTable::addIntoBasicTables(Integer previous, StatementType previousType,
 void NextTable::addIntoCollectionTables(Integer previous, StatementType previousType, Integer next,
                                         StatementType nextType)
 {
-    tryAdd(previousType, nextType, next, stmtPreviousType, stmtPreviousTypeSet);
+    tryAdd(previousType, nextType, next, stmtNextType, stmtNextTypeSet);
     tryAdd(nextType, previousType, previous, stmtPreviousType, stmtPreviousTypeSet);
 }
 

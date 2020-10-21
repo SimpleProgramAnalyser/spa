@@ -16,6 +16,7 @@
 #define SPA_PQL_RAW_QUERY_RESULT_H
 
 #include "Types.h"
+#include "error/InputError.h"
 #include "pkb/PkbTypes.h"
 
 class RawQueryResult {
@@ -23,10 +24,12 @@ public:
     explicit RawQueryResult(Vector<String> results);
     Boolean operator==(const RawQueryResult& rawQueryResult) const;
 
-    const Boolean isSyntaxError;
-    const String errorMessage;
+    const Boolean hasError;
+    const InputError errorMessage;
 
     static RawQueryResult getSyntaxError(String errorMessage);
+    static RawQueryResult getSemanticError(String errorMessage);
+    static RawQueryResult getFalseResultWithSemanticError(String errorMessage);
 
     Boolean isEmpty();
     String get(Integer index);
@@ -34,7 +37,8 @@ public:
     void sort();
 
 private:
-    explicit RawQueryResult(String errorMessage);
+    explicit RawQueryResult(String errorMessage, Boolean isSyntaxError);
+    explicit RawQueryResult(String errorMessage, Vector<String> rawQueryResult);
     Vector<String> results;
 };
 

@@ -7,6 +7,7 @@
 #include "pkb/PKB.h"
 #include "pql/evaluator/relationships/FollowsEvaluator.h"
 #include "pql/evaluator/relationships/ModifiesEvaluator.h"
+#include "pql/evaluator/relationships/NextEvaluator.h"
 #include "pql/evaluator/relationships/ParentEvaluator.h"
 #include "pql/evaluator/relationships/UsesEvaluator.h"
 
@@ -613,5 +614,329 @@ TEST_CASE("Uses clauses are evaluated correctly")
         Reference rightRef(LiteralRefType, "f");
         evaluateUsesClause(leftRef, rightRef, &resTable);
         REQUIRE(resTable.hasResults());
+    }
+}
+
+TEST_CASE("Next* clauses are evaluated correctly")
+{
+    /*
+            1. read x;
+            2. print x;
+            3. if (x > 2) {
+            4.    x = 5;
+                } else {
+            5.    x = 6;}
+            6. while (x < 0) {
+            7.    read y;
+            8.    x = x - y;}
+            9. Dummy Node
+     */
+
+    resetPKB();
+
+    insertIntoStatementTable(1, ReadStatement);
+    insertIntoStatementTable(2, PrintStatement);
+    insertIntoStatementTable(3, IfStatement);
+    insertIntoStatementTable(4, AssignmentStatement);
+    insertIntoStatementTable(5, AssignmentStatement);
+    insertIntoStatementTable(6, WhileStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, AssignmentStatement);
+
+    addNextRelationships(1, ReadStatement, 2, PrintStatement);
+    addNextRelationships(2, PrintStatement, 3, IfStatement);
+    addNextRelationships(3, IfStatement, 4, AssignmentStatement);
+    addNextRelationships(3, IfStatement, 5, AssignmentStatement);
+    addNextRelationships(4, AssignmentStatement, 6, WhileStatement);
+    addNextRelationships(5, AssignmentStatement, 6, WhileStatement);
+    addNextRelationships(6, WhileStatement, 7, ReadStatement);
+    addNextRelationships(7, ReadStatement, 8, AssignmentStatement);
+    addNextRelationships(8, AssignmentStatement, 6, WhileStatement);
+
+    DeclarationTable declTable{};
+    DesignEntity readDesignEntity(ReadType);
+    DesignEntity printDesignEntity(PrintType);
+    DesignEntity assignDesignEntity(AssignType);
+    DesignEntity stmtDesignEntity(StmtType);
+    DesignEntity whileDesignEntity(WhileType);
+    DesignEntity ifDesignEntity(IfType);
+    declTable.addDeclaration("re", readDesignEntity);
+    declTable.addDeclaration("pn", printDesignEntity);
+    declTable.addDeclaration("a", assignDesignEntity);
+    declTable.addDeclaration("s", stmtDesignEntity);
+    declTable.addDeclaration("w", whileDesignEntity);
+    declTable.addDeclaration("if", ifDesignEntity);
+    ResultsTable resTable(declTable);
+
+    SECTION("Left integer, right synonym")
+    {
+        SECTION("Right synonym (statement)")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                           Vector<String>({"2", "3", "4", "5", "6", "7", "8"}));
+        }
+
+        SECTION("Right synonym (read)")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(SynonymRefType, "re", readDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"7"}));
+        }
+
+        SECTION("Right synonym (print)")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(SynonymRefType, "pn", printDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
+        }
+
+        SECTION("Right synonym (assign)")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(SynonymRefType, "a", assignDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
+        }
+
+        SECTION("Right synonym (while)")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(SynonymRefType, "w", whileDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
+        }
+
+        SECTION("Right synonym (if)")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(SynonymRefType, "ifs", ifDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
+        }
+    }
+
+    SECTION("Left synonym, right integer)")
+    {
+        SECTION("Left synonym (statement)")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(IntegerRefType, "8");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                           Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
+        }
+
+        SECTION("Left synonym (read)")
+        {
+            Reference leftRef(SynonymRefType, "re", readDesignEntity);
+            Reference rightRef(IntegerRefType, "8");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"1", "7"}));
+        }
+
+        SECTION("Left synonym (print)")
+        {
+            Reference leftRef(SynonymRefType, "pn", printDesignEntity);
+            Reference rightRef(IntegerRefType, "8");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
+        }
+
+        SECTION("Left synonym (assign)")
+        {
+            Reference leftRef(SynonymRefType, "a", assignDesignEntity);
+            Reference rightRef(IntegerRefType, "8");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
+        }
+
+        SECTION("Left synonym (while)")
+        {
+            Reference leftRef(SynonymRefType, "w", whileDesignEntity);
+            Reference rightRef(IntegerRefType, "8");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
+        }
+
+        SECTION("Left synonym (if)")
+        {
+            Reference leftRef(SynonymRefType, "ifs", ifDesignEntity);
+            Reference rightRef(IntegerRefType, "8");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
+        }
+
+        SECTION("Left synonym (statement), right integer in while statement")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(IntegerRefType, "7");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
+        }
+    }
+
+    SECTION("Left integer, right integer")
+    {
+        SECTION("Valid left integer, right integer")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(IntegerRefType, "6");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            REQUIRE(resTable.hasResults());
+        }
+
+        SECTION("Left integer greater than right integer")
+        {
+            Reference leftRef(IntegerRefType, "7");
+            Reference rightRef(IntegerRefType, "3");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            REQUIRE(!resTable.hasResults());
+        }
+
+        SECTION("Left integer, right integer greater than max statement number")
+        {
+            Reference leftRef(IntegerRefType, "1");
+            Reference rightRef(IntegerRefType, "9");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            REQUIRE(!resTable.hasResults());
+        }
+    }
+
+    SECTION("Both any references")
+    {
+        // Test case for both wildcards
+        SECTION("Both are wildcards")
+        {
+            Reference leftRef(WildcardRefType, "_");
+            Reference rightRef(WildcardRefType, "_");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            REQUIRE(resTable.hasResults());
+        }
+
+        // Test case for left wildcard, right synonym
+        SECTION("Left is wildcard, right is synonym (statement)")
+        {
+            Reference leftRef(WildcardRefType, "_");
+            Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                           Vector<String>({"2", "3", "4", "5", "6", "7", "8"}));
+        }
+
+        SECTION("Left is wildcard, right is synonym (read)")
+        {
+            Reference leftRef(WildcardRefType, "_");
+            Reference rightRef(SynonymRefType, "re", readDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"7"}));
+        }
+
+        SECTION("Left is wildcard, right is synonym (print)")
+        {
+            Reference leftRef(WildcardRefType, "_");
+            Reference rightRef(SynonymRefType, "pn", printDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
+        }
+
+        SECTION("Left is wildcard, right is synonym (assign)")
+        {
+            Reference leftRef(WildcardRefType, "_");
+            Reference rightRef(SynonymRefType, "a", assignDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
+        }
+
+        SECTION("Left is wildcard, right is synonym (while)")
+        {
+            Reference leftRef(WildcardRefType, "_");
+            Reference rightRef(SynonymRefType, "w", whileDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
+        }
+
+        SECTION("Left is wildcard, right is synonym (if)")
+        {
+            Reference leftRef(WildcardRefType, "_");
+            Reference rightRef(SynonymRefType, "ifs", ifDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
+        }
+
+        // Test case for left synonym, right wildcard
+        SECTION("Left is synonym (statement), right is wildcard")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(WildcardRefType, "_");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                           Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
+        }
+
+        SECTION("Left is synonym (read), right is wildcard")
+        {
+            Reference leftRef(SynonymRefType, "re", readDesignEntity);
+            Reference rightRef(WildcardRefType, "_");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"1", "7"}));
+        }
+
+        SECTION("Left is synonym (print), right is wildcard")
+        {
+            Reference leftRef(SynonymRefType, "pn", printDesignEntity);
+            Reference rightRef(WildcardRefType, "_");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
+        }
+
+        SECTION("Left is synonym (assign), right is wildcard")
+        {
+            Reference leftRef(SynonymRefType, "a", assignDesignEntity);
+            Reference rightRef(WildcardRefType, "_");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
+        }
+
+        SECTION("Left is synonym (while), right is wildcard")
+        {
+            Reference leftRef(SynonymRefType, "w", whileDesignEntity);
+            Reference rightRef(WildcardRefType, "_");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
+        }
+
+        SECTION("Left is synonym (if), right is wildcard")
+        {
+            Reference leftRef(SynonymRefType, "ifs", ifDesignEntity);
+            Reference rightRef(WildcardRefType, "_");
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
+        }
+
+        // Test cases for both synonyms
+        SECTION("Left is synonym (read), right is synonym (assign)")
+        {
+            Reference leftRef(SynonymRefType, "re", readDesignEntity);
+            Reference rightRef(SynonymRefType, "a", assignDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"1", "7"}));
+            requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
+            requireVectorsHaveSameElements(
+                resTable.getResultsTwo("re", "a"),
+                Vector<Pair<String, String>>({{"1", "4"}, {"1", "5"}, {"1", "8"}, {"7", "8"}}));
+        }
+
+        SECTION("Left and right is synonym (statement)")
+        {
+            Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
+            Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
+            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"6", "7", "8"}));
+        }
     }
 }

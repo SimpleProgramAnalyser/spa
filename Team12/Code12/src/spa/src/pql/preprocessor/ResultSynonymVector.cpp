@@ -42,4 +42,4 @@ Boolean ResultSynonymVector::operator==(const ResultSynonymVector& resultSynonym
     }
 
     return true;
-};
+}

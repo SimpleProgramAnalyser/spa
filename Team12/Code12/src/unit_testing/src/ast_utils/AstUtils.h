@@ -127,4 +127,34 @@ String getProgram20String_multipleProceduresSpheresdf();
 // Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
 ProgramNode* getProgram20Tree_multipleProceduresSpheresdf();
 
+// Program 21: program with if, while, read, print, call, assign
+String getProgram21String_endWithIf();
+// Program 21: program with if, while, read, print, call, assign
+ProgramNode* getProgram21Tree_endWithIf();
+
+// Program 22: program with if, nested whiles, read, print, call, assign
+String getProgram22String_whileNestedInWhile();
+// Program 22: program with if, nested whiles, read, print, call, assign
+ProgramNode* getProgram22Tree_whileNestedInWhile();
+
+// Program 23: program with nested whiles and if
+String getProgram23String_nestedWhileIfs();
+// Program 23: program with nested whiles and if
+ProgramNode* getProgram23Tree_nestedWhileIfs();
+
+// Program 24: program with nested ifs
+String getProgram24String_nestedIfs();
+// Program 24: program with nested ifs
+ProgramNode* getProgram24Tree_nestedIfs();
+
+// Program 25: program with nested ifs in a while
+String getProgram25String_nestedIfsInWhile();
+// Program 25: program with nested ifs in a while
+ProgramNode* getProgram25Tree_nestedIfsInWhile();
+
+// Program 26: program with interleaving nested ifs in a while
+String getProgram26String_nestedInterleavingIfsInWhile();
+// Program 26: program with interleaving nested ifs in a while
+ProgramNode* getProgram26Tree_nestedInterleavingIfsInWhile();
+
 #endif // UNIT_TESTING_AST_UTILS_H

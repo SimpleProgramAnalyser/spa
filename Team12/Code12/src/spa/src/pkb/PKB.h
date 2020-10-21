@@ -124,6 +124,7 @@ void insertIntoStatementTable(Integer stmtNum, const ProcedureName& procName);
 Vector<String> getProcedureCalled(Integer callStmtNum);
 Vector<Integer> getAllCallStatementsByProcedure(const String& procName);
 Vector<String> getAllProceduresCalled();
+StatementType getStatementType(StatementNumber stmtNum);
 
 // Constant
 void insertIntoConstantTable(Integer constant);

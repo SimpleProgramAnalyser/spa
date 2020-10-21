@@ -32,10 +32,10 @@ Vector<String> convertToTupleString(const NtupledResult& resultTuples)
     for (const std::vector<std::string>& tuple : resultTuples) {
         std::ostringstream stringStream;
         size_t length = tuple.size();
-        for (size_t i = 0; i < length - 1; i++) {
+        for (size_t i = 0; i + 1 < length; i++) {
             stringStream << tuple[i] << delimiter;
         }
-        if (length - 1 >= 0) {
+        if (length > 0) {
             stringStream << tuple[length - 1];
         }
         tupleStrings.emplace_back(stringStream.str());
@@ -57,24 +57,27 @@ RawQueryResult Evaluator::evaluateQuery()
 {
     /*
      * First check if PQL query is semantically valid.
-     * If invalid, don't continue evaluating query.
+     * If invalid and Select BOOLEAN, we return FALSE.
+     * If invalid and not Select BOOLEAN, stop evaluating query.
      */
-    if (query.isInvalid()) {
-        // TODO: Check query.toReturnFalseResult() for Semantically invalid query but Select BOOLEAN
-        return RawQueryResult::getSyntaxError(
-            "ERROR CODE 3735929054: PQL was not parsed. SIGSYNTAX obtained. This incident will be reported.");
+    if (query.toReturnFalseResult()) {
+        return RawQueryResult::getFalseResultWithSemanticError(query.getErrorMessage());
+    } else if (query.isSyntacticallyInvalid()) {
+        return RawQueryResult::getSyntaxError(query.getErrorMessage());
+    } else if (query.isSemanticallyInvalid()) {
+        return RawQueryResult::getSemanticError(query.getErrorMessage());
     }
-    return evaluateSyntacticallyValidQuery();
+    return evaluateValidQuery();
 }
 
 /*
  * Processes a PQL query and interacts with PKB if needed,
  * to obtain the results to a query that was determined
- * to be syntactically valid.
+ * to be syntactically and semantically valid.
  *
  * @return The list of query results for the Select synonym.
  */
-RawQueryResult Evaluator::evaluateSyntacticallyValidQuery()
+RawQueryResult Evaluator::evaluateValidQuery()
 {
     // initiate Affects and Next evaluators
     resultsTable.manageEvaluator(new NextEvaluator(resultsTable));
@@ -128,7 +131,7 @@ RawQueryResult Evaluator::evaluateSelectSynonym()
         resultsWithAttributes = convertToTupleString(mapAttributesN(resultsTable, resultsForSynonym, selectedSynonyms));
     }
     }
-    return RawQueryResult(resultsWithAttributes);
+    return RawQueryResult(std::move(resultsWithAttributes));
 }
 
 void evaluateAndCastSuchThat(Clause* cl, ResultsTable* resultsTable)

@@ -12,7 +12,7 @@ Void parseSimple(const String& rawProgram, Ui& ui)
 {
     ParserReturnType<ProgramNode*> parsedProgram = parseSimpleReturnNode(rawProgram);
     if (parsedProgram.hasError()) {
-        ui.postUiError(InputError(parsedProgram.getErrorString(), 1, 1, SimpleProgram, Syntax));
+        ui.postUiError(InputError(parsedProgram.getErrorString(), 0, 0, ErrorSource::SimpleProgram, ErrorType::Syntax));
         resetPKB();
         return;
     }
@@ -21,7 +21,7 @@ Void parseSimple(const String& rawProgram, Ui& ui)
     // populate Program Knowledge Base with Design Extractor
     Boolean hasSemanticError = !extractDesign(*abstractSyntaxTree);
     if (hasSemanticError) {
-        ui.postUiError(InputError("Semantic Error: Check called procedures.", 1, 1, SimpleProgram, Semantic));
+        ui.postUiError(InputError("Check called procedures.", 0, 0, ErrorSource::SimpleProgram, ErrorType::Semantic));
         resetPKB();
         return;
     }

@@ -3,227 +3,242 @@ assign a;
 Select a pattern a (_, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 49
 5000
-2 - Select Exact Single Variable
+2 - Select All Pattern (using attr name)
+assign a;
+Select a.stmt# pattern a (_, _)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 49
+5000
+3 - Select Pattern, Return None  
+assign a;
+Select a pattern a (_, _"33"_)
+none
+5000
+4 - Select Pattern, Return FALSE  
+assign a;
+Select BOOLEAN pattern a (_, _"33"_)
+FALSE
+5000
+5 - Select Exact Single Variable
 assign a;
 Select a pattern a(_, "v")
 2
 5000
-3 - Select half WildCard
+6 - Select half WildCard
 assign a;
 Select a pattern a(_, _"x"_)
 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 49 
 5000
-4 - Select based on RHS and LHS Identifier
+7 - Select based on RHS and LHS Identifier
 assign a;
 Select a pattern a("b", "v")
 2
 5000
-5 - Select based on RHS Identifier, LHS WildCard
+8 - Select based on RHS Identifier, LHS WildCard
 assign a;
 Select a pattern a("b", _)
 2, 6, 7, 8, 10, 14, 16, 21, 23, 26, 27, 34, 37, 38, 39, 40, 42, 43, 49
 5000
-6 - Select based on RHS Identifer, LHS WildCard and Identifier
+9 - Select based on RHS Identifer, LHS WildCard and Identifier
 assign a;
 Select a pattern a("b", _"x"_)
 6, 7, 8, 10, 14, 16, 21, 23, 26, 27, 34, 37, 38, 39, 40, 42, 43, 49
 5000
-7 - Select based on RHS WildCard, LHS WildCard and Identifier
+10 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, _"x * y"_)
 16, 26, 27, 28, 29, 31, 41, 43, 44, 46
 5000
-8 - Select based on RHS WildCard, LHS WildCard and Identifier
+11 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, _"x + y"_)
 12, 14, 19, 21, 38
 5000
-9 - Select based on RHS WildCard, LHS WildCard and Identifier
+12 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, _"x - y"_)
 15
 5000
-10 - Select based on RHS WildCard, LHS WildCard and Identifier
+13 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, _"x / y"_)
 17, 33
 5000
-11 - Select based on RHS WildCard, LHS WildCard and Identifier
+14 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, _"x % y"_)
 18, 35, 37
 5000
-12 - Select based on RHS WildCard, LHS Identifier
+15 - Select based on RHS WildCard, LHS Identifier
 assign a;
 Select a pattern a(_, "x * y")
 16
 5000
-13 - Select based on RHS WildCard, LHS WildCard and Identifier
+16 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, "x + y")
 12, 14
 5000
-14 - Select based on RHS WildCard, LHS WildCard and Identifier
+17 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, "x - y")
 15
 5000
-15 - Select based on RHS WildCard, LHS WildCard and Identifier
+18 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, "x / y")
 17
 5000
-16 - Select based on RHS WildCard, LHS WildCard and Identifier
+19 - Select based on RHS WildCard, LHS WildCard and Identifier
 assign a;
 Select a pattern a(_, "x % y")
 18
 5000
-17 - Select based on RHS Identifier, LHS Identifier
+20 - Select based on RHS Identifier, LHS Identifier
 assign a;
 Select a pattern a("b", "x * y")
 16
 5000
-18 - Select based on RHS Identifier LHS Identifier
+21 - Select based on RHS Identifier LHS Identifier
 assign a;
 Select a pattern a("a", "x + y")
 12
 5000
-19 - Select based on RHS Identifier LHS Identifier
+22 - Select based on RHS Identifier LHS Identifier
 assign a;
 Select a pattern a("c", "x - y")
 none
 5000
-20 - Select based on RHS Identifier LHS Identifier
+23 - Select based on RHS Identifier LHS Identifier
 assign a;
 Select a pattern a("c", "x / y")
 17
 5000
-21 - Select based on RHS Identifier LHS Identifier
+24 - Select based on RHS Identifier LHS Identifier
 assign a;
 Select a pattern a("a", "x % y")
 none
 5000
-22 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
+25 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
 assign a;
 Select a pattern a(_, _"x + 3"_)
 3, 9
 5000
-23 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
+26 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
 assign a;
 Select a pattern a(_, _"x * 3"_)
 6, 10
 5000
-24 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
+27 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
 assign a;
 Select a pattern a(_, _"x - 3"_)
 5, 11
 5000
-25 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
+28 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
 assign a;
 Select a pattern a(_, _"x / 3"_)
 7
 5000
-26 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
+29 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant)
 assign a;
 Select a pattern a(_, _"x % 3"_)
 8
 5000
-27 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant, Swapping affects answer)
+30 - Select based on RHS WildCard, LHS WildCard and Identifier(Int Constant, Swapping affects answer)
 assign a;
 Select a pattern a(_, _"3 + x"_)
 4
 5000
-28 - Space doesn't affect answer
+31 - Space doesn't affect answer
 assign a;
 Select a pattern a(_, _"3 + 	x"_)
 4
 5000
-29 - LHS WildCard, RHS 3 variables(x + y + z type)
+32 - LHS WildCard, RHS 3 variables(x + y + z type)
 assign a;
 Select a pattern a(_, _"x + y + z"_)
 19, 38
 5000
-30 - LHS WildCard, RHS 3 variables
+33 - LHS WildCard, RHS 3 variables
 assign a;
 Select a pattern a(_, _"x * y * z"_)
 29, 43
 5000
-31 - LHS WildCard, RHS 3 variables
+34 - LHS WildCard, RHS 3 variables
 assign a;
 Select a pattern a(_, _"x * y + z"_)
 26
 5000
-32 - LHS WildCard, RHS 3 variables
+35 - LHS WildCard, RHS 3 variables
 assign a;
 Select a pattern a(_, _"x + y * z"_)
 22
 5000
-33 - LHS WildCard, RHS 3 variables
+36 - LHS WildCard, RHS 3 variables
 assign a;
 Select a pattern a(_, _"x * y % z"_)
 31
 5000
-34 - LHS WildCard, RHS 3 variables (Combination of diff type from factor)
+37 - LHS WildCard, RHS 3 variables (Combination of diff type from factor)
 assign a;
 Select a pattern a(_, _"x / y * z"_)
 33
 5000
-35 - LHS WildCard, RHS 3 variables(Combination of diff type from + -)
+38 - LHS WildCard, RHS 3 variables(Combination of diff type from + -)
 assign a;
 Select a pattern a(_, _"x + y - z"_)
 21
 5000
-36 - LHS WildCard, RHS 4 variables
+39 - LHS WildCard, RHS 4 variables
 assign a;
 Select a pattern a(_, _"x + y + z + m"_)
 38
 5000
-37 - LHS WildCard, RHS 4 variables
+40 - LHS WildCard, RHS 4 variables
 assign a;
 Select a pattern a(_, _"x * y * z * m"_)
 none
 5000
-38 - LHS WildCard, RHS 4 variables
+41 - LHS WildCard, RHS 4 variables
 assign a;
 Select a pattern a(_, _"m + x * y + z "_)
 41
 5000
-39 - LHS WildCard, RHS 4 variables
+42 - LHS WildCard, RHS 4 variables
 assign a;
 Select a pattern a(_, _"m + x + y * z "_)
 39
 5000
-40 - LHS WildCard, RHS 4 variables
+43 - LHS WildCard, RHS 4 variables
 assign a;
 Select a pattern a(_, _"m * x + y + z "_)
 40
 5000
-41 - LHS WildCard, RHS 5 variables, Can detect inside if statement
+44 - LHS WildCard, RHS 5 variables, Can detect inside if statement
 assign a;
 Select a pattern a(_, _"m + x * y + z * t"_)
 44, 46
 5000
-42 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
+45 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
 assign a; variable v;
 Select a pattern a(v, _"x + 3"_)
 3, 9
 5000
-43 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
+46 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
 assign a; variable v;
 Select a pattern a(v, _"x * 3"_)
 6, 10
 5000
-44 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
+47 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
 assign a; variable v;
 Select a pattern a(v, _"x - 3"_)
 5, 11
 5000
-45 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
+48 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
 assign a; variable v;
 Select a pattern a(v, _"x / 3"_)
 7
 5000
-46 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
+49 - Select based on RHS Synonym, LHS WildCard and Identifier(Int Constant)
 assign a; variable v;
 Select a pattern a(v, _"x % 3"_)
 8

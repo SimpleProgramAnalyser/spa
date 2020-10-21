@@ -3,6 +3,8 @@
  * The error codes correspond to the index of the message in the array.
  */
 
+#include <array>
+
 #include "Parser.h"
 
 std::array<String, maxErrorCode> errorMessages
@@ -38,4 +40,5 @@ std::array<String, maxErrorCode> errorMessages
        "Conditional expression parsing failed, expected conditional or relational operator after closing bracket.",
        "Conditional expression parsing failed, unrecognised expression.",
        "Conditional expression parsing failed, expected closing bracket for !( ... )",
-       "Conditional expression parsing failed, expected closing bracket for (...) opr (...)"};
+       "Conditional expression parsing failed, expected closing bracket for (...) opr (...)",
+       "Conditional expression parsing failed, unexpected token after (...) opr (...)"};

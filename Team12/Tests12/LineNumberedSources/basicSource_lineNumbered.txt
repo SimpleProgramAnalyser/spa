@@ -1,0 +1,29 @@
+procedure main {    
+1    read steps;
+2    call raymarch;
+3    print depth; }
+
+procedure raymarch {
+4   ro = 13;
+5   rd = 19;     
+6   read depth; 
+7   while (count < steps) {
+8   print depth;
+9   po = ro + rd * depth;
+10  call spheresdf;
+11  if (dist < epsilon) then {
+12      done = depth; }
+    else {
+13      depth = depth + dist;} 
+14        count = count + 1; }}
+
+procedure spheresdf {
+15  dist = x * x + y * y + z * z;
+16  x = dist;
+17  depth = depth;
+18  read p;
+19  while (x != p) {
+20      p = x;
+21      x = (dist / x + x) / 2; } 
+22  dist = x - 1;
+23  x = x * x + y * y / 2; }

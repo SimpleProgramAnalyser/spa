@@ -1,0 +1,67 @@
+procedure mainPrint {
+1   a = x + y + z;
+2   while (a > b) {
+3       print b;
+4       a = 10 + x;
+5       if (a < 10) then {
+6           a = 20 + y + (10 + x);
+7           while (x > 10) {
+8               read y;
+9               call doNothing; 
+10              if (y < 12) then {
+11                  print x;
+12                  y = y + 10;
+13                  call doNothing;
+                } else {
+14                  call doNothing;
+15                  read x;
+                }
+16              a = 0;
+17              while (doNothing > 100) {
+18                  read doNothing;
+19                  doNothing = doNothing + 1;
+                }
+20              call doNothing;
+            }
+        } else {
+21          TryingToMakeLongVariableNamesToTestLimits = 10 * x;
+22          if (TryingToMakeLongVariableNamesToTestLimits < x) then {
+23              TryingToMakeLongVariableNamesToTestLimits = TryingToMakeLongVariableNamesToTestLimits * 10;
+            } else {
+24              if (doNothing < 100) then {
+25                  constantAssignment = 10 * 100 + 3 * 100;
+                } else {
+26                  print x;
+27                  read y;
+28                  call doNothing;
+                }
+            }
+29          read x;
+30          read y;
+31          read doNothing;
+        }
+32      while (a < b) {
+33          print x;
+34          call doNothing;
+35          print y;
+36          while (b < c) {
+37              call doNothing;
+38              doNothing = TryingToMakeLongVariableNamesToTestLimits * 30000;
+            }
+39          if (b >= c) then {
+40              doNothing = TryingToMakeLongVariableNamesToTestLimits / TryingToMakeLongVariableNamesToTestLimits;
+41              a1w3e1dN9m3s = 30000 * 30000;
+42              print a1w3e1dN9m3s;
+            } else {
+43              print x;
+44              print y;
+45              print doNothing;
+            }
+        }
+    }   
+}
+
+
+procedure doNothing {
+46    read y;
+}

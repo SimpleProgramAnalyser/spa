@@ -1,0 +1,81 @@
+procedure mainPrint {
+1   a = x + y + z;
+2   a = w + x + y + z;
+3   if ((x < y) && (y < z)) then {
+4       a = x + y * z;
+5       y = z + x;
+    } else {
+6       read w;
+7       y = x + y;
+    }
+8   while (x > y) {
+9       a = x + y + z + 3;
+10      read y;
+11      while (y < z) {
+12          print z;
+        }
+    }
+13  print w;
+14  read x;
+}
+
+
+procedure readPoint {
+15  b = h + e + l + p;
+16  count = die;
+17  print die;
+18  while (b < h) {
+19      if ((b < h) && (h < d)) then {
+20          v = 9 + v;
+21          read v;
+22          if ((h < b) && (d < h)) then {
+23              b = h + e + l + l;
+            } else {
+24              die = h * d;
+            }
+        } else {
+25          read count;
+26          what = count + 3;
+        }
+    }
+}
+
+procedure computeCentroid {
+27  a = b + c;
+28  while (a > b) {
+29      call mainPrint;
+30      if ((x < y) && (y < z)) then {
+31          a = x + y / z;
+32          y = z - x;
+33          call mainPrint;
+        } else {
+34          read w;
+35          y = x + y * z;
+        }
+36      count = 0;
+37      print z;
+    }
+
+38  call mainPrint;
+39  a = w + c;
+40  a = x + y % z;
+41  call mainPrint;
+42  while (b < c) {
+43      b = x + y % z + k;
+44      while (c > d) {
+45          w = nothell;
+46          call readPoint;
+47            while (w < c) {
+48              w = hell;
+            }
+        }
+49      print b;
+50      if (c > d) then {
+51          w = nothell;
+52          print w;
+        } else {
+53          w = readPoint;
+        }
+    }
+54  a = x + y + x + y + z;
+}

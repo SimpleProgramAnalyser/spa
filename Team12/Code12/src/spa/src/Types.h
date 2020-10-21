@@ -38,8 +38,8 @@ enum StatementType : char {
 
 // PQL
 
-enum ErrorType : char { Syntax = 0, Semantic = 1 };
+enum class ErrorType : char { Syntax = 0, Semantic = 1, Unknown = 2 };
 
-enum ErrorSource : char { SimpleProgram = 0, Query = 1 };
+enum class ErrorSource : char { SimpleProgram = 0, Query = 1, Unknown = 2 };
 
 #endif // SPA_TYPES_H

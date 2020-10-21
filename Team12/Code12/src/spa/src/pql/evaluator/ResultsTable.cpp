@@ -74,15 +74,16 @@ inline Boolean ResultsTable::checkIfSynonymInMap(const Synonym& syn) const
 void ResultsTable::filterAfterVerification(const Synonym& syn, const ClauseResult& results)
 {
     assert(!results.empty()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    ResultsSet resultsSet;
     if (checkIfSynonymInMap(syn)) {
-        resultsMap[syn] = findCommonElements(results, syn);
+        resultsSet = findCommonElements(results, syn);
+        resultsMap[syn] = resultsSet;
     } else {
         // synonym is not found in table, associate results with synonym
-        std::unordered_set<String> resultsSet;
         std::copy(results.begin(), results.end(), std::inserter(resultsSet, resultsSet.end()));
-        hasResult = !resultsSet.empty();
         resultsMap.insert(std::make_pair(syn, resultsSet));
     }
+    hasResult = !resultsSet.empty();
 }
 
 /**
@@ -524,7 +525,11 @@ NtupledResult ResultsTable::getResultsN(const Vector<Synonym>& syns)
 {
     assert(syns.size() > 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     mergeResults();
-    return joinAllSynonyms(syns);
+    if (!hasResults()) {
+        return std::vector<std::vector<String>>();
+    } else {
+        return joinAllSynonyms(syns);
+    }
 }
 
 Void ResultsTable::storeResultsZero(Boolean hasResults)
