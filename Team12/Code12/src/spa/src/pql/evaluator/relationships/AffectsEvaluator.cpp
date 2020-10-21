@@ -6,6 +6,17 @@
 
 #include "RelationshipsUtil.h"
 
+/**
+ * Checks whether a statement number modifies a variable,
+ * under the rules desribed by Affects/Affects*. Namely,
+ * statement has to be an assignment, read or procedure
+ * call statement and it has to modify the variable.
+ *
+ * @param statement Statement number to be checked.
+ * @param variable Variable to be checked.
+ * @return True, if statement is an Assignment, Read or
+ *         Call that modifies variable. Otherwise false.
+ */
 bool doesProgLineModifies(Integer statement, const String& variable)
 {
     StatementType type = getStatementType(statement);
@@ -17,11 +28,41 @@ bool doesProgLineModifies(Integer statement, const String& variable)
     }
 }
 
-Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef) {}
+/**
+ * Checks whether a particular DesignEntityType could
+ * possibly have any Affects/Affects* relationships.
+ *
+ * @param type DesignEntityType of a synonym.
+ * @return True, if the type is either "assign _;" or "stmt _;".
+ */
+inline bool isAffectable(DesignEntityType type)
+{
+    return type == AssignType || type == StmtType;
+}
 
-Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal) {}
+Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef)
+{
+    if (getStatementType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef.getDesignEntity().getType())) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+}
 
-Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef) {}
+Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal)
+{
+    if (!isAffectable(leftRef.getDesignEntity().getType()) || getStatementType(rightRefVal) != AssignmentStatement) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+}
+
+Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef)
+{
+    if (!isAffectable(leftRef.getDesignEntity().getType()) || !isAffectable(rightRef.getDesignEntity().getType())) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+}
 
 Void AffectsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal)
 {
