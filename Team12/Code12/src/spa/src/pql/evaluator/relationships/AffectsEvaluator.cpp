@@ -6,6 +6,17 @@
 
 #include "RelationshipsUtil.h"
 
+bool doesProgLineModifies(Integer statement, const String& variable)
+{
+    StatementType type = getStatementType(statement);
+    if (!(type == AssignmentStatement || type == CallStatement || type == ReadStatement)) {
+        // ignore container statements, according to definition of Affects
+        return false;
+    } else {
+        return checkIfStatementModifies(statement, variable);
+    }
+}
+
 Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef) {}
 
 Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal) {}
@@ -48,7 +59,7 @@ Void AffectsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal
             // rightRefVal is an assign due to initial guard clause
             foundRight = checkIfStatementUses(rightRefVal, variableModified);
             break;
-        } else if (checkIfStatementModifies(currentStatement, variableModified)) {
+        } else if (doesProgLineModifies(currentStatement, variableModified)) {
             break;
         }
         nextStatements = getAllNextStatements(currentStatement, AnyStatement);
