@@ -5,9 +5,13 @@
 
 #include "CfgTypes.h"
 
+#include <cassert>
+#include <queue>
+#include <unordered_set>
+
 #include "Util.h"
 
-CfgNode::CfgNode(List<StatementNode>* statements, List<CfgNode>* children, size_t cfgNodeNumber):
+CfgNode::CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber):
     statementNodes(statements), childrenNodes(children), nodeNumber(cfgNodeNumber)
 {}
 
@@ -35,7 +39,7 @@ Boolean nodesAreEqual(CfgNode* node1, CfgNode* node2, Vector<Boolean>* visitedAr
     } else {
         visitedArray->at(node1->nodeNumber) = true;
         // Check that the values in the StatementNode lists are equal
-        isEqual = util::checkListValuesEqual<StatementNode>(*(node1->statementNodes), *(node2->statementNodes));
+        isEqual = util::checkVectorOfPointersEqual<StatementNode*>(*(node1->statementNodes), *(node2->statementNodes));
         // Terminate early if it is not equal
         if (!isEqual) {
             return false;
@@ -50,8 +54,8 @@ Boolean nodesAreEqual(CfgNode* node1, CfgNode* node2, Vector<Boolean>* visitedAr
 
         // Check childrens' node numbers are the same
         for (size_t j = 0; j < node1->childrenNodes->size(); j++) {
-            size_t currentNodeNumber = node1->childrenNodes->at(j).get()->nodeNumber;
-            isEqual = currentNodeNumber == node2->childrenNodes->at(j).get()->nodeNumber;
+            size_t currentNodeNumber = node1->childrenNodes->at(j)->nodeNumber;
+            isEqual = currentNodeNumber == node2->childrenNodes->at(j)->nodeNumber;
             // Terminate early if it is not equal
             if (!isEqual) {
                 return false;
@@ -60,7 +64,7 @@ Boolean nodesAreEqual(CfgNode* node1, CfgNode* node2, Vector<Boolean>* visitedAr
 
         // Check if the children nodes are equal
         for (size_t k = 0; k < node1->childrenNodes->size(); k++) {
-            isEqual = nodesAreEqual(node1->childrenNodes->at(k).get(), node2->childrenNodes->at(k).get(), visitedArray);
+            isEqual = nodesAreEqual(node1->childrenNodes->at(k), node2->childrenNodes->at(k), visitedArray);
             // Terminate early if it is not equal
             if (!isEqual) {
                 return false;
@@ -68,6 +72,32 @@ Boolean nodesAreEqual(CfgNode* node1, CfgNode* node2, Vector<Boolean>* visitedAr
         }
     }
     return isEqual;
+}
+
+void CfgNode::deleteAllChildren() const
+{
+    // breadth-first search to get all nodes
+    std::unordered_set<CfgNode*> visitedNodes;
+    std::queue<CfgNode*> queue;
+    for (CfgNode* child : *childrenNodes) {
+        assert(child != nullptr);
+        queue.push(child);
+    }
+    while (!queue.empty()) {
+        CfgNode* current = queue.front();
+        if (visitedNodes.find(current) == visitedNodes.end()) {
+            visitedNodes.insert(current);
+            for (CfgNode* childOfCurrent : *(current->childrenNodes)) {
+                assert(childOfCurrent != nullptr);
+                queue.push(childOfCurrent);
+            }
+        }
+        queue.pop();
+    }
+    // delete all visited nodes
+    for (CfgNode* visited : visitedNodes) {
+        delete visited;
+    }
 }
 
 /**

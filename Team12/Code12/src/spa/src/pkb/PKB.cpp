@@ -6,6 +6,12 @@ PKB pkb = PKB();
 
 void resetPKB()
 {
+    // delete CFG
+    for (std::pair<ProcedureName, CfgNode*> mapEntry : pkb.cfgByProcedure) {
+        mapEntry.second->deleteAllChildren();
+        delete mapEntry.second;
+    }
+    // delete AST
     delete pkb.rootNode;
     pkb = PKB();
 }
@@ -428,11 +434,11 @@ Vector<ProcedureName> getAllCalleesStar()
 }
 
 // CFG
-void storeCFG(void* cfg, ProcedureName procedureName)
+void storeCFG(CfgNode* cfg, const ProcedureName& procedureName)
 {
     pkb.cfgByProcedure[procedureName] = cfg;
 }
-void* getCFG(ProcedureName procedureName)
+CfgNode* getCFG(const ProcedureName& procedureName)
 {
     if (pkb.cfgByProcedure.find(procedureName) == pkb.cfgByProcedure.end()) {
         return nullptr;
