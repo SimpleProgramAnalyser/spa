@@ -4,7 +4,11 @@
 
 #include "CacheSet.h"
 
+#include <utility>
+
 #include "pkb/PKB.h"
+
+CacheSet::CacheSet(std::unordered_set<StatementNumber> unorderedSet): set(std::move(unorderedSet)) {}
 
 CacheSet::CacheSet(const Vector<StatementNumber>& nonStarRelationshipResults)
 {
