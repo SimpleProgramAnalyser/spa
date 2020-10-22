@@ -80,7 +80,7 @@ void CfgNode::deleteAllChildren() const
     std::unordered_set<CfgNode*> visitedNodes;
     std::queue<CfgNode*> queue;
     for (CfgNode* child : *childrenNodes) {
-        assert(child != nullptr);
+        assert(child != nullptr); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         queue.push(child);
     }
     while (!queue.empty()) {
@@ -88,7 +88,7 @@ void CfgNode::deleteAllChildren() const
         if (visitedNodes.find(current) == visitedNodes.end()) {
             visitedNodes.insert(current);
             for (CfgNode* childOfCurrent : *(current->childrenNodes)) {
-                assert(childOfCurrent != nullptr);
+                assert(childOfCurrent != nullptr); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 queue.push(childOfCurrent);
             }
         }

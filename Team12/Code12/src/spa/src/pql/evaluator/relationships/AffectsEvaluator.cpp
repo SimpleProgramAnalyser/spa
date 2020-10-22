@@ -7,6 +7,7 @@
 #include <cassert>
 #include <functional>
 #include <set>
+#include <stdexcept>
 
 #include "RelationshipsUtil.h"
 
