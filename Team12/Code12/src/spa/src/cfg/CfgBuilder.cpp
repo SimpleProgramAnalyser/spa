@@ -15,8 +15,8 @@
  */
 CfgNode* createCfgNode(size_t stmtListSize, size_t& currentNumberOfNodes)
 {
-    List<StatementNode>* statements = new List<StatementNode>();
-    List<CfgNode>* children = new List<CfgNode>();
+    auto* statements = new Vector<StatementNode*>();
+    auto* children = new Vector<CfgNode*>();
 
     // Reserve enough space for the statements in the node
     // At least the size of the statement list, in case the whole
@@ -37,7 +37,7 @@ CfgNode* createCfgNode(size_t stmtListSize, size_t& currentNumberOfNodes)
  */
 Boolean cfgNodeIsEmpty(CfgNode* node)
 {
-    return node->childrenNodes->size() == 0 && node->statementNodes->size() == 0;
+    return node->childrenNodes->empty() && node->statementNodes->empty();
 }
 
 /**
@@ -58,12 +58,11 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
     case ReadStatement:
     case PrintStatement:
     case CallStatement: {
-        (*currentCfgNode->statementNodes).push_back(std::unique_ptr<StatementNode>(statementNodePtr));
+        (*currentCfgNode->statementNodes).push_back(statementNodePtr);
         return currentCfgNode;
-        break;
     }
     case WhileStatement: {
-        WhileStatementNode* whileStmt = dynamic_cast<WhileStatementNode*>(statementNodePtr);
+        auto* whileStmt = dynamic_cast<WhileStatementNode*>(statementNodePtr);
         const StmtlstNode& whileStmtListNode = *(whileStmt->statementList);
         const List<StatementNode>& stmtList = whileStmtListNode.statementList;
         size_t stmtListSize = stmtList.size();
@@ -72,15 +71,15 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         Boolean currentNodeIsEmpty = cfgNodeIsEmpty(currentCfgNode);
         if (!currentNodeIsEmpty) {
             whileNewNode = createCfgNode(1, currentNumberOfNodes);
-            (*currentCfgNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileNewNode));
+            (*currentCfgNode->childrenNodes).push_back(whileNewNode);
 
         } else {
             whileNewNode = currentCfgNode;
         }
 
         CfgNode* whileNode = createCfgNode(stmtListSize, currentNumberOfNodes);
-        (*whileNewNode->statementNodes).push_back(std::unique_ptr<StatementNode>(statementNodePtr));
-        (*whileNewNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileNode));
+        (*whileNewNode->statementNodes).push_back(statementNodePtr);
+        (*whileNewNode->childrenNodes).push_back(whileNode);
 
         // Loop through the statement list of the While Statement
         currentCfgNode = whileNode;
@@ -89,17 +88,16 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
             // Recurse
             currentCfgNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, stmtListSize);
         }
-        (*currentCfgNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileNewNode));
+        (*currentCfgNode->childrenNodes).push_back(whileNewNode);
 
         // To complete the while loop shape of the CFG
         CfgNode* whileDummyNode = createCfgNode(wholeStmtListSize, currentNumberOfNodes);
-        (*whileNewNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(whileDummyNode));
+        (*whileNewNode->childrenNodes).push_back(whileDummyNode);
         currentCfgNode = whileDummyNode;
         return currentCfgNode;
-        break;
     }
     case IfStatement: {
-        IfStatementNode* ifStmt = dynamic_cast<IfStatementNode*>(statementNodePtr);
+        auto* ifStmt = dynamic_cast<IfStatementNode*>(statementNodePtr);
         const StmtlstNode& ifStmtListNode = *(ifStmt->ifStatementList);
         const StmtlstNode& elseStmtListNode = *(ifStmt->elseStatementList);
         const List<StatementNode>& ifStmtList = ifStmtListNode.statementList;
@@ -112,16 +110,16 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         CfgNode* ifNewNode;
         if (!currentNodeIsEmpty) {
             ifNewNode = createCfgNode(1, currentNumberOfNodes);
-            (*currentCfgNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(ifNewNode));
+            (*currentCfgNode->childrenNodes).push_back(ifNewNode);
         } else {
             ifNewNode = currentCfgNode;
         }
         CfgNode* ifNode = createCfgNode(ifStmtListSize, currentNumberOfNodes);
         CfgNode* elseNode = createCfgNode(elseStmtListSize, currentNumberOfNodes);
 
-        (*ifNewNode->statementNodes).push_back(std::unique_ptr<StatementNode>(statementNodePtr));
-        (*ifNewNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(ifNode));
-        (*ifNewNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(elseNode));
+        (*ifNewNode->statementNodes).push_back(statementNodePtr);
+        (*ifNewNode->childrenNodes).push_back(ifNode);
+        (*ifNewNode->childrenNodes).push_back(elseNode);
 
         // Loop through the statement lists (if & else ) of the If Statement
         for (size_t m = 0; m < ifStmtListSize; m++) {
@@ -138,14 +136,13 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
 
         // To complete the if-else diamond shape of the CFG
         CfgNode* ifDummyNode = createCfgNode(wholeStmtListSize, currentNumberOfNodes);
-        (*ifNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(ifDummyNode));
-        (*elseNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(ifDummyNode));
+        (*ifNode->childrenNodes).push_back(ifDummyNode);
+        (*elseNode->childrenNodes).push_back(ifDummyNode);
         return ifDummyNode;
     }
     default:
         // Will not enter here
         return currentCfgNode;
-        break;
     }
 }
 
@@ -168,5 +165,5 @@ Pair<CfgNode*, size_t> buildCfg(const StmtlstNode* const stmtListNode)
         StatementNode* stmtNode = (stmtListNode->statementList).at(j).get();
         currentCfgNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumber, stmtListSize);
     }
-    return Pair<CfgNode*, size_t>(cfgRootNode, currentNumber);
+    return {cfgRootNode, currentNumber};
 }

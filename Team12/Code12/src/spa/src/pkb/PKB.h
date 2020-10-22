@@ -1,14 +1,15 @@
 #ifndef PKB_H
 #define PKB_H
 
-#include <pkb/PkbTypes.h>
-#include <pkb/relationships/Calls.h>
-#include <pkb/relationships/Follows.h>
-#include <pkb/relationships/Modifies.h>
-#include <pkb/relationships/Next.h>
-#include <pkb/relationships/Parent.h>
-#include <pkb/relationships/Uses.h>
-#include <pkb/tables/Tables.h>
+#include "PkbTypes.h"
+#include "cfg/CfgTypes.h"
+#include "relationships/Calls.h"
+#include "relationships/Follows.h"
+#include "relationships/Modifies.h"
+#include "relationships/Next.h"
+#include "relationships/Parent.h"
+#include "relationships/Uses.h"
+#include "tables/Tables.h"
 
 /**
  * Holds API methods for the Program Knowledge Base (PKB).
@@ -136,8 +137,8 @@ void assignRootNode(ProgramNode* rootNodeToAssign);
 ProgramNode* getRootNode();
 
 // CFG
-void storeCFG(void* cfg, ProcedureName procedureName);
-void* getCFG(ProcedureName procedureName);
+void storeCFG(CfgNode* cfg, const ProcedureName& procedureName);
+CfgNode* getCFG(const ProcedureName& procedureName);
 
 // Others
 void resetPKB();
@@ -155,7 +156,7 @@ public:
     ConstantTable constantTable;
     NextTable nextTable;
     CallsTable callsTable;
-    HashMap<ProcedureName, void*> cfgByProcedure;
+    HashMap<ProcedureName, CfgNode*> cfgByProcedure;
 };
 
 #endif // PKB_H
