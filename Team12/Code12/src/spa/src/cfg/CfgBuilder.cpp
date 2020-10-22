@@ -124,27 +124,23 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         (*ifNewNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(elseNode));
 
         // Loop through the statement lists (if & else ) of the If Statement
-        currentCfgNode = ifNode;
         for (size_t m = 0; m < ifStmtListSize; m++) {
             StatementNode* stmtNode = ifStmtList.at(m).get();
             // Recurse
-            ifNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, ifStmtListSize);
+            ifNode = buildCfgWithStatementNode(stmtNode, ifNode, currentNumberOfNodes, ifStmtListSize);
         }
 
-        currentCfgNode = elseNode;
         for (size_t n = 0; n < elseStmtListSize; n++) {
             StatementNode* stmtNode = elseStmtList.at(n).get();
             // Recurse
-            elseNode = buildCfgWithStatementNode(stmtNode, currentCfgNode, currentNumberOfNodes, elseStmtListSize);
+            elseNode = buildCfgWithStatementNode(stmtNode, elseNode, currentNumberOfNodes, elseStmtListSize);
         }
 
         // To complete the if-else diamond shape of the CFG
         CfgNode* ifDummyNode = createCfgNode(wholeStmtListSize, currentNumberOfNodes);
         (*ifNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(ifDummyNode));
         (*elseNode->childrenNodes).push_back(std::unique_ptr<CfgNode>(ifDummyNode));
-        currentCfgNode = ifDummyNode;
-        return currentCfgNode;
-        break;
+        return ifDummyNode;
     }
     default:
         // Will not enter here
