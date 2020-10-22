@@ -52,10 +52,16 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
                                             nextRelationships);
         } else {
             while (childrenList->at(0)->statementNodes->empty()) {
-                childrenList = childrenList->at(0)->childrenNodes;
+                if (!childrenList->at(0)->childrenNodes->empty()) {
+                    childrenList = childrenList->at(0)->childrenNodes;
+                } else {
+                    break;
+                }
             }
-            addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0)->statementNodes->at(0),
-                                            nextRelationships);
+            Vector<StatementNode*>* currentChildStatementList = childrenList->at(0)->statementNodes;
+            if (!currentChildStatementList->empty()) {
+                addNextRelationshipBetweenNodes(prevStmtNode, currentChildStatementList->at(0), nextRelationships);
+            }
         }
     }
 
