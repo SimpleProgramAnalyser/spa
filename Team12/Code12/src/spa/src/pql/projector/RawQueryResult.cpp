@@ -6,6 +6,9 @@
 #include "RawQueryResult.h"
 
 #include <algorithm>
+#include <cassert>
+
+#include "lexer/Lexer.h"
 
 /*
  * Constructs a RawQueryResult instance, from a Vector
@@ -151,10 +154,33 @@ void RawQueryResult::sort()
     std::sort(results.begin(), results.end(), [](const std::string& a, const std::string& b) {
         if (!a.empty() && std::all_of(a.begin(), a.end(), ::isdigit) && !b.empty()
             && std::all_of(b.begin(), b.end(), ::isdigit)) {
-
+            // one number
             return std::stoi(a) < std::stoi(b);
         } else {
-            return a < b;
+            StringVector aSplit = splitByWhitespace(a);
+            StringVector bSplit = splitByWhitespace(b);
+            if (aSplit.size() == 1 && bSplit.size() == 1) {
+                // alphanumeric
+                return a < b;
+            } else {
+                assert(aSplit.size() == bSplit.size()); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                std::size_t len = aSplit.size();
+                for (std::size_t i = 0; i < len; i++) {
+                    std::string firstStr = aSplit.at(i);
+                    std::string secondStr = bSplit.at(i);
+                    if (firstStr != secondStr) {
+                        if (std::all_of(firstStr.begin(), firstStr.end(), ::isdigit)
+                            && std::all_of(secondStr.begin(), secondStr.end(), ::isdigit)) {
+                            // one number
+                            return std::stoi(firstStr) < std::stoi(secondStr);
+                        } else {
+                            return firstStr < secondStr;
+                        }
+                    }
+                }
+                // both lists the same
+                return false;
+            }
         }
     });
 }
