@@ -5,6 +5,8 @@
 #include "AffectsEvaluator.h"
 
 #include <cassert>
+#include <functional>
+#include <set>
 
 #include "RelationshipsUtil.h"
 #include "cfg/CfgTypes.h"
@@ -57,8 +59,52 @@ public:
 };
 
 /**
+ * Implementation of a priority queue using a std::set
+ * to ensure unique elements within the queue.
+ */
+template <typename T, typename Comparator>
+class UniquePriorityQueue {
+private:
+    std::set<T, Comparator> orderedSet;
+
+public:
+    // Inserts an item into the priority queue. Duplicates will be ignored.
+    void insert(T item)
+    {
+        orderedSet.insert(item);
+    }
+
+    // Checks if the priority queue is empty or not.
+    bool empty() const
+    {
+        return orderedSet.empty();
+    }
+
+    // Returns a copy of the top-most item from the priority queue.
+    T peek() const
+    {
+        return *orderedSet.begin();
+    }
+
+    // Deletes the top-most item from the priority queue.
+    void pop()
+    {
+        orderedSet.erase(orderedSet.begin());
+    }
+
+    // Removes the top-most item from the priority queue and returns it.
+    T popOff()
+    {
+        auto startPosition = orderedSet.begin();
+        T item = *startPosition;
+        orderedSet.erase(startPosition);
+        return item;
+    }
+};
+
+/**
  * Checks whether a statement number modifies a variable,
- * under the rules desribed by Affects/Affects*. Namely,
+ * under the rules described by Affects/Affects*. Namely,
  * statement has to be an assignment, read or procedure
  * call statement and it has to modify the variable.
  *
@@ -87,7 +133,7 @@ bool doesProgLineModifies(Integer statement, const String& variable)
  */
 inline bool isAffectable(DesignEntityType type)
 {
-    return type == AssignType || type == StmtType;
+    return type == AssignType || type == StmtType || type == Prog_LineType;
 }
 
 /**
@@ -235,11 +281,47 @@ Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& ri
     }
 
     Vector<Integer> nextStatements = getAllNextStatements(leftRefVal, AnyStatement);
-    Vector<Integer> affectedStatements;
-    while (!nextStatements.empty()) {
+    // A priority queue that returns smaller statements first
+    UniquePriorityQueue<Integer, std::less<Integer>> statementsQueue;
+    for (Integer next : nextStatements) {
+        statementsQueue.insert(next);
+    }
+    Vector<String> modifiedFromPkb = getModifiesVariablesFromStatement(leftRefVal);
+    // assignments can only modify one variable
+    assert(modifiedFromPkb.size() == 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    std::unordered_set<Integer> affectedStatements;
+    String modifiedVariable = modifiedFromPkb.at(0);
+    // a set to break out of a loop
+    std::unordered_set<Integer> visitedStatementsSet;
+
+    while (!statementsQueue.empty()) {
+        Integer currentStatement = statementsQueue.popOff();
+        if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
+            // if we have visited before, we ignore
+            continue;
+        }
+        visitedStatementsSet.insert(currentStatement);
+
+        StatementType currentStatementType = getStatementType(currentStatement);
+        if (currentStatementType == AssignmentStatement && checkIfStatementUses(currentStatement, modifiedVariable)) {
+            // this assignment is Affected by leftRefVal
+            affectedStatements.insert(currentStatement);
+        }
+
+        if (doesProgLineModifies(currentStatement, modifiedVariable)) {
+            // this statements modifies the variable, so we are sure that
+            // there can no longer be any Affects found along this branch
+            continue;
+        }
+
+        // continue traversal of the branch, put all Next statements into the queue
+        for (Integer next : getAllNextStatements(currentStatement, AnyStatement)) {
+            statementsQueue.insert(next);
+        }
     }
 
-    resultsTable.storeResultsOne(rightRef, convertToClauseResult(affectedStatements));
+    resultsTable.storeResultsOne(
+        rightRef, convertToClauseResult(std::vector<Integer>(affectedStatements.begin(), affectedStatements.end())));
 }
 
 Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal)
@@ -248,13 +330,75 @@ Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer righ
         resultsTable.storeResultsZero(false);
         return;
     }
-
-    Vector<Integer> prevStatements = getAllPreviousStatements(rightRefVal, AnyStatement);
-    Vector<Integer> affectingStatements;
-    while (!prevStatements.empty()) {
+    Vector<String> usedFromPkb = getUsesVariablesFromStatement(rightRefVal);
+    if (usedFromPkb.empty()) {
+        // this assign uses no variables, cannot possibly have anything Affecting it
+        resultsTable.storeResultsZero(false);
+        return;
     }
 
-    resultsTable.storeResultsOne(leftRef, convertToClauseResult(affectingStatements));
+    Vector<Integer> prevStatements = getAllPreviousStatements(rightRefVal, AnyStatement);
+    std::shared_ptr<std::unordered_set<String>> originalUsedVariables
+        = std::make_shared<std::unordered_set<String>>(usedFromPkb.begin(), usedFromPkb.end());
+    // A priority queue that returns larger statements first
+    UniquePriorityQueue<Integer, std::greater<Integer>> statementsQueue;
+    // A map to tell which statements still can modify which variables
+    std::unordered_map<Integer, std::shared_ptr<std::unordered_set<String>>> statementVariablesMap;
+    for (Integer prev : prevStatements) {
+        statementsQueue.insert(prev);
+        statementVariablesMap.emplace(prev, originalUsedVariables);
+    }
+    std::unordered_set<Integer> affectingStatements;
+    // a set to break out of a loop
+    std::unordered_set<Integer> visitedStatementsSet;
+
+    while (!statementsQueue.empty()) {
+        Integer currentStatement = statementsQueue.popOff();
+        if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
+            // if we have visited before, we ignore
+            continue;
+        }
+        visitedStatementsSet.insert(currentStatement);
+
+        StatementType currentStatementType = getStatementType(currentStatement);
+        bool doesCurrentModifyAnyVariables = false;
+        std::unordered_set<String> remainingVariables = *statementVariablesMap.at(currentStatement);
+        for (const String& variable : *statementVariablesMap.at(currentStatement)) {
+            if (doesProgLineModifies(currentStatement, variable)) {
+                doesCurrentModifyAnyVariables = true;
+                remainingVariables.erase(variable);
+            }
+        }
+        if (currentStatementType == AssignmentStatement && doesCurrentModifyAnyVariables) {
+            // this assignment Affects rightRefVal
+            affectingStatements.insert(currentStatement);
+        }
+
+        if (doesCurrentModifyAnyVariables && remainingVariables.empty()) {
+            // before this statement, all variables used in rightRefVal have been
+            // modified, so there can no longer be any Affects found along this branch
+            continue;
+        }
+
+        // continue traversal of the branch, put all Previous statements into a queue
+        // also, associate the current set with Previous statements
+        for (Integer prev : getAllPreviousStatements(currentStatement, AnyStatement)) {
+            statementsQueue.insert(prev);
+            if (statementVariablesMap.find(prev) != statementVariablesMap.end()) {
+                // if already exists in map, merge the sets
+                for (const String& variable : remainingVariables) {
+                    statementVariablesMap.at(prev)->insert(variable);
+                }
+            } else if (doesCurrentModifyAnyVariables) {
+                statementVariablesMap.emplace(prev, std::make_shared<std::unordered_set<String>>(remainingVariables));
+            } else {
+                statementVariablesMap.emplace(prev, statementVariablesMap.at(currentStatement));
+            }
+        }
+    }
+
+    resultsTable.storeResultsOne(
+        leftRef, convertToClauseResult(Vector<Integer>(affectingStatements.begin(), affectingStatements.end())));
 }
 
 Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef)
