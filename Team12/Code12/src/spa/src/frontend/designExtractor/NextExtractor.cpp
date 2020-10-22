@@ -51,11 +51,18 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
             addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0).get()->statementNodes->at(0).get(),
                                             nextRelationships);
         } else {
-            while (childrenList->at(0).get()->statementNodes->size() == 0) {
-                childrenList = childrenList->at(0).get()->childrenNodes;
+            while (childrenList->at(0).get()->statementNodes->empty()) {
+                if (!childrenList->at(0).get()->childrenNodes->empty()) {
+                    childrenList = childrenList->at(0).get()->childrenNodes;
+                } else {
+                    break;
+                }
             }
-            addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0).get()->statementNodes->at(0).get(),
-                                            nextRelationships);
+            List<StatementNode>* currentChildStatementList = childrenList->at(0).get()->statementNodes;
+            if (!currentChildStatementList->empty()) {
+                addNextRelationshipBetweenNodes(prevStmtNode, currentChildStatementList->at(0).get(),
+                                                nextRelationships);
+            }
         }
     }
 
