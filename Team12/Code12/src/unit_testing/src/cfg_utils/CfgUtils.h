@@ -70,6 +70,12 @@ std::pair<CfgNode*, size_t> getProgram18Cfg_endWithWhile();
 
 // Program 19: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign - Not Applicable for CFG
 
-// Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign - Not Applicable for CFG
+/** CFG BIP Builder**/
+//Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
+std::pair<CfgNode*, size_t> getProgram20Cfg_main();
+std::pair<CfgNode*, size_t> getProgram20Cfg_raymarch();
+std::pair<CfgNode*, size_t> getProgram20Cfg_spheresdf();
+std::pair<CfgNode*, size_t> getProgram20CfgBip_multipleProceduresSpheresdf();
+
 
 #endif // UNIT_TESTING_CFG_UTILS_H

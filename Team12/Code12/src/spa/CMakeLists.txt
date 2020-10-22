@@ -27,6 +27,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBipBuilder.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBipBuilder.cpp
 
     # design extractor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h

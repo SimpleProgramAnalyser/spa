@@ -8,8 +8,10 @@
 #include "CfgUtils.h"
 #include "cfg/CfgTypes.h"
 #include "cfg/CfgBuilder.h"
+#include "cfg/CfgBipBuilder.h"
 #include "ast/AstLibrary.h"
 
+/** CFG Builder **/
 std::pair<CfgNode*, size_t> getProgram1Cfg_compute()
 {
     // Create Cfg root node
@@ -497,6 +499,300 @@ std::pair<CfgNode*, size_t> getProgram18Cfg_endWithWhile()
     firstWhileCfgChildrenNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgNode));
 
     firstWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(whileDummyCfgNode));
+
+    return std::make_pair(expectedCfg, currentNumberOfNodes);
+}
+
+
+std::pair<CfgNode*, size_t> getProgram20Cfg_main()
+{
+    size_t currentNumberOfNodes = -1;
+    CfgNode* expectedCfg = createCfgNode(3, currentNumberOfNodes);
+
+    // procedure main
+    expectedCfg->statementNodes->push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("steps"))));
+    expectedCfg->statementNodes->push_back(std::unique_ptr<CallStatementNode>(createCallNode(2, "raymarch")));
+    expectedCfg->statementNodes->push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(3, Variable("depth"))));
+
+    return std::make_pair(expectedCfg, currentNumberOfNodes);
+}
+
+std::pair<CfgNode*, size_t> getProgram20Cfg_raymarch()
+{
+    size_t currentNumberOfNodes = -1;
+    CfgNode* expectedCfg = createCfgNode(3, currentNumberOfNodes);
+
+    expectedCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(4, Variable("ro"), createRefExpr(13))));
+    expectedCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("rd"), createRefExpr(19))));
+    expectedCfg->statementNodes->push_back(std::unique_ptr<ReadStatementNode>(createReadNode(6, Variable("depth"))));
+
+
+    // Create new nodes for While Statement
+    CfgNode* firstWhileCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* firstWhileCfgChildrenNode = createCfgNode(3, currentNumberOfNodes);
+    CfgNode* whileDummyCfgNode = createCfgNode(0, currentNumberOfNodes);
+    expectedCfg->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgNode));
+
+    List<StatementNode> raymarchWhileStatements;
+    raymarchWhileStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("depth"))));
+    raymarchWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        9, Variable("po"),
+        createPlusExpr(createRefExpr("ro"), createTimesExpr(createRefExpr("rd"), createRefExpr("depth"))))));
+    raymarchWhileStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(10, "spheresdf")));
+
+
+    firstWhileCfgNode->statementNodes->push_back((std::unique_ptr<WhileStatementNode>(createWhileNode(
+        7, createLtExpr(createRefExpr("count"), createRefExpr("steps")), createStmtlstNode(raymarchWhileStatements)))));
+    firstWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgChildrenNode));
+
+    firstWhileCfgChildrenNode->statementNodes->push_back(
+        std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("depth"))));
+    firstWhileCfgChildrenNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        9, Variable("po"),
+        createPlusExpr(createRefExpr("ro"), createTimesExpr(createRefExpr("rd"), createRefExpr("depth"))))));
+    firstWhileCfgChildrenNode->statementNodes->push_back(
+        std::unique_ptr<CallStatementNode>(createCallNode(10, "spheresdf")));
+    firstWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(whileDummyCfgNode));
+
+
+    CfgNode* ifNewCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* ifCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* elseCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* ifDummyNode = createCfgNode(1, currentNumberOfNodes);
+
+    List<StatementNode> statements;
+    List<StatementNode> ifStatements;
+    List<StatementNode> elseStatements;
+    // If statements
+    ifStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(12, Variable("done"), createRefExpr("depth"))));
+    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(13, Variable("depth"), createPlusExpr(createRefExpr("depth"), createRefExpr("dist")))));
+
+
+    ifNewCfgNode->statementNodes->push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(11, createLtExpr(createRefExpr("dist"), createRefExpr("epsilon")), createStmtlstNode(ifStatements),
+                     createStmtlstNode(elseStatements))));
+    firstWhileCfgChildrenNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifNewCfgNode));
+
+    ifCfgNode->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(12, Variable("done"), createRefExpr("depth"))));
+    elseCfgNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(13, Variable("depth"), createPlusExpr(createRefExpr("depth"), createRefExpr("dist")))));
+
+    ifNewCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifCfgNode));
+    ifNewCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(elseCfgNode));
+
+    ifCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
+    elseCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
+    
+    ifDummyNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(14, Variable("count"), createPlusExpr(createRefExpr("count"), createRefExpr(1)))));
+
+    ifDummyNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgNode));
+
+
+    return std::make_pair(expectedCfg, currentNumberOfNodes);
+}
+
+std::pair<CfgNode*, size_t> getProgram20Cfg_spheresdf()
+{
+    size_t currentNumberOfNodes = -1;
+    CfgNode* expectedCfg = createCfgNode(4, currentNumberOfNodes);
+
+    expectedCfg->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(15, Variable("dist"),
+                         createPlusExpr(createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                                                       createTimesExpr(createRefExpr("y"), createRefExpr("y"))),
+                                        createTimesExpr(createRefExpr("z"), createRefExpr("z"))))));
+    expectedCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(16, Variable("x"), createRefExpr("dist"))));
+    expectedCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(17, Variable("depth"), createRefExpr("depth"))));
+    expectedCfg->statementNodes->push_back(std::unique_ptr<ReadStatementNode>(createReadNode(18, Variable("p"))));
+
+    // Create new nodes for While Statement
+    CfgNode* firstWhileCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* firstWhileCfgChildrenNode = createCfgNode(2, currentNumberOfNodes);
+    CfgNode* whileDummyCfgNode = createCfgNode(2, currentNumberOfNodes);
+    expectedCfg->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgNode));
+
+    // procedure spheresdf while
+    List<StatementNode> spheresdfWhileStatements;
+    spheresdfWhileStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(20, Variable("p"), createRefExpr("x"))));
+    spheresdfWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        21, Variable("x"),
+        createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")),
+                      createRefExpr(2)))));
+
+    firstWhileCfgNode->statementNodes->push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
+        19, createNeqExpr(createRefExpr("x"), createRefExpr("p")), createStmtlstNode(spheresdfWhileStatements))));
+    firstWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgChildrenNode));
+
+    firstWhileCfgChildrenNode->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(20, Variable("p"), createRefExpr("x"))));
+    firstWhileCfgChildrenNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        21, Variable("x"),
+        createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")),
+                      createRefExpr(2)))));
+
+    firstWhileCfgChildrenNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(firstWhileCfgNode));
+    firstWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(whileDummyCfgNode));
+
+    whileDummyCfgNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(22, Variable("dist"), createMinusExpr(createRefExpr("x"), createRefExpr(1)))));
+    whileDummyCfgNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        23, Variable("x"),
+        createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                       createDivExpr(createTimesExpr(createRefExpr("y"), createRefExpr("y")), createRefExpr(2))))));
+
+    return std::make_pair(expectedCfg, currentNumberOfNodes);
+}
+
+
+/** CFG BIP Builder **/
+std::pair<CfgNode*, size_t> getProgram20CfgBip_multipleProceduresSpheresdf()
+{
+    size_t currentNumberOfNodes = -1;
+    CfgNode* expectedCfg = createCfgNode(3, currentNumberOfNodes);
+
+    // procedure main
+    expectedCfg->statementNodes->push_back(std::unique_ptr<ReadStatementNode>(createReadNode(1, Variable("steps"))));
+    expectedCfg->statementNodes->push_back(std::unique_ptr<CallStatementNode>(createCallNode(2, "raymarch")));
+
+    // procedure raymarch
+    CfgNode* raymarchCfg = createCfgNode(3, currentNumberOfNodes);
+    expectedCfg->childrenNodes->push_back(std::unique_ptr<CfgNode>(raymarchCfg));
+
+    raymarchCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(4, Variable("ro"), createRefExpr(13))));
+    raymarchCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("rd"), createRefExpr(19))));
+    raymarchCfg->statementNodes->push_back(std::unique_ptr<ReadStatementNode>(createReadNode(6, Variable("depth"))));
+
+    // Create new nodes for While Statement
+    CfgNode* raymarchWhileCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* raymarchWhileCfgChildrenNode = createCfgNode(3, currentNumberOfNodes);
+    raymarchCfg->childrenNodes->push_back(std::unique_ptr<CfgNode>(raymarchWhileCfgNode));
+
+    List<StatementNode> raymarchWhileStatements;
+    raymarchWhileStatements.push_back(std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("depth"))));
+    raymarchWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        9, Variable("po"),
+        createPlusExpr(createRefExpr("ro"), createTimesExpr(createRefExpr("rd"), createRefExpr("depth"))))));
+    raymarchWhileStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(10, "spheresdf")));
+
+
+    raymarchWhileCfgNode->statementNodes->push_back((std::unique_ptr<WhileStatementNode>(createWhileNode(
+        7, createLtExpr(createRefExpr("count"), createRefExpr("steps")), createStmtlstNode(raymarchWhileStatements)))));
+    raymarchWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(raymarchWhileCfgChildrenNode));
+
+    raymarchWhileCfgChildrenNode->statementNodes->push_back(
+        std::unique_ptr<PrintStatementNode>(createPrintNode(8, Variable("depth"))));
+    raymarchWhileCfgChildrenNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        9, Variable("po"),
+        createPlusExpr(createRefExpr("ro"), createTimesExpr(createRefExpr("rd"), createRefExpr("depth"))))));
+    raymarchWhileCfgChildrenNode->statementNodes->push_back(
+        std::unique_ptr<CallStatementNode>(createCallNode(10, "spheresdf")));
+
+
+    CfgNode* spheresdfCfg = createCfgNode(4, currentNumberOfNodes);
+    raymarchWhileCfgChildrenNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(spheresdfCfg));
+
+    spheresdfCfg->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(15, Variable("dist"),
+                         createPlusExpr(createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                                                       createTimesExpr(createRefExpr("y"), createRefExpr("y"))),
+                                        createTimesExpr(createRefExpr("z"), createRefExpr("z"))))));
+    spheresdfCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(16, Variable("x"), createRefExpr("dist"))));
+    spheresdfCfg->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(17, Variable("depth"), createRefExpr("depth"))));
+    spheresdfCfg->statementNodes->push_back(std::unique_ptr<ReadStatementNode>(createReadNode(18, Variable("p"))));
+
+    // Create new nodes for While Statement
+    CfgNode* spheresdfWhileCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* spheresdfWhileCfgChildrenNode = createCfgNode(2, currentNumberOfNodes);
+    CfgNode* spheresdfWhileDummyCfgNode = createCfgNode(2, currentNumberOfNodes);
+    spheresdfCfg->childrenNodes->push_back(std::unique_ptr<CfgNode>(spheresdfWhileCfgNode));
+
+    // procedure spheresdf while
+    List<StatementNode> spheresdfWhileStatements;
+    spheresdfWhileStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(20, Variable("p"), createRefExpr("x"))));
+    spheresdfWhileStatements.push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        21, Variable("x"),
+        createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")),
+                      createRefExpr(2)))));
+
+    spheresdfWhileCfgNode->statementNodes->push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
+        19, createNeqExpr(createRefExpr("x"), createRefExpr("p")), createStmtlstNode(spheresdfWhileStatements))));
+    spheresdfWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(spheresdfWhileCfgChildrenNode));
+
+    spheresdfWhileCfgChildrenNode->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(20, Variable("p"), createRefExpr("x"))));
+    spheresdfWhileCfgChildrenNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        21, Variable("x"),
+        createDivExpr(createPlusExpr(createDivExpr(createRefExpr("dist"), createRefExpr("x")), createRefExpr("x")),
+                      createRefExpr(2)))));
+
+    spheresdfWhileCfgChildrenNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(spheresdfWhileCfgNode));
+    spheresdfWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(spheresdfWhileDummyCfgNode));
+
+    spheresdfWhileDummyCfgNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(22, Variable("dist"), createMinusExpr(createRefExpr("x"), createRefExpr(1)))));
+    spheresdfWhileDummyCfgNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(createAssignNode(
+        23, Variable("x"),
+        createPlusExpr(createTimesExpr(createRefExpr("x"), createRefExpr("x")),
+                       createDivExpr(createTimesExpr(createRefExpr("y"), createRefExpr("y")), createRefExpr(2))))));
+
+
+    // Back to raymarch 
+    CfgNode* ifNewCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* ifCfgNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* ifDummyNode = createCfgNode(1, currentNumberOfNodes);
+    CfgNode* elseCfgNode = createCfgNode(1, currentNumberOfNodes);
+
+    List<StatementNode> statements;
+    List<StatementNode> ifStatements;
+    List<StatementNode> elseStatements;
+    // If and else statements
+    ifStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(12, Variable("done"), createRefExpr("depth"))));
+    elseStatements.push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(13, Variable("depth"), createPlusExpr(createRefExpr("depth"), createRefExpr("dist")))));
+
+
+    ifNewCfgNode->statementNodes->push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(11, createLtExpr(createRefExpr("dist"), createRefExpr("epsilon")), createStmtlstNode(ifStatements),
+                     createStmtlstNode(elseStatements))));
+    spheresdfWhileDummyCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifNewCfgNode));
+
+    ifCfgNode->statementNodes->push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(12, Variable("done"), createRefExpr("depth"))));
+    elseCfgNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(13, Variable("depth"), createPlusExpr(createRefExpr("depth"), createRefExpr("dist")))));
+
+    ifNewCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifCfgNode));
+    ifNewCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(elseCfgNode));
+
+    ifCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
+    elseCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(ifDummyNode));
+
+    ifDummyNode->statementNodes->push_back(std::unique_ptr<AssignmentStatementNode>(
+        createAssignNode(14, Variable("count"), createPlusExpr(createRefExpr("count"), createRefExpr(1)))));
+
+    ifDummyNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(raymarchWhileCfgNode));
+       
+
+    CfgNode* raymarchWhileDummyCfgNode = createCfgNode(1, currentNumberOfNodes);
+    raymarchWhileCfgNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(raymarchWhileDummyCfgNode));
+
+    raymarchWhileDummyCfgNode->statementNodes->push_back(
+        std::unique_ptr<PrintStatementNode>(createPrintNode(3, Variable("depth"))));
 
     return std::make_pair(expectedCfg, currentNumberOfNodes);
 }
