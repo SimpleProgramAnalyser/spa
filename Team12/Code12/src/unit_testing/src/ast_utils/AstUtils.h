@@ -157,4 +157,8 @@ String getProgram26String_nestedInterleavingIfsInWhile();
 // Program 26: program with interleaving nested ifs in a while
 ProgramNode* getProgram26Tree_nestedInterleavingIfsInWhile();
 
+// Program 27: program with if in if statement
+String getProgram27String_ifInIf();
+// Program 27: program with if in if statement
+ProgramNode* getProgram27Tree_ifInIf();
 #endif // UNIT_TESTING_AST_UTILS_H
