@@ -8,6 +8,7 @@
 #include "cfg/CfgBuilder.h"
 #include "frontend/designExtractor/NextExtractor.h"
 
+
 bool checkIfNextRelationshipsAreEqual(std::vector<std::pair<Integer, Integer>> actualNextRelationships,
                                       std::vector<std::pair<Integer, Integer>> expectedNextRelationships)
 {
@@ -44,6 +45,7 @@ std::vector<std::pair<Integer, Integer>> getActualNextRelationships(const List<P
 
     return extractNext(cfgInfo);
 }
+
 
 TEST_CASE("Next extractor works for basic program with read, assign, print - compute")
 {
@@ -367,6 +369,22 @@ TEST_CASE("Next extractor works for program with interleaving nested ifs in whil
     expectedNextRelationships.push_back(std::make_pair(20, 1));
     expectedNextRelationships.push_back(std::make_pair(21, 1));
     expectedNextRelationships.push_back(std::make_pair(22, 1));
+
+    bool isEqual = checkIfNextRelationshipsAreEqual(actualNextRelationships, expectedNextRelationships);
+    REQUIRE(isEqual == true);
+}
+
+TEST_CASE("Next extractor works for program with if in if statement - ifInIf")
+{
+    const List<ProcedureNode>* procedureList = &(getProgram27Tree_ifInIf()->procedureList);
+    std::vector<std::pair<Integer, Integer>> actualNextRelationships = getActualNextRelationships(procedureList);
+
+    // Expected
+    std::vector<std::pair<Integer, Integer>> expectedNextRelationships;
+    expectedNextRelationships.push_back(std::make_pair(1, 2));
+    expectedNextRelationships.push_back(std::make_pair(1, 3));
+    expectedNextRelationships.push_back(std::make_pair(3, 4));
+    expectedNextRelationships.push_back(std::make_pair(3, 5));
 
     bool isEqual = checkIfNextRelationshipsAreEqual(actualNextRelationships, expectedNextRelationships);
     REQUIRE(isEqual == true);

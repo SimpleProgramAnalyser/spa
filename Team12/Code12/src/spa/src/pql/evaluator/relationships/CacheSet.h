@@ -1,9 +1,10 @@
-//
-// Created by Chester Sim on 17/10/20.
-//
+/**
+ * Cache set class for Query Evaluator.
+ * Guarantees amortised constant time access and insertion.
+ */
 
-#ifndef SPA_CACHESET_H
-#define SPA_CACHESET_H
+#ifndef SPA_PQL_CACHE_SET_H
+#define SPA_PQL_CACHE_SET_H
 
 #include "../EvaluatorUtils.h"
 
@@ -13,6 +14,8 @@ private:
 
 public:
     CacheSet() = default;
+
+    explicit CacheSet(std::unordered_set<StatementNumber> unorderedSet);
 
     /**
      * Uses the non star version of the relationship
@@ -57,4 +60,4 @@ public:
     ClauseResult filterStatementType(StatementType stmtType) const;
 };
 
-#endif // SPA_CACHESET_H
+#endif // SPA_PQL_CACHE_SET_H

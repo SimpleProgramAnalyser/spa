@@ -9,7 +9,7 @@
 
 Void copyAndAddStmtNode(StatementNode* stmtNode, CfgNode* newCfgNode)
 {
-    (*newCfgNode->statementNodes).push_back(std::unique_ptr<StatementNode>(stmtNode));
+    (*newCfgNode->statementNodes).push_back(stmtNode);
 }
 
 CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*>* proceduresCfg,
@@ -24,12 +24,12 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
     } else { 
         visitedMap->at(currentProcName).at(currentCfgNodeNumber) = currentCfgBipNode;
 
-        List<StatementNode>* stmtList = cfgNode->statementNodes;
-        List<CfgNode>* childrenList = cfgNode->childrenNodes;
+        Vector<StatementNode*>* stmtList = cfgNode->statementNodes;
+        Vector<CfgNode*>* childrenList = cfgNode->childrenNodes;
 
         // For each statement node in current CFG node's stmt list
         for (size_t i = 0; i < stmtList->size(); i++) {
-            StatementNode* stmtNode = stmtList->at(i).get();
+            StatementNode* stmtNode = stmtList->at(i);
             StatementType stmtType = stmtNode->getStatementType();
 
             switch (stmtType) {
@@ -54,13 +54,13 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
                     size_t indexOfLastCfgNodeOfCalledProc = visitedMap->at(procName).size() - 1;
                     // Last node of the CfgBipNode of the called procedure
                     CfgNode* lastCfgNodeCfgBipNode = visitedMap->at(procName).at(indexOfLastCfgNodeOfCalledProc);
-                    currentCfgBipNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(calledNodeCfgBipPointer));
+                    currentCfgBipNode->childrenNodes->push_back(calledNodeCfgBipPointer);
 
-                    lastCfgNodeCfgBipNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(currentCfgBipNode));
+                    lastCfgNodeCfgBipNode->childrenNodes->push_back(currentCfgBipNode);
                 } else {
                     CfgNode* newCfgBipNode
                         = createCfgNode(calledProcCfgRootNode->statementNodes->size(), currentNumberOfNodes);
-                    currentCfgBipNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(newCfgBipNode));
+                    currentCfgBipNode->childrenNodes->push_back(newCfgBipNode);
 
                     currentCfgBipNode = buildCfgBipWithNode(calledProcCfgRootNode, proceduresCfg, currentNumberOfNodes,
                                                             newCfgBipNode, visitedMap, procName);
@@ -75,16 +75,16 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
         }
 
         for (size_t j = 0; j < childrenList->size(); j++) {
-            CfgNode* currentChild = childrenList->at(j).get();
+            CfgNode* currentChild = childrenList->at(j);
             CfgNode* childNodeCfgBipPointer = visitedMap->at(currentProcName).at(currentChild->nodeNumber);
             CfgNode* newCfgBipNode;
             if (childNodeCfgBipPointer != nullptr) {
                 newCfgBipNode = childNodeCfgBipPointer;
-                currentCfgBipNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(newCfgBipNode));
+                currentCfgBipNode->childrenNodes->push_back(newCfgBipNode);
 
             } else {
                 newCfgBipNode = createCfgNode(currentChild->statementNodes->size(), currentNumberOfNodes);
-                currentCfgBipNode->childrenNodes->push_back(std::unique_ptr<CfgNode>(newCfgBipNode));
+                currentCfgBipNode->childrenNodes->push_back(newCfgBipNode);
 
                 if (j == childrenList->size() - 1) {
                     currentCfgBipNode = buildCfgBipWithNode(currentChild, proceduresCfg, currentNumberOfNodes,

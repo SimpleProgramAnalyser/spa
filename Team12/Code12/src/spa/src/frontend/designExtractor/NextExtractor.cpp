@@ -42,20 +42,26 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
                          std::vector<Pair<Integer, Integer>>* nextRelationships)
 {
     Boolean nodeIsVisited = visitedArray->at(cfgNode->nodeNumber);
-    List<StatementNode>* stmtList = cfgNode->statementNodes;
-    List<CfgNode>* childrenList = cfgNode->childrenNodes;
+    Vector<StatementNode*>* stmtList = cfgNode->statementNodes;
+    Vector<CfgNode*>* childrenList = cfgNode->childrenNodes;
 
     // Dummy node with no statement nodes
     if (stmtList->empty() && childrenList->size() == 1) {
-        if (childrenList->at(0).get()->statementNodes->size() != 0) {
-            addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0).get()->statementNodes->at(0).get(),
+        if (!childrenList->at(0)->statementNodes->empty()) {
+            addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0)->statementNodes->at(0),
                                             nextRelationships);
         } else {
-            while (childrenList->at(0).get()->statementNodes->size() == 0) {
-                childrenList = childrenList->at(0).get()->childrenNodes;
+            while (childrenList->at(0)->statementNodes->empty()) {
+                if (!childrenList->at(0)->childrenNodes->empty()) {
+                    childrenList = childrenList->at(0)->childrenNodes;
+                } else {
+                    break;
+                }
             }
-            addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0).get()->statementNodes->at(0).get(),
-                                            nextRelationships);
+            Vector<StatementNode*>* currentChildStatementList = childrenList->at(0)->statementNodes;
+            if (!currentChildStatementList->empty()) {
+                addNextRelationshipBetweenNodes(prevStmtNode, currentChildStatementList->at(0), nextRelationships);
+            }
         }
     }
 
@@ -69,7 +75,7 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
     // We add a Next relationship between the previous statement node, if any, and the first
     // statement of the current CFG node (visited or not)
     if (prevStmtNode != nullptr && !stmtList->empty()) {
-        StatementNode* firstNode = stmtList->at(0).get();
+        StatementNode* firstNode = stmtList->at(0);
 
         addNextRelationshipBetweenNodes(prevStmtNode, firstNode, nextRelationships);
     }
@@ -84,20 +90,19 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
         // We run for stmtList.size() - 1 because we do not consider the last node for
         // Next relationships within a node
         for (size_t i = 0; i < stmtList->size() - 1; i++) {
-            StatementNode* prevStmtNode = stmtList->at(i).get();
-            StatementNode* currentStmtNode = stmtList->at(i + 1).get();
+            StatementNode* prevStmtNodeI = stmtList->at(i);
+            StatementNode* currentStmtNode = stmtList->at(i + 1);
 
-            addNextRelationshipBetweenNodes(prevStmtNode, currentStmtNode, nextRelationships);
+            addNextRelationshipBetweenNodes(prevStmtNodeI, currentStmtNode, nextRelationships);
         }
 
         // We recurse with the last statement in the current CFG node and the current CFG node's children
-        StatementNode* lastNode = stmtList->back().get();
+        StatementNode* lastNode = stmtList->back();
 
-        for (size_t j = 0; j < childrenList->size(); j++) {
-            extractNextFromNode(childrenList->at(j).get(), visitedArray, lastNode, nextRelationships);
+        for (auto& child : *childrenList) {
+            extractNextFromNode(child, visitedArray, lastNode, nextRelationships);
         }
     }
-    return;
 }
 
 /**

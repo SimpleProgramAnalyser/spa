@@ -2749,3 +2749,69 @@ ProgramNode* getProgram26Tree_nestedInterleavingIfsInWhile()
 }
 
 
+
+String getProgram27String_ifInIf()
+{
+    String ifInIf = "\
+      procedure ifInIf {\n\
+        if (stmt == 1) then {\n\
+          stmt = 2;\n\
+        } else {\n\
+          if (stmt == 3) then {\n\
+            stmt = 4;\n\
+          } else {\n\
+            stmt = 5;\n\
+          } } }\n\
+";
+    /*
+    * Annotated with statement numbers:
+      procedure ifInIf {
+    1   if (stmt == 1) then {
+    2     stmt = 2;
+        } else {
+    3     if (stmt == 3) then {
+    4       stmt = 4;
+          } else {
+    5       stmt = 5;
+          } } }
+    */
+        return ifInIf;
+}
+
+ProgramNode* getProgram27Tree_ifInIf()
+{
+    List<ProcedureNode> procedureList;
+    List<StatementNode> doSmthStmts;
+
+    // procedure doSmth while & ifs
+
+    List<StatementNode> doSmth1IfStatements;
+    List<StatementNode> doSmth1ElseStatements;
+
+    List<StatementNode> doSmth2IfStatements;
+    List<StatementNode> doSmth2ElseStatements;
+
+    doSmth2IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(4, Variable("stmt"), createRefExpr(4))));
+
+    doSmth2ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("stmt"), createRefExpr(5))));
+
+    doSmth1IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("stmt"), createRefExpr(2))));
+
+    doSmth1ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(3, createEqExpr(createRefExpr("stmt"), createRefExpr(3)), createStmtlstNode(doSmth2IfStatements),
+                     createStmtlstNode(doSmth2ElseStatements))));
+
+    doSmthStmts.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(1, createEqExpr(createRefExpr("stmt"), createRefExpr(1)), createStmtlstNode(doSmth1IfStatements),
+                     createStmtlstNode(doSmth1ElseStatements))));
+
+    StmtlstNode* doSmthStmtLstNode = createStmtlstNode(doSmthStmts);
+    ProcedureNode* doSmthProc = createProcedureNode("doSmth", doSmthStmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(doSmthProc));
+    ProgramNode* programNode = createProgramNode("main", procedureList, 5);
+
+    return programNode;
+}
