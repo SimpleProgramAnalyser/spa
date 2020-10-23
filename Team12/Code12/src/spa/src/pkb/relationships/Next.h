@@ -34,7 +34,7 @@ private:
      */
     HashMap<Integer, StatementNumVectorsByType> stmtPreviousMap;
     HashMap<Integer, StatementNumVectorsByType> stmtNextMap;
-    // sets used to deduplicate the above structure
+    // sets used to deduplicate the above structures
     HashMap<Integer, StatementNumSetsByType> stmtPreviousSet;
     HashMap<Integer, StatementNumSetsByType> stmtNextSet;
 

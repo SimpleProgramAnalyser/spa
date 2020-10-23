@@ -3,7 +3,7 @@
 
 #include <pkb/PkbTypes.h>
 
-typedef ArrayArrayTupleList<Integer, Integer> TupleTable;
+typedef ArrayArrayTupleList<StatementNumber, StatementNumber> TupleTable;
 
 /**
  * Stores Parent, Parent* relationships.
@@ -11,65 +11,95 @@ typedef ArrayArrayTupleList<Integer, Integer> TupleTable;
 class ParentTable {
 public:
     // writing
-    void addParentRelationships(Integer parent, StatementType parentStmtType, Integer child,
+    void addParentRelationships(StatementNumber parent, StatementType parentStmtType, StatementNumber child,
                                 StatementType childStmtType);
-    void addParentRelationshipsStar(Integer parent, StatementType parentStmtType,
+    void addParentRelationshipsStar(StatementNumber parent, StatementType parentStmtType,
                                     const Vector<StatementNumWithType>& childStmttypePairs);
 
     // reading
-    Boolean checkIfParentHolds(Integer parent, Integer child);
-    Boolean checkIfParentHoldsStar(Integer parent, Integer child);
+    Boolean checkIfParentHolds(StatementNumber parent, StatementNumber child);
+    Boolean checkIfParentHoldsStar(StatementNumber parent, StatementNumber child);
 
-    Vector<Integer> getAllChildStatements(Integer parent, StatementType childType);
-    Vector<StatementNumWithType> getParentStatement(Integer child);
-    Vector<Integer> getAllChildStatementsStar(Integer parent, StatementType stmtType);
-    Vector<Integer> getAllParentStatementsStar(Integer child, StatementType stmtType);
+    Vector<StatementNumber> getAllChildStatements(StatementNumber parent, StatementType childType);
+    Vector<StatementNumWithType> getParentStatement(StatementNumber child);
+    Vector<StatementNumber> getAllChildStatementsStar(StatementNumber parent, StatementType stmtType);
+    Vector<StatementNumber> getAllParentStatementsStar(StatementNumber child, StatementType stmtType);
 
-    Vector<Integer> getAllParentStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
-    Vector<Integer> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
-    Vector<Integer> getAllChildStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
-    Vector<Integer> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
-    Vector<Pair<Integer, Integer>> getAllParentTuple(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
-    Vector<Pair<Integer, Integer>> getAllParentTupleStar(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+    Vector<StatementNumber> getAllParentStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+    Vector<StatementNumber> getAllParentStatementsTypedStar(StatementType stmtTypeOfParent,
+                                                            StatementType stmtTypeOfChild);
+    Vector<StatementNumber> getAllChildStatementsTyped(StatementType stmtTypeOfParent, StatementType stmtTypeOfChild);
+    Vector<StatementNumber> getAllChildStatementsTypedStar(StatementType stmtTypeOfParent,
+                                                           StatementType stmtTypeOfChild);
+    Vector<Pair<StatementNumber, StatementNumber>> getAllParentTuple(StatementType stmtTypeOfParent,
+                                                                     StatementType stmtTypeOfChild);
+    Vector<Pair<StatementNumber, StatementNumber>> getAllParentTupleStar(StatementType stmtTypeOfParent,
+                                                                         StatementType stmtTypeOfChild);
 
 private:
-    // to check if Parent(*)(x, y) holds
-    HashMap<Integer, StatementNumWithType> stmtParentMap;
-    HashMap<Integer, StatementNumVectorsByType> stmtChildlistMap;
-    HashMap<Integer, HashSet<Integer>> stmtChildsetMap;
-    HashMap<Integer, HashSet<Integer>> stmtParentstarsetMap;
-    HashMap<Integer, HashSet<Integer>> stmtChildstarsetMap;
-
-    // statements parent/child given statement, sorted by type
-    HashMap<Integer, StatementNumVectorsByType> stmtParentstarlistMap;
-    HashMap<Integer, StatementNumVectorsByType> stmtChildstarlistMap;
-
-    // WARNING: potential confusion
-    // stmtParentType:
+    // Table and inverse tables
     /**
-     * | StmtType | Statements parent this type |
-     * | Assign   | Assign: 1, 2; While: 3      |
+     * Primary key: statement number
+     * Result: next/previous statements, stored by statement type
+     *
+     * Secondary key: statement type
+     * Result: Vector<Statement Number>
+     */
+    // there can only be one parent statement for a given statement.
+    // idempotent, just overwrite if multiple values received
+    HashMap<StatementNumber, StatementNumWithType> stmtParentMap;
+
+    // this is not the case for child, parent* and child*. Multiple values means we need to deduplicate
+    HashMap<StatementNumber, StatementNumVectorsByType> stmtChildMap;
+    HashMap<StatementNumber, StatementNumVectorsByType> stmtParentStarMap;
+    HashMap<StatementNumber, StatementNumVectorsByType> stmtChildStarMap;
+
+    // sets used to deduplicate the above structures
+    HashMap<StatementNumber, StatementNumSetsByType> stmtChildSet;
+    HashMap<StatementNumber, StatementNumSetsByType> stmtParentStarSet;
+    HashMap<StatementNumber, StatementNumSetsByType> stmtChildStarSet;
+
+    // Collection Tables
+    /**
+     * Primary key: statement type
+     * Result: a table by statement type
+     *
+     * Secondary key: statement type
+     * Result: Vector<Statement Number>
      */
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentStarType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildStarType;
-    TupleTable parentTuples;
-    TupleTable parentStarTuples;
-
     // hashsets to prevent duplication in lists above
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentTypeSet;
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentStarTypeSet;
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtChildTypeSet;
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtChildStarTypeSet;
 
-    // since the above is confusing, we have some helper functions.
-    void typedShenanigans(Integer parent, StatementType parentType, Integer child, StatementType childType);
-    void typedShenanigansStar(Integer parent, StatementType parentType, Integer child, StatementType childType);
-    static void tryAddParent(Integer parent, StatementType parentType, StatementType childType, ArrayArrayList& aal,
-                             ArrayArraySet& aas);
-    static void tryAddChild(Integer child, StatementType parentType, StatementType childType, ArrayArrayList& aal,
-                            ArrayArraySet& aas);
+    // Tuples
+    /**
+     * Primary key: statement type
+     * Result: a table by statement type
+     *
+     * Secondary key: statement type
+     * Result: Vector<Statement Number>
+     */
+    TupleTable parentTuples;
+    TupleTable parentStarTuples;
+
+    void addIntoBasicTables(StatementType parentType, StatementNumber parent, StatementType childType,
+                            StatementNumber child);
+    void addIntoCollectionTables(StatementType parentType, StatementNumber parent, StatementType childType,
+                                 StatementNumber child);
+    void addIntoTupleTables(StatementType parentType, StatementNumber parent, StatementType childType,
+                            StatementNumber child);
+    void addIntoBasicTablesStar(StatementType parentType, StatementNumber parent, StatementType childType,
+                                StatementNumber child);
+    void addIntoCollectionTablesStar(StatementType parentType, StatementNumber parent, StatementType childType,
+                                     StatementNumber child);
+    void addIntoTupleTablesStar(StatementType parentType, StatementNumber parent, StatementType childType,
+                                StatementNumber child);
 };
 
 #endif // SPA_PARENT_H
