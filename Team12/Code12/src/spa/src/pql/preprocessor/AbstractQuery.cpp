@@ -1,21 +1,16 @@
-#include <utility>
-
-#include "AqTypes.h"
+#include "AbstractQuery.h"
 
 /************************/
 /** Constructors        */
 /************************/
 
-AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage)
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    Errorable(queryErrorType, errorMessage)
+{}
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult):
-    isToReturnFalseResult(returnFalseResult)
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+    isToReturnFalseResult(returnFalseResult), Errorable(queryErrorType, errorMessage)
+{}
 
 AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations):
     resultSynonyms(std::move(synonyms)), declarationTable(declarations)
@@ -52,6 +47,11 @@ DeclarationTable AbstractQuery::getDeclarationTable() const
 Boolean AbstractQuery::toReturnFalseResult() const
 {
     return isToReturnFalseResult;
+}
+
+ErrorMessage AbstractQuery::getErrorMessage() const
+{
+    return errorMessage;
 }
 
 Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)

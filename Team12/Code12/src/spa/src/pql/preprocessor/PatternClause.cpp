@@ -1,6 +1,4 @@
-#include <utility>
-
-#include "AqTypes.h"
+#include "PatternClause.h"
 
 /************************/
 /** Static Members      */

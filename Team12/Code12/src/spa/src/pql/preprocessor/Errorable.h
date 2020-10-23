@@ -5,8 +5,8 @@
 #ifndef SPA_QUERYERROR_H
 #define SPA_QUERYERROR_H
 
-#include "QueryErrorType.h"
 #include "Types.h"
+#include "QueryErrorType.h"
 
 typedef String ErrorMessage;
 
@@ -16,6 +16,9 @@ protected:
     ErrorMessage errorMessage;
 
 public:
+    Errorable()=default;
+    Errorable(QueryErrorType queryErrorType);
+    Errorable(QueryErrorType queryErrorType, ErrorMessage message);
     Boolean isSyntacticallyInvalid() const;
     Boolean isSemanticallyInvalid() const;
     Boolean isInvalid() const;
@@ -23,8 +26,8 @@ public:
     Void setSyntaxError();
     Void setError(QueryErrorType queryErrorType);
     Void setError(QueryErrorType queryErrorType, ErrorMessage message);
-    String getErrorMessage() const;
-    QueryErrorType getErrorType() const;
+    String getErrorMessage();
+    QueryErrorType getErrorType();
 };
 
 #endif // SPA_QUERYERROR_H

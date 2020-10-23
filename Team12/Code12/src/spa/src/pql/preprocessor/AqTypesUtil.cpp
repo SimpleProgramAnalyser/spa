@@ -1,9 +1,5 @@
-/**
- * Implementation of the AbstractQuery, and
- * supporting substructures and their public methods.
- */
-
-#include "AqTypes.h"
+#include "AqTypesUtils.h"
+#include "DesignEntityType.h"
 
 Expression* createExpression(const String& literal)
 {

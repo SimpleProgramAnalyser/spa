@@ -1,6 +1,16 @@
 #include "Errorable.h"
 
 /************************/
+/** Constructors        */
+/************************/
+
+Errorable::Errorable(QueryErrorType queryErrorType): errorType(queryErrorType) {}
+
+Errorable::Errorable(QueryErrorType queryErrorType, ErrorMessage message):
+    errorType(queryErrorType), errorMessage(message)
+{}
+
+/************************/
 /** Instance Methods    */
 /************************/
 
@@ -49,12 +59,12 @@ Void Errorable::setError(QueryErrorType queryErrorType)
     }
 }
 
-String Errorable::getErrorMessage() const
+String Errorable::getErrorMessage()
 {
     return errorMessage;
 }
 
-QueryErrorType Errorable::getErrorType() const
+QueryErrorType Errorable::getErrorType()
 {
     return errorType;
 }

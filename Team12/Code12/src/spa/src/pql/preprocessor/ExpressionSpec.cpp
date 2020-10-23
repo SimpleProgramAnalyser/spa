@@ -1,6 +1,7 @@
+#include "ExpressionSpec.h"
+
 #include "AqTypes.h"
 #include "frontend/parser/Parser.h"
-#include "lexer/Lexer.h"
 
 ExpressionSpec::ExpressionSpec(): expression(std::unique_ptr<Expression>()), expressionSpecType{InvalidExpressionType}
 {}
@@ -14,10 +15,8 @@ ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType
 {}
 
 ExpressionSpec::ExpressionSpec(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    expressionSpecType{InvalidExpressionType}
-{
-    this->setError(queryErrorType, errorMessage);
-}
+    expressionSpecType{InvalidExpressionType}, Errorable{queryErrorType, errorMessage}
+{}
 
 /**
  * Creates an ExpressionSpec of based on the given

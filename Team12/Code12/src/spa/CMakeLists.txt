@@ -82,8 +82,7 @@ add_library(spa
 
     # pql/preprocessor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
@@ -168,7 +167,7 @@ add_library(spa
 
     # pql manager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp src/pql/preprocessor/DesignEntityType.h src/pql/preprocessor/DesignEntity.h src/pql/preprocessor/AqTypesUtils.h src/pql/preprocessor/Attribute.h src/pql/preprocessor/ResultSynonym.h src/pql/preprocessor/ResultSynonymVector.h src/pql/preprocessor/DeclarationTable.h src/pql/preprocessor/Clause.h src/pql/preprocessor/Reference.h src/pql/preprocessor/Relationship.h src/pql/preprocessor/WithClause.h src/pql/preprocessor/SuchThatClause.h src/pql/preprocessor/ExpressionSpec.h src/pql/preprocessor/PatternClause.h src/pql/preprocessor/ClauseVector.h src/pql/preprocessor/AbstractQuery.h src/pql/preprocessor/AqTypesUtil.cpp)
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

@@ -1,4 +1,4 @@
-#include "AqTypes.h"
+#include "Relationship.h"
 
 template <typename T>
 Boolean isValidInTable(std::unordered_map<RelationshipReferenceType, std::unordered_set<T>> table,

@@ -1,7 +1,5 @@
 #include "Preprocessor.h"
 
-#include "frontend/parser/Parser.h"
-
 StringVector splitByFirstConsecutiveWhitespace(const String& str);
 Boolean containsOpenParentheses(const String& str);
 StringPair splitDeclarationAndSelectClause(const String& query);
