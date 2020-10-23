@@ -78,14 +78,20 @@ bool doesProgLineModifies(Integer statement, const String& variable)
 }
 
 /**
- * Checks whether a particular DesignEntityType could
+ * Checks whether a particular Reference is a WildcardRefType,
+ * or the Reference's DesignEntityType could
  * possibly have any Affects/Affects* relationships.
  *
- * @param type DesignEntityType of a synonym.
- * @return True, if the type is either "assign _;" or "stmt _;".
+ * @param ref Reference to check.
+ * @return True, if the type is either "_", "assign _;" or "stmt _;".
  */
-inline bool isAffectable(DesignEntityType type)
+inline bool isAffectable(Reference ref)
 {
+    if (ref.getReferenceType() == WildcardRefType) {
+        return true;
+    }
+
+    DesignEntityType type = ref.getDesignEntity().getType();
     return type == AssignType || type == StmtType || type == Prog_LineType;
 }
 
@@ -251,7 +257,7 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
 
 Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef)
 {
-    if (getStatementType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef.getDesignEntity().getType())) {
+    if (getStatementType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef)) {
         resultsTable.storeResultsZero(false);
         return;
     }
@@ -305,7 +311,7 @@ Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& ri
 
 Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal)
 {
-    if (!isAffectable(leftRef.getDesignEntity().getType()) || getStatementType(rightRefVal) != AssignmentStatement) {
+    if (!isAffectable(leftRef) || getStatementType(rightRefVal) != AssignmentStatement) {
         resultsTable.storeResultsZero(false);
         return;
     }
@@ -386,8 +392,7 @@ Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer righ
 Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef)
 {
     if (leftRef.getReferenceType() == SynonymRefType && rightRef.getReferenceType() == SynonymRefType
-        && (!isAffectable(leftRef.getDesignEntity().getType())
-            || !isAffectable(rightRef.getDesignEntity().getType()))) {
+        && (!isAffectable(leftRef) || !isAffectable(rightRef))) {
         resultsTable.storeResultsZero(false);
         return;
     }
@@ -491,15 +496,43 @@ Void AffectsEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal
     resultsTable.storeResultsZero(foundRight);
 }
 
-Void AffectsEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) {}
+Void AffectsEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
+{
+    if (getStatementType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef)) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
 
-Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal) {}
+    CacheSet modifierStarAnyStmtResults
+        = getCacheModifierStarStatement(leftRefVal, -1); // -1 is used to indicate no previous statement
+    ClauseResult clauseResult = modifierStarAnyStmtResults.toClauseResult();
+    resultsTable.storeResultsOne(rightRef, clauseResult);
+}
+
+Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal)
+{
+    DesignEntityType rightSynonymType = leftRef.isWildCard() ? StmtType : leftRef.getDesignEntity().getType();
+    if (getStatementType(rightRefVal) != AssignmentStatement || !isAffectable(leftRef)) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+
+    CacheSet userStarAnyStmtResults
+        = getCacheUserStarStatement(rightRefVal, -1); // -1 is used to indicate no previous statement
+    ClauseResult clauseResult = userStarAnyStmtResults.toClauseResult();
+    resultsTable.storeResultsOne(leftRef, clauseResult);
+}
 
 Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) {}
 
 Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) {}
 
-AffectsEvaluator::AffectsEvaluator(ResultsTable& resultsTable): resultsTable(resultsTable) {}
+AffectsEvaluator::AffectsEvaluator(ResultsTable& resultsTable):
+    resultsTable(resultsTable), cacheUserTable(), cacheModifierTable(), exploredUserAssigns(),
+    exploredModifierAssigns(), cacheUserStarTable(), cacheModifierStarTable(), partiallyCacheModifierStarTable(),
+    partiallyCacheUserStarTable(), exploredUserStarAssigns(), exploredModifierStarAssigns(),
+    visitedModifierStarAssigns(), visitedUserStarAssigns()
+{}
 
 Void AffectsEvaluator::evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef)
 {
@@ -519,4 +552,120 @@ Void AffectsEvaluator::evaluateAffectsClause(const Reference& leftRef, const Ref
     }
 }
 
-Void AffectsEvaluator::evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef) {}
+Void AffectsEvaluator::evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef)
+{
+    ReferenceType leftRefType = leftRef.getReferenceType();
+    ReferenceType rightRefType = rightRef.getReferenceType();
+    if (leftRefType == IntegerRefType && canMatchMultiple(rightRefType)) {
+        evaluateLeftKnownStar(std::stoi(leftRef.getValue()), rightRef);
+    } else if (canMatchMultiple(leftRefType) && rightRefType == IntegerRefType) {
+        evaluateRightKnownStar(leftRef, std::stoi(rightRef.getValue()));
+    } else if (leftRefType == IntegerRefType && rightRefType == IntegerRefType) {
+        evaluateBothKnownStar(std::stoi(leftRef.getValue()), std::stoi(rightRef.getValue()));
+    } else if (canMatchMultiple(leftRefType) && canMatchMultiple(rightRefType)) {
+        evaluateBothAnyStar(leftRef, rightRef);
+    } else {
+        throw std::runtime_error(
+            "Error in AffectsEvaluator::evaluateAffectsStarClause: No synonyms or integers in Affects* clause");
+    }
+}
+
+CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevModifierStmtNum)
+{
+    // Check if statement number has been explored in star cache table
+    if (exploredModifierStarAssigns.isCached(stmtNum)) {
+        if (partiallyCacheModifierStarTable.isCached(stmtNum)) {
+            Vector<StatementNumber> allPartiallyCachedStatements
+                = partiallyCacheModifierStarTable.get(stmtNum).toList();
+            CacheSet additionalCacheSet;
+            for (StatementNumber i : allPartiallyCachedStatements) {
+                CacheSet completedCacheSet = getCacheModifierStarStatement(i, stmtNum);
+                additionalCacheSet.combine(completedCacheSet);
+            }
+            cacheModifierStarTable.get(stmtNum).combine(additionalCacheSet);
+            partiallyCacheModifierStarTable.remove(stmtNum);
+        }
+        return cacheModifierStarTable.get(stmtNum);
+    }
+
+    if (visitedModifierStarAssigns.isCached(stmtNum)) {
+        // evaluation is still processing in a while loop,
+        // and encountered a statement that is also currently
+        // being processed in the recursion stack, hence it
+        // is unable to determine its completed Modifier CacheSet
+        partiallyCacheModifierStarTable.insertPartial(prevModifierStmtNum, stmtNum);
+        return CacheSet();
+    }
+
+    visitedModifierStarAssigns.insert(stmtNum);
+
+    // if the statement has not been evaluated before, evaluate it
+    if (!exploredModifierAssigns.isCached(stmtNum)) {
+        evaluateLeftKnown(stmtNum, Reference(WildcardRefType, "_"));
+    }
+
+    Vector<StatementNumber> allUserStatements = cacheModifierTable.get(stmtNum).toList();
+    CacheSet currentCacheSet(allUserStatements);
+    for (StatementNumber userStatement : allUserStatements) {
+        if (userStatement == stmtNum) {
+            continue;
+        }
+
+        CacheSet nextModifierCacheSet = getCacheModifierStarStatement(userStatement, stmtNum);
+        currentCacheSet.combine(nextModifierCacheSet);
+    }
+
+    cacheModifierStarTable.insert(stmtNum, currentCacheSet);
+    exploredModifierStarAssigns.insert(stmtNum);
+    return currentCacheSet;
+}
+
+CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevUserStmtNum)
+{
+    // Check if statement number has been explored in star cache table
+    if (exploredUserStarAssigns.isCached(stmtNum)) {
+        if (partiallyCacheUserStarTable.isCached(stmtNum)) {
+            Vector<StatementNumber> allPartiallyCachedStatements = partiallyCacheUserStarTable.get(stmtNum).toList();
+            CacheSet additionalCacheSet;
+            for (StatementNumber i : allPartiallyCachedStatements) {
+                CacheSet completedCacheSet = getCacheUserStarStatement(i, stmtNum);
+                additionalCacheSet.combine(completedCacheSet);
+            }
+            cacheUserStarTable.get(stmtNum).combine(additionalCacheSet);
+            partiallyCacheUserStarTable.remove(stmtNum);
+        }
+        return cacheUserStarTable.get(stmtNum);
+    }
+
+    if (visitedUserStarAssigns.isCached(stmtNum)) {
+        // evaluation is still processing in a while loop,
+        // and encountered a statement that is also currently
+        // being processed in the recursion stack, hence it
+        // is unable to determine its completed User CacheSet
+        partiallyCacheUserStarTable.insertPartial(prevUserStmtNum, stmtNum);
+        return CacheSet();
+    }
+
+    visitedUserStarAssigns.insert(stmtNum);
+
+    // if the statement has not been evaluated before, evaluate it
+    if (!exploredUserAssigns.isCached(stmtNum)) {
+        evaluateRightKnown(Reference(WildcardRefType, "_"), stmtNum);
+    }
+
+    Vector<StatementNumber> allModifierStatements = cacheUserTable.get(stmtNum).toList();
+    CacheSet currentCacheSet(allModifierStatements);
+    for (StatementNumber modifierStatement : allModifierStatements) {
+        // TODO: will the order of iteration affect the partially cached results? should it be sorted?
+        if (modifierStatement == stmtNum) {
+            continue;
+        }
+
+        CacheSet nextUserCacheSet = getCacheUserStarStatement(modifierStatement, stmtNum);
+        currentCacheSet.combine(nextUserCacheSet);
+    }
+
+    cacheUserStarTable.insert(stmtNum, currentCacheSet);
+    exploredUserStarAssigns.insert(stmtNum);
+    return currentCacheSet;
+}

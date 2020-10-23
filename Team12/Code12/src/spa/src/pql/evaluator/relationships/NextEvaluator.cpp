@@ -161,7 +161,10 @@ Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVa
     resultsTable.storeResultsZero(nextStarAnyStmtResults.isCached(rightRefVal));
 }
 
-NextEvaluator::NextEvaluator(ResultsTable& resultsTable): resultsTable(resultsTable) {}
+NextEvaluator::NextEvaluator(ResultsTable& resultsTable):
+    resultsTable(resultsTable), cachePrevStarTable(), cacheNextStarTable(), exploredPrevStatements(),
+    exploredNextStatements()
+{}
 
 Void NextEvaluator::evaluateNextClause(const Reference& leftRef, const Reference& rightRef)
 {
@@ -288,31 +291,6 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
             currentCacheSet.insert(i);
         }
 
-        //        // Evaluate the statement that has a Next
-        //        // relationship with the current statement
-        //        // and is not in the current while's statement
-        //        // list first, before evaluating the while loop.
-        //        // This allows the statements in the while loop
-        //        // to get the Next* statements that are after
-        //        // the while loop.
-        //        if (prevStatementList.size() > 1) {
-        //            StatementNumber lastWhileStatementNumber = prevStatementList.at(0) == prevWhileStatementNumber
-        //                                                           ? prevStatementList.at(1)
-        //                                                           : prevStatementList.at(0);
-        //            CacheSet prevCacheSet = getCachePrevStatement(prevWhileStatementNumber);
-        //            currentCacheSet.combine(prevCacheSet);
-        //        }
-        //
-        //        StatementNumber lastStatementNumberInWhileLoop = getLastStatementNumberInWhileLoop(
-        //            prevWhileStatementNumber,
-        //            stmtNum); // TODO: Possible double evaluation here, can think of how to improve complexity
-        //
-        //        // Add all the statements in while statement's
-        //        // statement list to the cache set of while statement
-        //        for (int i = stmtNum; i <= lastStatementNumberInWhileLoop; i++) {
-        //            currentCacheSet.insert(i);
-        //        }
-        //
         // Add while statement's cache set to all statements
         // in statement list. This is done on the basis that
         // all the statements in the statement list should
@@ -321,10 +299,6 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
             cachePrevStarTable.insert(i, currentCacheSet);
             exploredPrevStatements.insert(i);
         }
-        //
-        //        cachePrevStarTable.insert(stmtNum, currentCacheSet);
-        //        exploredPrevStatements.insert(stmtNum);
-        //        return currentCacheSet;
     } else {
         for (auto prevStmtNum : prevStatementList) {
             CacheSet prevCacheSet = getCachePrevStatement(prevStmtNum);

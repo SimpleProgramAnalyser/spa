@@ -58,6 +58,8 @@ public:
 
     // Returns a ClauseResult with the StatementNumber filtered for stmtType
     ClauseResult filterStatementType(StatementType stmtType) const;
+
+    Vector<StatementNumber> toList() const;
 };
 
 #endif // SPA_PQL_CACHE_SET_H

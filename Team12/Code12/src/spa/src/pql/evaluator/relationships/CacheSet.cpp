@@ -56,3 +56,12 @@ ClauseResult CacheSet::filterStatementType(StatementType stmtType) const
     }
     return filteredStrList;
 }
+
+Vector<StatementNumber> CacheSet::toList() const
+{
+    Vector<StatementNumber> stmtNumList;
+    for (StatementNumber i : set) {
+        stmtNumList.push_back(i);
+    }
+    return stmtNumList;
+}

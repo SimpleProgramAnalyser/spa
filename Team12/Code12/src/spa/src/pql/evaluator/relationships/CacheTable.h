@@ -35,6 +35,8 @@ public:
      * not in the table (either key or value), returns FALSE.
      */
     Boolean check(StatementNumber key, StatementNumber value);
+
+    Void remove(StatementNumber stmtNum);
 };
 
 #endif // SPA_PQL_CACHE_TABLE_H
