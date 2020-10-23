@@ -85,7 +85,7 @@ bool doesProgLineModifies(Integer statement, const String& variable)
  * @param ref Reference to check.
  * @return True, if the type is either "_", "assign _;" or "stmt _;".
  */
-inline bool isAffectable(Reference ref)
+inline bool isAffectable(const Reference& ref)
 {
     if (ref.getReferenceType() == WildcardRefType) {
         return true;
@@ -255,6 +255,55 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
     return nextNode;
 }
 
+/**
+ * Caches all the statements that the
+ * given statement affects.
+ */
+Void AffectsEvaluator::cacheModifierAssigns(Integer leftRefVal) {
+    Vector<Integer> nextStatements = getAllNextStatements(leftRefVal, AnyStatement);
+    // A priority queue that returns smaller statements first
+    UniquePriorityQueue<Integer, std::less<Integer>> statementsQueue;
+    for (Integer next : nextStatements) {
+        statementsQueue.insert(next);
+    }
+    Vector<String> modifiedFromPkb = getModifiesVariablesFromStatement(leftRefVal);
+    // assignments can only modify one variable
+    assert(modifiedFromPkb.size() == 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    std::unordered_set<Integer> affectedStatements;
+    String modifiedVariable = modifiedFromPkb.at(0);
+    // a set to break out of a loop
+    std::unordered_set<Integer> visitedStatementsSet;
+
+    while (!statementsQueue.empty()) {
+        Integer currentStatement = statementsQueue.popOff();
+        if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
+            // if we have visited before, we ignore
+            continue;
+        }
+        visitedStatementsSet.insert(currentStatement);
+
+        StatementType currentStatementType = getStatementType(currentStatement);
+        if (currentStatementType == AssignmentStatement
+            && checkIfStatementUses(currentStatement, modifiedVariable)) {
+            // this assignment is Affected by leftRefVal
+            affectedStatements.insert(currentStatement);
+        }
+
+        if (doesProgLineModifies(currentStatement, modifiedVariable)) {
+            // this statements modifies the variable, so we are sure that
+            // there can no longer be any Affects found along this branch
+            continue;
+        }
+
+        // continue traversal of the branch, put all Next statements into the queue
+        for (Integer next : getAllNextStatements(currentStatement, AnyStatement)) {
+            statementsQueue.insert(next);
+        }
+    }
+    cacheModifierTable.insert(leftRefVal, CacheSet(affectedStatements));
+    exploredModifierAssigns.insert(leftRefVal);
+}
+
 Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef)
 {
     if (getStatementType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef)) {
@@ -263,51 +312,82 @@ Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& ri
     }
 
     if (!exploredModifierAssigns.isCached(leftRefVal)) {
-        Vector<Integer> nextStatements = getAllNextStatements(leftRefVal, AnyStatement);
-        // A priority queue that returns smaller statements first
-        UniquePriorityQueue<Integer, std::less<Integer>> statementsQueue;
-        for (Integer next : nextStatements) {
-            statementsQueue.insert(next);
-        }
-        Vector<String> modifiedFromPkb = getModifiesVariablesFromStatement(leftRefVal);
-        // assignments can only modify one variable
-        assert(modifiedFromPkb.size() == 1); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-        std::unordered_set<Integer> affectedStatements;
-        String modifiedVariable = modifiedFromPkb.at(0);
-        // a set to break out of a loop
-        std::unordered_set<Integer> visitedStatementsSet;
-
-        while (!statementsQueue.empty()) {
-            Integer currentStatement = statementsQueue.popOff();
-            if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
-                // if we have visited before, we ignore
-                continue;
-            }
-            visitedStatementsSet.insert(currentStatement);
-
-            StatementType currentStatementType = getStatementType(currentStatement);
-            if (currentStatementType == AssignmentStatement
-                && checkIfStatementUses(currentStatement, modifiedVariable)) {
-                // this assignment is Affected by leftRefVal
-                affectedStatements.insert(currentStatement);
-            }
-
-            if (doesProgLineModifies(currentStatement, modifiedVariable)) {
-                // this statements modifies the variable, so we are sure that
-                // there can no longer be any Affects found along this branch
-                continue;
-            }
-
-            // continue traversal of the branch, put all Next statements into the queue
-            for (Integer next : getAllNextStatements(currentStatement, AnyStatement)) {
-                statementsQueue.insert(next);
-            }
-        }
-        cacheModifierTable.insert(leftRefVal, CacheSet(affectedStatements));
-        exploredModifierAssigns.insert(leftRefVal);
+        cacheModifierAssigns(leftRefVal);
     }
+
     resultsTable.storeResultsOne(rightRef, cacheModifierTable.get(leftRefVal).toClauseResult());
 }
+
+/**
+ * Caches all the statements that the
+ * given statement is affected by.
+ */
+Void AffectsEvaluator::cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb)
+{
+    Vector<Integer> prevStatements = getAllPreviousStatements(rightRefVal, AnyStatement);
+    std::shared_ptr<std::unordered_set<String>> originalUsedVariables
+        = std::make_shared<std::unordered_set<String>>(usedFromPkb.begin(), usedFromPkb.end());
+    // A priority queue that returns larger statements first
+    UniquePriorityQueue<Integer, std::greater<Integer>> statementsQueue;
+    // A map to tell which statements still can modify which variables
+    std::unordered_map<Integer, std::shared_ptr<std::unordered_set<String>>> statementVariablesMap;
+    for (Integer prev : prevStatements) {
+        statementsQueue.insert(prev);
+        statementVariablesMap.emplace(prev, originalUsedVariables);
+    }
+    std::unordered_set<Integer> affectingStatements;
+    // a set to break out of a loop
+    std::unordered_set<Integer> visitedStatementsSet;
+
+    while (!statementsQueue.empty()) {
+        Integer currentStatement = statementsQueue.popOff();
+        if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
+            // if we have visited before, we ignore
+            continue;
+        }
+        visitedStatementsSet.insert(currentStatement);
+
+        StatementType currentStatementType = getStatementType(currentStatement);
+        bool doesCurrentModifyAnyVariables = false;
+        std::unordered_set<String> remainingVariables = *statementVariablesMap.at(currentStatement);
+        for (const String& variable : *statementVariablesMap.at(currentStatement)) {
+            if (doesProgLineModifies(currentStatement, variable)) {
+                doesCurrentModifyAnyVariables = true;
+                remainingVariables.erase(variable);
+            }
+        }
+        if (currentStatementType == AssignmentStatement && doesCurrentModifyAnyVariables) {
+            // this assignment Affects rightRefVal
+            affectingStatements.insert(currentStatement);
+        }
+
+        if (doesCurrentModifyAnyVariables && remainingVariables.empty()) {
+            // before this statement, all variables used in rightRefVal have been
+            // modified, so there can no longer be any Affects found along this branch
+            continue;
+        }
+
+        // continue traversal of the branch, put all Previous statements into a queue
+        // also, associate the current set with Previous statements
+        for (Integer prev : getAllPreviousStatements(currentStatement, AnyStatement)) {
+            statementsQueue.insert(prev);
+            if (statementVariablesMap.find(prev) != statementVariablesMap.end()) {
+                // if already exists in map, merge the sets
+                for (const String& variable : remainingVariables) {
+                    statementVariablesMap.at(prev)->insert(variable);
+                }
+            } else if (doesCurrentModifyAnyVariables) {
+                statementVariablesMap.emplace(prev,
+                                              std::make_shared<std::unordered_set<String>>(remainingVariables));
+            } else {
+                statementVariablesMap.emplace(prev, statementVariablesMap.at(currentStatement));
+            }
+        }
+    }
+    cacheUserTable.insert(rightRefVal, CacheSet(affectingStatements));
+    exploredUserAssigns.insert(rightRefVal);
+}
+
 
 Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal)
 {
@@ -323,81 +403,20 @@ Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer righ
     }
     // cache if needed
     if (!exploredUserAssigns.isCached(rightRefVal)) {
-        Vector<Integer> prevStatements = getAllPreviousStatements(rightRefVal, AnyStatement);
-        std::shared_ptr<std::unordered_set<String>> originalUsedVariables
-            = std::make_shared<std::unordered_set<String>>(usedFromPkb.begin(), usedFromPkb.end());
-        // A priority queue that returns larger statements first
-        UniquePriorityQueue<Integer, std::greater<Integer>> statementsQueue;
-        // A map to tell which statements still can modify which variables
-        std::unordered_map<Integer, std::shared_ptr<std::unordered_set<String>>> statementVariablesMap;
-        for (Integer prev : prevStatements) {
-            statementsQueue.insert(prev);
-            statementVariablesMap.emplace(prev, originalUsedVariables);
-        }
-        std::unordered_set<Integer> affectingStatements;
-        // a set to break out of a loop
-        std::unordered_set<Integer> visitedStatementsSet;
-
-        while (!statementsQueue.empty()) {
-            Integer currentStatement = statementsQueue.popOff();
-            if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
-                // if we have visited before, we ignore
-                continue;
-            }
-            visitedStatementsSet.insert(currentStatement);
-
-            StatementType currentStatementType = getStatementType(currentStatement);
-            bool doesCurrentModifyAnyVariables = false;
-            std::unordered_set<String> remainingVariables = *statementVariablesMap.at(currentStatement);
-            for (const String& variable : *statementVariablesMap.at(currentStatement)) {
-                if (doesProgLineModifies(currentStatement, variable)) {
-                    doesCurrentModifyAnyVariables = true;
-                    remainingVariables.erase(variable);
-                }
-            }
-            if (currentStatementType == AssignmentStatement && doesCurrentModifyAnyVariables) {
-                // this assignment Affects rightRefVal
-                affectingStatements.insert(currentStatement);
-            }
-
-            if (doesCurrentModifyAnyVariables && remainingVariables.empty()) {
-                // before this statement, all variables used in rightRefVal have been
-                // modified, so there can no longer be any Affects found along this branch
-                continue;
-            }
-
-            // continue traversal of the branch, put all Previous statements into a queue
-            // also, associate the current set with Previous statements
-            for (Integer prev : getAllPreviousStatements(currentStatement, AnyStatement)) {
-                statementsQueue.insert(prev);
-                if (statementVariablesMap.find(prev) != statementVariablesMap.end()) {
-                    // if already exists in map, merge the sets
-                    for (const String& variable : remainingVariables) {
-                        statementVariablesMap.at(prev)->insert(variable);
-                    }
-                } else if (doesCurrentModifyAnyVariables) {
-                    statementVariablesMap.emplace(prev,
-                                                  std::make_shared<std::unordered_set<String>>(remainingVariables));
-                } else {
-                    statementVariablesMap.emplace(prev, statementVariablesMap.at(currentStatement));
-                }
-            }
-        }
-        cacheUserTable.insert(rightRefVal, CacheSet(affectingStatements));
-        exploredUserAssigns.insert(rightRefVal);
+        cacheUserAssigns(rightRefVal, usedFromPkb);
     }
     resultsTable.storeResultsOne(leftRef, cacheUserTable.get(rightRefVal).toClauseResult());
 }
 
-Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef)
+/**
+ * Caches all the modifiers and users in the entire
+ * SIMPLE source program. This caching is only done
+ * a maximum of 1 time per query.
+ */
+Void AffectsEvaluator::cacheAll()
 {
-    if (leftRef.getReferenceType() == SynonymRefType && rightRef.getReferenceType() == SynonymRefType
-        && (!isAffectable(leftRef) || !isAffectable(rightRef))) {
-        resultsTable.storeResultsZero(false);
-        return;
-    }
-    // cache if needed
     if (!cacheFullyPopulated) {
+
         // we can skip procedures that do not modify any variables
         Vector<String> procedures = getAllModifiesProcedures();
         AffectsTuple resultsLists;
@@ -424,6 +443,17 @@ Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference
         }
         cacheFullyPopulated = true;
     }
+}
+
+Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef)
+{
+    if (leftRef.getReferenceType() == SynonymRefType && rightRef.getReferenceType() == SynonymRefType
+        && (!isAffectable(leftRef) || !isAffectable(rightRef))) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+    // cache if needed
+    cacheAll();
     if (leftRef.getReferenceType() == SynonymRefType && leftRef == rightRef) {
         // case where both synonyms the same, e.g. Affects(a, a)
         Vector<Integer> selfAffected;
@@ -511,7 +541,6 @@ Void AffectsEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference
 
 Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal)
 {
-    DesignEntityType rightSynonymType = leftRef.isWildCard() ? StmtType : leftRef.getDesignEntity().getType();
     if (getStatementType(rightRefVal) != AssignmentStatement || !isAffectable(leftRef)) {
         resultsTable.storeResultsZero(false);
         return;
@@ -523,15 +552,100 @@ Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer 
     resultsTable.storeResultsOne(leftRef, clauseResult);
 }
 
-Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) {}
+Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) {
+    if (!isAffectable(leftRef) || !isAffectable(rightRef)) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
 
-Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) {}
+    Vector<StatementNumber> allAssignStatements = getAllStatements(AssignmentStatement);
+
+    if (leftRef.isWildCard() && rightRef.isWildCard()) {
+        // return true if there are any normal modifies
+        for (StatementNumber stmtNum : allAssignStatements) {
+            if (!exploredModifierAssigns.isCached(stmtNum)) {
+                cacheModifierAssigns(stmtNum);
+            }
+
+            if (cacheModifierTable.get(stmtNum).empty()) {
+                continue;
+            }
+
+            resultsTable.storeResultsZero(true);
+            return;
+        }
+
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+
+    cacheAll();
+    Vector<StatementNumber> results;
+
+    if (leftRef.isWildCard() || rightRef.isWildCard()) {
+        // return all that has a normal modifies
+        if (leftRef.isWildCard()) {
+            for (StatementNumber stmtNum : allAssignStatements) {
+                if (exploredUserAssigns.isCached(stmtNum) && !cacheUserTable.get(stmtNum).empty()) {
+                    results.push_back(stmtNum);
+                }
+            }
+        } else {
+            for (StatementNumber stmtNum : allAssignStatements) {
+                if (exploredModifierAssigns.isCached(stmtNum) && !cacheModifierTable.get(stmtNum).empty()) {
+                    results.push_back(stmtNum);
+                }
+            }
+        }
+
+        ClauseResult clauseResult = convertToClauseResult(results);
+        resultsTable.storeResultsOne(rightRef, clauseResult);
+        return;
+    }
+
+    if (leftRef == rightRef) {
+        // return all that has a Affects* with itself
+        for (StatementNumber stmtNum: allAssignStatements) {
+            CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(stmtNum, -1);
+            if (modifierStarAnyStmtResults.isCached(stmtNum)) {
+                results.push_back(stmtNum);
+            }
+        }
+
+        ClauseResult clauseResult = convertToClauseResult(results);
+        resultsTable.storeResultsOne(leftRef, clauseResult);
+        return;
+    }
+
+    // leftRef != rightRef && both != wildcard
+    Vector<Pair<Integer, Integer>> pairedResults;
+    for (StatementNumber stmtNum: allAssignStatements) {
+        CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(stmtNum, -1);
+        Vector<StatementNumber> resultsList = modifierStarAnyStmtResults.toList();
+        for (auto result : resultsList) {
+            Pair<Integer, Integer> pairResult = std::make_pair(stmtNum, result);
+            pairedResults.push_back(pairResult);
+        }
+    }
+
+    resultsTable.storeResultsTwo(leftRef.getValue(), rightRef.getValue(), convertToPairedResult(pairedResults));
+}
+
+Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
+{
+    if (getStatementType(leftRefVal) != AssignmentStatement || getStatementType(rightRefVal) != AssignmentStatement) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+    CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(leftRefVal, -1);
+    resultsTable.storeResultsZero(modifierStarAnyStmtResults.isCached(rightRefVal));
+}
 
 AffectsEvaluator::AffectsEvaluator(ResultsTable& resultsTable):
     resultsTable(resultsTable), cacheUserTable(), cacheModifierTable(), exploredUserAssigns(),
-    exploredModifierAssigns(), cacheUserStarTable(), cacheModifierStarTable(), partiallyCacheModifierStarTable(),
-    partiallyCacheUserStarTable(), exploredUserStarAssigns(), exploredModifierStarAssigns(),
-    visitedModifierStarAssigns(), visitedUserStarAssigns()
+    exploredModifierAssigns(), allModifierAssigns(), allUserAssigns(), allAffectsTuples(), cacheFullyPopulated(false),
+    cacheUserStarTable(), cacheModifierStarTable(), partiallyCacheUserStarTable(), partiallyCacheModifierStarTable(),
+    exploredUserStarAssigns(), exploredModifierStarAssigns(), visitedUserStarAssigns(), visitedModifierStarAssigns()
 {}
 
 Void AffectsEvaluator::evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef)
@@ -601,7 +715,7 @@ CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum
 
     // if the statement has not been evaluated before, evaluate it
     if (!exploredModifierAssigns.isCached(stmtNum)) {
-        evaluateLeftKnown(stmtNum, Reference(WildcardRefType, "_"));
+        cacheModifierAssigns(stmtNum);
     }
 
     Vector<StatementNumber> allUserStatements = cacheModifierTable.get(stmtNum).toList();
@@ -650,7 +764,12 @@ CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, St
 
     // if the statement has not been evaluated before, evaluate it
     if (!exploredUserAssigns.isCached(stmtNum)) {
-        evaluateRightKnown(Reference(WildcardRefType, "_"), stmtNum);
+        Vector<String> usedFromPkb = getUsesVariablesFromStatement(stmtNum);
+        if (usedFromPkb.empty()) {
+            // this assign uses no variables, cannot possibly have anything Affecting it
+            return CacheSet();
+        }
+        cacheUserAssigns(stmtNum, usedFromPkb);
     }
 
     Vector<StatementNumber> allModifierStatements = cacheUserTable.get(stmtNum).toList();

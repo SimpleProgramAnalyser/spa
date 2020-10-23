@@ -70,6 +70,9 @@ private:
     const CfgNode* affectsSearch(const CfgNode* cfg,
                                  std::unordered_map<String, std::unordered_set<Integer>>& affectsMap,
                                  AffectsTuple& resultsLists);
+    Void cacheModifierAssigns(Integer leftRefVal);
+    Void cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb);
+    Void cacheAll();
 
     // Helper methods for Affects*
     CacheSet getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
