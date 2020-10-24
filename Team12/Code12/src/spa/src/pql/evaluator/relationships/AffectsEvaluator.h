@@ -59,13 +59,24 @@ private:
     // Cache for Affects*(modifierStar, userStar)
     CacheTable cacheUserStarTable;
     CacheTable cacheModifierStarTable;
+    CacheTable partiallyCacheUserStarTable;
+    CacheTable partiallyCacheModifierStarTable;
     CacheSet exploredUserStarAssigns;
     CacheSet exploredModifierStarAssigns;
+    CacheSet visitedUserStarAssigns;
+    CacheSet visitedModifierStarAssigns;
 
     // Helper methods for Affects
     const CfgNode* affectsSearch(const CfgNode* cfg,
                                  std::unordered_map<String, std::unordered_set<Integer>>& affectsMap,
                                  AffectsTuple& resultsLists);
+    Void cacheModifierAssigns(Integer leftRefVal);
+    Void cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb);
+    Void cacheAll();
+
+    // Helper methods for Affects*
+    CacheSet getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
+    CacheSet getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
 
     // Methods for Affects
     Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef);
