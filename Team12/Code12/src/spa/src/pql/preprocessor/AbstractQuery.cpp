@@ -24,12 +24,7 @@ AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& dec
 /** Instance Methods    */
 /************************/
 
-const Vector<ResultSynonym> AbstractQuery::getSelectSynonym() const
-{
-    return resultSynonyms.getSynonyms();
-}
-
-const Vector<ResultSynonym> AbstractQuery::getSynonyms() const
+const Vector<ResultSynonym> AbstractQuery::getSelectedSynonyms() const
 {
     return resultSynonyms.getSynonyms();
 }

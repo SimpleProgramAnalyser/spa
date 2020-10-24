@@ -20,7 +20,7 @@ public:
                                         DesignEntityType leftDesignEntityType, AttributeType leftAttributeType,
                                         ReferenceType rightRefType, ReferenceValue rightRefValue,
                                         DesignEntityType rightDesignEntityType, AttributeType rightAttributeType);
-    AbstractQueryBuilder& addSuchThatClause(RelationshipReferenceType relRefType, ReferenceType leftRefType,
+    AbstractQueryBuilder& addSuchThatClause(RelationshipType relRefType, ReferenceType leftRefType,
                                             ReferenceValue leftRefValue, DesignEntityType leftDesignEntityType,
                                             ReferenceType rightRefType, ReferenceValue rightRefValue,
                                             DesignEntityType rightDesignEntityType);

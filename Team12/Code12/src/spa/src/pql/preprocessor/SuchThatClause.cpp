@@ -10,23 +10,13 @@ SuchThatClause::SuchThatClause(Relationship& r): Clause(SuchThatClauseType), rel
 /** Static Methods      */
 /************************/
 
-/**
- * Processes the clause constraint string for a
- * SuchThatClause, by abstracting it into its relevant
- * Relationship and References.
- *
- * @param clauseConstraint  String of the clause constraint with all
- *                          whitespaces removed.
- * @return                  A Clause pointer of the SuchThatClause
- *                          that was constructed.
- */
 Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, DeclarationTable& declarationTable)
 {
     StringPair pair = util::splitByFirstDelimiter(clauseConstraint, '(');
 
     String relRef = pair.first;
 
-    RelationshipReferenceType relRefType = Relationship::getRelRefType(relRef);
+    RelationshipType relRefType = Relationship::getRelRefType(relRef);
     if (relRefType == InvalidRelationshipType) {
         return new Clause(SuchThatClauseType, QuerySyntaxError, "Invalid Relationship type " + relRef);
     }

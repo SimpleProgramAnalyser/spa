@@ -8,7 +8,7 @@ Expression* createExpression(const String& literal)
     return expression;
 }
 
-Boolean isValidSynonym(String testString)
+Boolean isValidSynonym(const String& testString)
 {
     return util::isPossibleIdentifier(testString);
 }

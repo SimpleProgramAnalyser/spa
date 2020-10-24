@@ -23,7 +23,7 @@ Void ResultSynonymVector::add(const ResultSynonym& resultSynonym)
     resultSynonyms.push_back(resultSynonym);
 }
 
-Boolean ResultSynonymVector::isSelectBoolean()
+Boolean ResultSynonymVector::isSelectBoolean() const
 {
     return resultSynonyms.empty();
 }

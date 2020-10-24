@@ -18,19 +18,6 @@ ExpressionSpec::ExpressionSpec(QueryErrorType queryErrorType, ErrorMessage error
     expressionSpecType{InvalidExpressionType}, Errorable{queryErrorType, errorMessage}
 {}
 
-/**
- * Creates an ExpressionSpec of based on the given
- * exprSpecString. It will determine the ExpressionSpecType
- * and call the parser from frontend to parse the expression
- * string into an Expression.
- *
- * If the exprSpecString is an invalid form of
- * ExpressionSpec, an invalid ExpressionSpec will be
- * returned.
- *
- * @param exprSpecString    The string to be parsed into an ExpressionSpec.
- * @return                  The ExpressionSpec constructed using exprSpectString.
- */
 ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString)
 {
     if (exprSpecString == "_") {

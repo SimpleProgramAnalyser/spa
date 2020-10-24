@@ -1,6 +1,6 @@
-#include <utility>
-
 #include "Reference.h"
+
+#include <utility>
 
 /************************/
 /** Constructors        */
@@ -30,18 +30,6 @@ Reference::Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute 
 /** Static Methods      */
 /************************/
 
-/**
- * Creates a Reference using the given ref String. It will
- * determine the ReferenceType based on the ref given.
- * If the ref is a synonym, the design entity of the synonym
- * will be stored in the Reference object.
- *
- * If the ref is an invalid form of a Reference, an invalid
- * Reference will be returned.
- *
- * @param ref   String of the reference to be constructed.
- * @return      A Reference based on ref.
- */
 Reference Reference::createReference(String ref, DeclarationTable& declarationTable)
 {
     if (ref == "_") {

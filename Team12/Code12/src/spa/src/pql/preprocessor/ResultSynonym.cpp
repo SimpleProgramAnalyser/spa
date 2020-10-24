@@ -60,7 +60,6 @@ ErrorMessage ResultSynonym::getErrorMessage() const
     return errorMessage;
 }
 
-
 Boolean ResultSynonym::operator==(const ResultSynonym& resultSynonym) const
 {
     return this->synonym == resultSynonym.synonym && this->attribute == resultSynonym.attribute;

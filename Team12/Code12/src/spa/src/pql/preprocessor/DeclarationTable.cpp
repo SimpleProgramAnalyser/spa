@@ -6,7 +6,7 @@
 /** Static Methods      */
 /************************/
 
-const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
+const ErrorMessage DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
 
 /************************/
 /** Constructors        */
@@ -14,7 +14,7 @@ const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration
 
 DeclarationTable::DeclarationTable(): table(), Errorable() {}
 
-DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, String errorMessage):
+DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, ErrorMessage errorMessage):
     Errorable(queryErrorType, std::move(errorMessage))
 {}
 

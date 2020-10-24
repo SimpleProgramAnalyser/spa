@@ -4,6 +4,7 @@
 #include "AqTypesUtils.h"
 #include "DesignEntity.h"
 
+// All the different types of Attributes.
 enum AttributeType : char {
     ProcNameType,
     VarNameType,
@@ -12,9 +13,11 @@ enum AttributeType : char {
     NoAttributeType,
     InvalidAttributeType
 };
+
+// All the underlying types of AttributeTypes.
 enum AttributeValueType : char { IntegerValueType, NameValueType, InvalidValueType };
 
-// Hash function for Attribute
+// Hash function for AttributeType
 template <>
 struct std::hash<AttributeType> {
     std::size_t operator()(const AttributeType& attributeType) const
@@ -29,16 +32,21 @@ private:
     AttributeType type;
 
 public:
+    // Map of attribute string to their AttributeType.
     static std::unordered_map<String, AttributeType> attributeMap;
+    // Map of AttributeType to their valid DesignEntityTypes
     static std::unordered_map<AttributeType, DesignEntityTypeSet> attributeDesignEntityMap;
-
+    // Checks if the DesignEntityType corresponds to the AttributeType.
     static Boolean validateDesignEntityAttributeSemantics(DesignEntityType designEntityType,
                                                           AttributeType attributeType);
 
     Attribute();
     explicit Attribute(AttributeType attributeType);
     explicit Attribute(String attributeTypeString);
+
+    // Retrieves the underlying AttributeType
     AttributeType getType();
+
     Boolean operator==(const Attribute& attribute) const;
     Boolean operator!=(const Attribute& attribute) const;
 };

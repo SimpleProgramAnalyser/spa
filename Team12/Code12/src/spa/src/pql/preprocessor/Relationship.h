@@ -4,7 +4,8 @@
 #include "AqTypesUtils.h"
 #include "Reference.h"
 
-enum RelationshipReferenceType : char {
+// All the Relationship Types.
+enum RelationshipType : char {
     FollowsType,
     FollowsStarType,
     ParentType,
@@ -24,10 +25,10 @@ enum RelationshipReferenceType : char {
     InvalidRelationshipType
 };
 
-// Hash function for RelationshipReferenceType
+// Hash function for RelationshipType
 template <>
-struct std::hash<RelationshipReferenceType> {
-    std::size_t operator()(const RelationshipReferenceType& relRefType) const
+struct std::hash<RelationshipType> {
+    std::size_t operator()(const RelationshipType& relRefType) const
     {
         // NOLINTNEXTLINE
         return std::hash<char>()(static_cast<const char&>(relRefType));
@@ -36,32 +37,57 @@ struct std::hash<RelationshipReferenceType> {
 
 class Relationship: public Errorable {
 private:
-    static std::unordered_map<String, RelationshipReferenceType> relationshipReferenceTypeMap;
-    static std::unordered_map<RelationshipReferenceType, std::unordered_set<DesignEntityType>>
-        leftReferenceSynonymValidationTable;
-    static std::unordered_map<RelationshipReferenceType, std::unordered_set<DesignEntityType>>
-        rightReferenceSynonymValidationTable;
-    static std::unordered_map<RelationshipReferenceType, std::unordered_set<ReferenceType>>
-        leftReferenceTypeValidationTable;
-    static std::unordered_map<RelationshipReferenceType, std::unordered_set<ReferenceType>>
-        rightReferenceTypeValidationTable;
+    // Map of string to its corresponding RelationshipType.
+    // If string does not have any corresponding match, an
+    // InvalidRelationshipType will be returned.
+    static std::unordered_map<String, RelationshipType> relationshipTypeMap;
 
-    RelationshipReferenceType relationshipReferenceType;
+    // Map of the RelationshipType to the valid DesignEntityType of the left Synonym Reference.
+    static std::unordered_map<RelationshipType, std::unordered_set<DesignEntityType>>
+        leftReferenceSynonymValidationTable;
+
+    // Map of the RelationshipType to the valid DesignEntityType of the right Synonym Reference.
+    static std::unordered_map<RelationshipType, std::unordered_set<DesignEntityType>>
+        rightReferenceSynonymValidationTable;
+
+    // Map of the RelationshipType to the valid ReferenceType of the left Reference.
+    static std::unordered_map<RelationshipType, std::unordered_set<ReferenceType>> leftReferenceTypeValidationTable;
+
+    // Map of the RelationshipType to the valid ReferenceType of the right Reference.
+    static std::unordered_map<RelationshipType, std::unordered_set<ReferenceType>> rightReferenceTypeValidationTable;
+
+    RelationshipType relationshipType;
     Reference leftReference;
     Reference rightReference;
 
-    static Boolean validateRelationshipSemantics(RelationshipReferenceType relRefType, Reference leftRef,
-                                                 Reference rightRef);
+    // Checks the validity of the Relationship and the left and right References
+    // using the validity maps.
+    static Boolean validateRelationshipSemantics(RelationshipType relRefType, Reference leftRef, Reference rightRef);
+
+    // Instantiate a Relationship with the given RelationshipType, and the left and right References.
+    Relationship(RelationshipType relRefType, Reference leftRef, Reference rightRef);
 
 public:
-    static Relationship createRelationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
-    static RelationshipReferenceType getRelRefType(String relRef);
+    // Validates andd creates a Relationship based given RelationshipType,
+    // and the left and right References.
+    static Relationship createRelationship(RelationshipType relRefType, Reference leftRef, Reference rightRef);
 
-    Relationship(RelationshipReferenceType relRefType, Reference leftRef, Reference rightRef);
+    // Converts the given string into a RelationshipType.
+    static RelationshipType getRelRefType(String relRef);
+
+    // Instantiates an erroneous Relationship with the given QueryErrorType
+    // and ErrorMessage.
     Relationship(QueryErrorType queryErrorType, ErrorMessage errorMessage);
-    RelationshipReferenceType getType();
+
+    // Retrieves the RelationshipType of the Relationship.
+    RelationshipType getType();
+
+    // Retrieves the left Reference of the Relationship.
     Reference getLeftRef();
+
+    // Retrieves the right Reference of the Relationship.
     Reference getRightRef();
+
     Boolean operator==(const Relationship& relationship);
 };
 

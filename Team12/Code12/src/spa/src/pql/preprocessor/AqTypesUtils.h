@@ -6,12 +6,12 @@
 #include <unordered_set>
 #include <utility>
 
+#include "DesignEntityType.h"
 #include "Errorable.h"
 #include "Types.h"
 #include "Util.h"
 #include "frontend/parser/Parser.h"
 #include "lexer/Lexer.h"
-#include "DesignEntityType.h"
 
 typedef String Synonym;
 
@@ -25,7 +25,8 @@ typedef String Synonym;
  */
 Expression* createExpression(const String& literal);
 
-Boolean isValidSynonym(String s);
+// Checks if the string is a valid Synonym.
+Boolean isValidSynonym(const String& s);
 
 /**
  * Check if the DesignEntityType represents

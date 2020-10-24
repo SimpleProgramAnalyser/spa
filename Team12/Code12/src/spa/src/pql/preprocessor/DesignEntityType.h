@@ -3,6 +3,13 @@
 
 #include "Types.h"
 
+/**
+ * All the valid DesignEntity types.
+ * The enums are assigned special values
+ * such that those whose smallest two bits
+ * is 01, are Statements.
+ */
+// t
 enum DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
     StmtType = 1,       // 0000 0001

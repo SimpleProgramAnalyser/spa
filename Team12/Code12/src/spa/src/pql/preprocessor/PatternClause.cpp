@@ -24,16 +24,6 @@ PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Refe
 /** Static Methods      */
 /************************/
 
-/**
- * Processes the clause constraint string for a
- * PatternClause, by abstracting it into its relevant
- * PatternTypeStatement, Reference and ExpressionSpec.
- *
- * @param clauseConstraint  String of the clause constraint with all
- *                          whitespaces removed.
- * @return                  A Clause pointer of the PatternClause
- *                          that was constructed.
- */
 Clause* PatternClause::createPatternClause(const String& clauseConstraint, DeclarationTable& declarationTable)
 {
     StringPair pair = util::splitByFirstDelimiter(clauseConstraint, '(');
@@ -73,9 +63,12 @@ Clause* PatternClause::processAssignPatternClause(Synonym patternSynonym, String
     Reference firstReference = Reference::createReference(firstConstraintString, declarationTable);
     if (firstReference.isInvalid()) {
         return new Clause(PatternClauseType, firstReference.getErrorType(), firstReference.getErrorMessage());
-    } else if (!isValidVariableEntityRef(firstReference)) {
-        return new Clause(PatternClauseType, QuerySemanticsError,
-                          "Invalid first Reference used in assign PatternClause: " + firstReference.getValue());
+    }
+
+    QueryErrorType errorType = checkValidityOfVariable(firstReference);
+    if (errorType != NoQueryErrorType) {
+        return new Clause(PatternClauseType, errorType,
+                          "Invalid variable in Assign PatternClause: " + firstReference.getValue());
     }
 
     ExpressionSpec rightExpressionSpec = ExpressionSpec::createExpressionSpec(secondConstraintString);
@@ -109,8 +102,12 @@ Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, Desig
     Reference firstReference = Reference::createReference(firstConstraintString, declarationTable);
     if (firstReference.isInvalid()) {
         return new Clause(PatternClauseType, firstReference.getErrorType(), firstReference.getErrorMessage());
-    } else if (!isValidVariableEntityRef(firstReference)) {
-        return new Clause(PatternClauseType, QuerySyntaxError, "");
+    }
+
+    QueryErrorType errorType = checkValidityOfVariable(firstReference);
+    if (errorType != NoQueryErrorType) {
+        return new Clause(PatternClauseType, errorType,
+                          "Invalid variable in If/While PatternClause: " + firstReference.getValue());
     }
 
     if (secondConstraintString != "_" || (synonymDesignEntityType == IfType && thirdConstraintString != "_")) {
@@ -123,14 +120,18 @@ Clause* PatternClause::processIfWhilePatternClause(Synonym patternSynonym, Desig
     return new PatternClause(std::move(patternSynonym), patternType, firstReference);
 }
 
-Boolean PatternClause::isValidVariableEntityRef(Reference ref)
+QueryErrorType PatternClause::checkValidityOfVariable(const Reference& ref)
 {
-    Boolean isVariableType
-        = ref.getReferenceType() == SynonymRefType && ref.getDesignEntity().getType() == VariableType;
+    Boolean isSynonym = ref.getReferenceType() == SynonymRefType;
+
+    if (isSynonym) {
+        return ref.getDesignEntity().getType() == VariableType ? NoQueryErrorType : QuerySemanticsError;
+    }
+
     Boolean isWildcard = ref.getReferenceType() == WildcardRefType;
     Boolean isLiteral = ref.getReferenceType() == LiteralRefType;
 
-    return isVariableType || isWildcard || isLiteral;
+    return isWildcard || isLiteral ? NoQueryErrorType : QuerySyntaxError;
 }
 
 /************************/
