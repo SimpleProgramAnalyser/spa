@@ -1,17 +1,14 @@
-#include <utility>
-
-#include "AqTypes.h"
+#include "ClauseVector.h"
 
 /************************/
 /** Constructors        */
 /************************/
 
-ClauseVector::ClauseVector() {}
+ClauseVector::ClauseVector(): Errorable() {}
 
-ClauseVector::ClauseVector(QueryErrorType queryErrorType, ErrorMessage errorMessage)
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+ClauseVector::ClauseVector(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    Errorable(queryErrorType, errorMessage)
+{}
 
 /************************/
 /** Instance Methods    */
@@ -30,6 +27,16 @@ Clause* ClauseVector::get(Integer index) const
 Integer ClauseVector::count() const
 {
     return clauses.size();
+}
+
+QueryErrorType ClauseVector::getErrorType() const
+{
+    return errorType;
+}
+
+ErrorMessage ClauseVector::getErrorMessage() const
+{
+    return errorMessage;
 }
 
 Boolean ClauseVector::operator==(const ClauseVector& clauseVector)
