@@ -68,8 +68,7 @@ void evaluateNextTransitive(const Reference& leftRef, const Reference& rightRef,
 std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>
 getSuchThatEvaluatorMap()
 {
-    return std::unordered_map<RelationshipType,
-                              auto (*)(const Reference&, const Reference&, ResultsTable*)->void>(
+    return std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>(
         {{AffectsType, evaluateAffectsNormal},
          {AffectsStarType, evaluateAffectsTransitive},
          {CallsType, evaluateCallsNormal},
@@ -91,8 +90,8 @@ getSuchThatEvaluatorMap()
 Void evaluateSuchThat(SuchThatClause* stClause, ResultsTable* resultsTable)
 {
     RelationshipType relRefType = stClause->getRelationship().getType();
-    std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>
-        evaluatorMap = getSuchThatEvaluatorMap();
+    std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void> evaluatorMap
+        = getSuchThatEvaluatorMap();
     auto mapEntry = evaluatorMap.find(relRefType);
     if (mapEntry == evaluatorMap.end()) {
         throw std::runtime_error("Unknown relationship type in evaluateSuchThat");

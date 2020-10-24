@@ -1,8 +1,8 @@
 #ifndef SPA_EXPRESSIONSPEC_H
 #define SPA_EXPRESSIONSPEC_H
 
-#include "ast/AstTypes.h"
 #include "AqTypesUtils.h"
+#include "ast/AstTypes.h"
 
 // All the types of ExpressionSpec.
 enum ExpressionSpecType : char {

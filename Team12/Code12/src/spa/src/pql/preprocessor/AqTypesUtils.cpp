@@ -1,4 +1,5 @@
 #include "AqTypesUtils.h"
+
 #include "DesignEntityType.h"
 
 Expression* createExpression(const String& literal)
@@ -6,11 +7,6 @@ Expression* createExpression(const String& literal)
     StringVector splitString = splitProgram(literal);
     Expression* expression = parseExpression(splitString);
     return expression;
-}
-
-Boolean isValidSynonym(const String& testString)
-{
-    return util::isPossibleIdentifier(testString);
 }
 
 Boolean isStatementDesignEntity(DesignEntityType type)

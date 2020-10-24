@@ -25,9 +25,6 @@ typedef String Synonym;
  */
 Expression* createExpression(const String& literal);
 
-// Checks if the string is a valid Synonym.
-Boolean isValidSynonym(const String& s);
-
 /**
  * Check if the DesignEntityType represents
  * a SIMPLE statement of some sort.
