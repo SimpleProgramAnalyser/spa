@@ -81,28 +81,45 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKBUtils.cpp
 
     # pql/preprocessor
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AbstractQuery.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypesUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/AqTypesUtils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Attribute.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Attribute.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Clause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ClauseVector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DeclarationTable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/DesignEntityType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Errorable.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Errorable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/PatternClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Preprocessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ExpressionSpec.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/QueryErrorType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Reference.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/Relationship.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonym.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonymVector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/ResultSynonymVector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
 
-    # pql/evaluator
+        # pql/evaluator
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.h
@@ -167,7 +184,7 @@ add_library(spa
 
     # pql manager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp src/pql/preprocessor/DesignEntityType.h src/pql/preprocessor/DesignEntity.h src/pql/preprocessor/AqTypesUtils.h src/pql/preprocessor/Attribute.h src/pql/preprocessor/ResultSynonym.h src/pql/preprocessor/ResultSynonymVector.h src/pql/preprocessor/DeclarationTable.h src/pql/preprocessor/Clause.h src/pql/preprocessor/Reference.h src/pql/preprocessor/Relationship.h src/pql/preprocessor/WithClause.h src/pql/preprocessor/SuchThatClause.h src/pql/preprocessor/ExpressionSpec.h src/pql/preprocessor/PatternClause.h src/pql/preprocessor/ClauseVector.h src/pql/preprocessor/AbstractQuery.h src/pql/preprocessor/AqTypesUtil.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/PqlManager.cpp)
 
 # flags for debug
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
