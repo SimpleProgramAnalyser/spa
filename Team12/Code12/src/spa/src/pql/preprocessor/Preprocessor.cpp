@@ -130,7 +130,7 @@ ResultSynonym processResultSynonym(const String& resultSynonymString, Declaratio
 
     // Synonym without attributes
     if (splitByFullStop.size() == 1) {
-        if (!isValidSynonym(resultSynonymString)) {
+        if (!util::isPossibleIdentifier(resultSynonymString)) {
             return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
         } else if (!declarationTable.hasSynonym(resultSynonymString)) {
             return ResultSynonym(QuerySemanticsError, "Synonym " + resultSynonymString + " is not declared");
@@ -142,7 +142,7 @@ ResultSynonym processResultSynonym(const String& resultSynonymString, Declaratio
     Synonym synonym = splitByFullStop[0];
     String attribute = splitByFullStop[1];
 
-    if (!isValidSynonym(synonym)) {
+    if (!util::isPossibleIdentifier(synonym)) {
         return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
     } else if (!declarationTable.hasSynonym(synonym)) {
         return ResultSynonym(QuerySemanticsError, "Synonym " + synonym + " is not declared");
@@ -421,7 +421,7 @@ DeclarationTable processDeclarations(const String& declarationsString)
                 // Syntax error e.g. while w w1;
                 return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
             } else {
-                if (!isValidSynonym(token)) {
+                if (!util::isPossibleIdentifier(token)) {
                     return DeclarationTable(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + token);
                 } else if (newDeclarations.hasSynonym(token)) {
                     return DeclarationTable(QuerySemanticsError, "Synonym " + token + " has already been declared");
