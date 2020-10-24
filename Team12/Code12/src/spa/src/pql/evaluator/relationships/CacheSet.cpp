@@ -66,6 +66,7 @@ Vector<StatementNumber> CacheSet::toList() const
     return stmtNumList;
 }
 
-Boolean CacheSet::empty() const {
+Boolean CacheSet::empty() const
+{
     return set.empty();
 }

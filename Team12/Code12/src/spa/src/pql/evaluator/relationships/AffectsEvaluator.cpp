@@ -259,7 +259,8 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
  * Caches all the statements that the
  * given statement affects.
  */
-Void AffectsEvaluator::cacheModifierAssigns(Integer leftRefVal) {
+Void AffectsEvaluator::cacheModifierAssigns(Integer leftRefVal)
+{
     Vector<Integer> nextStatements = getAllNextStatements(leftRefVal, AnyStatement);
     // A priority queue that returns smaller statements first
     UniquePriorityQueue<Integer, std::less<Integer>> statementsQueue;
@@ -283,8 +284,7 @@ Void AffectsEvaluator::cacheModifierAssigns(Integer leftRefVal) {
         visitedStatementsSet.insert(currentStatement);
 
         StatementType currentStatementType = getStatementType(currentStatement);
-        if (currentStatementType == AssignmentStatement
-            && checkIfStatementUses(currentStatement, modifiedVariable)) {
+        if (currentStatementType == AssignmentStatement && checkIfStatementUses(currentStatement, modifiedVariable)) {
             // this assignment is Affected by leftRefVal
             affectedStatements.insert(currentStatement);
         }
@@ -377,8 +377,7 @@ Void AffectsEvaluator::cacheUserAssigns(Integer rightRefVal, Vector<String> used
                     statementVariablesMap.at(prev)->insert(variable);
                 }
             } else if (doesCurrentModifyAnyVariables) {
-                statementVariablesMap.emplace(prev,
-                                              std::make_shared<std::unordered_set<String>>(remainingVariables));
+                statementVariablesMap.emplace(prev, std::make_shared<std::unordered_set<String>>(remainingVariables));
             } else {
                 statementVariablesMap.emplace(prev, statementVariablesMap.at(currentStatement));
             }
@@ -387,7 +386,6 @@ Void AffectsEvaluator::cacheUserAssigns(Integer rightRefVal, Vector<String> used
     cacheUserTable.insert(rightRefVal, CacheSet(affectingStatements));
     exploredUserAssigns.insert(rightRefVal);
 }
-
 
 Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal)
 {
@@ -552,7 +550,8 @@ Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer 
     resultsTable.storeResultsOne(leftRef, clauseResult);
 }
 
-Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) {
+Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef)
+{
     if (!isAffectable(leftRef) || !isAffectable(rightRef)) {
         resultsTable.storeResultsZero(false);
         return;
@@ -605,7 +604,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
 
     if (leftRef == rightRef) {
         // return all that has a Affects* with itself
-        for (StatementNumber stmtNum: allAssignStatements) {
+        for (StatementNumber stmtNum : allAssignStatements) {
             CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(stmtNum, -1);
             if (modifierStarAnyStmtResults.isCached(stmtNum)) {
                 results.push_back(stmtNum);
@@ -619,7 +618,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
 
     // leftRef != rightRef && both != wildcard
     Vector<Pair<Integer, Integer>> pairedResults;
-    for (StatementNumber stmtNum: allAssignStatements) {
+    for (StatementNumber stmtNum : allAssignStatements) {
         CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(stmtNum, -1);
         Vector<StatementNumber> resultsList = modifierStarAnyStmtResults.toList();
         for (auto result : resultsList) {
