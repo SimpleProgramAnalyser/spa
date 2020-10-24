@@ -1,4 +1,5 @@
 #include "Preprocessor.h"
+#include "AqTypesUtils.h"
 
 AbstractQuery Preprocessor::processQuery(const String& query)
 {
