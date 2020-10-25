@@ -1,7 +1,6 @@
-//
-// Created by Chester Sim on 17/10/20.
-//
-
+/**
+ * Implementation of CacheTable class for Query Evaluator.
+ */
 #include "CacheTable.h"
 
 Boolean CacheTable::isCached(StatementNumber num) const

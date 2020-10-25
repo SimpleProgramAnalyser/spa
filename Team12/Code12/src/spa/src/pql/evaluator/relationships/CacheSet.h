@@ -1,5 +1,5 @@
 /**
- * Cache set class for Query Evaluator.
+ * CacheSet class for Query Evaluator.
  * Guarantees amortised constant time access and insertion.
  */
 

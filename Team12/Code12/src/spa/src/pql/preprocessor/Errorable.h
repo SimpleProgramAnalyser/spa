@@ -1,7 +1,3 @@
-//
-// Created by Chester Sim on 15/10/20.
-//
-
 #ifndef SPA_QUERYERROR_H
 #define SPA_QUERYERROR_H
 
