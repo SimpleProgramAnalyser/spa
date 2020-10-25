@@ -1,20 +1,24 @@
+#include "Clause.h"
+
 #include <utility>
 
-#include "AqTypes.h"
+#include "PatternClause.h"
+#include "SuchThatClause.h"
+#include "WithClause.h"
 
 /************************/
 /** Constructors        */
 /************************/
 
-Clause::Clause(ClauseType clauseType)
+Clause::Clause(ClauseType clauseType): Errorable()
 {
     type = clauseType;
 }
 
-Clause::Clause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessage errorMessage)
+Clause::Clause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessage message):
+    Errorable(queryErrorType, std::move(message))
 {
     type = clauseType;
-    this->setError(queryErrorType, std::move(errorMessage));
 }
 
 /************************/
@@ -24,6 +28,16 @@ Clause::Clause(ClauseType clauseType, QueryErrorType queryErrorType, ErrorMessag
 ClauseType Clause::getType()
 {
     return type;
+}
+
+QueryErrorType Clause::getErrorType() const
+{
+    return errorType;
+}
+
+ErrorMessage Clause::getErrorMessage() const
+{
+    return errorMessage;
 }
 
 Boolean Clause::operator==(Clause& clause)

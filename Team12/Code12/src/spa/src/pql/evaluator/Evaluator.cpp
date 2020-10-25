@@ -103,7 +103,7 @@ RawQueryResult Evaluator::evaluateValidQuery()
 
 RawQueryResult Evaluator::evaluateSelectSynonym()
 {
-    Vector<ResultSynonym> selectedSynonyms = query.getSelectSynonym();
+    Vector<ResultSynonym> selectedSynonyms = query.getSelectedSynonyms();
     Vector<String> resultsWithAttributes;
     switch (selectedSynonyms.size()) {
     case 0: {

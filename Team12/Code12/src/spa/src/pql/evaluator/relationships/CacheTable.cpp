@@ -34,3 +34,8 @@ Boolean CacheTable::check(StatementNumber key, StatementNumber value)
 {
     return table.find(key) != table.end() && table[key].isCached(value);
 }
+
+Void CacheTable::remove(StatementNumber stmtNum)
+{
+    table.erase(stmtNum);
+}

@@ -1,4 +1,4 @@
-#include "AqTypes.h"
+#include "DesignEntity.h"
 
 /************************/
 /** Static Members      */
