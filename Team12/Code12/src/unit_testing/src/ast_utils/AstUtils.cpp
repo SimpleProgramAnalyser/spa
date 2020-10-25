@@ -2068,7 +2068,7 @@ ProgramNode* getProgram22Tree_whileNestedInWhile()
         std::unique_ptr<AssignmentStatementNode>(createAssignNode(9, Variable("normSq"), createRefExpr("y"))));
 
     StmtlstNode* readPointStmtLstNode = createStmtlstNode(readPointStmts);
-    ProcedureNode* readPointProc = createProcedureNode("raymarch", readPointStmtLstNode);
+    ProcedureNode* readPointProc = createProcedureNode("readPoint", readPointStmtLstNode);
     procedureList.push_back(std::unique_ptr<ProcedureNode>(readPointProc));
     ProgramNode* programNode = createProgramNode("main", procedureList, 9);
 
@@ -2352,7 +2352,7 @@ ProgramNode* getProgram24Tree_nestedIfs()
 String getProgram25String_nestedIfsInWhile()
 {
     String nestedIfs = "\
-      procedure nested {\n\
+      procedure nested2 {\n\
         while (stmt == 1) {\n\
           stmt = 2;\n\
           if (stmt == 3) then {\n\
@@ -2527,7 +2527,7 @@ ProgramNode* getProgram25Tree_nestedIfsInWhile()
 String getProgram26String_nestedInterleavingIfsInWhile()
 {
     String nestedIfsInWhile = "\
-      procedure nested2 {\n\
+      procedure nested3 {\n\
         while (stmt == 1) {\n\
           if (stmt == 2) then {\n\
 		    if (stmt == 3) then {\n\
@@ -2748,8 +2748,6 @@ ProgramNode* getProgram26Tree_nestedInterleavingIfsInWhile()
     return programNode;
 }
 
-
-
 String getProgram27String_ifInIf()
 {
     String ifInIf = "\
@@ -2775,7 +2773,7 @@ String getProgram27String_ifInIf()
     5       stmt = 5;
           } } }
     */
-        return ifInIf;
+    return ifInIf;
 }
 
 ProgramNode* getProgram27Tree_ifInIf()
@@ -2813,5 +2811,449 @@ ProgramNode* getProgram27Tree_ifInIf()
     procedureList.push_back(std::unique_ptr<ProcedureNode>(doSmthProc));
     ProgramNode* programNode = createProgramNode("main", procedureList, 5);
 
+    return programNode;
+}
+
+String getProgram28String_combineIfInIfAndNested3AndNested2()
+{
+    String ifInIf = "\
+      procedure ifInIf {\n\
+        if (stmt == 1) then {\n\
+          stmt = 2;\n\
+          call nested3;\n\
+        } else {\n\
+          if (stmt == 3) then {\n\
+            stmt = 4;\n\
+          } else {\n\
+            stmt = 5;\n\
+          } } }\n\
+      procedure nested3 {\n\
+        while (stmt == 1) {\n\
+          if (stmt == 2) then {\n\
+		    if (stmt == 3) then {\n\
+		      if (stmt == 4) then {\n\
+                if (stmt == 5) then {\n\
+                  if (stmt == 6) then {\n\
+                    if (stmt == 7) then {\n\
+                      if (stmt == 8) then {\n\
+                        if (stmt == 9) then {\n\
+                          if (stmt == 10) then {\n\
+                            if (stmt == 11) then {\n\
+                              stmt = 12;\n\
+                            } else {\n\
+                              stmt = 13;\n\
+                            }\n\
+                          } else {\n\
+                            stmt = 14;\n\
+                          }\n\
+                        } else {\n\
+                          stmt = 15;\n\
+                        }\n\
+                      } else {\n\
+                        stmt = 16;\n\
+                      }\n\
+                    } else {\n\
+                      stmt = 17;\n\
+                    }\n\
+                  } else {\n\
+                    stmt = 18;\n\
+                  }\n\
+                } else {\n\
+                  stmt = 19;\n\
+                }\n\
+		      } else {\n\
+		        stmt = 20;\n\
+		      }\n\
+		    } else {\n\
+		      stmt = 21;\n\
+		    }\n\
+          } else {\n\
+		    stmt = 22;\n\
+	      }\n\
+        }\n\
+        stmt = 23;\n\
+        call nested2; }\n\
+      procedure nested2 {\n\
+        while (stmt == 1) {\n\
+          stmt = 2;\n\
+          if (stmt == 3) then {\n\
+            stmt = 4;\n\
+          } else {\n\
+            if (stmt == 5) then {\n\
+              stmt = 6;\n\
+            } else {\n\
+              if (stmt == 7) then {\n\
+                stmt = 8;\n\
+              } else {\n\
+                if (stmt == 9) then {\n\
+                  stmt = 10;\n\
+                } else {\n\
+                  if (stmt == 11) then {\n\
+                    stmt = 12;\n\
+                  } else {\n\
+                    if (stmt == 13) then {\n\
+                      stmt = 14;\n\
+                    } else {\n\
+                      if (stmt == 15) then {\n\
+                        stmt = 16;\n\
+                      } else {\n\
+                        if (stmt == 17) then {\n\
+                          stmt = 18;\n\
+                        } else {\n\
+                          stmt = 19; }}}}}}}}}\n\
+        stmt = 20; }\n\
+";
+    /*
+    * Annotated with statement numbers:
+      procedure ifInIf {
+    1   if (stmt == 1) then {
+    2     stmt = 2;
+    3     call nested3;
+        } else {
+    4     if (stmt == 3) then {
+    5       stmt = 4;
+    6       call nested2;
+          } else {
+    7       stmt = 5;
+          } } }
+
+      procedure nested3 {
+    8   while (stmt == 1) {
+    9     if (stmt == 2) then {
+    10      if (stmt == 3) then {
+    11        if (stmt == 4) then {
+    12          if (stmt == 5) then {
+    13            if (stmt == 6) then {
+    14              if (stmt == 7) then {
+    15                if (stmt == 8) then {
+    16                  if (stmt == 9) then {
+    17                    if (stmt == 10) then {
+    18                      if (stmt == 11) then {
+    19                        stmt = 12;
+                            } else {
+    20                        stmt = 13;
+                            }
+                          } else {
+    21                      stmt = 14;
+                          }
+                        } else {
+    22                    stmt = 15;
+                        }
+                      } else {
+    23                  stmt = 16;
+                      }
+                    } else {
+    24                stmt = 17;
+                    }
+                  } else {
+    25              stmt = 18;
+                  }
+                } else {
+    26            stmt = 19;
+                }
+              } else {
+    27          stmt = 20;
+              }
+            } else {
+    28        stmt = 21;
+            }
+          } else {
+    29      stmt = 22;
+          }
+        }
+    30  stmt = 23;
+    31  call nested2;}
+
+        procedure nested2 {\n\
+    32  while (stmt == 1) {\n\
+    33    stmt = 2;\n\
+    34    if (stmt == 3) then {\n\
+    35      stmt = 4;\n\
+          } else {\n\
+    36      if (stmt == 5) then {\n\
+    37        stmt = 6;\n\
+            } else {\n\
+    38        if (stmt == 7) then {\n\
+    39          stmt = 8;\n\
+              } else {\n\
+    40          if (stmt == 9) then {\n\
+    41            stmt = 10;\n\
+                } else {\n\
+    42            if (stmt == 11) then {\n\
+    43              stmt = 12;\n\
+                  } else {\n\
+    44              if (stmt == 13) then {\n\
+    45                stmt = 14;\n\
+                    } else {\n\
+    46                if (stmt == 15) then {\n\
+    47                  stmt = 16;\n\
+                      } else {\n\
+    48                  if (stmt == 17) then {\n\
+    49                    stmt = 18;\n\
+                        } else {\n\
+    50                    stmt = 19; }}}}}}}}}\n\
+    51  stmt = 20; }\n\
+
+    */
+    return ifInIf;
+}
+
+ProgramNode* getProgram28Tree_combineIfInIfAndNested3AndNested2()
+{
+    List<ProcedureNode> procedureList;
+
+    // procedure ifInIf while & ifs
+    List<StatementNode> ifInIfStmts;
+
+    List<StatementNode> ifInIf1IfStatements;
+    List<StatementNode> ifInIf1ElseStatements;
+
+    List<StatementNode> ifInIf2IfStatements;
+    List<StatementNode> ifInIf2ElseStatements;
+
+    ifInIf2IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(5, Variable("stmt"), createRefExpr(4))));
+
+    ifInIf2IfStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(6, "nested2")));
+
+    ifInIf2ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(7, Variable("stmt"), createRefExpr(5))));
+
+    ifInIf1IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(2, Variable("stmt"), createRefExpr(2))));
+
+    ifInIf1IfStatements.push_back(std::unique_ptr<CallStatementNode>(createCallNode(3, "nested3")));
+
+    ifInIf1ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(4, createEqExpr(createRefExpr("stmt"), createRefExpr(3)), createStmtlstNode(ifInIf2IfStatements),
+                     createStmtlstNode(ifInIf2ElseStatements))));
+
+    ifInIfStmts.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(1, createEqExpr(createRefExpr("stmt"), createRefExpr(1)), createStmtlstNode(ifInIf1IfStatements),
+                     createStmtlstNode(ifInIf1ElseStatements))));
+    StmtlstNode* ifInIfStmtLstNode = createStmtlstNode(ifInIfStmts);
+    ProcedureNode* ifInIfProc = createProcedureNode("ifInIf", ifInIfStmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(ifInIfProc));
+
+    // procedure nested while & ifs
+    List<StatementNode> nested3Stmts;
+
+    List<StatementNode> nested3WhileStatements;
+
+    List<StatementNode> nested31IfStatements;
+    List<StatementNode> nested31ElseStatements;
+
+    List<StatementNode> nested32IfStatements;
+    List<StatementNode> nested32ElseStatements;
+    List<StatementNode> nested33IfStatements;
+    List<StatementNode> nested33ElseStatements;
+
+    List<StatementNode> nested34IfStatements;
+    List<StatementNode> nested34ElseStatements;
+
+    List<StatementNode> nested35IfStatements;
+    List<StatementNode> nested35ElseStatements;
+
+    List<StatementNode> nested36IfStatements;
+    List<StatementNode> nested36ElseStatements;
+
+    List<StatementNode> nested37IfStatements;
+    List<StatementNode> nested37ElseStatements;
+
+    List<StatementNode> nested38IfStatements;
+    List<StatementNode> nested38ElseStatements;
+
+    List<StatementNode> nested39IfStatements;
+    List<StatementNode> nested39ElseStatements;
+
+    List<StatementNode> nested310IfStatements;
+    List<StatementNode> nested310ElseStatements;
+
+    nested31ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(29, Variable("stmt"), createRefExpr(22))));
+
+    nested32ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(28, Variable("stmt"), createRefExpr(21))));
+
+    nested33ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(27, Variable("stmt"), createRefExpr(20))));
+
+    nested34ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(26, Variable("stmt"), createRefExpr(19))));
+
+    nested35ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(25, Variable("stmt"), createRefExpr(18))));
+
+    nested36ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(24, Variable("stmt"), createRefExpr(17))));
+
+    nested37ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(23, Variable("stmt"), createRefExpr(16))));
+
+    nested38ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(22, Variable("stmt"), createRefExpr(15))));
+
+    nested39ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(21, Variable("stmt"), createRefExpr(14))));
+
+    nested310ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(20, Variable("stmt"), createRefExpr(13))));
+
+    nested310IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(19, Variable("stmt"), createRefExpr(12))));
+
+    nested39IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(18, createEqExpr(createRefExpr("stmt"), createRefExpr(11)),
+                     createStmtlstNode(nested310IfStatements), createStmtlstNode(nested310ElseStatements))));
+
+    nested38IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(17, createEqExpr(createRefExpr("stmt"), createRefExpr(10)),
+                     createStmtlstNode(nested39IfStatements), createStmtlstNode(nested39ElseStatements))));
+
+    nested37IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(16, createEqExpr(createRefExpr("stmt"), createRefExpr(9)), createStmtlstNode(nested38IfStatements),
+                     createStmtlstNode(nested38ElseStatements))));
+
+    nested36IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(15, createEqExpr(createRefExpr("stmt"), createRefExpr(8)), createStmtlstNode(nested37IfStatements),
+                     createStmtlstNode(nested37ElseStatements))));
+
+    nested35IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(14, createEqExpr(createRefExpr("stmt"), createRefExpr(7)), createStmtlstNode(nested36IfStatements),
+                     createStmtlstNode(nested36ElseStatements))));
+
+    nested34IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(13, createEqExpr(createRefExpr("stmt"), createRefExpr(6)), createStmtlstNode(nested35IfStatements),
+                     createStmtlstNode(nested35ElseStatements))));
+
+    nested33IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(12, createEqExpr(createRefExpr("stmt"), createRefExpr(5)), createStmtlstNode(nested34IfStatements),
+                     createStmtlstNode(nested34ElseStatements))));
+
+    nested32IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(11, createEqExpr(createRefExpr("stmt"), createRefExpr(4)), createStmtlstNode(nested33IfStatements),
+                     createStmtlstNode(nested33ElseStatements))));
+
+    nested31IfStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(10, createEqExpr(createRefExpr("stmt"), createRefExpr(3)), createStmtlstNode(nested32IfStatements),
+                     createStmtlstNode(nested32ElseStatements))));
+
+    nested3WhileStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(9, createEqExpr(createRefExpr("stmt"), createRefExpr(2)), createStmtlstNode(nested31IfStatements),
+                     createStmtlstNode(nested31ElseStatements))));
+
+    nested3Stmts.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
+        8, createEqExpr(createRefExpr("stmt"), createRefExpr(1)), createStmtlstNode(nested3WhileStatements))));
+
+    nested3Stmts.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(30, Variable("stmt"), createRefExpr(23))));
+
+    nested3Stmts.push_back(std::unique_ptr<CallStatementNode>(createCallNode(31, "nested2")));
+
+    StmtlstNode* nested3StmtLstNode = createStmtlstNode(nested3Stmts);
+    ProcedureNode* nested3Proc = createProcedureNode("nested3", nested3StmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(nested3Proc));
+
+    // procedure doSmth while & ifs
+    List<StatementNode> nested2Stmts;
+
+    List<StatementNode> nested21IfStatements;
+    List<StatementNode> nested21ElseStatements;
+
+    List<StatementNode> nested22IfStatements;
+    List<StatementNode> nested22ElseStatements;
+    List<StatementNode> nested23IfStatements;
+    List<StatementNode> nested23ElseStatements;
+
+    List<StatementNode> nested24IfStatements;
+    List<StatementNode> nested24ElseStatements;
+
+    List<StatementNode> nested25IfStatements;
+    List<StatementNode> nested25ElseStatements;
+
+    List<StatementNode> nested26IfStatements;
+    List<StatementNode> nested26ElseStatements;
+
+    List<StatementNode> nested27IfStatements;
+    List<StatementNode> nested27ElseStatements;
+
+    List<StatementNode> nested28IfStatements;
+    List<StatementNode> nested28ElseStatements;
+
+    List<StatementNode> nested2WhileStatements;
+
+    nested28IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(49, Variable("stmt"), createRefExpr(18))));
+
+    nested28ElseStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(50, Variable("stmt"), createRefExpr(19))));
+
+    nested27IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(47, Variable("stmt"), createRefExpr(16))));
+
+    nested27ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(48, createEqExpr(createRefExpr("stmt"), createRefExpr(17)),
+                     createStmtlstNode(nested28IfStatements), createStmtlstNode(nested28ElseStatements))));
+
+    nested26IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(45, Variable("stmt"), createRefExpr(14))));
+
+    nested26ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(46, createEqExpr(createRefExpr("stmt"), createRefExpr(15)),
+                     createStmtlstNode(nested27IfStatements), createStmtlstNode(nested27ElseStatements))));
+
+    nested25IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(43, Variable("stmt"), createRefExpr(12))));
+
+    nested25ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(44, createEqExpr(createRefExpr("stmt"), createRefExpr(13)),
+                     createStmtlstNode(nested26IfStatements), createStmtlstNode(nested26ElseStatements))));
+
+    nested24IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(41, Variable("stmt"), createRefExpr(10))));
+
+    nested24ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(42, createEqExpr(createRefExpr("stmt"), createRefExpr(11)),
+                     createStmtlstNode(nested25IfStatements), createStmtlstNode(nested25ElseStatements))));
+
+    nested23IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(39, Variable("stmt"), createRefExpr(8))));
+
+    nested23ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(40, createEqExpr(createRefExpr("stmt"), createRefExpr(9)), createStmtlstNode(nested24IfStatements),
+                     createStmtlstNode(nested24ElseStatements))));
+
+    nested22IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(37, Variable("stmt"), createRefExpr(6))));
+
+    nested22ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(38, createEqExpr(createRefExpr("stmt"), createRefExpr(7)), createStmtlstNode(nested23IfStatements),
+                     createStmtlstNode(nested23ElseStatements))));
+
+    nested21IfStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(35, Variable("stmt"), createRefExpr(4))));
+
+    nested21ElseStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(36, createEqExpr(createRefExpr("stmt"), createRefExpr(5)), createStmtlstNode(nested22IfStatements),
+                     createStmtlstNode(nested22ElseStatements))));
+
+    nested2WhileStatements.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(33, Variable("stmt"), createRefExpr(2))));
+
+    nested2WhileStatements.push_back(std::unique_ptr<IfStatementNode>(
+        createIfNode(34, createEqExpr(createRefExpr("stmt"), createRefExpr(3)), createStmtlstNode(nested21IfStatements),
+                     createStmtlstNode(nested21ElseStatements))));
+
+    nested2Stmts.push_back(std::unique_ptr<WhileStatementNode>(createWhileNode(
+        32, createEqExpr(createRefExpr("stmt"), createRefExpr(1)), createStmtlstNode(nested2WhileStatements))));
+
+    nested2Stmts.push_back(
+        std::unique_ptr<AssignmentStatementNode>(createAssignNode(51, Variable("stmt"), createRefExpr(20))));
+
+    StmtlstNode* nested2StmtLstNode = createStmtlstNode(nested2Stmts);
+    ProcedureNode* nested2Proc = createProcedureNode("nested2", nested2StmtLstNode);
+    procedureList.push_back(std::unique_ptr<ProcedureNode>(nested2Proc));
+
+    ProgramNode* programNode = createProgramNode("main", procedureList, 51);
     return programNode;
 }

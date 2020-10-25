@@ -8,7 +8,6 @@
 #include "cfg/CfgBuilder.h"
 #include "frontend/designExtractor/NextExtractor.h"
 
-
 bool checkIfNextRelationshipsAreEqual(std::vector<std::pair<Integer, Integer>> actualNextRelationships,
                                       std::vector<std::pair<Integer, Integer>> expectedNextRelationships)
 {
@@ -42,9 +41,9 @@ std::vector<std::pair<Integer, Integer>> getActualNextRelationships(const List<P
     Name procName = procedureList->at(0)->procedureName;
     const StmtlstNode* const stmtListNode = procedureList->at(0)->statementListNode;
     std::pair<CfgNode*, size_t> cfgInfo = buildCfg(stmtListNode);
+
     return extractNext(cfgInfo);
 }
-
 
 TEST_CASE("Next extractor works for basic program with read, assign, print - compute")
 {
@@ -372,7 +371,6 @@ TEST_CASE("Next extractor works for program with interleaving nested ifs in whil
     bool isEqual = checkIfNextRelationshipsAreEqual(actualNextRelationships, expectedNextRelationships);
     REQUIRE(isEqual == true);
 }
-
 
 TEST_CASE("Next extractor works for program with if in if statement - ifInIf")
 {
