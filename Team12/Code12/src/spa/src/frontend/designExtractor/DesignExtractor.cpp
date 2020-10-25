@@ -4,8 +4,8 @@
 #include <iostream>
 #include <utility>
 
-#include "../src/cfg/CfgBuilder.h"
 #include "../src/cfg/CfgBipBuilder.h"
+#include "../src/cfg/CfgBuilder.h"
 #include "./pkb/PKB.h"
 #include "CallsExtractor.h"
 #include "FollowsExtractor.h"
@@ -57,5 +57,3 @@ Boolean extractDesign(ProgramNode& rootNode)
         return true;
     }
 }
-
-

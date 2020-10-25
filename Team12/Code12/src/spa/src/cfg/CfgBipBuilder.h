@@ -10,6 +10,4 @@
 
 CfgNode* buildCfgBip(std::unordered_map<Name, CfgNode*>* proceduresCfg, Name firstProcName,
                      std::unordered_map<Name, size_t>* numberOfCfgNodes);
-//std::pair<CfgNode*, size_t> buildCfg(const StmtlstNode* const rootNode);
-
 #endif // SPA_CFG_BUILDER_BIP_H
