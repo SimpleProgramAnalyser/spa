@@ -58,6 +58,12 @@ public:
 
     // Returns a ClauseResult with the StatementNumber filtered for stmtType
     ClauseResult filterStatementType(StatementType stmtType) const;
+
+    // Converts CacheSet into a Vector of StatementNumbers.
+    Vector<StatementNumber> toList() const;
+
+    // Returns true if CacheSet is empty.
+    Boolean empty() const;
 };
 
 #endif // SPA_PQL_CACHE_SET_H
