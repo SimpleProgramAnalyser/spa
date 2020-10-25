@@ -1,23 +1,22 @@
-#include <utility>
+#include "DeclarationTable.h"
 
-#include "AqTypes.h"
+#include <utility>
 
 /************************/
 /** Static Methods      */
 /************************/
 
-const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
+const ErrorMessage DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
 
 /************************/
 /** Constructors        */
 /************************/
 
-DeclarationTable::DeclarationTable(): table{} {}
+DeclarationTable::DeclarationTable(): table(), Errorable() {}
 
-DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, String errorMessage)
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    Errorable(queryErrorType, std::move(errorMessage))
+{}
 
 /************************/
 /** Instance Methods    */
@@ -28,9 +27,9 @@ Void DeclarationTable::addDeclaration(const Synonym& s, DesignEntity& designEnti
     table.insert({s, designEntity});
 }
 
-Boolean DeclarationTable::hasSynonym(Synonym s)
+Boolean DeclarationTable::hasSynonym(const Synonym& s) const
 {
-    std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
+    auto got = table.find(s);
     if (got == table.end()) {
         return false;
     }
@@ -38,15 +37,20 @@ Boolean DeclarationTable::hasSynonym(Synonym s)
     return true;
 }
 
-DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s) const
+DesignEntity DeclarationTable::getDesignEntityOfSynonym(const Synonym& s) const
 {
-    std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
+    auto got = table.find(s);
     if (got == table.end()) {
         DesignEntity nonExistentType("NonExistentType");
         return nonExistentType;
     } else {
         return got->second;
     }
+}
+
+ErrorMessage DeclarationTable::getErrorMessage() const
+{
+    return errorMessage;
 }
 
 Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable) const

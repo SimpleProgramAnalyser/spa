@@ -56,7 +56,7 @@ AbstractQueryBuilder& AbstractQueryBuilder::addWithClause(ReferenceType leftRefT
     return *this;
 }
 
-AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipReferenceType relRefType,
+AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipType relRefType,
                                                               ReferenceType leftRefType, ReferenceValue leftRefValue,
                                                               DesignEntityType leftDesignEntityType,
                                                               ReferenceType rightRefType, ReferenceValue rightRefValue,

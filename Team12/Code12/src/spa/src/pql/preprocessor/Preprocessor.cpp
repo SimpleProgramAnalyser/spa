@@ -1,29 +1,7 @@
 #include "Preprocessor.h"
 
-#include "frontend/parser/Parser.h"
+#include "AqTypesUtils.h"
 
-StringVector splitByFirstConsecutiveWhitespace(const String& str);
-Boolean containsOpenParentheses(const String& str);
-StringPair splitDeclarationAndSelectClause(const String& query);
-std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses);
-ResultSynonymVector processSelectResultString(String selectResultString, DeclarationTable& declarationTable);
-ResultSynonym processResultSynonym(const String& resultSynonymString, DeclarationTable& declarationTable);
-StringVector splitResultAndClauses(String& s);
-
-/**
- * Processes a given PQL query into an AbstractQuery.
- * The returned AbstractQuery will contain the selected
- * synonym, all the declarations in a DeclarationTable
- * and all the clauses contained separately in a
- * ClauseVector.
- *
- * If the PQL query is syntactically or semantically
- * incorrect, an invalid AbstractQuery will be returned.
- *
- * @param query PQL query string to be processed
- * @return      AbstractQuery that breaks the PQL query into
- *              abstract objects that can be evaluated.
- */
 AbstractQuery Preprocessor::processQuery(const String& query)
 {
     // TODO: Improve splitting of Declarations and Select Clauses - iterate every char from the front until ; Select
@@ -153,7 +131,7 @@ ResultSynonym processResultSynonym(const String& resultSynonymString, Declaratio
 
     // Synonym without attributes
     if (splitByFullStop.size() == 1) {
-        if (!isValidSynonym(resultSynonymString)) {
+        if (!util::isPossibleIdentifier(resultSynonymString)) {
             return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
         } else if (!declarationTable.hasSynonym(resultSynonymString)) {
             return ResultSynonym(QuerySemanticsError, "Synonym " + resultSynonymString + " is not declared");
@@ -165,7 +143,7 @@ ResultSynonym processResultSynonym(const String& resultSynonymString, Declaratio
     Synonym synonym = splitByFullStop[0];
     String attribute = splitByFullStop[1];
 
-    if (!isValidSynonym(synonym)) {
+    if (!util::isPossibleIdentifier(synonym)) {
         return ResultSynonym(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + resultSynonymString);
     } else if (!declarationTable.hasSynonym(synonym)) {
         return ResultSynonym(QuerySemanticsError, "Synonym " + synonym + " is not declared");
@@ -177,14 +155,6 @@ ResultSynonym processResultSynonym(const String& resultSynonymString, Declaratio
     return resultSynonym;
 }
 
-/**
- * Splits the selected synonym, tuple or BOOLEAN
- * from the rest of the clauses.
- * @param s     String to be split
- * @return      StringVector that contains either one or two strings.
- *              If StringVector only contains one string, that means
- *              that are no constraint clauses.
- */
 StringVector splitResultAndClauses(String& s)
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
@@ -206,18 +176,7 @@ StringVector splitResultAndClauses(String& s)
     return tupleResultAndClauses;
 }
 
-/**
- * Processes the clauses component of the PQL query, and
- * split them up accordingly into separate clauses stored
- * in a clause vector. The different clauses include
- * SuchThatClause and PatternClause.
- *
- * @param clausesString String of clauses to be processed. String
- *                      starts from after the selected synonym.
- * @return              ClauseVector of all clauses in the
- *                      clausesString.
- */
-ClauseVector Preprocessor::processClauses(const String& clausesString, DeclarationTable& declarationTable)
+ClauseVector processClauses(const String& clausesString, DeclarationTable& declarationTable)
 {
     ClauseVector clauseVector;
     String currentClauseConstraint;
@@ -398,22 +357,7 @@ ClauseVector Preprocessor::processClauses(const String& clausesString, Declarati
     return clauseVector;
 }
 
-/**
- * Processes the declaration component of the PQL query.
- * A DeclarationTable will be created with the Synonym as
- * the key and the DesignEntity of the Synonym as the
- * value.
- *
- * If any of the declarations is invalid, or a syntax
- * error is encountered, an invalid DeclarationTable will
- * be returned.
- *
- * @param declarationsString    The substring of the PQL query with all
- *                              the declarations.
- * @return                      A DeclarationTable that stores all stated
- *                              declarations in the declarationsString.
- */
-DeclarationTable Preprocessor::processDeclarations(const String& declarationsString)
+DeclarationTable processDeclarations(const String& declarationsString)
 {
     DeclarationTable newDeclarations;
 
@@ -478,7 +422,7 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
                 // Syntax error e.g. while w w1;
                 return DeclarationTable(QuerySyntaxError, DeclarationTable::INVALID_DECLARATION_SYNTAX);
             } else {
-                if (!isValidSynonym(token)) {
+                if (!util::isPossibleIdentifier(token)) {
                     return DeclarationTable(QuerySyntaxError, ResultSynonym::INVALID_SYNONYM_MESSAGE + token);
                 } else if (newDeclarations.hasSynonym(token)) {
                     return DeclarationTable(QuerySemanticsError, "Synonym " + token + " has already been declared");
@@ -494,15 +438,6 @@ DeclarationTable Preprocessor::processDeclarations(const String& declarationsStr
 
 // Utils
 
-/**
- * Returns a pair of Strings, split by the
- * last appearance of the semicolon. If the
- * semicolon does not exist, a pair of empty
- * strings will be returned.
- *
- * @param query String to be split.
- * @return Pair of Strings split by delimiter.
- */
 StringPair splitDeclarationAndSelectClause(const String& query)
 {
     StringPair stringVector;
@@ -519,14 +454,6 @@ StringPair splitDeclarationAndSelectClause(const String& query)
     return std::make_pair(leftToken, rightToken);
 }
 
-/**
- * Splits up the given string by the first
- * consecutive whitespaces, into two substrings.
- * Given string should be trimmed.
- *
- * @param str String to be split
- * @return vector of 2 strings
- */
 StringVector splitByFirstConsecutiveWhitespace(const String& str)
 {
     const char* currentChar = str.c_str();
@@ -556,11 +483,11 @@ StringVector splitByFirstConsecutiveWhitespace(const String& str)
     return splitByFirstWhitespaceVector;
 }
 
-Boolean hasChar(const String& str, char charToLookFor)
+Boolean containsOpenParentheses(const String& str)
 {
     const char* currentChar = str.c_str();
     while (*currentChar != '\0') {
-        if (*currentChar == charToLookFor) {
+        if (*currentChar == '(') {
             return true;
         }
         currentChar++;
@@ -569,39 +496,6 @@ Boolean hasChar(const String& str, char charToLookFor)
     return false;
 }
 
-Boolean containsOpenParentheses(const String& str)
-{
-    return hasChar(str, '(');
-}
-
-/**
- * Counts the number of opened parentheses in the
- * newly appended clause constraint. Opened
- * parentheses here means open parentheses that
- * are not yet closed by a close parentheses.
- *
- * It uses the number of opened parentheses in the
- * token, and add it to the count of number of
- * opened parentheses before the current token was
- * appended.
- *
- * If a close parentheses in this token that closes
- * the first open parentheses in the newly appended
- * clause constraint exist, any further parentheses
- * encountered in this token would deem the clause
- * invalid.
- *
- * If there ever a point where the number of opened
- * parentheses is negative, which means there are
- * more close than open parentheses, the clause
- * would be deemed invalid.
- *
- * @param token                         Current token being processed
- * @param previousNumOfOpenParentheses  Previous number of opened parentheses
- *                                      from the clause constraint before it
- *                                      was appended with token.
- * @return                              Current number of opened parentheses
- */
 std::pair<Boolean, Integer> countNumOfOpenParentheses(const String& token, Integer previousNumOfOpenParentheses)
 {
     const char* currentChar = token.c_str();
