@@ -8,7 +8,6 @@
 #include "cfg/CfgBuilder.h"
 #include "frontend/designExtractor/NextExtractor.h"
 
-
 bool checkIfNextRelationshipsAreEqual(std::vector<std::pair<Integer, Integer>> actualNextRelationships,
                                       std::vector<std::pair<Integer, Integer>> expectedNextRelationships)
 {
@@ -45,7 +44,6 @@ std::vector<std::pair<Integer, Integer>> getActualNextRelationships(const List<P
 
     return extractNext(cfgInfo);
 }
-
 
 TEST_CASE("Next extractor works for basic program with read, assign, print - compute")
 {
