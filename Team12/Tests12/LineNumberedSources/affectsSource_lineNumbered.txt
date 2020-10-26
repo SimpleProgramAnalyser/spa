@@ -1,0 +1,96 @@
+procedure mainPrint {
+1   print specialRead;
+2   print y;
+}
+
+
+procedure readPoint {
+3   if ((x < y) && (y < z)) then {
+4       cenX = cenX + readPoint;
+5       y = z + x;
+    } else {
+6       y = x + y;
+    }
+
+7   if ((x < y) && (y < z)) then {
+8       normSq = y;
+9       while (y < z) {
+10          normSq = z + y;
+11          print z;
+        }
+12      print normSq;
+    } else {
+13      y = x + y;
+14      read x;
+15      read y;
+16      call mainPrint;
+    }
+17  while (x > z) {
+18      x = y;
+19      y = normSq + 3;
+    }
+}
+
+procedure computeCentroid {
+20  count = 0;
+21  cenX = count;
+22  cenY = cenX;
+23  call readPoint;
+24  while ((x != 10) && (y != 100)) {
+25      count = count + 1;
+26      if (y < count) then {
+27          cenX = cenX + x;
+28          read count;
+        } else {
+29          cenY = cenY + y;
+        }
+30      while (y < x) {
+31          call readPoint;
+        }
+32      cenY = cenX;
+    }
+33  if (count == 0) then {
+34      flag = 1;
+    } else {
+35      cenX = cenX / count;
+36      cenY = cenY / count;
+37      if (readPoint == 0) then {
+38          readPoint = 1;
+        } else {
+39          readPoint = readPoint + 1;
+        }
+    }
+40  normSq = cenX * cenX + cenY * cenY;
+}
+
+procedure modifiedAffects {
+41    if (x == 10) then {
+42        count = 0;
+43        cenX = count + special;
+44        cenY = cenX;
+
+    } else {
+45        count = 0;
+46        cenX = count + special;
+47        read cenX;
+48        cenY = cenX;
+    }
+
+49    while (x == 10) {
+50        count = 0;
+51       cenX = count + special;
+52        read cenX;
+53        cenY = cenX;
+54        cenY = cenY + 1;
+    }
+
+55     while (x == 10) {
+56         specialNotAffects = 0;
+57        count = 0;
+58        notAffects = specialNotAffects;
+59        notModified = notAffects;
+60        cenX = test + count + notAffects + notModified;
+61        call computeCentroid;
+62        cenY = cenX + count + notModified;
+    }
+}
