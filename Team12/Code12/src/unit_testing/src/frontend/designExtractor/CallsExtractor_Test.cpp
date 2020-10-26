@@ -42,11 +42,8 @@ bool checkIfMemosAreEqual(std::vector<std::pair<size_t, std::unordered_set<size_
         }
     }
 
-
     return memosAreEqual;
 }
-
-
 
 bool checkIfCallRelationshipsAreEqual(std::vector<std::pair<String, String>> call1,
                                       std::vector<std::pair<String, String>>* call2)
@@ -55,7 +52,7 @@ bool checkIfCallRelationshipsAreEqual(std::vector<std::pair<String, String>> cal
     std::sort(call1.begin(), call1.end(), callsComp);
     std::sort(call2->begin(), call2->end(), callsComp);
 
-   for (size_t i = 0; i < call1.size(); i++) {
+    for (size_t i = 0; i < call1.size(); i++) {
         callsAreEqual = call1.at(i).first == call2->at(i).first;
         if (!callsAreEqual) {
             return false;
@@ -70,11 +67,11 @@ bool checkIfCallRelationshipsAreEqual(std::vector<std::pair<String, String>> cal
 
 TEST_CASE("Calls extractor works for multiple procedure program - computeCentroid")
 {
-    std::vector<std::vector<bool>> adjacencyMatrix {
-        {false, false, true, true}, 
+    std::vector<std::vector<bool>> adjacencyMatrix{
+        {false, false, true, true},
         {false, false, false, false},
-        {false, false, false, false}, 
-        {false, true, false, false}, 
+        {false, false, false, false},
+        {false, true, false, false},
     };
     const List<ProcedureNode>* procedureList = &(getProgram7Tree_computeCentroid()->procedureList);
     std::vector<std::pair<size_t, std::unordered_set<size_t>>> actualMemo;
@@ -82,20 +79,20 @@ TEST_CASE("Calls extractor works for multiple procedure program - computeCentroi
 
     std::vector<std::pair<size_t, std::unordered_set<size_t>>> expectedMemo;
     ;
-    expectedMemo.push_back(std::make_pair(0, std::unordered_set<size_t> ({2, 3, 1})));
-    expectedMemo.push_back(std::make_pair(1, std::unordered_set<size_t> ({})));
+    expectedMemo.push_back(std::make_pair(0, std::unordered_set<size_t>({2, 3, 1})));
+    expectedMemo.push_back(std::make_pair(1, std::unordered_set<size_t>({})));
     expectedMemo.push_back(std::make_pair(2, std::unordered_set<size_t>({})));
     expectedMemo.push_back(std::make_pair(3, std::unordered_set<size_t>({1})));
 
     REQUIRE(actualMemo.size() == expectedMemo.size());
     REQUIRE(checkIfMemosAreEqual(actualMemo, &expectedMemo) == true);
 
-    std::vector<std::pair<String, String>> actualCallRelationships = extractCalls(*getProgram7Tree_computeCentroid(), adjacencyMatrix);
+    std::vector<std::pair<String, String>> actualCallRelationships
+        = extractCalls(*getProgram7Tree_computeCentroid(), adjacencyMatrix);
     std::vector<std::pair<String, String>> expectedCallRelationships;
     expectedCallRelationships.push_back(std::make_pair("main", "computeCentroid"));
     expectedCallRelationships.push_back(std::make_pair("main", "printResults"));
     expectedCallRelationships.push_back(std::make_pair("computeCentroid", "readPoint"));
-
 
     REQUIRE(actualCallRelationships.size() == expectedCallRelationships.size());
     REQUIRE(checkIfCallRelationshipsAreEqual(actualCallRelationships, &expectedCallRelationships) == true);
@@ -158,8 +155,8 @@ TEST_CASE("Calls extractor works for program with variable with same name as pro
     REQUIRE(checkIfCallRelationshipsAreEqual(actualCallRelationships, &expectedCallRelationships) == true);
 }
 
-
-TEST_CASE("Calls extractor works for program with mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign - multipleProcedures")
+TEST_CASE("Calls extractor works for program with mutipleProcedures, program with multiple procedures, with if, while, "
+          "read, print, call, assign - multipleProcedures")
 {
     std::vector<std::vector<bool>> adjacencyMatrix{
         {false, true, true, false},
@@ -192,7 +189,6 @@ TEST_CASE("Calls extractor works for program with mutipleProcedures, program wit
     expectedCallRelationships.push_back(std::make_pair("a", "c"));
     expectedCallRelationships.push_back(std::make_pair("b", "d"));
     expectedCallRelationships.push_back(std::make_pair("c", "d"));
-
 
     REQUIRE(actualCallRelationships.size() == expectedCallRelationships.size());
     REQUIRE(checkIfCallRelationshipsAreEqual(actualCallRelationships, &expectedCallRelationships) == true);

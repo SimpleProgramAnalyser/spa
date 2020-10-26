@@ -244,7 +244,8 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
             break;
         }
         default: {
-            // PrintStatement, do nothing
+            // PrintStatement, cannot modify variables so no need to check
+            nextNode = cfg->childrenNodes->empty() ? nullptr : cfg->childrenNodes->at(0);
         }
         }
     }
