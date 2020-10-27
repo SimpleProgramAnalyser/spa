@@ -520,3 +520,33 @@ TEST_CASE("getResultsN performs Cartesian product for repeated synonyms")
              {"6", "Rust", "d", "6"},   {"6", "Rust", "e", "4"},   {"6", "Rust", "e", "5"},   {"6", "Rust", "e", "6"}});
     }
 }
+
+TEST_CASE("mergeTwoSynonyms merges first synonym first when required to")
+{
+    ResultsTable table(DeclarationTable{});
+    table.storeResultsOne("ciento", {"101", "102", "103", "104", "105", "106"});
+    table.storeResultsTwo("doscientos", "ciento", {{"203", "101"}, {"202", "104"}, {"201", "107"}, {"204", "108"}});
+    PairedResult resultsTwo = table.getResultsTwo("doscientos", "ciento");
+    requireVectorsHaveSameElements(resultsTwo, {{"202", "104"}, {"203", "101"}});
+    ClauseResult resultsOne = table.getResultsOne("doscientos");
+    // if second synonym "ciento" is merged first, this gives {"201", "202", "203", "204"}
+    //
+    // the "filtering" of second synonym "doscientos" is not
+    // done, since second synonym did not exist in graph yet
+    requireVectorsHaveSameElements(resultsOne, {"202", "203"});
+}
+
+TEST_CASE("mergeTwoSynonyms merges second synonym first when required to")
+{
+    ResultsTable table(DeclarationTable{});
+    table.storeResultsOne("ciento", {"101", "102", "103", "104", "105", "106"});
+    table.storeResultsTwo("ciento", "doscientos", {{"101", "203"}, {"104", "202"}, {"107", "201"}, {"108", "204"}});
+    PairedResult resultsTwo = table.getResultsTwo("doscientos", "ciento");
+    requireVectorsHaveSameElements(resultsTwo, {{"202", "104"}, {"203", "101"}});
+    ClauseResult resultsOne = table.getResultsOne("doscientos");
+    // if first synonym "ciento" is merged first, this gives {"201", "202", "203", "204"}
+    //
+    // the "filtering" of second synonym "doscientos" is not
+    // done, since second synonym did not exist in graph yet
+    requireVectorsHaveSameElements(resultsOne, {"202", "203"});
+}
