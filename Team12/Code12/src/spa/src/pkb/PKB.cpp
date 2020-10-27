@@ -446,3 +446,33 @@ CfgNode* getCFG(const ProcedureName& procedureName)
         return pkb.cfgByProcedure[procedureName];
     }
 }
+
+// NextBip
+void addNextBipRelationships(StatementNumber prev, StatementType prevType, StatementNumber next, StatementType nextType)
+{
+    pkb.nextBipTable.addNextBipRelationships(prev, prevType, next, nextType);
+}
+Boolean checkIfNextBipHolds(StatementNumber prev, StatementNumber next)
+{
+    return pkb.nextBipTable.checkIfNextBipHolds(prev, next);
+}
+Vector<StatementNumber> getAllNextBipStatements(StatementNumber prev, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllNextBipStatements(prev, nextType);
+}
+Vector<StatementNumber> getAllPreviousBipStatements(StatementNumber next, StatementType prevType)
+{
+    return pkb.nextBipTable.getAllPreviousBipStatements(next, prevType);
+}
+Vector<StatementNumber> getAllNextBipStatementsTyped(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllNextBipStatementsTyped(prevType, nextType);
+}
+Vector<StatementNumber> getAllPreviousBipStatementsTyped(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllPreviousBipStatementsTyped(prevType, nextType);
+}
+Vector<Pair<StatementNumber, StatementNumber>> getAllNextBipTuples(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllNextBipTuples(prevType, nextType);
+}

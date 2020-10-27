@@ -66,8 +66,6 @@ private:
     void addIntoBasicTables(Integer previous, StatementType previousType, Integer next, StatementType nextType);
     void addIntoCollectionTables(Integer previous, StatementType previousType, Integer next, StatementType nextType);
     void addIntoTupleTables(Integer previous, StatementType previousType, Integer next, StatementType nextType);
-    // deprecated.
-    void typedShenanigans(Integer previous, StatementType previousType, Integer next, StatementType nextType);
 };
 
 #endif // SPA_NEXT_H
