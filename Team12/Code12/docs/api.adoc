@@ -3,10 +3,11 @@
 This document provides the relevant techinical APIs exposed by each different component.
 
 == Frontend
+
 === Parser API
-*Overview*: The Parser API describes methods available to the parser of the Simple Program
-Analyser (SPA). The main method, parseSimple, is the main entry point to the program,
-where a SIMPLE program string is input for analysis.
+
+*Overview*: The Parser API describes methods available to the parser of the Simple Program Analyser (SPA).
+The main method, parseSimple, is the main entry point to the program, where a SIMPLE program string is input for analysis.
 
 * <<parseSimple>>
 * <<parseExpression>>
@@ -17,24 +18,20 @@ where a SIMPLE program string is input for analysis.
 `*VOID* parseSimple(*STRING* rawProgram) throws *SYNTAX_ERROR*;`
 
 *Description*: Takes in a SIMPLE program string so the PKB can be populated with entries.
-If the program string is not in valid SIMPLE syntax, or contains semantic errors,
-an ERROR will be thrown. +
+If the program string is not in valid SIMPLE syntax, or contains semantic errors, an ERROR will be thrown. +
 
 '''
 
 [#parseExpression]
 `*EXPRESSION* parseExpression(*STRING_LIST* lexedExpression);`
 
-**Description**: Takes in a lexed SIMPLE expression, and returns an Abstract Syntax Tree (AST)
-node that represents the expression. This method may be used to pattern-match queries.
+**Description**: Takes in a lexed SIMPLE expression, and returns an Abstract Syntax Tree (AST) node that represents the expression.
+This method may be used to pattern-match queries.
 
 === Design Extractor API
-*Overview*: The Design Extractor API describes methods available to the Design
-Extractor of the Simple Program Analyser (SPA). In the Design Extractor, program
-design entity relationships are identified and stored in the PKB. The main method,
-extractDesign, provides the inputs required by the Design Extractor to determine
-program design entity relationships, namely an Abstract Syntax Tree (AST) of a
-SIMPLE program.
+
+*Overview*: The Design Extractor API describes methods available to the Design Extractor of the Simple Program Analyser (SPA).
+In the Design Extractor, program design entity relationships are identified and stored in the PKB. The main method, extractDesign, provides the inputs required by the Design Extractor to determine program design entity relationships, namely an Abstract Syntax Tree (AST) of a SIMPLE program.
 
 * <<extractDesign>>
 
@@ -43,17 +40,16 @@ SIMPLE program.
 [#extractDesign]
 `*VOID* extractDesign(*PROGRAM_NODE* rootNode) throws *SEMANTIC_ERROR*;`
 
-*Description*: Takes in a SIMPLE AST and walks the tree, identifying the presence of
-important relationships between program design entities. If the program contains
-semantic errors, a SEMANTIC_ERROR will be thrown. +
+*Description*: Takes in a SIMPLE AST and walks the tree, identifying the presence of important relationships between program design entities.
+If the program contains semantic errors, a SEMANTIC_ERROR will be thrown. +
 
 === Abstract Syntax Tree (AST) API
-*Overview*: The AST API describes the methods available to construct an Abstract Syntax Tree
-in the Simple Program Analyser (SPA).
+
+*Overview*: The AST API describes the methods available to construct an Abstract Syntax Tree in the Simple Program Analyser (SPA).
 
 ==== Nodes API
-*Overview*: The Nodes API describes the methods available to create Node representations
-in the Simple Program Analyser (SPA).
+
+*Overview*: The Nodes API describes the methods available to create Node representations in the Simple Program Analyser (SPA).
 
 * <<createAssignNode>>
 * <<createCallNode>>
@@ -70,16 +66,14 @@ in the Simple Program Analyser (SPA).
 [#createAssignNode]
 `*ASSIGNMENT_STATEMENT_NODE* createAssignNode(*STATEMENT_NUMBER* sn, *VARIABLE* var, *EXPRESSION* expr);`
 
-*Description*: Creates and returns an *ASSIGNMENT_STATEMENT_NODE* with `var` and `expr` as the children,
-and `sn` as its statement number.
+*Description*: Creates and returns an *ASSIGNMENT_STATEMENT_NODE* with `var` and `expr` as the children, and `sn` as its statement number.
 
 '''
 
 [#createCallNode]
 `*CALL_STATEMENT_NODE* createCallNode(*STATEMENT_NUMBER* sn, *NAME* procName);`
 
-*Description*: Creates and returns a *CALL_STATEMENT_NODE* with `procName` as the child,
-and `sn` as its statement number.
+*Description*: Creates and returns a *CALL_STATEMENT_NODE* with `procName` as the child, and `sn` as its statement number.
 
 '''
 
@@ -88,24 +82,21 @@ and `sn` as its statement number.
 *STMTLST_NODE* leftStatementList, *STMTLST_NODE* rightStatementList);`
 
 *Description*: Creates and returns an *IF_STATEMENT_NODE* with the condition `predicate`,
-`leftStatementList` and `rightStatementList` as the children,
-and `sn` as its statement number.
+`leftStatementList` and `rightStatementList` as the children, and `sn` as its statement number.
 
 '''
 
 [#createPrintNode]
 `*PRINT_STATEMENT_NODE* createPrintNode(*STATEMENT_NUMBER* sn, *VARIABLE* var);`
 
-*Description*: Creates and returns a *PRINT_STATEMENT_NODE* with `var` as the child,
-and `sn` as its statement number.
+*Description*: Creates and returns a *PRINT_STATEMENT_NODE* with `var` as the child, and `sn` as its statement number.
 
 '''
 
 [#createProcedureNode]
 `*PROCEDURE_NODE* createProcedureNode(*NAME* procedureName, *STMTLST_NODE* stmtlstNode);`
 
-*Description*: Creates and returns a *PROCEDURE_NODE* with `stmtlstNode` as the child,
-and `procedureName` as the name of the procedure.
+*Description*: Creates and returns a *PROCEDURE_NODE* with `stmtlstNode` as the child, and `procedureName` as the name of the procedure.
 
 '''
 
@@ -113,17 +104,15 @@ and `procedureName` as the name of the procedure.
 `*PROGRAM_NODE* createProgramNode(*NAME* programName, *PROCEDURE_NODE_LIST* procedureNodes,
 *STATEMENT_NUMBER* totalStmts);`
 
-*Description*: Creates and returns a *PROGRAM_NODE* with `procedureNodes` as the child in a
-*PROCEDURE_NODE_LIST* form, and `programName` as the name of the program. It also stores the
-total number of statements `totalStmts`.
+*Description*: Creates and returns a *PROGRAM_NODE* with `procedureNodes` as the child in a *PROCEDURE_NODE_LIST* form, and `programName` as the name of the program.
+It also stores the total number of statements `totalStmts`.
 
 '''
 
 [#createReadNode]
 `*READ_STATEMENT_NODE* createReadNode(*STATEMENT_NUMBER* sn, *VARIABLE* var);`
 
-*Description*: Creates and returns a *READ_STATEMENT_NODE* with `var` as the child,
-and `sn` as its statement number.
+*Description*: Creates and returns a *READ_STATEMENT_NODE* with `var` as the child, and `sn` as its statement number.
 
 '''
 
@@ -142,8 +131,8 @@ and `sn` as its statement number.
 `statementList` as its children, and `sn` as its statement number.
 
 ==== Expressions API
-*Overview*: The Expressions API describes the methods available to create Expression representations
-in the Simple Program Analyser (SPA).
+
+*Overview*: The Expressions API describes the methods available to create Expression representations in the Simple Program Analyser (SPA).
 
 * <<createAndExpr>>
 * <<createDivExpr>>
@@ -164,80 +153,80 @@ in the Simple Program Analyser (SPA).
 [#createAndExpr]
 `*AND_EXPRESSION* createAndExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
-*Description*: Creates and returns an *AND_EXPRESSION* where the truthy value depends on
-both `leftExpr` and the `rightExpr`. This corresponds to the "```&&```" operation in SIMPLE.
+*Description*: Creates and returns an *AND_EXPRESSION* where the truthy value depends on both `leftExpr` and the `rightExpr`.
+This corresponds to the "```&&```" operation in SIMPLE.
 
 '''
 
 [#createDivExpr]
 `*ARITHMETIC_EXPRESSION* createDivExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
-*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is divided
-by the `rightExpr`. This corresponds to the "```/```" operation in SIMPLE.
+*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is divided by the `rightExpr`.
+This corresponds to the "```/```" operation in SIMPLE.
 
 '''
 
 [#createEqExpr]
 `*RELATIONAL_EXPRESSION* createEqExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
-*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is equal
-to the `rightRelFactor`. This corresponds to the "```==```" operation in SIMPLE.
+*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is equal to the `rightRelFactor`.
+This corresponds to the "```==```" operation in SIMPLE.
 
 '''
 
 [#createGtExpr]
 `*RELATIONAL_EXPRESSION* createGtExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
-*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is greater
-than the `rightRelFactor`. This corresponds to the "```>```" operation in SIMPLE.
+*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is greater than the `rightRelFactor`.
+This corresponds to the "```>```" operation in SIMPLE.
 
 '''
 
 [#createGteExpr]
 `*RELATIONAL_EXPRESSION* createGteExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
-*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is greater
-than or equals to the `rightRelFactor`.  This corresponds to the "```>=```" operation in SIMPLE.
+*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is greater than or equals to the `rightRelFactor`.
+This corresponds to the "```>=```" operation in SIMPLE.
 
 '''
 
 [#createLtExpr]
 `*RELATIONAL_EXPRESSION* createLtExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
-*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is lesser
-than the `rightRelFactor`.  This corresponds to the "```<```" operation in SIMPLE.
+*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is lesser than the `rightRelFactor`.
+This corresponds to the "```<```" operation in SIMPLE.
 
 '''
 
 [#createLteExpr]
 *`RELATIONAL_EXPRESSION* createLteExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
-*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is lesser
-than or equals to the `rightRelFactor`.  This corresponds to the "```&lt;=```" operation in SIMPLE.
+*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is lesser than or equals to the `rightRelFactor`.
+This corresponds to the "```&lt;=```" operation in SIMPLE.
 
 '''
 
 [#createMinusExpr]
 `*ARITHMETIC_EXPRESSION* createMinusExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
-*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is divided
-by the `rightExpr`.  This corresponds to the "```-```" operation in SIMPLE.
+*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is divided by the `rightExpr`.
+This corresponds to the "```-```" operation in SIMPLE.
 
 '''
 
 [#createModExpr]
 `*ARITHMETIC_EXPRESSION* createModExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
-*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is mod
-by the `rightExpr`. This corresponds to the "```%```" operation in SIMPLE.
+*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is mod by the `rightExpr`.
+This corresponds to the "```%```" operation in SIMPLE.
 
 '''
 
 [#createNeqExpr]
 `*RELATIONAL_EXPRESSION* createNeqExpr(*EXPRESSION* leftRelFactor, *EXPRESSION* rightRelFactor);`
 
-*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is not
-equal to the `rightRelFactor`. This corresponds to the "```!=```" operation in SIMPLE.
+*Description*: Creates and returns a *RELATIONAL_EXPRESSION* where the `leftRelFactor` is not equal to the `rightRelFactor`.
+This corresponds to the "```!=```" operation in SIMPLE.
 
 '''
 
@@ -252,16 +241,16 @@ This corresponds to the "```!```" operation in SIMPLE.
 [#createOrExpr]
 `*OR_EXPRESSION* createOrExpr(*CONDITIONAL_EXPRESSION* leftExpr, *CONDITIONAL_EXPRESSION* rightExpr);`
 
-*Description*: Creates and returns an *OR_EXPRESSION* where the truthy value depends on
-either `leftExpr` or the `rightExpr`. This corresponds to the "```||```" operation in SIMPLE.
+*Description*: Creates and returns an *OR_EXPRESSION* where the truthy value depends on either `leftExpr` or the `rightExpr`.
+This corresponds to the "```||```" operation in SIMPLE.
 
 '''
 
 [#createPlusExpr]
 `*ARITHMETIC_EXPRESSION* createPlusExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
-*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is added
-to the `rightExpr`. This corresponds to the "```+```" operation in SIMPLE.
+*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is added to the `rightExpr`.
+This corresponds to the "```+```" operation in SIMPLE.
 
 '''
 
@@ -271,34 +260,30 @@ to the `rightExpr`. This corresponds to the "```+```" operation in SIMPLE.
 `*REFERENCE_EXPRESSION* createRefExpr(*INTEGER* constant);`
 
 *Description*: Creates and returns a *REFERENCE_EXPRESSION* based on `variable`
-or `constant`. Reference expressions can be either a variable or a constant.
-To create a reference expression based on a variable, pass the variable name
-as a `STRING`, and to create a reference expression based
-on a constant, pass the constant value as an `Integer`.
+or `constant`.
+Reference expressions can be either a variable or a constant.
+To create a reference expression based on a variable, pass the variable name as a `STRING`, and to create a reference expression based on a constant, pass the constant value as an `Integer`.
 
 '''
 
 [#createTimesExpr]
 `*ARITHMETIC_EXPRESSION* createTimesExpr(*EXPRESSION* leftExpr, *EXPRESSION* rightExpr);`
 
-*Description*: Creates and returns an  *ARITHMETIC_EXPRESSION* where the `leftExpr` is multiplied
-with the `rightExpr`. This corresponds to the "```*```" operation in SIMPLE.
+*Description*: Creates and returns an *ARITHMETIC_EXPRESSION* where the `leftExpr` is multiplied with the `rightExpr`.
+This corresponds to the "```*```" operation in SIMPLE.
 
 ==== AST Helper API
-*Overview*: The AST Helper API describes useful methods that are
-often used when dealing with an Abstract Syntax Tree.
+
+*Overview*: The AST Helper API describes useful methods that are often used when dealing with an Abstract Syntax Tree.
 
 * <<isContainerStatement>>
 
 [#isContainerStatement]
 `*BOOLEAN* isContainerStatement(*STATEMENT_TYPE* stmtType);`
 
-*Description*: Returns true if `stmtType` corresponds to an "if" statement
-or a "while" statement in SIMPLE. These statements contain other statements
-of their own, hence they are also known as "container statements".
+*Description*: Returns true if `stmtType` corresponds to an "if" statement or a "while" statement in SIMPLE. These statements contain other statements of their own, hence they are also known as "container statements".
 
 '''
-
 
 == PKB
 
@@ -333,16 +318,14 @@ of their own, hence they are also known as "container statements".
 [#getProcedureCalled]
 `*PROCEDURE_LIST* getProcedureCalled(*INTEGER* stmtNum);`
 
-*Description*: Returns the *PROCEDURE* called by the statement with `stmtNum`.If the statement is
-not a *Call Statement*, an empty list is returned.
+*Description*: Returns the *PROCEDURE* called by the statement with `stmtNum`.If the statement is not a *Call Statement*, an empty list is returned.
 
 '''
 
 [#getAllCallStatementsByProcedure]
 `*STATEMENT_LIST* getAllCallStatementsByProcedure(*PROCEDURE* proc);`
 
-*Description*: Returns a *STATEMENT_LIST* of statements that called `proc`.If `proc` is not a valid
-*PROCEDURE* or is not called by any *Call Statement*, returns an empty list.
+*Description*: Returns a *STATEMENT_LIST* of statements that called `proc`.If `proc` is not a valid *PROCEDURE* or is not called by any *Call Statement*, returns an empty list.
 
 '''
 
@@ -454,8 +437,7 @@ If `proc` is not found in Procedure Table, returns the statement range `(0,0)`.
 `*VOID* insertIntoProcedureTable(*PROCEDURE* proc, *STATEMENT_LIST* statements);`
 
 *Description*: Inserts the *PROCEDURE* `proc` and the `statements` it contain into Procedure Table.
-This method is idempotent - repeated `proc` with different statements cause a union of statements recorded
-in PKB associated with the same `proc`.
+This method is idempotent - repeated `proc` with different statements cause a union of statements recorded in PKB associated with the same `proc`.
 
 === Constant Table API
 
@@ -569,8 +551,7 @@ Description: Returns a *VARIABLE_LIST* of all variables that are used in the SIM
 [#getUsesStatements]
 `*STATEMENT_LIST* getUsesStatements(*VARIABLE* var, *STATEMENT_TYPE* stmtType);`
 
-*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* of *STATEMENT_TYPE* `stmtType`,
-that uses *VARIABLE* `var`.
+*Description*: Returns a *STATEMENT_LIST* of all *STATEMENT* of *STATEMENT_TYPE* `stmtType`, that uses *VARIABLE* `var`.
 
 '''
 
@@ -880,8 +861,7 @@ Parents are of STATEMENT_TYPE `stmtType`.
 
 === Follows API
 
-*Overview*: The Follows API describes the methods exposed by Follows Table to insert and extract
-information related to the Follows relationships in the processed SIMPLE program.
+*Overview*: The Follows API describes the methods exposed by Follows Table to insert and extract information related to the Follows relationships in the processed SIMPLE program.
 
 * <<addFollowsRelationships>>
 * <<addFollowsRelationshipsStar>>
@@ -1019,8 +999,7 @@ holds and are of STATEMENT_TYPE `stmtType`.
 
 === Next API
 
-*Overview*: The Next API describes the methods exposed by Next Table to insert and extract
-information related to the Next relationships in the processed SIMPLE program.
+*Overview*: The Next API describes the methods exposed by Next Table to insert and extract information related to the Next relationships in the processed SIMPLE program.
 
 * <<addNextRelationships>>
 * <<checkIfNextHolds>>
@@ -1053,23 +1032,95 @@ with `nextStmtType` into the Next Table.
 [#getAllNextStatements]
 `*STATEMENT_LIST* getAllNextStatements(*INTEGER* previous, *STATEMENT_TYPE* nextType);`
 
+*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT*s of `previous` that are of `nextType`.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
+
+'''
+
+[#getAllNextStatementsTyped]
+`*STATEMENT_LIST* getAllNextStatementsTyped(*STATEMENT_TYPE* prevType,
+*STATEMENT_TYPE* nextType);`
+
+*Description*: Returns a *STATEMENT_LIST* of statements of *STATEMENT_TYPE* `nextType` such that
+`Next(previous, returned)` holds where `previous` is any statement of *STATEMENT_TYPE* `prevType`.
+
+'''
+
+[#getAllPreviousStatements]
+`*STATEMENT_LIST* getPreviousStatement(*INTEGER* next, *STATEMENT_TYPE* previousType);`
+
+*Description*: Returns a *STATEMENT_LIST* containing the previous *STATEMENT* of `next` that are of `previousType`.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `next`.
+
+'''
+
+[#getAllPreviousStatementsTyped]
+`*STATEMENT_LIST* getAllPreviousStatementsTyped(*STATEMENT_TYPE* prevType,
+*STATEMENT_TYPE* nextType);`
+
+*Description*: Returns a *STATEMENT_LIST* of statements of *STATEMENT_TYPE* `prevType` such that
+`Next(returned, next)` holds where `next` is any statement of *STATEMENT_TYPE* `nextType`.
+
+'''
+
+[#getAllNextTuple]
+`*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextTuple(*STATEMENT_TYPE* prevType,
+*STATEMENT_TYPE* nextType);`
+
+*Description*: Returns a list of pairs, where for each pair, the *Next* relationship holds between them, and the previous is of `prevType`, and the next is of `nextType`.
+
+=== NextBip API
+
+*Overview*: The NextBip API describes the methods exposed by NextBip Table to insert and extract information related to the NextBip relationships in the processed SIMPLE program.
+
+* <<addNextBipRelationships>>
+* <<checkIfNextBipHolds>>
+* <<getAllNextBipStatements>>
+* <<getAllNextBipStatementsTyped>>
+* <<getAllPreviousBipStatements>>
+* <<getAllPreviousBipStatementsTyped>>
+* <<getAllNextBipTuple>>
+
+'''
+
+[#addNextBipRelationships]
+`*VOID* addNextBipRelationships(*INTEGER* previous, *STATEMENT_TYPE*, previousStmtType, *INTEGER* next,
+*STATEMENT_TYPE* nextStmtType);`
+
+*Requires*: `previousStmtType` and `nextStmtType` cannot be `AnyStatement` type.
+
+*Description*: Adds a NextBip relationship between `previous` with `previousStmtType` and `next`
+with `nextStmtType` into the NextBip Table.
+
+'''
+
+[#checkIfNextBipHolds]
+`*BOOLEAN* checkIfNextBipHolds(*INTEGER* previous, *INTEGER* next);`
+
+*Description*: Returns `TRUE` if there is a NextBip relationship between `previous` and `next`, else return `FALSE`.
+
+'''
+
+[#getAllNextBipStatements]
+`*STATEMENT_LIST* getAllNextBipStatements(*INTEGER* previous, *STATEMENT_TYPE* nextType);`
+
 *Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT*s of `previous` that are of
 `nextType`.
 *STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
 
 '''
 
-[#getAllNextStatementsTyped]
-`*STATEMENT_LIST* getAllNextStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
-*STATEMENT_TYPE* stmtTypeOfNext);`
+[#getAllNextBipStatementsTyped]
+`*STATEMENT_LIST* getAllNextBipStatementsTyped(*STATEMENT_TYPE* prevType,
+*STATEMENT_TYPE* nextType);`
 
-*Description*: Returns a *STATEMENT_LIST* of statements such that `Next*(previous,returned)`
-holds and are of STATEMENT_TYPE `stmtType`.
+*Description*: Returns a *STATEMENT_LIST* of statements of *STATEMENT_TYPE* `nextType` such that
+`NextBip(previous, returned)` holds where `previous` is any statement of *STATEMENT_TYPE* `prevType`.
 
 '''
 
-[#getAllPreviousStatements]
-`*STATEMENT_LIST* getPreviousStatement(*INTEGER* next, *STATEMENT_TYPE* previousType);`
+[#getAllPreviousBipStatements]
+`*STATEMENT_LIST* getPreviousBipStatement(*INTEGER* next, *STATEMENT_TYPE* previousType);`
 
 *Description*: Returns a *STATEMENT_LIST* containing the previous *STATEMENT* of `next` that are of
 `previousType`.
@@ -1077,21 +1128,20 @@ holds and are of STATEMENT_TYPE `stmtType`.
 
 '''
 
-[#getAllPreviousStatementsTyped]
-`*STATEMENT_LIST* getAllPreviousStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
-*STATEMENT_TYPE* stmtTypeOfNext);`
+[#getAllPreviousBipStatementsTyped]
+`*STATEMENT_LIST* getAllPreviousBipStatementsTyped(*STATEMENT_TYPE* prevType,
+*STATEMENT_TYPE* nextType);`
 
-*Description*: Returns a *STATEMENT_LIST* of all previous statements that are of *STATEMENT_TYPE*
-`stmtTypeOfPrevious`, with a next of *STATEMENT_TYPE* `stmtTypeOfNext`.
+*Description*: Returns a *STATEMENT_LIST* of statements of *STATEMENT_TYPE* `prevType` such that
+`NextBip(returned, next)` holds where `next` is any statement of *STATEMENT_TYPE* `nextType`.
 
 '''
 
-[#getAllNextTuple]
-`*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextTuple(*STATEMENT_TYPE* stmtTypeOfPrevious,
-*STATEMENT_TYPE* stmtTypeOfNext);`
+[#getAllNextBipTuple]
+`*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextBipTuple(*STATEMENT_TYPE* prevType,
+*STATEMENT_TYPE* nextType);`
 
-*Description*: Returns a list of pairs, where for each pair, the *Next* relationship holds between them, and the
-previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
+*Description*: Returns a list of pairs, where for each pair, the *NextBip* relationship holds between them, and the previous is of `prevType`, and the next is of `nextType`.
 
 === Calls API
 
@@ -1113,14 +1163,16 @@ previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
 [#addCallsRelationships]
 `*VOID* addCallerRelationships(*PROCEDURE* caller, *PROCEDURE* callee);`
 
-*Description*: Adds a Calls relationship between `caller` and `callee`. This method is idempotent.
+*Description*: Adds a Calls relationship between `caller` and `callee`.
+This method is idempotent.
 
 '''
 
 [#addCallsRelationshipsStar]
 `*VOID* addCallerRelationshipsStar(*PROCEDURE* caller, *PROCEDURE* callee);`
 
-*Description*: Adds a Calls* relationship between `caller` and `callee`. This method is idempotent.
+*Description*: Adds a Calls* relationship between `caller` and `callee`.
+This method is idempotent.
 
 '''
 
@@ -1159,8 +1211,8 @@ previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
 
 `*PROCEDURE_LIST* getAllCallersStar();`
 
-*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls some process(es) directly or
-indirectly. *PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that calls some process(es) directly or indirectly.
+*PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
 
 '''
 
@@ -1185,24 +1237,22 @@ indirectly. *PROCEDURE_LIST* returned is empty if there is no procedure called i
 
 `*PROCEDURE_LIST* getAllCalleesStar();`
 
-*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that is called by some process(es) directly or
-indirectly. *PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
+*Description*: Returns a *PROCEDURE_LIST* containing all *PROCEDURES* that is called by some process(es) directly or indirectly.
+*PROCEDURE_LIST* returned is empty if there is no procedure called in the program.
 
 '''
 
 [#getAllCallsTuple]
 `*LIST<PAIR<PROCEDURE,PROCEDURE>>* getAllCallsTuple();`
 
-*Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls* relationship holds
-between them.
+*Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls* relationship holds between them.
 
 '''
 
 [#getAllCallsTupleStar]
 `*LIST<PAIR<PROCEDURE,PROCEDURE>>* getAllCallsTupleStar();`
 
-*Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls** relationship holds
-between them.
+*Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls** relationship holds between them.
 
 === Utilities API
 
@@ -1217,8 +1267,7 @@ between them.
 [#resetPKB]
 `*VOID* resetPKB()`
 
-*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
-PKB from memory.This is an irreversible action.
+*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in PKB from memory.This is an irreversible action.
 
 '''
 
@@ -1249,12 +1298,11 @@ PKB from memory.This is an irreversible action.
 *Description*: Retrieves the *CFG* for `proc` stored in PKB.
 If <<setCFG>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
 
-
 == PQL
 
 === PQLManager API
-*Overview*: Handles the business logic for processing and evaluating Processed
-Query Language (PQL) queries.
+
+*Overview*: Handles the business logic for processing and evaluating Processed Query Language (PQL) queries.
 
 * <<executeQuery>>
 
@@ -1264,12 +1312,12 @@ Query Language (PQL) queries.
 `*FORMATTED_QUERY_RESULT* executeQuery(*STRING* query, *QUERY_RESULT_FORMAT_TYPE* format);`
 
 *Description*: Returns a *FORMATTED_QUERY_RESULT* after processing and evaluating a
-`query` in *Processed Query Language* (PQL) form. Results are formatted according to
-specified `format`.
+`query` in *Processed Query Language* (PQL) form.
+Results are formatted according to specified `format`.
 
 === Preprocessor API
-*Overview*: Handles the business logic for pre-processing PQL queries, including validating
-syntax and semantics.
+
+*Overview*: Handles the business logic for pre-processing PQL queries, including validating syntax and semantics.
 
 * <<processQuery>>
 
@@ -1281,8 +1329,8 @@ syntax and semantics.
 *Description*: Returns an *ABSTRACT_QUERY* after validating and breaking down the `query`.
 
 === Evaluator API
-*Overview*: Evaluates the processed query and obtain a result for it by interacting
-with the PKB.
+
+*Overview*: Evaluates the processed query and obtain a result for it by interacting with the PKB.
 
 * <<evaluateQuery>>
 
@@ -1291,10 +1339,10 @@ with the PKB.
 [#evaluateQuery]
 `*RAW_QUERY_RESULT* evaluateQuery(*ABSTRACT_QUERY* abstractQuery);`
 
-*Description*: Returns a *RAW_QUERY_RESULT* after evaluating the `abstractQuery` and
-obtaining information from the PKB.
+*Description*: Returns a *RAW_QUERY_RESULT* after evaluating the `abstractQuery` and obtaining information from the PKB.
 
 === Projector API
+
 *Overview*: Formats query results into human readable context, for the Autotester and UI.
 
 * <<formatAutotester>>
@@ -1305,14 +1353,12 @@ obtaining information from the PKB.
 [#formatAutotester]
 `*FORMATTED_RESULT* formatAutotester(*RAW_QUERY_RESULT* rawQueryResult);`
 
-*Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to
-a conforming standard, for the Autotester.
+*Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to a conforming standard, for the Autotester.
 
 [#formatUI]
 `*FORMATTED_RESULT* formatUI(*RAW_QUERY_RESULT* rawQueryResult);`
 
-*Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to
-a conforming standard, for the UI.
+*Description*: Returns a *FORMATTED_RESULT* after formatting `rawQueryResult` to a conforming standard, for the UI.
 
 == Shared Libraries (for internal use)
 
@@ -1353,15 +1399,9 @@ a conforming standard, for the UI.
 `*STRING_LIST* splitProgram(*STRING* program);`
 
 *Description*: Returns a *STRING_LIST* after splitting SIMPLE program `program`
-into strings containing the names, numbers, symbols that the Lexer can determine
-based on SIMPLE syntax.All whitespace will be truncated from the strings.
+into strings containing the names, numbers, symbols that the Lexer can determine based on SIMPLE syntax.All whitespace will be truncated from the strings.
 
 [#trimWhitespace]
 `*STRING* trimWhitespace(*STRING* str);`
 
-*Description*: Given a string `str` that starts or ends with some whitespace
-characters, or both starts and ends with whitespace characters, returns a
-substring of 'str' with the starting and ending whitespaces truncated.If
-the string consists only of whitespaces, return an empty string.If the
-string does not contain any whitespaces (this includes the empty string),
-return the same string `str`.
+*Description*: Given a string `str` that starts or ends with some whitespace characters, or both starts and ends with whitespace characters, returns a substring of 'str' with the starting and ending whitespaces truncated.If the string consists only of whitespaces, return an empty string.If the string does not contain any whitespaces (this includes the empty string), return the same string `str`.
