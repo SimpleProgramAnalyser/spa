@@ -1,6 +1,8 @@
 #ifndef PKB_H
 #define PKB_H
 
+#include <pkb/relationships/NextBip.h>
+
 #include "PkbTypes.h"
 #include "cfg/CfgTypes.h"
 #include "relationships/Calls.h"
@@ -105,6 +107,16 @@ Vector<ProcedureName> getAllCalleesStar(const ProcedureName& caller);
 Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTuple();
 Vector<Pair<ProcedureName, ProcedureName>> getAllCallsTupleStar();
 
+// NextBip
+void addNextBipRelationships(StatementNumber prev, StatementType prevType, StatementNumber next,
+                             StatementType nextType);
+Boolean checkIfNextBipHolds(StatementNumber prev, StatementNumber next);
+Vector<StatementNumber> getAllNextBipStatements(StatementNumber prev, StatementType nextType);
+Vector<StatementNumber> getAllPreviousBipStatements(StatementNumber next, StatementType prevType);
+Vector<StatementNumber> getAllNextBipStatementsTyped(StatementType prevType, StatementType nextType);
+Vector<StatementNumber> getAllPreviousBipStatementsTyped(StatementType prevType, StatementType nextType);
+Vector<Pair<StatementNumber, StatementNumber>> getAllNextBipTuples(StatementType prevType, StatementType nextType);
+
 // Procedure
 void insertIntoProcedureTable(const String& procName, StatementNumber firstStmtNum, StatementNumber lastStmtNum);
 Boolean isProcedureInProgram(const String& procName);
@@ -156,6 +168,7 @@ public:
     ConstantTable constantTable;
     NextTable nextTable;
     CallsTable callsTable;
+    NextBipTable nextBipTable;
     HashMap<ProcedureName, CfgNode*> cfgByProcedure;
 };
 

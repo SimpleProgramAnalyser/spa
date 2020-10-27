@@ -72,6 +72,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/NextBip.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/NextBip.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
