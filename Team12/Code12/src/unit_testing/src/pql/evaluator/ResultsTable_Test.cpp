@@ -520,3 +520,13 @@ TEST_CASE("getResultsN performs Cartesian product for repeated synonyms")
              {"6", "Rust", "d", "6"},   {"6", "Rust", "e", "4"},   {"6", "Rust", "e", "5"},   {"6", "Rust", "e", "6"}});
     }
 }
+
+TEST_CASE("mergeTwoSynonyms takes into account results from previous one synonym clause")
+{
+    ResultsTable table(DeclarationTable{});
+    table.storeResultsOne("ciento", {"101", "102", "103", "104"});
+    table.storeResultsOne("doscientos", {"201", "202", "203", "204"});
+    table.storeResultsTwo("doscientos", "ciento", {{"202", "104"}, {"203", "101"}, {"204", "106"}, {"205", "102"}});
+    PairedResult results = table.getResultsTwo("doscientos", "ciento");
+    requireVectorsHaveSameElements(results, {{"202", "104"}, {"203", "101"}});
+}
