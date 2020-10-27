@@ -5,72 +5,123 @@
 #include "Follows.h"
 
 #include <cassert>
+#include <pkb/PKBUtils.h>
 
-void FollowsTable::tryAddBefore(Integer before, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
-                                ArrayArraySet& aas)
+/**
+ * Adds relationship as given by parameters into the relevant basic tables (table and its inverse).
+ *
+ * @param beforeType
+ * @param before
+ * @param afterType
+ * @param after
+ */
+void FollowsTable::addIntoBasicTables(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                      StatementNumber after)
 {
-    // store the before statement into (lists of statements before type afterStmtType)
-    auto setBeforeType = &aas[afterType].byType[beforeType];
-    // returns true if new object is created (emplace is successful)
-    if (setBeforeType->find(before) == setBeforeType->end()) {
-        setBeforeType->insert(before);
-        aal[afterType].byType[beforeType].push_back(before);
-    }
+    // store statements before it
+    stmtBeforeMap[after] = std::make_pair(before, beforeType);
+    // store statements after it
+    stmtAfterMap[before] = std::make_pair(after, afterType);
 }
-void FollowsTable::tryAddAfter(Integer after, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
-                               ArrayArraySet& aas)
+
+/**
+ * Adds relationship as given by parameters into the relevant collection tables (table and its inverse).
+ *
+ * @param beforeType
+ * @param before
+ * @param afterType
+ * @param after
+ */
+void FollowsTable::addIntoCollectionTables(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                           StatementNumber after)
 {
-    // store the after statement into (lists of statements after type afterStmtType)
-    auto setAfterType = &aas[beforeType].byType[afterType];
-    // returns true if new object is created (emplace is successful)
-    if (setAfterType->find(after) == setAfterType->end()) {
-        setAfterType->insert(after);
-        aal[beforeType].byType[afterType].push_back(after);
-    }
+    // stmtBeforeType has shape StatementType (after) -> StatementType (before) -> StatementNumber
+    tryAdd(afterType, beforeType, before, stmtBeforeType, stmtBeforeTypeSet);
+
+    // stmtAfterType has shape StatementType (before) -> StatementType (after) -> StatementNumber
+    tryAdd(beforeType, afterType, after, stmtAfterType, stmtAfterTypeSet);
 }
-// important private helper function
-void FollowsTable::typedShenanigans(Integer before, StatementType beforeStmtType, Integer after,
-                                    StatementType afterStmtType)
+
+/**
+ * Adds relationship as given by parameters into the relevant tuple tables (table and its inverse).
+ *
+ * @param beforeType
+ * @param before
+ * @param afterType
+ * @param after
+ */
+void FollowsTable::addIntoTupleTables(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                      StatementNumber after)
 {
-    tryAddBefore(before, beforeStmtType, afterStmtType, stmtBeforeType, stmtBeforeTypeSet);
-    tryAddBefore(before, beforeStmtType, AnyStatement, stmtBeforeType, stmtBeforeTypeSet);
-    tryAddBefore(before, AnyStatement, afterStmtType, stmtBeforeType, stmtBeforeTypeSet);
-    tryAddBefore(before, AnyStatement, AnyStatement, stmtBeforeType, stmtBeforeTypeSet);
-
-    tryAddAfter(after, beforeStmtType, afterStmtType, stmtAfterType, stmtAfterTypeSet);
-    tryAddAfter(after, beforeStmtType, AnyStatement, stmtAfterType, stmtAfterTypeSet);
-    tryAddAfter(after, AnyStatement, afterStmtType, stmtAfterType, stmtAfterTypeSet);
-    tryAddAfter(after, AnyStatement, AnyStatement, stmtAfterType, stmtAfterTypeSet);
-
-    // for tuples
     auto pair = std::make_pair(before, after);
     followsTuples[AnyStatement][AnyStatement].push_back(pair);
-    followsTuples[AnyStatement][afterStmtType].push_back(pair);
-    followsTuples[beforeStmtType][AnyStatement].push_back(pair);
-    followsTuples[beforeStmtType][afterStmtType].push_back(pair);
+    followsTuples[AnyStatement][afterType].push_back(pair);
+    followsTuples[beforeType][AnyStatement].push_back(pair);
+    followsTuples[beforeType][afterType].push_back(pair);
 }
-// important private helper function
-void FollowsTable::typedShenanigansStar(Integer before, StatementType beforeStmtType, Integer after,
-                                        StatementType afterStmtType)
+
+/**
+ * Adds relationship (star) as given by parameters into the relevant basic tables (table and its inverse).
+ *
+ * @param beforeType
+ * @param before
+ * @param afterType
+ * @param after
+ */
+void FollowsTable::addIntoBasicTablesStar(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                          StatementNumber after)
 {
-    tryAddBefore(before, beforeStmtType, afterStmtType, stmtBeforeStarType, stmtBeforeStarTypeSet);
-    tryAddBefore(before, beforeStmtType, AnyStatement, stmtBeforeStarType, stmtBeforeStarTypeSet);
-    tryAddBefore(before, AnyStatement, afterStmtType, stmtBeforeStarType, stmtBeforeStarTypeSet);
-    tryAddBefore(before, AnyStatement, AnyStatement, stmtBeforeStarType, stmtBeforeStarTypeSet);
+    // stmtBeforeStarMap has shape StatementNumber -> StatementType -> Statement number
+    tryAdd(after, beforeType, before, stmtBeforeStarMap, stmtBeforeStarSet);
 
-    tryAddAfter(after, beforeStmtType, afterStmtType, stmtAfterStarType, stmtAfterStarTypeSet);
-    tryAddAfter(after, beforeStmtType, AnyStatement, stmtAfterStarType, stmtAfterStarTypeSet);
-    tryAddAfter(after, AnyStatement, afterStmtType, stmtAfterStarType, stmtAfterStarTypeSet);
-    tryAddAfter(after, AnyStatement, AnyStatement, stmtAfterStarType, stmtAfterStarTypeSet);
+    // stmtAfterStarMap has shape StatementNumber -> StatementType -> Statement number
+    tryAdd(before, afterType, after, stmtAfterStarMap, stmtAfterStarSet);
+}
 
-    // for tuples
+/**
+ * Adds relationship (star) as given by parameters into the relevant collection tables (table and its inverse).
+ *
+ * @param beforeType
+ * @param before
+ * @param afterType
+ * @param after
+ */
+void FollowsTable::addIntoCollectionTablesStar(StatementType beforeType, StatementNumber before,
+                                               StatementType afterType, StatementNumber after)
+{
+    // stmtBeforeType has shape StatementType (after) -> StatementType (before) -> StatementNumber
+    tryAdd(afterType, beforeType, before, stmtBeforeStarType, stmtBeforeStarTypeSet);
+
+    // stmtAfterType has shape StatementType (before) -> StatementType (after) -> StatementNumber
+    tryAdd(beforeType, afterType, after, stmtAfterStarType, stmtAfterStarTypeSet);
+}
+
+/**
+ * Adds relationship (star) as given by parameters into the relevant tuple tables (table and its inverse).
+ *
+ * @param beforeType
+ * @param before
+ * @param afterType
+ * @param after
+ */
+void FollowsTable::addIntoTupleTablesStar(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                          StatementNumber after)
+{
     auto pair = std::make_pair(before, after);
     followsStarTuples[AnyStatement][AnyStatement].push_back(pair);
-    followsStarTuples[AnyStatement][afterStmtType].push_back(pair);
-    followsStarTuples[beforeStmtType][AnyStatement].push_back(pair);
-    followsStarTuples[beforeStmtType][afterStmtType].push_back(pair);
+    followsStarTuples[AnyStatement][afterType].push_back(pair);
+    followsStarTuples[beforeType][AnyStatement].push_back(pair);
+    followsStarTuples[beforeType][afterType].push_back(pair);
 }
 
+/**
+ * Given a relationship Follows(a, b), insert them into the basic tables and tuple tables. Idempotent.
+ *
+ * @param before
+ * @param beforeStmtType
+ * @param after
+ * @param afterStmtType
+ */
 void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeStmtType, Integer after,
                                            StatementType afterStmtType)
 {
@@ -82,14 +133,20 @@ void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeS
     assert(
         afterStmtType > AnyStatement && afterStmtType < STATEMENT_TYPE_COUNT
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    // store statements before it
-    stmtBeforeMap[after] = std::make_pair(before, beforeStmtType);
-    // store statements after it
-    stmtAfterMap[before] = std::make_pair(after, afterStmtType);
 
-    typedShenanigans(before, beforeStmtType, after, afterStmtType);
+    addIntoBasicTables(beforeStmtType, before, afterStmtType, after);
+    addIntoCollectionTables(beforeStmtType, before, afterStmtType, after);
+    addIntoTupleTables(beforeStmtType, before, afterStmtType, after);
 }
 
+/**
+ * Given a relationship Follows*(a, b), insert them into the basic tables and tuple tables. Idempotent.
+ *
+ * @param before
+ * @param beforeStmtType
+ * @param after
+ * @param afterStmtType
+ */
 void FollowsTable::addFollowsRelationshipsStar(Integer before, StatementType beforeStmtType,
                                                const Vector<StatementNumWithType>& afterStmttypePairs)
 {
@@ -104,31 +161,45 @@ void FollowsTable::addFollowsRelationshipsStar(Integer before, StatementType bef
         assert(
             afterStmtType > AnyStatement && afterStmtType < STATEMENT_TYPE_COUNT
             && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-        // set and list
-        stmtBeforestarsetMap[after].insert(before);
-        stmtBeforestarlistMap[after].byType[beforeStmtType].push_back(before);
-        stmtBeforestarlistMap[after].byType[AnyStatement].push_back(before);
 
-        stmtAfterstarsetMap[before].insert(after);
-        stmtAfterstarlistMap[before].byType[afterStmtType].push_back(after);
-        stmtAfterstarlistMap[before].byType[AnyStatement].push_back(after);
-
-        typedShenanigansStar(before, beforeStmtType, after, afterStmtType);
+        addIntoBasicTablesStar(beforeStmtType, before, afterStmtType, after);
+        addIntoCollectionTablesStar(beforeStmtType, before, afterStmtType, after);
+        addIntoTupleTablesStar(beforeStmtType, before, afterStmtType, after);
     }
 }
 
-// reading
+/**
+ * Returns TRUE if there is a Follows relationship between before and after, else return FALSE.
+ *
+ * @param before
+ * @param after
+ * @return
+ */
 Boolean FollowsTable::checkIfFollowsHolds(Integer before, Integer after)
 {
     return stmtAfterMap[before].first == after;
 }
 
+/**
+ * Returns TRUE if there is a Follows* relationship between before and after, else return FALSE.
+ *
+ * @param before
+ * @param after
+ * @return
+ */
 Boolean FollowsTable::checkIfFollowsHoldsStar(Integer before, Integer after)
 {
-    auto stmtSet = stmtAfterstarsetMap[before];
+    auto stmtSet = stmtAfterStarSet[before].byType[AnyStatement];
     return stmtSet.find(after) != stmtSet.end();
 }
 
+/**
+ * Returns a *STATEMENT_LIST* containing the after *STATEMENT* of `before`. *STATEMENT_LIST* returned is empty if there
+ * is no such relationship for `before`.
+ *
+ * @param before
+ * @return
+ */
 Vector<StatementNumWithType> FollowsTable::getAfterStatement(Integer before)
 {
     Vector<StatementNumWithType> toReturn;
@@ -137,6 +208,14 @@ Vector<StatementNumWithType> FollowsTable::getAfterStatement(Integer before)
     }
     return toReturn;
 }
+
+/**
+ * Returns a *STATEMENT_LIST* containing the before *STATEMENT* of `after`. *STATEMENT_LIST* returned is empty if there
+ * is no such relationship for `after`.
+ *
+ * @param after
+ * @return
+ */
 Vector<StatementNumWithType> FollowsTable::getBeforeStatement(Integer after)
 {
     Vector<StatementNumWithType> toReturn;
@@ -145,38 +224,108 @@ Vector<StatementNumWithType> FollowsTable::getBeforeStatement(Integer after)
     }
     return toReturn;
 }
+
+/**
+ * Returns a *STATEMENT_LIST* of statements such that `Follows(before,returned)` holds and are of STATEMENT_TYPE
+ * `stmtType`.
+ *
+ * @param before
+ * @param stmtType
+ * @return
+ */
 Vector<Integer> FollowsTable::getAllAfterStatementsStar(Integer before, StatementType stmtType)
 {
-    return stmtAfterstarlistMap[before].byType[stmtType];
-}
-Vector<Integer> FollowsTable::getAllBeforeStatementsStar(Integer after, StatementType stmtType)
-{
-    return stmtBeforestarlistMap[after].byType[stmtType];
+    return stmtAfterStarMap[before].byType[stmtType];
 }
 
+/**
+ * Returns a *STATEMENT_LIST* of statements that are before* `after` and are of STATEMENT_TYPE `stmtType`.
+ *
+ * @param after
+ * @param stmtType
+ * @return
+ */
+Vector<Integer> FollowsTable::getAllBeforeStatementsStar(Integer after, StatementType stmtType)
+{
+    return stmtBeforeStarMap[after].byType[stmtType];
+}
+
+/**
+ * Returns a *STATEMENT_LIST* of all before statements that are of *STATEMENT_TYPE* `stmtTypeOfBefore`, with a after of
+ * *STATEMENT_TYPE* `stmtTypeOfAfter`.
+ *
+ * @param stmtTypeOfBefore
+ * @param stmtTypeOfAfter
+ * @return
+ */
 Vector<Integer> FollowsTable::getAllBeforeStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
 {
     return stmtBeforeType[stmtTypeOfAfter].byType[stmtTypeOfBefore];
 }
+
+/**
+ * Returns a *STATEMENT_LIST* of statements such that `Follows*(before,returned)` holds and are of STATEMENT_TYPE
+ * `stmtType`.
+ *
+ * @param stmtTypeOfBefore
+ * @param stmtTypeOfAfter
+ * @return
+ */
 Vector<Integer> FollowsTable::getAllBeforeStatementsTypedStar(StatementType stmtTypeOfBefore,
                                                               StatementType stmtTypeOfAfter)
 {
     return stmtBeforeStarType[stmtTypeOfAfter].byType[stmtTypeOfBefore];
 }
+
+/**
+ * Returns a *STATEMENT_LIST* of all before statements that are of *STATEMENT_TYPE* `stmtTypeOfBefore`, with a
+ * _transitive_ after of *STATEMENT_TYPE* `stmtTypeOfAfter`.
+ *
+ * @param stmtTypeOfBefore
+ * @param stmtTypeOfAfter
+ * @return
+ */
 Vector<Integer> FollowsTable::getAllAfterStatementsTyped(StatementType stmtTypeOfBefore, StatementType stmtTypeOfAfter)
 {
     return stmtAfterType[stmtTypeOfBefore].byType[stmtTypeOfAfter];
 }
+
+/**
+ * Returns a *STATEMENT_LIST* of all after statements that are of *STATEMENT_TYPE* `stmtTypeOfAfter`, with a
+ * _transitive_ Follows of *STATEMENT_TYPE* `stmtTypeOfBefore`.
+ *
+ * @param stmtTypeOfBefore
+ * @param stmtTypeOfAfter
+ * @return
+ */
 Vector<Integer> FollowsTable::getAllAfterStatementsTypedStar(StatementType stmtTypeOfBefore,
                                                              StatementType stmtTypeOfAfter)
 {
     return stmtAfterStarType[stmtTypeOfBefore].byType[stmtTypeOfAfter];
 }
+
+/**
+ * Returns a list of pairs, where for each pair, the *Follows* relationship holds between them, and the before is of
+ * `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
+ *
+ * @param stmtTypeOfBefore
+ * @param stmtTypeOfAfter
+ * @return
+ */
 Vector<Pair<Integer, Integer>> FollowsTable::getAllFollowsTuple(StatementType stmtTypeOfBefore,
                                                                 StatementType stmtTypeOfAfter)
 {
     return followsTuples[stmtTypeOfBefore][stmtTypeOfAfter];
 }
+
+/**
+ * Returns a list of pairs, where for each pair, the *Follows* relationship holds between them, and the before is of
+ * `stmtTypeOfBefore`, and the after is of `stmtTypeOfAfter`.
+ *
+ * @param stmtTypeOfBefore
+ * @param stmtTypeOfAfter
+ * @return
+ */
 Vector<Pair<Integer, Integer>> FollowsTable::getAllFollowsTupleStar(StatementType stmtTypeOfBefore,
                                                                     StatementType stmtTypeOfAfter)
 {

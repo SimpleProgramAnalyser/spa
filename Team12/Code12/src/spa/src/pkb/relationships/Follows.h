@@ -34,41 +34,66 @@ public:
                                                           StatementType stmtTypeOfAfter);
 
 private:
-    // to check if Follows(*)(x, y) holds
-    HashMap<Integer, StatementNumWithType> stmtBeforeMap;
-    HashMap<Integer, StatementNumWithType> stmtAfterMap;
-    HashMap<Integer, HashSet<Integer>> stmtBeforestarsetMap;
-    HashMap<Integer, HashSet<Integer>> stmtAfterstarsetMap;
-
-    // statements before/after given statement, sorted by type
-    HashMap<Integer, StatementNumVectorsByType> stmtBeforestarlistMap;
-    HashMap<Integer, StatementNumVectorsByType> stmtAfterstarlistMap;
-
-    // WARNING: potential confusion
-    // stmtBeforeType:
+    // Table and inverse tables
     /**
-     * | StmtType | Statements before this type |
-     * | Assign   | Assign: 1, 2; While: 3      |
+     * Primary key: statement number
+     * Result: next/previous statements, stored by statement type
+     *
+     * Secondary key: statement type
+     * Result: Vector<Statement Number>
+     */
+    // there can only be one statement before/after a given statement.
+    // idempotent, just overwrite if multiple values received
+    HashMap<StatementNumber, StatementNumWithType> stmtBeforeMap;
+    HashMap<StatementNumber, StatementNumWithType> stmtAfterMap;
+
+    // this is not the case for star. Multiple values means we need to deduplicate
+    HashMap<StatementNumber, StatementNumVectorsByType> stmtBeforeStarMap;
+    HashMap<StatementNumber, StatementNumVectorsByType> stmtAfterStarMap;
+    // sets used to deduplicate the above structures
+    HashMap<StatementNumber, StatementNumSetsByType> stmtBeforeStarSet;
+    HashMap<StatementNumber, StatementNumSetsByType> stmtAfterStarSet;
+
+    // Collection Tables
+    /**
+     * Primary key: statement type
+     * Result: a table by statement type
+     *
+     * Secondary key: statement type
+     * Result: Vector<Statement Number>
      */
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtBeforeType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtBeforeStarType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtAfterType;
     Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtAfterStarType;
-    TupleTable followsTuples;
-    TupleTable followsStarTuples;
-
     // hashsets to prevent duplication in lists above
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtBeforeTypeSet;
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtBeforeStarTypeSet;
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtAfterTypeSet;
     Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtAfterStarTypeSet;
 
-    // since the above is confusing, we have some helper functions.
-    void typedShenanigans(Integer before, StatementType beforeType, Integer after, StatementType afterType);
-    void typedShenanigansStar(Integer before, StatementType beforeType, Integer after, StatementType afterType);
-    static void tryAddBefore(Integer before, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
-                             ArrayArraySet& aas);
-    static void tryAddAfter(Integer after, StatementType beforeType, StatementType afterType, ArrayArrayList& aal,
-                            ArrayArraySet& aas);
+    // Tuples
+    /**
+     * Primary key: statement type
+     * Result: a table by statement type
+     *
+     * Secondary key: statement type
+     * Result: Vector<Statement Number>
+     */
+    TupleTable followsTuples;
+    TupleTable followsStarTuples;
+
+    void addIntoBasicTables(StatementType beforeType, StatementNumber before, StatementType afterType,
+                            StatementNumber after);
+    void addIntoCollectionTables(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                 StatementNumber after);
+    void addIntoTupleTables(StatementType beforeType, StatementNumber before, StatementType afterType,
+                            StatementNumber after);
+    void addIntoBasicTablesStar(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                StatementNumber after);
+    void addIntoCollectionTablesStar(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                     StatementNumber after);
+    void addIntoTupleTablesStar(StatementType beforeType, StatementNumber before, StatementType afterType,
+                                StatementNumber after);
 };
 #endif // SPA_BEFORE_H
