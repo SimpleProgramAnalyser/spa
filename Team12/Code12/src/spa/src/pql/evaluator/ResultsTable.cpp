@@ -403,13 +403,6 @@ bool ResultsTable::operator==(const ResultsTable& rt) const
         return false;
     }
 
-    std::function<bool(std::pair<std::string, std::vector<std::string>>,
-                       std::pair<std::string, std::vector<std::string>>)>
-        comparator = [](const std::pair<std::string, std::vector<std::string>>& pair1,
-                        const std::pair<std::string, std::vector<std::string>>& pair2) {
-            return pair1.first < pair2.first;
-        };
-
     std::vector<std::pair<std::string, std::vector<std::string>>> thisResultsList
         = getVectorFromResultsMap(this->resultsMap);
     std::vector<std::pair<std::string, std::vector<std::string>>> otherResultsList
