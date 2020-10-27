@@ -294,6 +294,7 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
 {
     ClauseResult syn1Results;
     ClauseResult syn2Results;
+    Boolean filterS2First = false;
     if (table->hasRelationships(s1, s2)) {
         // past relations exist for s1 and s2 (inner join)
         std::unordered_set<ResultsRelation, ResultsRelationHasher> newRelationsSet;
@@ -320,9 +321,18 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
             = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
         syn1Results = successfulValues.first;
         syn2Results = successfulValues.second;
+        // check for cases where one synonym is singular in results
+        // table, but no relationships in the relationships graph
+        Boolean s1IsSingular = table->checkIfSynonymInMap(s1) && s1IsNew;
+        Boolean s2IsSingular = table->checkIfSynonymInMap(s2) && s2IsNew;
+        // put the one that does not exist in the results table in first
+        filterS2First = s1IsSingular && !s2IsSingular;
     }
     if (syn1Results.empty() || syn2Results.empty()) {
         table->hasResult = false;
+    } else if (filterS2First) {
+        table->filterAfterVerification(s2, syn2Results);
+        table->filterAfterVerification(s1, syn1Results);
     } else {
         table->filterAfterVerification(s1, syn1Results);
         table->filterAfterVerification(s2, syn2Results);
