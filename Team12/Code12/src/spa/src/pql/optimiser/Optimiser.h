@@ -16,3 +16,9 @@
 Void optimiseQuery(AbstractQuery& abstractQuery);
 
 #endif // SPA_PQL_OPTIMISER_H
+
+Void substituteWithValues(AbstractQuery& abstractQuery);
+Void deleteDuplicateClauses(AbstractQuery& abstractQuery);
+Void groupQueryClauses(AbstractQuery& abstractQuery);
+Void sortWithinEachClause(AbstractQuery& abstractQuery);
+Void sortClauses(AbstractQuery& abstractQuery);
