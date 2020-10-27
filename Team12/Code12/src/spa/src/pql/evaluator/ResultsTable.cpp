@@ -315,9 +315,36 @@ void ResultsTable::mergeTwoSynonyms(ResultsTable* table, const Synonym& s1, cons
     } else {
         Boolean s1IsNew = !table->relationships->hasSeenBefore(s1);
         Boolean s2IsNew = !table->relationships->hasSeenBefore(s2);
+        const PairedResult* filteredTuples = &tuples;
+        // check for cases where synonym is singular in results table,
+        // but no relationships in the relationships graph
+        Boolean s1IsSingular = table->checkIfSynonymInMap(s1) && s1IsNew;
+        Boolean s2IsSingular = table->checkIfSynonymInMap(s2) && s2IsNew;
+        PairedResult s1MatchingTuples;
+        if (s1IsSingular) {
+            ClauseResult previousS1Results = table->get(s1);
+            std::unordered_set<String> previousS1Set(previousS1Results.begin(), previousS1Results.end());
+            for (const Pair<String, String>& tuple : *filteredTuples) {
+                if (previousS1Set.find(tuple.first) != previousS1Set.end()) {
+                    s1MatchingTuples.emplace_back(tuple);
+                }
+            }
+            filteredTuples = &s1MatchingTuples;
+        }
+        PairedResult s2MatchingTuples;
+        if (s2IsSingular) {
+            ClauseResult previousS2Results = table->get(s2);
+            std::unordered_set<String> previousS2Set(previousS2Results.begin(), previousS2Results.end());
+            for (const Pair<String, String>& tuple : *filteredTuples) {
+                if (previousS2Set.find(tuple.second) != previousS2Set.end()) {
+                    s2MatchingTuples.emplace_back(tuple);
+                }
+            }
+            filteredTuples = &s2MatchingTuples;
+        }
         // load relationships first, to see which relationships were successfully added
         Pair<Vector<String>, Vector<String>> successfulValues
-            = table->relationships->insertRelationships(tuples, s1, s1IsNew, s2, s2IsNew);
+            = table->relationships->insertRelationships(*filteredTuples, s1, s1IsNew, s2, s2IsNew);
         syn1Results = successfulValues.first;
         syn2Results = successfulValues.second;
     }
