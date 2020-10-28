@@ -447,6 +447,20 @@ CfgNode* getCFG(const ProcedureName& procedureName)
     }
 }
 
+// CFG Bip
+void storeCFGBip(CfgNode* cfgBip, const ProcedureName& procedureName)
+{
+    pkb.cfgBipByProcedure[procedureName] = cfgBip;
+}
+CfgNode* getCFGBip(const ProcedureName& procedureName)
+{
+    if (pkb.cfgBipByProcedure.find(procedureName) == pkb.cfgBipByProcedure.end()) {
+        return nullptr;
+    } else {
+        return pkb.cfgBipByProcedure[procedureName];
+    }
+}
+
 // NextBip
 void addNextBipRelationships(StatementNumber prev, StatementType prevType, StatementNumber next, StatementType nextType)
 {

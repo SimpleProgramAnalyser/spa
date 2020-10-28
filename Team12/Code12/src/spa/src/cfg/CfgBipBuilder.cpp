@@ -16,12 +16,14 @@
  * @param currentCfgBipNode The current CfgBip node
  * @param visitedMap Hash map of the visited nodes in each procedure, it is not a nullptr if it has been visited
  * @param currentProcName The current procedure name
+ * @param visitedCfgProcedure Hashmap of the visited status of the CFG of a procedure. True if the CFG of a procedure has been visited.
  * @return The pointer to the current CfgNode of the CfgBip
  */
 
 CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*>* proceduresCfg,
                              size_t& currentNumberOfNodes, CfgNode* currentCfgBipNode,
-                             std::unordered_map<Name, Vector<CfgNode*>>* visitedMap, Name currentProcName)
+                             std::unordered_map<Name, Vector<CfgNode*>>* visitedMap, Name currentProcName,
+                             std::unordered_map<Name, Boolean>* visitedCfgProcedure)
 {
     size_t currentCfgNodeNumber = cfgNode->nodeNumber;
     CfgNode* cfgBipNodeForCfgNodeInProcedure = visitedMap->at(currentProcName).at(currentCfgNodeNumber);
@@ -84,12 +86,13 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
                     currentCfgBipNode->childrenNodes->push_back(calledNodeCfgBipPointer);
                     currentCfgBipNode = lastCfgNodeCfgBipNode;
                 } else {
+                    visitedCfgProcedure->at(procName) = true;
                     // Create new node to traverse the CFG of the called procedure
                     CfgNode* newCfgBipNode
                         = createCfgNode(calledProcCfgRootNode->statementNodes->size(), currentNumberOfNodes);
                     currentCfgBipNode->childrenNodes->push_back(newCfgBipNode);
                     currentCfgBipNode = buildCfgBipWithNode(calledProcCfgRootNode, proceduresCfg, currentNumberOfNodes,
-                                                            newCfgBipNode, visitedMap, procName);
+                                                            newCfgBipNode, visitedMap, procName, visitedCfgProcedure);
                 }
                 prevStmtIsCallType = true;
                 break;
@@ -128,10 +131,10 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
                 // Set the currentCfgBipNode when it is the last child
                 if (j == childrenList->size() - 1) {
                     currentCfgBipNode = buildCfgBipWithNode(currentChild, proceduresCfg, currentNumberOfNodes,
-                                                            newCfgBipNode, visitedMap, currentProcName);
+                                                            newCfgBipNode, visitedMap, currentProcName, visitedCfgProcedure);
                 } else {
                     buildCfgBipWithNode(currentChild, proceduresCfg, currentNumberOfNodes, newCfgBipNode, visitedMap,
-                                        currentProcName);
+                                        currentProcName, visitedCfgProcedure);
                 }
             }
         }
@@ -142,19 +145,20 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
  * Builds the CFGBip of a given program.
  *
  * @param proceduresCfg Hash map of the procedures' names and the root node oftheir respective CFG
- * @firstProcName The name of the first procedure
- * @numberOfCfgNodes The total number of CfgNodes
+ * @param procName The name of the current procedure
+ * @param numberOfCfgNodes The total number of CfgNodes for each procedure in its CFG
+ * @param visitedCfgProcedure Hashmap of the visited status of the CFG of a procedure. True if the CFG of a procedure has been visited.
+ * @return The root CfgBip node
  */
-CfgNode* buildCfgBip(std::unordered_map<Name, CfgNode*>* proceduresCfg, Name firstProcName,
-                     std::unordered_map<Name, size_t>* numberOfCfgNodes)
+CfgNode* buildCfgBip(std::unordered_map<Name, CfgNode*>* proceduresCfg, Name procName,
+                     std::unordered_map<Name, size_t>* numberOfCfgNodes, std::unordered_map<Name, Boolean>* visitedCfgProcedure)
 {
     size_t currentNumberOfNodes = -1;
-    CfgNode* firstCfg = proceduresCfg->at(firstProcName);
+    CfgNode* firstCfg = proceduresCfg->at(procName);
 
     CfgNode* rootCfgBipNode = createCfgNode(firstCfg->statementNodes->size(), currentNumberOfNodes);
-    CfgNode* currentCfgBipNode = rootCfgBipNode;
 
-    // Initialise visitedArray for each procedure
+    // Initialise visitedArray for each CFG node in all the procedures
     std::unordered_map<Name, Vector<CfgNode*>> visitedMap;
     for (auto it = numberOfCfgNodes->begin(); it != numberOfCfgNodes->end(); ++it) {
         Vector<CfgNode*> visitedArray;
@@ -165,7 +169,7 @@ CfgNode* buildCfgBip(std::unordered_map<Name, CfgNode*>* proceduresCfg, Name fir
         visitedMap.insert({it->first, visitedArray});
     }
 
-    currentCfgBipNode = buildCfgBipWithNode(firstCfg, proceduresCfg, currentNumberOfNodes, currentCfgBipNode,
-                                            &visitedMap, firstProcName);
+    buildCfgBipWithNode(firstCfg, proceduresCfg, currentNumberOfNodes, rootCfgBipNode,
+                                            &visitedMap, procName, visitedCfgProcedure);
     return rootCfgBipNode;
 }
