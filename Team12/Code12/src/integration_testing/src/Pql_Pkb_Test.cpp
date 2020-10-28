@@ -3251,7 +3251,7 @@ TEST_CASE("Query selecting attributes should not return duplicates - Print # Var
     FormattedQueryResult expected("aprendoEspanol");
     REQUIRE(actual == expected);
 
-    String query2 = "print pn; variable v; Select <pn.varName, v>";
+    String query2 = "print pn; procedure p; Select <pn.varName, p>";
     FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui);
     FormattedQueryResult expected2("aprendoEspanol aprendesEspanol");
     REQUIRE(actual2 == expected2);
