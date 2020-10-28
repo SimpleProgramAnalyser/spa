@@ -11,6 +11,11 @@ void resetPKB()
         mapEntry.second->deleteAllChildren();
         delete mapEntry.second;
     }
+    // delete CFG BIP
+    for (std::pair<ProcedureName, CfgNode*> mapEntry : pkb.cfgBipByProcedure) {
+        mapEntry.second->deleteAllChildren();
+        delete mapEntry.second;
+    }
     // delete AST
     delete pkb.rootNode;
     pkb = PKB();

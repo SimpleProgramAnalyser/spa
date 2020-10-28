@@ -1209,8 +1209,10 @@ between them.
 * <<resetPKB>>
 * <<assignRootNode>>
 * <<getRootNode>>
-* <<setCFG>>
+* <<storeCFG>>
 * <<getCFG>>
+* <<storeCFGBip>>
+* <<getCFGBip>>
 
 '''
 
@@ -1236,7 +1238,7 @@ PKB from memory.This is an irreversible action.
 
 '''
 
-[#setCFG]
+[#storeCFG]
 `*VOID* storeCFG(*CFG* cfg, *PROCEDURE* proc)`
 
 *Description*: Store `cfg` as the *CFG* for the *PROCEDURE* `proc` in PKB.
@@ -1247,8 +1249,23 @@ PKB from memory.This is an irreversible action.
 `*CFG* getCFG(*PROCEDURE* proc)`
 
 *Description*: Retrieves the *CFG* for `proc` stored in PKB.
-If <<setCFG>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
+If <<storeCFG>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
 
+'''
+
+[#storeCFGBip]
+`*VOID* storeCFGBip(*CFG* cfgBip, *PROCEDURE* proc)`
+
+*Description*: Store `cfgBip` as the *CFG* with branching into procedures
+for the *PROCEDURE* `proc` in PKB.
+
+'''
+
+[#getCFGBip]
+`*CFG* getCFGBip(*PROCEDURE* proc)`
+
+*Description*: Retrieves the *CFG* with branching into procedures for `proc` stored in PKB.
+If <<storeCFGBip>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
 
 == PQL
 
