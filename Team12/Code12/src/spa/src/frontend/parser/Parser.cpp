@@ -908,9 +908,13 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
             nextUnparsed = result.nextUnparsedToken;
         }
 
-        if (nextUnparsed < 0 || programTokens->at(nextUnparsed).tokenTag != frontend::BracesClosedTag) {
-            // syntax error in statements, or syntax error due to unmatched brackets in statement list
+        if (nextUnparsed < 0) {
+            // syntax error in statements
             isSyntaxError = true;
+        } else if (nextUnparsed >= numberOfTokens
+                   || programTokens->at(nextUnparsed).tokenTag != frontend::BracesClosedTag) {
+            // syntax error due to unmatched brackets in statement list
+            return getSyntaxError<StmtlstNode>(34);
         } else {
             // no errors
         }
