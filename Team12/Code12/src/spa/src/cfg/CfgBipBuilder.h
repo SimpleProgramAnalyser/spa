@@ -9,5 +9,6 @@
 #include "CfgTypes.h"
 
 CfgNode* buildCfgBip(std::unordered_map<Name, CfgNode*>* proceduresCfg, Name firstProcName,
-                     std::unordered_map<Name, size_t>* numberOfCfgNodes);
+                     std::unordered_map<Name, size_t>* numberOfCfgNodes,
+                     std::unordered_map<Name, Boolean>* visitedCfgProcedure);
 #endif // SPA_CFG_BUILDER_BIP_H

@@ -26,8 +26,11 @@ Boolean extractDesign(ProgramNode& rootNode)
 {
     SemanticErrorsValidator seValidator(rootNode);
     Boolean isSemanticallyValid = seValidator.isProgramValid();
+    // CFG of each procedure
     std::unordered_map<Name, CfgNode*> proceduresCfg;
     std::unordered_map<Name, size_t> numberOfCfgNodes;
+    // Hash map to check if a Cfg is visited when building CfgBip
+    std::unordered_map<Name, Boolean> visitedProcedureCfg;
 
     if (!isSemanticallyValid) {
         // Terminate program
@@ -51,9 +54,23 @@ Boolean extractDesign(ProgramNode& rootNode)
 
             // Extract Next relationships
             extractNext(cfgInfo);
+
+            // Initialise visitedProcedureCfg to keep track if a procedure
+            // has been visited when building CfgBip
+            visitedProcedureCfg.insert({procName, false});
         }
 
-        buildCfgBip(&proceduresCfg, procedureList->at(0)->procedureName, &numberOfCfgNodes);
+        // Ensure that all procedures is included in a CfgBip
+        for (size_t j = 0; j < procedureList->size(); j++) {
+            Name procName = procedureList->at(j)->procedureName;
+            if (!visitedProcedureCfg.at(procName)) {
+                visitedProcedureCfg.at(procName) = true;
+                CfgNode* currentCfgBipRootNode
+                    = buildCfgBip(&proceduresCfg, procName, &numberOfCfgNodes, &visitedProcedureCfg);
+                // Store root node of the CfgBip with the current procedure as the "top"
+                storeCFGBip(currentCfgBipRootNode, procName);
+            }
+        }
         return true;
     }
 }
