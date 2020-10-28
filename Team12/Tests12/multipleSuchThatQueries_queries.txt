@@ -306,7 +306,7 @@ doNothing, doNothing2, doNothing4, doSomething, mainPrint
 62 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 stmt s; variable v;
 Select v such that Parent*(54,s) such that Uses(s, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, print, procedure, read, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, x, y, z
 5000
 63 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 while s; variable v;
@@ -371,7 +371,7 @@ doNothing, doNothing2, doNothing4, doSomething, mainPrint
 75 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 stmt s; variable v;
 Select v such that Parent*(54,s) such that Uses(s, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, print, procedure, read, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, x, y, z
 5000
 76 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 while s; variable v;
@@ -496,7 +496,7 @@ doNothing, doNothing2, doNothing3, doNothing4, doSomething, mainPrint, procedure
 100 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 stmt s; variable v;
 Select v such that Follows*(55,s) such that Modifies(s, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, procedure, read, x, y, z
+TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, doNothing, x, y, z
 5000
 101 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 assign s; variable v;
@@ -556,7 +556,7 @@ none
 112 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 stmt s; variable v;
 Select v such that Follows*(67,s) such that Uses(s, v)
-TryingToMakeLongVariableNamesToTestLimits, a, b, c, constantAssignment, d, doNothing, print, procedure, read, x, y, z
+a, procedure, x, y, z
 5000
 113 - Select Based on RHS that is Relavant to Query, 1 common synonym permutation
 while s; variable v;
