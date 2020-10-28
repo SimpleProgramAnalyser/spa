@@ -67,15 +67,15 @@ private:
      * Secondary key: statement type
      * Result: Vector<Statement Number>
      */
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentType;
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtParentStarType;
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildType;
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtChildStarType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtParentType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtParentStarType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtChildType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtChildStarType;
     // hashsets to prevent duplication in lists above
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentTypeSet;
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtParentStarTypeSet;
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtChildTypeSet;
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtChildStarTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtParentTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtParentStarTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtChildTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtChildStarTypeSet;
 
     // Tuples
     /**
