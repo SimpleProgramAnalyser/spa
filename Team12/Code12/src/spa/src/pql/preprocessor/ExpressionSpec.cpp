@@ -1,5 +1,7 @@
 #include "ExpressionSpec.h"
 
+#include <utility>
+
 #include "AqTypes.h"
 #include "frontend/parser/Parser.h"
 
@@ -15,7 +17,7 @@ ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType
 {}
 
 ExpressionSpec::ExpressionSpec(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    expressionSpecType{InvalidExpressionType}, Errorable{queryErrorType, errorMessage}
+    Errorable{queryErrorType, std::move(errorMessage)}, expressionSpecType{InvalidExpressionType}
 {}
 
 ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString)

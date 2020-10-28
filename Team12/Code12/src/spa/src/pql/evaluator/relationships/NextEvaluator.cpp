@@ -162,8 +162,8 @@ Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVa
 }
 
 NextEvaluator::NextEvaluator(ResultsTable& resultsTable):
-    resultsTable(resultsTable), cachePrevStarTable(), cacheNextStarTable(), exploredPrevStatements(),
-    exploredNextStatements()
+    resultsTable(resultsTable), cacheNextStarTable(), cachePrevStarTable(), exploredNextStatements(),
+    exploredPrevStatements()
 {}
 
 Void NextEvaluator::evaluateNextClause(const Reference& leftRef, const Reference& rightRef)

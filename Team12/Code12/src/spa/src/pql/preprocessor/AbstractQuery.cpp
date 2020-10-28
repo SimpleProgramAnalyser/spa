@@ -1,15 +1,17 @@
 #include "AbstractQuery.h"
 
+#include <utility>
+
 /************************/
 /** Constructors        */
 /************************/
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, errorMessage)
+    Errorable(queryErrorType, std::move(errorMessage))
 {}
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult):
-    isToReturnFalseResult(returnFalseResult), Errorable(queryErrorType, errorMessage)
+    Errorable(queryErrorType, std::move(errorMessage)), isToReturnFalseResult(returnFalseResult)
 {}
 
 AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations):
@@ -24,7 +26,7 @@ AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& dec
 /** Instance Methods    */
 /************************/
 
-const Vector<ResultSynonym> AbstractQuery::getSelectedSynonyms() const
+Vector<ResultSynonym> AbstractQuery::getSelectedSynonyms() const
 {
     return resultSynonyms.getSynonyms();
 }
