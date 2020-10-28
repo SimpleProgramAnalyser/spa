@@ -14,6 +14,7 @@ CfgNode* getActualCfgBipRootNode(ProgramNode* progNode, Name firstProcName)
 {
     std::unordered_map<Name, CfgNode*> proceduresCfg;
     std::unordered_map<Name, size_t> numberOfCfgNodes;
+    std::unordered_map<Name, Boolean> visitedProcedureCfg;
 
     // Build Cfg for each procedure
     const List<ProcedureNode>* procedureList = &(progNode->procedureList);
@@ -25,9 +26,11 @@ CfgNode* getActualCfgBipRootNode(ProgramNode* progNode, Name firstProcName)
         // Add CFG root node into procedureCfg and numberOfCfgNodes
         proceduresCfg.insert({procName, cfgInfo.first});
         numberOfCfgNodes.insert({procName, cfgInfo.second});
+        visitedProcedureCfg.insert({procName, false});
     }
 
-    CfgNode* cfgBipRootNode = buildCfgBip(&proceduresCfg, firstProcName, &numberOfCfgNodes);
+    visitedProcedureCfg.at(firstProcName) = true;
+    CfgNode* cfgBipRootNode = buildCfgBip(&proceduresCfg, firstProcName, &numberOfCfgNodes, &visitedProcedureCfg);
 
     return cfgBipRootNode;
 }

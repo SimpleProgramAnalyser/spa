@@ -152,6 +152,10 @@ ProgramNode* getRootNode();
 void storeCFG(CfgNode* cfg, const ProcedureName& procedureName);
 CfgNode* getCFG(const ProcedureName& procedureName);
 
+// CFG Bip
+void storeCFGBip(CfgNode* cfgBip, const ProcedureName& procedureName);
+CfgNode* getCFGBip(const ProcedureName& procedureName);
+
 // Others
 void resetPKB();
 
@@ -170,6 +174,7 @@ public:
     CallsTable callsTable;
     NextBipTable nextBipTable;
     HashMap<ProcedureName, CfgNode*> cfgByProcedure;
+    HashMap<ProcedureName, CfgNode*> cfgBipByProcedure;
 };
 
 #endif // PKB_H
