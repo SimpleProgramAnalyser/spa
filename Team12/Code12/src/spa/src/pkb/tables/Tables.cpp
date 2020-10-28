@@ -218,7 +218,7 @@ Vector<String> StatementTable::getAllProceduresCalled()
  */
 StatementType StatementTable::getStatementType(StatementNumber stmtNum)
 {
-    if (statementTypes.find(stmtNum) != statementTypes.end()) {
+    if (statementTypes.find(stmtNum) == statementTypes.end()) {
         return NonExistentStatement;
     }
     return statementTypes.find(stmtNum)->second;
