@@ -61,7 +61,7 @@ public:
     AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations, ClauseVector& clauseVector);
 
     // Retrieves all the selected synonyms.
-    const Vector<ResultSynonym> getSelectedSynonyms() const;
+    Vector<ResultSynonym> getSelectedSynonyms() const;
 
     // Retrieves all the clauses in the query.
     const ClauseVector& getClauses() const;

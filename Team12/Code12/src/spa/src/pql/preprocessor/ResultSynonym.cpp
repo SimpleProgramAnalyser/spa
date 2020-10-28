@@ -12,7 +12,7 @@ const ErrorMessage ResultSynonym::INVALID_SYNONYM_MESSAGE = "Invalid naming for 
 /** Constructors        */
 /************************/
 
-ResultSynonym::ResultSynonym(String syn): synonym(std::move(syn)), attribute(NoAttributeType), Errorable() {}
+ResultSynonym::ResultSynonym(String syn): Errorable(), synonym(std::move(syn)), attribute(NoAttributeType) {}
 
 ResultSynonym::ResultSynonym(QueryErrorType queryErrorType): Errorable(queryErrorType) {}
 
