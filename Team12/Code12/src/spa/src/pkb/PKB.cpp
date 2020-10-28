@@ -11,6 +11,11 @@ void resetPKB()
         mapEntry.second->deleteAllChildren();
         delete mapEntry.second;
     }
+    // delete CFG BIP
+    for (std::pair<ProcedureName, CfgNode*> mapEntry : pkb.cfgBipByProcedure) {
+        mapEntry.second->deleteAllChildren();
+        delete mapEntry.second;
+    }
     // delete AST
     delete pkb.rootNode;
     pkb = PKB();
@@ -444,6 +449,20 @@ CfgNode* getCFG(const ProcedureName& procedureName)
         return nullptr;
     } else {
         return pkb.cfgByProcedure[procedureName];
+    }
+}
+
+// CFG Bip
+void storeCFGBip(CfgNode* cfgBip, const ProcedureName& procedureName)
+{
+    pkb.cfgBipByProcedure[procedureName] = cfgBip;
+}
+CfgNode* getCFGBip(const ProcedureName& procedureName)
+{
+    if (pkb.cfgBipByProcedure.find(procedureName) == pkb.cfgBipByProcedure.end()) {
+        return nullptr;
+    } else {
+        return pkb.cfgBipByProcedure[procedureName];
     }
 }
 
