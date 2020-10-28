@@ -61,7 +61,7 @@ Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable) c
     }
 
     return std::all_of(
-        this->table.begin(), this->table.end(), [this, declarationTable](const std::pair<String, String>& key) {
+        this->table.begin(), this->table.end(), [this, declarationTable](const std::pair<String, DesignEntity>& key) {
             return this->getDesignEntityOfSynonym(key.first) == declarationTable.getDesignEntityOfSynonym(key.first);
         });
 }
