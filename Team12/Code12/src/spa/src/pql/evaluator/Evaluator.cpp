@@ -81,7 +81,7 @@ RawQueryResult Evaluator::evaluateValidQuery()
 {
     // initiate Affects and Next evaluators
     resultsTable.manageEvaluator(new NextEvaluator(resultsTable));
-    resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable));
+    resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable, new AffectsEvaluatorFacade()));
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);

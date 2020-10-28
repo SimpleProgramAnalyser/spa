@@ -14,6 +14,8 @@
 #include "cfg/CfgTypes.h"
 
 class AffectsEvaluatorFacade {
+public:
+    AffectsEvaluatorFacade() = default;
     AffectsEvaluatorFacade(const AffectsEvaluatorFacade&) = default;
     AffectsEvaluatorFacade(AffectsEvaluatorFacade&&) = default;
     virtual ~AffectsEvaluatorFacade() = default;
@@ -54,6 +56,23 @@ class AffectsEvaluatorFacade {
     virtual StatementType getType(Integer stmtNum);
 
     /**
+     * Returns a list of statement numbers that refer
+     * to every assignment statement in the program.
+     */
+    virtual Vector<Integer> getAssigns();
+
+    /**
+     * Returns a list of procedures that modify some variable
+     * in the program. The exact variables do not matter.
+     *
+     * These procedures are relevant for the calculation of
+     * Affects relationships as only statements (more
+     * specifically, assignments) that modify variables
+     * need to be looked at, by the definition.
+     */
+    virtual Vector<String> getRelevantProcedures();
+
+    /**
      * Returns the root node of the Control Flow Graph
      * of the procedure with the name provided.
      */
@@ -77,17 +96,6 @@ class AffectsEvaluatorFacade {
      *         Call that modifies variable. Otherwise false.
      */
     virtual Boolean doesStatementModify(Integer stmtNum, const String& variable);
-
-    /**
-     * Returns a list of procedures that modify some variable
-     * in the program. The exact variables do not matter.
-     *
-     * These procedures are relevant for the calculation of
-     * Affects relationships as only statements (more
-     * specifically, assignments) that modify variables
-     * need to be looked at, by the definition.
-     */
-    virtual Vector<String> getRelevantProcedures();
 };
 
 #endif // SPA_PQL_AFFECTS_EVALUATOR_FACADE_H

@@ -32,6 +32,16 @@ StatementType AffectsEvaluatorFacade::getType(Integer stmtNum)
     return getStatementType(stmtNum);
 }
 
+Vector<Integer> AffectsEvaluatorFacade::getAssigns()
+{
+    return getAllStatements(AssignmentStatement);
+}
+
+Vector<String> AffectsEvaluatorFacade::getRelevantProcedures()
+{
+    return getAllModifiesProcedures();
+}
+
 CfgNode* AffectsEvaluatorFacade::getCfg(const String& procedureName)
 {
     return getCFG(procedureName);
@@ -51,9 +61,4 @@ Boolean AffectsEvaluatorFacade::doesStatementModify(Integer stmtNum, const Strin
     } else {
         return checkIfStatementModifies(stmtNum, variable);
     }
-}
-
-Vector<String> AffectsEvaluatorFacade::getRelevantProcedures()
-{
-    return getAllModifiesProcedures();
 }

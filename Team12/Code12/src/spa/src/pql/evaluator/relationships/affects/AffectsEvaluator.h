@@ -5,6 +5,7 @@
 #ifndef SPA_PQL_AFFECTS_EVALUATOR_H
 #define SPA_PQL_AFFECTS_EVALUATOR_H
 
+#include "AffectsEvaluatorFacade.h"
 #include "cfg/CfgTypes.h"
 #include "pql/evaluator/ResultsTable.h"
 #include "pql/evaluator/relationships/CacheTable.h"
@@ -45,6 +46,9 @@ public:
 class AffectsEvaluator {
 private:
     ResultsTable& resultsTable;
+    // The facade which this Affects Evaluator uses to interact
+    // with components outside of Query Processor (i.e. PKB)
+    std::unique_ptr<AffectsEvaluatorFacade> facade;
 
     // Cache for Affects(modifier, user)
     CacheTable cacheUserTable;          // cache tables to store individual Affects(a, b) for known a, b
@@ -91,7 +95,18 @@ private:
     Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
 
 public:
-    explicit AffectsEvaluator(ResultsTable& resultsTable);
+    /**
+     * Constructs a new AffectsEvaluator.
+     *
+     * @param resultsTable The results table for the Evaluator to
+     *                     store results in after evaluation.
+     * @param facade The facade used by AffectsEvaluator to access
+     *               other components of SIMPLE program analyser.
+     *               Note that this pointer will be managed by Affects
+     *               Evaluator (the Facade will be deleted at the end
+     *               of the lifetime of the parent AffectsEvaluator)
+     */
+    explicit AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade);
     Void evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef);
     Void evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef);
 };
