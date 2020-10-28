@@ -7,13 +7,13 @@
 
 #include <stdexcept>
 
-#include "AffectsEvaluator.h"
 #include "CallsEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "ModifiesEvaluator.h"
 #include "NextEvaluator.h"
 #include "ParentEvaluator.h"
 #include "UsesEvaluator.h"
+#include "affects/AffectsEvaluator.h"
 
 void evaluateAffectsNormal(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
 {
