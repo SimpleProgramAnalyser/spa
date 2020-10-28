@@ -41,4 +41,5 @@ std::array<String, maxErrorCode> errorMessages
        "Conditional expression parsing failed, unrecognised expression.",
        "Conditional expression parsing failed, expected closing bracket for !( ... )",
        "Conditional expression parsing failed, expected closing bracket for (...) opr (...)",
-       "Conditional expression parsing failed, unexpected token after (...) opr (...)"};
+       "Conditional expression parsing failed, unexpected token after (...) opr (...)",
+       "Statement list parsing failed, expected closing brace after statement list."};
