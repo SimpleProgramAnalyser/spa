@@ -5,9 +5,9 @@
 #ifndef SPA_PQL_AFFECTS_EVALUATOR_H
 #define SPA_PQL_AFFECTS_EVALUATOR_H
 
-#include "CacheTable.h"
 #include "cfg/CfgTypes.h"
 #include "pql/evaluator/ResultsTable.h"
+#include "pql/evaluator/relationships/CacheTable.h"
 
 /**
  * A class to hold result lists for Affects.

@@ -9,7 +9,7 @@
 #include <set>
 #include <stdexcept>
 
-#include "RelationshipsUtil.h"
+#include "pql/evaluator/relationships/RelationshipsUtil.h"
 
 /**
  * Implementation of a priority queue using a std::set
