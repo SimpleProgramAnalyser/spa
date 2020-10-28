@@ -16,7 +16,8 @@
  * @param currentCfgBipNode The current CfgBip node
  * @param visitedMap Hash map of the visited nodes in each procedure, it is not a nullptr if it has been visited
  * @param currentProcName The current procedure name
- * @param visitedCfgProcedure Hashmap of the visited status of the CFG of a procedure. True if the CFG of a procedure has been visited.
+ * @param visitedCfgProcedure Hashmap of the visited status of the CFG of a procedure. True if the CFG of a procedure
+ * has been visited.
  * @return The pointer to the current CfgNode of the CfgBip
  */
 
@@ -130,8 +131,9 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
                 currentCfgBipNode->childrenNodes->push_back(newCfgBipNode);
                 // Set the currentCfgBipNode when it is the last child
                 if (j == childrenList->size() - 1) {
-                    currentCfgBipNode = buildCfgBipWithNode(currentChild, proceduresCfg, currentNumberOfNodes,
-                                                            newCfgBipNode, visitedMap, currentProcName, visitedCfgProcedure);
+                    currentCfgBipNode
+                        = buildCfgBipWithNode(currentChild, proceduresCfg, currentNumberOfNodes, newCfgBipNode,
+                                              visitedMap, currentProcName, visitedCfgProcedure);
                 } else {
                     buildCfgBipWithNode(currentChild, proceduresCfg, currentNumberOfNodes, newCfgBipNode, visitedMap,
                                         currentProcName, visitedCfgProcedure);
@@ -147,11 +149,13 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
  * @param proceduresCfg Hash map of the procedures' names and the root node oftheir respective CFG
  * @param procName The name of the current procedure
  * @param numberOfCfgNodes The total number of CfgNodes for each procedure in its CFG
- * @param visitedCfgProcedure Hashmap of the visited status of the CFG of a procedure. True if the CFG of a procedure has been visited.
+ * @param visitedCfgProcedure Hashmap of the visited status of the CFG of a procedure. True if the CFG of a procedure
+ * has been visited.
  * @return The root CfgBip node
  */
 CfgNode* buildCfgBip(std::unordered_map<Name, CfgNode*>* proceduresCfg, Name procName,
-                     std::unordered_map<Name, size_t>* numberOfCfgNodes, std::unordered_map<Name, Boolean>* visitedCfgProcedure)
+                     std::unordered_map<Name, size_t>* numberOfCfgNodes,
+                     std::unordered_map<Name, Boolean>* visitedCfgProcedure)
 {
     size_t currentNumberOfNodes = -1;
     CfgNode* firstCfg = proceduresCfg->at(procName);
@@ -169,7 +173,7 @@ CfgNode* buildCfgBip(std::unordered_map<Name, CfgNode*>* proceduresCfg, Name pro
         visitedMap.insert({it->first, visitedArray});
     }
 
-    buildCfgBipWithNode(firstCfg, proceduresCfg, currentNumberOfNodes, rootCfgBipNode,
-                                            &visitedMap, procName, visitedCfgProcedure);
+    buildCfgBipWithNode(firstCfg, proceduresCfg, currentNumberOfNodes, rootCfgBipNode, &visitedMap, procName,
+                        visitedCfgProcedure);
     return rootCfgBipNode;
 }
