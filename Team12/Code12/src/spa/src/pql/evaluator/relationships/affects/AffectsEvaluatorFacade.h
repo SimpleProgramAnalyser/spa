@@ -19,8 +19,8 @@ public:
     AffectsEvaluatorFacade(const AffectsEvaluatorFacade&) = default;
     AffectsEvaluatorFacade(AffectsEvaluatorFacade&&) = default;
     virtual ~AffectsEvaluatorFacade() = default;
-    virtual AffectsEvaluatorFacade& operator=(const AffectsEvaluatorFacade&) = default;
-    virtual AffectsEvaluatorFacade& operator=(AffectsEvaluatorFacade&&) = default;
+    AffectsEvaluatorFacade& operator=(const AffectsEvaluatorFacade&) = default;
+    AffectsEvaluatorFacade& operator=(AffectsEvaluatorFacade&&) = default;
 
     /**
      * Returns a list of variables used by a
