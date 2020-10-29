@@ -47,7 +47,7 @@ AbstractQuery Preprocessor::processQuery(const String& query)
 
     ResultSynonymVector resultSynonymVector = processSelectResultString(selectResultString, declarationTable);
 
-    if (resultSynonymVector.isInvalid()) {
+    if (resultSynonymVector.isSyntacticallyInvalid()) {
         return AbstractQuery(resultSynonymVector.getErrorType(), resultSynonymVector.getErrorMessage());
     }
 
@@ -93,7 +93,7 @@ ResultSynonymVector processSelectResultString(String selectResultString, Declara
     // Single Synonym result
     if (selectResultString.at(0) != '<') {
         ResultSynonym processedResultSynonym = processResultSynonym(selectResultString, declarationTable);
-        if (processedResultSynonym.isInvalid()) {
+        if (processedResultSynonym.isSyntacticallyInvalid()) {
             return ResultSynonymVector(processedResultSynonym.getErrorType(), processedResultSynonym.getErrorMessage());
         }
 
@@ -112,7 +112,7 @@ ResultSynonymVector processSelectResultString(String selectResultString, Declara
     for (auto& resultSynonymString : resultSynonymStrings) {
         String trimmedResultSynonymString = trimWhitespace(resultSynonymString);
         ResultSynonym processedResultSynonym = processResultSynonym(trimmedResultSynonymString, declarationTable);
-        if (processedResultSynonym.isInvalid()) {
+        if (processedResultSynonym.isSyntacticallyInvalid()) {
             return ResultSynonymVector(processedResultSynonym.getErrorType(), processedResultSynonym.getErrorMessage());
         }
 
@@ -292,7 +292,7 @@ ClauseVector processClauses(const String& clausesString, DeclarationTable& decla
                 }
 
                 Clause* clause = WithClause::createWithClause(currentClauseConstraint, declarationTable);
-                if (clause->isInvalid()) {
+                if (clause->isSyntacticallyInvalid()) {
                     return ClauseVector(clause->getErrorType(), clause->getErrorMessage());
                 }
 
@@ -345,7 +345,7 @@ ClauseVector processClauses(const String& clausesString, DeclarationTable& decla
                     clause = PatternClause::createPatternClause(currentClauseConstraint, declarationTable);
                 }
 
-                if (clause->isInvalid()) {
+                if (clause->isSyntacticallyInvalid()) {
                     return ClauseVector(clause->getErrorType(), clause->getErrorMessage());
                 }
 

@@ -73,7 +73,7 @@ Clause* PatternClause::processAssignPatternClause(Synonym patternSynonym, String
 
     ExpressionSpec rightExpressionSpec = ExpressionSpec::createExpressionSpec(secondConstraintString);
     if (rightExpressionSpec.isInvalid()) {
-        return new Clause(PatternClauseType, QuerySemanticsError,
+        return new Clause(PatternClauseType, rightExpressionSpec.getErrorType(),
                           "Invalid ExpressionSpec used in assign PatternClause: " + secondConstraintString);
     }
 
