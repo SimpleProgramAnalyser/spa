@@ -65,6 +65,28 @@ void evaluateNextTransitive(const Reference& leftRef, const Reference& rightRef,
     resultsTable->getNextEvaluator()->evaluateNextStarClause(leftRef, rightRef);
 }
 
+// ======================================== Branch Into Procedure (BIP) ========================================
+
+void evaluateAffectsBip(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getAffectsBipEvaluator()->evaluateAffectsClause(leftRef, rightRef);
+}
+
+void evaluateAffectsBipTransitive(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getAffectsBipEvaluator()->evaluateAffectsStarClause(leftRef, rightRef);
+}
+
+void evaluateNextBip(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getNextBipEvaluator()->evaluateNextClause(leftRef, rightRef);
+}
+
+void evaluateNextBipTransitive(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getNextBipEvaluator()->evaluateNextStarClause(leftRef, rightRef);
+}
+
 std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>
 getSuchThatEvaluatorMap()
 {
@@ -84,7 +106,12 @@ getSuchThatEvaluatorMap()
          {ModifiesStatementType, evaluateModifiesClause},
          {ModifiesProcedureType, evaluateModifiesClause},
          {NextType, evaluateNextNormal},
-         {NextStarType, evaluateNextTransitive}});
+         {NextStarType, evaluateNextTransitive},
+         // branch into procedures (BIP)
+         {AffectsBipType, evaluateAffectsBip},
+         {AffectsBipStarType, evaluateAffectsBipTransitive},
+         {NextBipType, evaluateNextBip},
+         {NextBipStarType, evaluateNextBipTransitive}});
 }
 
 Void evaluateSuchThat(SuchThatClause* stClause, ResultsTable* resultsTable)

@@ -127,11 +127,11 @@ void ParentTable::addParentRelationships(StatementNumber parent, StatementType p
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        parentStmtType > AnyStatement && parentStmtType < STATEMENT_TYPE_COUNT
+        parentStmtType > AnyStatement && parentStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        childStmtType > AnyStatement && childStmtType < STATEMENT_TYPE_COUNT
+        childStmtType > AnyStatement && childStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     addIntoBasicTables(parentStmtType, parent, childStmtType, child);
@@ -152,14 +152,14 @@ void ParentTable::addParentRelationshipsStar(StatementNumber parent, StatementTy
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        parentStmtType > AnyStatement && parentStmtType < STATEMENT_TYPE_COUNT
+        parentStmtType > AnyStatement && parentStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     for (auto stmtTypePair : childStmttypePairs) {
         StatementNumber child = stmtTypePair.first;
         StatementType childStmtType = stmtTypePair.second;
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         assert(
-            childStmtType > AnyStatement && childStmtType < STATEMENT_TYPE_COUNT
+            childStmtType > AnyStatement && childStmtType < StatementTypeCount
             && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         addIntoBasicTablesStar(parentStmtType, parent, childStmtType, child);

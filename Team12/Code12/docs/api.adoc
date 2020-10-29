@@ -375,9 +375,9 @@ If a same `stmtNum` already exists in the table, any attributes associated with 
 [#getStatementType]
 `*STATEMENT_TYPE* getStatementType(INTEGER stmtNum);`
 
-*Requires*: `stmtNum` must be a valid statement number in SIMPLE program.
-
-*Description*: Returns the *STATEMENT_TYPE* of `stmtNum`.
+*Description*: Returns the *STATEMENT_TYPE* of `stmtNum`. If
+`stmtNum` is not a valid statement number in SIMPLE program,
+this method returns NON_EXISTENT_STATEMENT_TYPE.
 
 === Variable Table API
 
@@ -1020,7 +1020,8 @@ holds and are of STATEMENT_TYPE `stmtType`.
 === Next API
 
 *Overview*: The Next API describes the methods exposed by Next Table to insert and extract
-information related to the Next relationships in the processed SIMPLE program.
+information related to the Next relationships in the processed SIMPLE program. This API
+differs from the other relationships as the transitive relationship (Next*) is not stored.
 
 * <<addNextRelationships>>
 * <<checkIfNextHolds>>
@@ -1204,23 +1205,22 @@ between them.
 *Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls** relationship holds
 between them.
 
-=== Utilities API
+=== Trees API
 
-* <<resetPKB>>
+*Overview*: The Trees API describes the methods related to various
+trees created in the Frontend and used by Query Processor. Namely,
+Trees API provides a database to store and retrieve the Abstract
+Syntax Tree of the entire program, and the Control Flow Graph
+for procedures in the program.
+
 * <<assignRootNode>>
 * <<getRootNode>>
 * <<storeCFG>>
 * <<getCFG>>
+* <<getProceduresWithCFG>>
 * <<storeCFGBip>>
 * <<getCFGBip>>
-
-'''
-
-[#resetPKB]
-`*VOID* resetPKB()`
-
-*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
-PKB from memory.This is an irreversible action.
+* <<getProceduresWithCFGBip>>
 
 '''
 
@@ -1253,6 +1253,14 @@ If <<storeCFG>> was never called for the `proc` given, a *NULL_POINTER* will be 
 
 '''
 
+[#getProceduresWithCFG]
+`*PROCEDURE_LIST* getProceduresWithCFG()`
+
+*Description*: Retrieves the names of all procedures that have a *CFG*
+associated with them in the Program Knowledge Base.
+
+'''
+
 [#storeCFGBip]
 `*VOID* storeCFGBip(*CFG* cfgBip, *PROCEDURE* proc)`
 
@@ -1266,6 +1274,27 @@ for the *PROCEDURE* `proc` in PKB.
 
 *Description*: Retrieves the *CFG* with branching into procedures for `proc` stored in PKB.
 If <<storeCFGBip>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
+
+'''
+
+[#getProceduresWithCFGBip]
+`*PROCEDURE_LIST* getProceduresWithCFGBip()`
+
+*Description*: Retrieves the names of all procedures that have a *CFG*
+with branching into procedures in the Program Knowledge Base.
+
+
+=== Utilities API
+
+* <<resetPKB>>
+
+'''
+
+[#resetPKB]
+`*VOID* resetPKB()`
+
+*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
+PKB from memory.This is an irreversible action.
 
 == PQL
 

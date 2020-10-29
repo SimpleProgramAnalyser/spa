@@ -46,11 +46,11 @@ private:
      * Secondary key: statement type
      * Result: Vector<Statement Number>
      */
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtPreviousType;
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtNextType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtPreviousType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtNextType;
     // hashsets to prevent duplication in lists above
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtPreviousTypeSet;
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtNextTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtPreviousTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtNextTypeSet;
 
     // Tuples
     /**

@@ -106,7 +106,7 @@ SCENARIO("Iteration 1 Parent", "[follows][pkb]")
                 Vector<StatementType> nonContainerTypes
                     = {CallStatement, ReadStatement, PrintStatement, AssignmentStatement};
                 for (StatementType nonContainerType : nonContainerTypes) {
-                    for (int i = 0; i < STATEMENT_TYPE_COUNT; i++) {
+                    for (int i = 0; i < StatementTypeCount; i++) {
                         REQUIRE(parentTable.getAllParentStatementsTyped(nonContainerType, StatementType(i)).empty());
                         REQUIRE(parentTable.getAllChildStatementsTyped(nonContainerType, StatementType(i)).empty());
                         REQUIRE(

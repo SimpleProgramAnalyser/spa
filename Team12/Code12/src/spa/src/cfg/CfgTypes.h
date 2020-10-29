@@ -25,9 +25,9 @@ public:
     CfgNode(CfgNode&&) = delete;
     CfgNode& operator=(CfgNode&&) = delete;
 
-    // A method to delete all children of this node.
+    // A method to find all unique children of this node.
     // This method is non-recursive.
-    void deleteAllChildren() const;
+    Vector<CfgNode*> findAllChildren() const;
 
     Boolean equals(CfgNode* cfgn, size_t numberOfNodes);
 };

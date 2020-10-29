@@ -78,6 +78,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tree/TreeStore.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tree/TreeStore.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
@@ -158,6 +160,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsEvaluatorFacade.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsEvaluatorFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsBipFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsBipFacade.cpp
 
     # pql/evaluator/pattern
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/AssignMatcher.h
