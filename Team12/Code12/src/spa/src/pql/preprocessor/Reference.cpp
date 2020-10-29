@@ -6,7 +6,7 @@
 /** Constructors        */
 /************************/
 
-Reference::Reference(): referenceType{InvalidRefType}, designEntity{}, attribute{NoAttributeType} {}
+Reference::Reference(): referenceType{InvalidRefType}, referenceValue(), designEntity{}, attribute{NoAttributeType} {}
 
 Reference::Reference(QueryErrorType queryErrorType, ErrorMessage errorMessage):
     referenceType{InvalidRefType}, attribute{NoAttributeType}

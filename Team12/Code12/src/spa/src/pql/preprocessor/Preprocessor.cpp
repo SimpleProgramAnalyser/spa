@@ -47,7 +47,7 @@ AbstractQuery Preprocessor::processQuery(const String& query)
 
     ResultSynonymVector resultSynonymVector = processSelectResultString(selectResultString, declarationTable);
 
-    if (resultSynonymVector.isSyntacticallyInvalid()) {
+    if (resultSynonymVector.isInvalid()) {
         return AbstractQuery(resultSynonymVector.getErrorType(), resultSynonymVector.getErrorMessage());
     }
 
@@ -93,7 +93,7 @@ ResultSynonymVector processSelectResultString(String selectResultString, Declara
     // Single Synonym result
     if (selectResultString.at(0) != '<') {
         ResultSynonym processedResultSynonym = processResultSynonym(selectResultString, declarationTable);
-        if (processedResultSynonym.isSyntacticallyInvalid()) {
+        if (processedResultSynonym.isInvalid()) {
             return ResultSynonymVector(processedResultSynonym.getErrorType(), processedResultSynonym.getErrorMessage());
         }
 
@@ -103,7 +103,7 @@ ResultSynonymVector processSelectResultString(String selectResultString, Declara
     // Tuple result
     String removeTupleString = selectResultString.substr(1);
     StringVector resultSynonymStrings = splitByDelimiter(removeTupleString, ",");
-    if (resultSynonymStrings.size() == 0
+    if (resultSynonymStrings.empty()
         || (resultSynonymStrings.size() == 1 && isAllWhitespaces(resultSynonymStrings.at(0)))) {
         return ResultSynonymVector(QuerySyntaxError, "Result Synonym tuple does not have any Synonym");
     }
@@ -112,7 +112,7 @@ ResultSynonymVector processSelectResultString(String selectResultString, Declara
     for (auto& resultSynonymString : resultSynonymStrings) {
         String trimmedResultSynonymString = trimWhitespace(resultSynonymString);
         ResultSynonym processedResultSynonym = processResultSynonym(trimmedResultSynonymString, declarationTable);
-        if (processedResultSynonym.isSyntacticallyInvalid()) {
+        if (processedResultSynonym.isInvalid()) {
             return ResultSynonymVector(processedResultSynonym.getErrorType(), processedResultSynonym.getErrorMessage());
         }
 
@@ -366,6 +366,14 @@ ClauseVector processClauses(const String& clausesString, DeclarationTable& decla
         return ClauseVector(QuerySyntaxError, "Extra incomplete tokens at end of query");
     }
 
+    int numberOfClauses = clauseVector.count();
+    // check for semantic error
+    for (int i = 0; i < numberOfClauses; i++) {
+        Clause* currentClause = clauseVector.get(i);
+        if (currentClause->isSemanticallyInvalid()) {
+            return ClauseVector(currentClause->getErrorType(), currentClause->getErrorMessage());
+        }
+    }
     return clauseVector;
 }
 

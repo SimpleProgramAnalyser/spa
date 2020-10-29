@@ -8,11 +8,11 @@ typedef String ErrorMessage;
 
 class Errorable {
 protected:
-    QueryErrorType errorType = NoQueryErrorType;
+    QueryErrorType errorType;
     ErrorMessage errorMessage;
 
 public:
-    Errorable() = default;
+    Errorable();
 
     // Instantiate an Errorable with the given QueryErrorType.
     Errorable(QueryErrorType queryErrorType);

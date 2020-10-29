@@ -1,13 +1,17 @@
 #include "Errorable.h"
 
+#include <utility>
+
 /************************/
 /** Constructors        */
 /************************/
 
-Errorable::Errorable(QueryErrorType queryErrorType): errorType(queryErrorType) {}
+Errorable::Errorable(): errorType(NoQueryErrorType), errorMessage() {}
+
+Errorable::Errorable(QueryErrorType queryErrorType): errorType(queryErrorType), errorMessage() {}
 
 Errorable::Errorable(QueryErrorType queryErrorType, ErrorMessage message):
-    errorType(queryErrorType), errorMessage(message)
+    errorType(queryErrorType), errorMessage(std::move(message))
 {}
 
 /************************/
@@ -42,7 +46,7 @@ Void Errorable::setSyntaxError()
 Void Errorable::setError(QueryErrorType queryErrorType, String message)
 {
     setError(queryErrorType);
-    this->errorMessage = message;
+    this->errorMessage = std::move(message);
 }
 
 Void Errorable::setError(QueryErrorType queryErrorType)
