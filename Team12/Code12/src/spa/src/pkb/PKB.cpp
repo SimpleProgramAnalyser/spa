@@ -6,18 +6,6 @@ PKB pkb = PKB();
 
 void resetPKB()
 {
-    // delete CFG
-    for (std::pair<ProcedureName, CfgNode*> mapEntry : pkb.cfgByProcedure) {
-        mapEntry.second->deleteAllChildren();
-        delete mapEntry.second;
-    }
-    // delete CFG BIP
-    for (std::pair<ProcedureName, CfgNode*> mapEntry : pkb.cfgBipByProcedure) {
-        mapEntry.second->deleteAllChildren();
-        delete mapEntry.second;
-    }
-    // delete AST
-    delete pkb.rootNode;
     pkb = PKB();
 }
 
@@ -329,11 +317,11 @@ StatementType getStatementType(StatementNumber stmtNum)
 // RootNode
 void assignRootNode(ProgramNode* rootNodeToAssign)
 {
-    pkb.rootNode = rootNodeToAssign;
+    pkb.treeStore.assignRootNode(rootNodeToAssign);
 }
 ProgramNode* getRootNode()
 {
-    return pkb.rootNode;
+    return pkb.treeStore.getRootNode();
 }
 
 // Constant
@@ -441,29 +429,29 @@ Vector<ProcedureName> getAllCalleesStar()
 // CFG
 void storeCFG(CfgNode* cfg, const ProcedureName& procedureName)
 {
-    pkb.cfgByProcedure[procedureName] = cfg;
+    pkb.treeStore.storeCFG(cfg, procedureName);
 }
 CfgNode* getCFG(const ProcedureName& procedureName)
 {
-    if (pkb.cfgByProcedure.find(procedureName) == pkb.cfgByProcedure.end()) {
-        return nullptr;
-    } else {
-        return pkb.cfgByProcedure[procedureName];
-    }
+    return pkb.treeStore.getCFG(procedureName);
+}
+Vector<String> getProceduresWithCFG()
+{
+    return pkb.treeStore.getProceduresWithCFG();
 }
 
 // CFG Bip
 void storeCFGBip(CfgNode* cfgBip, const ProcedureName& procedureName)
 {
-    pkb.cfgBipByProcedure[procedureName] = cfgBip;
+    pkb.treeStore.storeCFGBip(cfgBip, procedureName);
 }
 CfgNode* getCFGBip(const ProcedureName& procedureName)
 {
-    if (pkb.cfgBipByProcedure.find(procedureName) == pkb.cfgBipByProcedure.end()) {
-        return nullptr;
-    } else {
-        return pkb.cfgBipByProcedure[procedureName];
-    }
+    return pkb.treeStore.getCFGBip(procedureName);
+}
+Vector<String> getProceduresWithCFGBip()
+{
+    return pkb.treeStore.getProceduresWithCFGBip();
 }
 
 // NextBip
