@@ -18,10 +18,15 @@ enum RelationshipType : char {
     ModifiesProcedureType,
     CallsType,
     CallsStarType,
-    NextType,
-    NextStarType,
     AffectsType,
     AffectsStarType,
+    NextType,
+    NextStarType,
+    // branch into procedure (BIP) types
+    AffectsBipType,
+    AffectsBipStarType,
+    NextBipType,
+    NextBipStarType,
     InvalidRelationshipType
 };
 

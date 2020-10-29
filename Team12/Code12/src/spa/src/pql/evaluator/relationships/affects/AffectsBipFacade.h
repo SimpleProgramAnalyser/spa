@@ -10,6 +10,7 @@
 #include "AffectsEvaluatorFacade.h"
 
 class AffectsBipFacade: public AffectsEvaluatorFacade {
+public:
     AffectsBipFacade() = default;
     AffectsBipFacade(const AffectsBipFacade&) = default;
     AffectsBipFacade(AffectsBipFacade&&) = default;

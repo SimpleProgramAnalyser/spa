@@ -387,13 +387,16 @@ PairedResult ResultsTable::getRelationships(const Synonym& leftSynonym, const Sy
 // set hasResult to true at the start, since no clauses have been evaluated
 ResultsTable::ResultsTable(DeclarationTable decls):
     declarations(std::move(decls)), relationships(std::unique_ptr<RelationshipsGraph>(new RelationshipsGraph())),
-    hasResult(true), hasEvaluated(false), affectsEvaluator(nullptr), nextEvaluator(nullptr)
+    hasResult(true), hasEvaluated(false), affectsEvaluator(nullptr), nextEvaluator(nullptr),
+    affectsBipEvaluator(nullptr), nextBipEvaluator(nullptr)
 {}
 
 ResultsTable::~ResultsTable()
 {
     delete affectsEvaluator;
     delete nextEvaluator;
+    delete affectsBipEvaluator;
+    delete nextBipEvaluator;
 }
 
 std::vector<std::pair<std::string, std::vector<std::string>>>
@@ -459,6 +462,16 @@ NextEvaluator* ResultsTable::getNextEvaluator() const
     return nextEvaluator;
 }
 
+AffectsEvaluator* ResultsTable::getAffectsBipEvaluator() const
+{
+    return affectsBipEvaluator;
+}
+
+NextEvaluator* ResultsTable::getNextBipEvaluator() const
+{
+    return nextBipEvaluator;
+}
+
 Void ResultsTable::manageEvaluator(AffectsEvaluator* affectsEval)
 {
     affectsEvaluator = affectsEval;
@@ -467,6 +480,16 @@ Void ResultsTable::manageEvaluator(AffectsEvaluator* affectsEval)
 Void ResultsTable::manageEvaluator(NextEvaluator* nextEval)
 {
     nextEvaluator = nextEval;
+}
+
+Void ResultsTable::manageEvaluatorBip(AffectsEvaluator* affectsBipEval)
+{
+    affectsBipEvaluator = affectsBipEval;
+}
+
+Void ResultsTable::manageEvaluatorBip(NextEvaluator* nextBipEval)
+{
+    nextBipEvaluator = nextBipEval;
 }
 
 Void ResultsTable::eliminatePotentialValue(const Synonym& synonym, const String& value)
