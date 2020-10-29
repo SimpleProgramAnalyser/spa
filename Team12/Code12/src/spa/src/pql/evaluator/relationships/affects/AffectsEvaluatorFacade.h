@@ -49,6 +49,7 @@ public:
      * program design abstraction relationship.
      */
     virtual Vector<Integer> getPrevious(Integer stmtNum);
+
     /**
      * Returns the statement type of a statement in
      * the program, given the statement's number.

@@ -394,8 +394,7 @@ Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer righ
 Void AffectsEvaluator::cacheAll()
 {
     if (!cacheFullyPopulated) {
-
-        // we can skip procedures that do not modify any variables
+        // we just need certain procedures for computation of Affects
         Vector<String> procedures = facade->getRelevantProcedures();
         AffectsTuple resultsLists;
         for (const String& proc : procedures) {

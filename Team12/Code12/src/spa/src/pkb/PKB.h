@@ -12,6 +12,7 @@
 #include "relationships/Parent.h"
 #include "relationships/Uses.h"
 #include "tables/Tables.h"
+#include "tree/TreeStore.h"
 
 /**
  * Holds API methods for the Program Knowledge Base (PKB).
@@ -144,27 +145,30 @@ void insertIntoConstantTable(Integer constant);
 Boolean isConstantInProgram(Integer constant);
 Vector<Integer> getAllConstants();
 
-// Root node
+// AST Root node
 void assignRootNode(ProgramNode* rootNodeToAssign);
 ProgramNode* getRootNode();
 
 // CFG
 void storeCFG(CfgNode* cfg, const ProcedureName& procedureName);
 CfgNode* getCFG(const ProcedureName& procedureName);
+Vector<String> getProceduresWithCFG();
 
 // CFG Bip
 void storeCFGBip(CfgNode* cfgBip, const ProcedureName& procedureName);
 CfgNode* getCFGBip(const ProcedureName& procedureName);
+Vector<String> getProceduresWithCFGBip();
 
 // Others
 void resetPKB();
 
 class PKB {
 public:
-    ProgramNode* rootNode = nullptr;
+    // Tables
     StatementTable statementTable;
     VariableTable variableTable;
     ProcedureTable procedureTable;
+    // Relationships
     FollowsTable followsTable;
     ParentTable parentTable;
     UsesTable usesTable;
@@ -173,8 +177,8 @@ public:
     NextTable nextTable;
     CallsTable callsTable;
     NextBipTable nextBipTable;
-    HashMap<ProcedureName, CfgNode*> cfgByProcedure;
-    HashMap<ProcedureName, CfgNode*> cfgBipByProcedure;
+    // Trees
+    TreeStore treeStore;
 };
 
 #endif // PKB_H
