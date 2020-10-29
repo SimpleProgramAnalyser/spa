@@ -375,9 +375,9 @@ If a same `stmtNum` already exists in the table, any attributes associated with 
 [#getStatementType]
 `*STATEMENT_TYPE* getStatementType(INTEGER stmtNum);`
 
-*Requires*: `stmtNum` must be a valid statement number in SIMPLE program.
-
-*Description*: Returns the *STATEMENT_TYPE* of `stmtNum`.
+*Description*: Returns the *STATEMENT_TYPE* of `stmtNum`. If
+`stmtNum` is not a valid statement number in SIMPLE program,
+this method returns NON_EXISTENT_STATEMENT_TYPE.
 
 === Variable Table API
 

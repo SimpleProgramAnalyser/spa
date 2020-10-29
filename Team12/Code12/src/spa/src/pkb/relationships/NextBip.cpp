@@ -67,11 +67,11 @@ void NextBipTable::addNextBipRelationships(Integer previous, StatementType previ
     // disable warnings due to assertions
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        previousStmtType > AnyStatement && previousStmtType < STATEMENT_TYPE_COUNT
+        previousStmtType > AnyStatement && previousStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        nextStmtType > AnyStatement && nextStmtType < STATEMENT_TYPE_COUNT
+        nextStmtType > AnyStatement && nextStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     addIntoBasicTables(previous, previousStmtType, next, nextStmtType);

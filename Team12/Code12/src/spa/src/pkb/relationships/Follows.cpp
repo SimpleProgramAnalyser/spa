@@ -127,11 +127,11 @@ void FollowsTable::addFollowsRelationships(Integer before, StatementType beforeS
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        beforeStmtType > AnyStatement && beforeStmtType < STATEMENT_TYPE_COUNT
+        beforeStmtType > AnyStatement && beforeStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        afterStmtType > AnyStatement && afterStmtType < STATEMENT_TYPE_COUNT
+        afterStmtType > AnyStatement && afterStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     addIntoBasicTables(beforeStmtType, before, afterStmtType, after);
@@ -152,14 +152,14 @@ void FollowsTable::addFollowsRelationshipsStar(Integer before, StatementType bef
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        beforeStmtType > AnyStatement && beforeStmtType < STATEMENT_TYPE_COUNT
+        beforeStmtType > AnyStatement && beforeStmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     for (auto stmtTypePair : afterStmttypePairs) {
         Integer after = stmtTypePair.first;
         StatementType afterStmtType = stmtTypePair.second;
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         assert(
-            afterStmtType > AnyStatement && afterStmtType < STATEMENT_TYPE_COUNT
+            afterStmtType > AnyStatement && afterStmtType < StatementTypeCount
             && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         addIntoBasicTablesStar(beforeStmtType, before, afterStmtType, after);

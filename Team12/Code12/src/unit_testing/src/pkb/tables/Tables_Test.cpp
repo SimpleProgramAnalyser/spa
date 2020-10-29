@@ -131,15 +131,15 @@ SCENARIO("Iteration 1 Tables Test")
                 }
             }
             // create (un)realistic expectations, just like this mean world
-            Array<Vector<Integer>, STATEMENT_TYPE_COUNT> statementLists;
-            for (int i = 0; i < STATEMENT_TYPE_COUNT; i++) {
+            Array<Vector<Integer>, StatementTypeCount> statementLists;
+            for (int i = 0; i < StatementTypeCount; i++) {
                 statementLists[i] = mapToIntegers(filterByType(statements, StatementType(i)));
             }
 
             THEN("correct statements can be found")
             {
                 // check for each statement type
-                for (int i = 0; i < STATEMENT_TYPE_COUNT; i++) {
+                for (int i = 0; i < StatementTypeCount; i++) {
                     REQUIRE_THAT(statementTable.getAllStatements(StatementType(i)),
                                  Catch::UnorderedEquals(statementLists[i]));
                 }
