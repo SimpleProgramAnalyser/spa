@@ -5,18 +5,29 @@
 
 #include "TreeStore.h"
 
+// Instantiate a new TreeStore
+TreeStore::TreeStore():
+    rootNode(nullptr), cfgByProcedure(), proceduresWithCfg(), cfgBipByProcedure(), proceduresWithCfgBip()
+{}
+
 // Clear all the trees when deleted
 TreeStore::~TreeStore()
 {
-    // delete CFG
+    // ensure deleted nodes are unique
+    std::unordered_set<CfgNode*> nodesToDelete;
+    // traverse CFG
     for (std::pair<ProcedureName, CfgNode*> mapEntry : cfgByProcedure) {
-        mapEntry.second->deleteAllChildren();
-        delete mapEntry.second;
+        std::vector<CfgNode*> childNodes = mapEntry.second->findAllChildren();
+        std::copy(childNodes.begin(), childNodes.end(), inserter(nodesToDelete, nodesToDelete.begin()));
     }
-    // delete CFG BIP
+    // traverse CFG BIP
     for (std::pair<ProcedureName, CfgNode*> mapEntry : cfgBipByProcedure) {
-        mapEntry.second->deleteAllChildren();
-        delete mapEntry.second;
+        std::vector<CfgNode*> childNodes = mapEntry.second->findAllChildren();
+        std::copy(childNodes.begin(), childNodes.end(), inserter(nodesToDelete, nodesToDelete.begin()));
+    }
+    // delete the CFG nodes
+    for (CfgNode* node : nodesToDelete) {
+        delete node;
     }
     // delete AST
     delete rootNode;

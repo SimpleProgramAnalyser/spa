@@ -12,7 +12,7 @@
 class TreeStore {
 private:
     // AST
-    ProgramNode* rootNode = nullptr;
+    ProgramNode* rootNode;
     // CFG
     HashMap<ProcedureName, CfgNode*> cfgByProcedure;
     Vector<ProcedureName> proceduresWithCfg;
@@ -21,7 +21,7 @@ private:
     Vector<ProcedureName> proceduresWithCfgBip;
 
 public:
-    TreeStore() = default;
+    TreeStore();
     ~TreeStore();
     TreeStore(const TreeStore&) = default;
     TreeStore(TreeStore&&) = delete;
