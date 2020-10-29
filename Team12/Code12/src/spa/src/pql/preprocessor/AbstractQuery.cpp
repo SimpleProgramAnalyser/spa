@@ -13,7 +13,7 @@
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage):
     Errorable(queryErrorType, std::move(errorMessage)), resultSynonyms(), clauses(), declarationTable(),
-    isToReturnFalseResult(queryErrorType == QuerySyntaxError)
+    isToReturnFalseResult(queryErrorType == QuerySemanticsError)
 {}
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult):
