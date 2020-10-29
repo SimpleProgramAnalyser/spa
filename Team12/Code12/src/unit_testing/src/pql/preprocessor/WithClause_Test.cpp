@@ -378,3 +378,9 @@ TEST_CASE("Spaces between synonym and attribute in Select is parsed correctly")
     REQUIRE(abstractQuery3 == expectedAbstractQuery);
     REQUIRE(abstractQuery4 == expectedAbstractQuery);
 }
+
+TEST_CASE("Syntactically invalid with clause returns syntax error")
+{
+    AbstractQuery abstractQuery = processQuery("read re; Select BOOLEAN such that Parent (re, _) with 5");
+    REQUIRE(abstractQuery.isSyntacticallyInvalid());
+}
