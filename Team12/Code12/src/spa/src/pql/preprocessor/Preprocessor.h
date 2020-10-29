@@ -53,6 +53,17 @@ ClauseVector processClauses(const String& clausesString, DeclarationTable& decla
 
 /**
  * Splits up the given string by the first
+ * non-alphanumeric character (or whitespace
+ * character). First character should be an
+ * alphanumeric character.
+ *
+ * @param str String to be split
+ * @return Vector of 2 strings
+ */
+StringVector splitByFirstNonAlphanum(const String& str);
+
+/**
+ * Splits up the given string by the first
  * consecutive whitespaces, into two substrings.
  * Given string should be trimmed.
  *

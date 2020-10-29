@@ -162,10 +162,22 @@ StringVector splitResultAndClauses(String& s)
 
     char firstChar = s.at(0);
 
-    // Normal single synonym or BOOLEAN
+    // Normal single synonym or BOOLEAN or syn.Attribute
     if (firstChar != '<') {
-        StringVector resultAndClauses = splitByFirstConsecutiveWhitespace(s);
-        return resultAndClauses;
+        StringVector resultAndClauses = splitByFirstNonAlphanum(s);
+        // check for attribute
+        if (resultAndClauses.size() == 2 && !resultAndClauses[1].empty() && resultAndClauses[1][0] == '.') {
+            String attributeAndClauses = resultAndClauses[1];
+            attributeAndClauses.erase(attributeAndClauses.begin());
+            StringVector splitAttributeFromClauses
+                = splitByFirstConsecutiveWhitespace(trimWhitespace(attributeAndClauses));
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+            assert(splitAttributeFromClauses.size() == 2);
+            return StringVector(
+                {resultAndClauses[0] + "." + splitAttributeFromClauses[0], splitAttributeFromClauses[1]});
+        } else {
+            return resultAndClauses;
+        }
     }
 
     StringVector tupleResultAndClauses = splitByDelimiter(s, ">");
@@ -452,6 +464,36 @@ StringPair splitDeclarationAndSelectClause(const String& query)
     String rightToken = query.substr(indexOfLastDelimiter + 1, query.size() - indexOfLastDelimiter - 1);
 
     return std::make_pair(leftToken, rightToken);
+}
+
+StringVector splitByFirstNonAlphanum(const String& str)
+{
+    const char* currentChar = str.c_str();
+    assert(isalnum(*currentChar)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    String currentToken;
+    StringVector split;
+
+    // Find first non-alphanumeric segment
+    while (*currentChar != '\0' && isalnum(*currentChar)) {
+        currentToken.push_back(*currentChar);
+        currentChar++;
+    }
+
+    split.push_back(currentToken);
+    currentToken.clear();
+
+    // Skip past all whitespaces
+    while (isWhitespace(currentChar)) {
+        currentChar++;
+    }
+
+    while (*currentChar != '\0') {
+        currentToken.push_back(*currentChar);
+        currentChar++;
+    }
+
+    split.push_back(currentToken);
+    return split;
 }
 
 StringVector splitByFirstConsecutiveWhitespace(const String& str)
