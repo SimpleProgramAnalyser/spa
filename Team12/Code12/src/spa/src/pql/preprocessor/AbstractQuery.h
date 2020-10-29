@@ -75,7 +75,7 @@ public:
     // Retrieves the error message.
     ErrorMessage getErrorMessage() const;
 
-    Boolean operator==(const AbstractQuery& abstractQuery);
+    Boolean operator==(const AbstractQuery& abstractQuery) const;
 };
 
 #endif // SPA_ABSTRACTQUERY_H

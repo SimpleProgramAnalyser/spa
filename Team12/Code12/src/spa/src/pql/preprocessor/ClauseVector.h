@@ -30,7 +30,7 @@ public:
     // Retrieves the ErrorMessage.
     ErrorMessage getErrorMessage() const;
 
-    Boolean operator==(const ClauseVector& clauseVector);
+    Boolean operator==(const ClauseVector& clauseVector) const;
     ~ClauseVector() = default;
     ClauseVector(const ClauseVector&) = delete;
     ClauseVector operator=(const ClauseVector&) = delete;

@@ -39,7 +39,7 @@ ErrorMessage ClauseVector::getErrorMessage() const
     return errorMessage;
 }
 
-Boolean ClauseVector::operator==(const ClauseVector& clauseVector)
+Boolean ClauseVector::operator==(const ClauseVector& clauseVector) const
 {
     return util::checkVectorOfPointersEqual(this->clauses, clauseVector.clauses);
 }

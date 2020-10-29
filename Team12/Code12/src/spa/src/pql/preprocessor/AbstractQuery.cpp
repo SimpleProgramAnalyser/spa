@@ -51,7 +51,7 @@ ErrorMessage AbstractQuery::getErrorMessage() const
     return errorMessage;
 }
 
-Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
+Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery) const
 {
     return this->resultSynonyms == abstractQuery.resultSynonyms && this->clauses == abstractQuery.clauses
            && this->declarationTable == abstractQuery.declarationTable

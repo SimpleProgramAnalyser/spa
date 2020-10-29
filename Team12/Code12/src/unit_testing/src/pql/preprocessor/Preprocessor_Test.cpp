@@ -2197,3 +2197,30 @@ TEST_CASE("Complex Queries 4")
 
     REQUIRE(equals);
 }
+
+TEST_CASE("Spaces between synonym and attribute in Select is parsed correctly")
+{
+    AbstractQuery abstractQuery1 = processQuery(
+        "assign s; constant c; Select s       .      stmt# such that Follows(8, 9) with c   . value      = s . stmt#");
+    AbstractQuery abstractQuery2 = processQuery(
+        "assign s; constant c; Select s.      stmt# such that Follows(8, 9) with c   . value      = s . stmt#");
+    AbstractQuery abstractQuery3 = processQuery(
+        "assign s; constant c; Select s       .stmt# such that Follows(8, 9) with c   . value      = s . stmt#");
+    AbstractQuery abstractQuery4 = processQuery(
+        "assign s; constant c; Select s.stmt# such that Follows(8, 9) with c   . value      = s . stmt#");
+
+    AbstractQuery expectedAbstractQuery = AbstractQueryBuilder::create()
+                                              .addSelectSynonym("s", "stmt#", AssignType)
+                                              .addDeclaration("s", "assign")
+                                              .addDeclaration("c", "constant")
+                                              .addSuchThatClause(FollowsType, IntegerRefType, "8", NonExistentType,
+                                                                 IntegerRefType, "9", NonExistentType)
+                                              .addWithClause(AttributeRefType, "c", ConstantType, ValueType,
+                                                             AttributeRefType, "s", AssignType, StmtNumberType)
+                                              .build();
+
+    REQUIRE(abstractQuery1 == expectedAbstractQuery);
+    REQUIRE(abstractQuery2 == expectedAbstractQuery);
+    REQUIRE(abstractQuery3 == expectedAbstractQuery);
+    REQUIRE(abstractQuery4 == expectedAbstractQuery);
+}
