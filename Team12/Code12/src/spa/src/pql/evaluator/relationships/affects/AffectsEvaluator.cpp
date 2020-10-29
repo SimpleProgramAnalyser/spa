@@ -395,7 +395,7 @@ Void AffectsEvaluator::cacheAll()
 {
     if (!cacheFullyPopulated) {
 
-        // we can skip procedures that do not modify any variables
+        // we can skip procedures that do not have a CFG
         Vector<String> procedures = facade->getRelevantProcedures();
         AffectsTuple resultsLists;
         for (const String& proc : procedures) {

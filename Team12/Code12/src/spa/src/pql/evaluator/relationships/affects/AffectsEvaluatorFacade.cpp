@@ -39,7 +39,7 @@ Vector<Integer> AffectsEvaluatorFacade::getAssigns()
 
 Vector<String> AffectsEvaluatorFacade::getRelevantProcedures()
 {
-    return getAllModifiesProcedures();
+    return getProceduresWithCFG();
 }
 
 CfgNode* AffectsEvaluatorFacade::getCfg(const String& procedureName)
