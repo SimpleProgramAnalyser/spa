@@ -2,15 +2,16 @@
 
 #include <utility>
 
-ResultSynonymVector::ResultSynonymVector(const ResultSynonym& synonym)
-{
-    resultSynonyms.push_back(synonym);
-}
+ResultSynonymVector::ResultSynonymVector(): Errorable(), resultSynonyms() {}
 
-ResultSynonymVector::ResultSynonymVector(Vector<ResultSynonym> synonyms): resultSynonyms{std::move(synonyms)} {}
+ResultSynonymVector::ResultSynonymVector(const ResultSynonym& synonym): Errorable(), resultSynonyms({synonym}) {}
+
+ResultSynonymVector::ResultSynonymVector(Vector<ResultSynonym> synonyms):
+    Errorable(), resultSynonyms{std::move(synonyms)}
+{}
 
 ResultSynonymVector::ResultSynonymVector(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, std::move(errorMessage))
+    Errorable(queryErrorType, std::move(errorMessage)), resultSynonyms()
 {}
 
 Vector<ResultSynonym> ResultSynonymVector::getSynonyms() const

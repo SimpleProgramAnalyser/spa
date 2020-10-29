@@ -7,19 +7,23 @@
 /************************/
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, std::move(errorMessage))
+    Errorable(queryErrorType, std::move(errorMessage)), resultSynonyms(), clauses(), declarationTable(),
+    isToReturnFalseResult(queryErrorType == QuerySyntaxError)
 {}
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult):
-    Errorable(queryErrorType, std::move(errorMessage)), isToReturnFalseResult(returnFalseResult)
+    Errorable(queryErrorType, std::move(errorMessage)), resultSynonyms(), clauses(), declarationTable(),
+    isToReturnFalseResult(returnFalseResult)
 {}
 
 AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations):
-    resultSynonyms(std::move(synonyms)), declarationTable(declarations)
+    Errorable(), resultSynonyms(std::move(synonyms)), clauses(), declarationTable(declarations),
+    isToReturnFalseResult(false)
 {}
 
 AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations, ClauseVector& clauseVector):
-    resultSynonyms(std::move(synonyms)), clauses(std::move(clauseVector)), declarationTable(declarations)
+    Errorable(), resultSynonyms(std::move(synonyms)), clauses(std::move(clauseVector)), declarationTable(declarations),
+    isToReturnFalseResult(false)
 {}
 
 /*************************/

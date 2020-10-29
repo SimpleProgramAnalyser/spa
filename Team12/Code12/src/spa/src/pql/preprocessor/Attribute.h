@@ -42,7 +42,7 @@ public:
 
     Attribute();
     explicit Attribute(AttributeType attributeType);
-    explicit Attribute(String attributeTypeString);
+    explicit Attribute(const String& attributeTypeString);
 
     // Retrieves the underlying AttributeType
     AttributeType getType();

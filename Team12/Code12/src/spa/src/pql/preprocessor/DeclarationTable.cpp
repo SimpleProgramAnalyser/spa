@@ -16,7 +16,7 @@ const ErrorMessage DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid decla
 DeclarationTable::DeclarationTable(): Errorable(), table() {}
 
 DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, std::move(errorMessage))
+    Errorable(queryErrorType, std::move(errorMessage)), table()
 {}
 
 /************************/

@@ -15,7 +15,7 @@ private:
     // Stores all declarations.
     DeclarationTable declarationTable;
     // Set to true if query is semantically invalid and the result clause is BOOLEAN.
-    Boolean isToReturnFalseResult = false;
+    Boolean isToReturnFalseResult;
 
 public:
     /**

@@ -15,7 +15,7 @@ public:
     Errorable();
 
     // Instantiate an Errorable with the given QueryErrorType.
-    Errorable(QueryErrorType queryErrorType);
+    explicit Errorable(QueryErrorType queryErrorType);
 
     // Instantiate an Errorable with the given QueryErrorType and ErrorMessage.
     Errorable(QueryErrorType queryErrorType, ErrorMessage message);

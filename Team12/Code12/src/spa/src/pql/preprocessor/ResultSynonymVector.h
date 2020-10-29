@@ -8,13 +8,13 @@ private:
     Vector<ResultSynonym> resultSynonyms; // Empty Vector but valid AbstractQuery => Select BOOLEAN
 
 public:
-    ResultSynonymVector() = default;
+    ResultSynonymVector();
 
     // Instantiate a ResultSynonymVector with the one given ResultSynonym.
     explicit ResultSynonymVector(const ResultSynonym& synonym);
 
     // Instantiate a ResultSynonymVector with the given synonyms.
-    ResultSynonymVector(Vector<ResultSynonym> synonyms);
+    explicit ResultSynonymVector(Vector<ResultSynonym> synonyms);
 
     // Instantiate an erroneous ResultSynonymVector with the given QueryErrorType
     // and ErrorMessage.s

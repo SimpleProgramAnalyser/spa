@@ -6,24 +6,27 @@
 /** Constructors        */
 /************************/
 
-Reference::Reference(): referenceType{InvalidRefType}, referenceValue(), designEntity{}, attribute{NoAttributeType} {}
+Reference::Reference():
+    Errorable(), referenceType{InvalidRefType}, referenceValue(), designEntity{}, attribute{NoAttributeType}
+{}
 
 Reference::Reference(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    referenceType{InvalidRefType}, attribute{NoAttributeType}
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+    Errorable(queryErrorType, std::move(errorMessage)), referenceType{InvalidRefType}, referenceValue(),
+    designEntity(), attribute{NoAttributeType}
+{}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, attribute{NoAttributeType}
+    Errorable(), referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, attribute{NoAttributeType}
 {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt):
-    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{designEnt}, attribute{NoAttributeType}
+    Errorable(), referenceType{refType}, referenceValue{std::move(refValue)},
+    designEntity{designEnt}, attribute{NoAttributeType}
 {}
 
 Reference::Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute attr):
-    referenceType{AttributeRefType}, referenceValue{std::move(refValue)}, designEntity{designEnt}, attribute{attr}
+    Errorable(), referenceType{AttributeRefType}, referenceValue{std::move(refValue)},
+    designEntity{designEnt}, attribute{attr}
 {}
 
 /************************/

@@ -5,19 +5,20 @@
 #include "AqTypes.h"
 #include "frontend/parser/Parser.h"
 
-ExpressionSpec::ExpressionSpec(): expression(std::unique_ptr<Expression>()), expressionSpecType{InvalidExpressionType}
+ExpressionSpec::ExpressionSpec():
+    Errorable(), expression(std::unique_ptr<Expression>()), expressionSpecType{InvalidExpressionType}
 {}
 
 ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType):
-    expression(std::unique_ptr<Expression>()), expressionSpecType{exprSpecType}
+    Errorable(), expression(std::unique_ptr<Expression>()), expressionSpecType{exprSpecType}
 {}
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
-    expression(expr), expressionSpecType{exprSpecType}
+    Errorable(), expression(expr), expressionSpecType{exprSpecType}
 {}
 
 ExpressionSpec::ExpressionSpec(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable{queryErrorType, std::move(errorMessage)}, expressionSpecType{InvalidExpressionType}
+    Errorable{queryErrorType, std::move(errorMessage)}, expression(), expressionSpecType{InvalidExpressionType}
 {}
 
 ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString)

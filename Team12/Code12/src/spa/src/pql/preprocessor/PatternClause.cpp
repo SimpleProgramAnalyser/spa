@@ -12,7 +12,7 @@ std::unordered_set<DesignEntityType> PatternClause::designEntityTypeValidationSe
 
 PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Reference entRef):
     Clause(PatternClauseType), patternSynonym(std::move(s)), patternStatementType(statementType),
-    entityReference(std::move(entRef))
+    entityReference(std::move(entRef)), expressionSpec()
 {}
 
 PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec):

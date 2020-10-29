@@ -13,24 +13,14 @@ std::unordered_map<String, DesignEntityType> DesignEntity::designEntityMap{
     {"procedure", ProcedureType}, {"prog_line", Prog_LineType}};
 
 /************************/
-/** Instance Members    */
-/************************/
-
-DesignEntity::DesignEntity()
-{
-    type = NonExistentType;
-}
-
-/************************/
 /** Constructors        */
 /************************/
 
-DesignEntity::DesignEntity(DesignEntityType designEntityType)
-{
-    type = designEntityType;
-}
+DesignEntity::DesignEntity(): type(NonExistentType) {}
 
-DesignEntity::DesignEntity(const String& stringType)
+DesignEntity::DesignEntity(DesignEntityType designEntityType): type(designEntityType) {}
+
+DesignEntity::DesignEntity(const String& stringType): type(NonExistentType)
 {
     auto got = DesignEntity::designEntityMap.find(stringType);
     if (got == DesignEntity::designEntityMap.end()) {
