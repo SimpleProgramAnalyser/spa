@@ -1,3 +1,8 @@
+/**
+ * Implementation of Abstract Query, a class that
+ * represents a parsed Program Query Language query.
+ */
+
 #include "AbstractQuery.h"
 
 #include <utility>

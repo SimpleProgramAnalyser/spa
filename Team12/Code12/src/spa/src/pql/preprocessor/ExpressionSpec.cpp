@@ -1,3 +1,8 @@
+/**
+ * Implementation of ExpressionSpec, representation
+ * of an Expression in a pattern clause.
+ */
+
 #include "ExpressionSpec.h"
 
 #include <utility>

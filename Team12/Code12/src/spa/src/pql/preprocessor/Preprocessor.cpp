@@ -1,3 +1,9 @@
+/**
+ * Implementation of key preprocessor methods that
+ * run through a query string and identifies errors,
+ * and builds the correct AbstractQuery.
+ */
+
 #include "Preprocessor.h"
 
 #include "AqTypesUtils.h"

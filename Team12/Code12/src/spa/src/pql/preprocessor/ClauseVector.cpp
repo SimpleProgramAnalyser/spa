@@ -1,3 +1,8 @@
+/**
+ * Implementation of a class representing a list
+ * of Clauses in an AbstractQuery.
+ */
+
 #include "ClauseVector.h"
 
 #include <utility>

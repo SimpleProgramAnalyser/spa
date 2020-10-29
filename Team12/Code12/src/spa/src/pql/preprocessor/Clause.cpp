@@ -1,3 +1,8 @@
+/**
+ * Implementation of Clause class that represents a
+ * single clause in a Program Query Language query.
+ */
+
 #include "Clause.h"
 
 #include <utility>

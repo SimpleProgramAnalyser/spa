@@ -1,5 +1,11 @@
-#ifndef SPA_QUERYERROR_H
-#define SPA_QUERYERROR_H
+/**
+ * This class represents an object that can hold an Error.
+ * Since Preprocessor identifies the syntax and semantic
+ * errors in a query, Errorable is highly utilised.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_ERRORABLE_H
+#define SPA_PQL_PREPROCESSOR_ERRORABLE_H
 
 #include "QueryErrorType.h"
 #include "Types.h"
@@ -49,4 +55,4 @@ public:
     QueryErrorType getErrorType();
 };
 
-#endif // SPA_QUERYERROR_H
+#endif // SPA_PQL_PREPROCESSOR_ERRORABLE_H

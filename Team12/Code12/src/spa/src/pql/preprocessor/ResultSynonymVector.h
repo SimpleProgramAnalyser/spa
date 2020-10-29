@@ -1,5 +1,11 @@
-#ifndef SPA_RESULTSYNONYMVECTOR_H
-#define SPA_RESULTSYNONYMVECTOR_H
+/**
+ * ResultSynonymVector is an abstraction for a tuple
+ * of ResultSynonyms, or no ResultSynonym at all
+ * (i.e. Select BOOLEAN).
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_RESULT_SYNONYM_VECTOR_H
+#define SPA_PQL_PREPROCESSOR_RESULT_SYNONYM_VECTOR_H
 
 #include "ResultSynonym.h"
 
@@ -39,4 +45,4 @@ public:
     Boolean operator==(const ResultSynonymVector& resultSynonymVector) const;
 };
 
-#endif // SPA_RESULTSYNONYMVECTOR_H
+#endif // SPA_PQL_PREPROCESSOR_RESULT_SYNONYM_VECTOR_H

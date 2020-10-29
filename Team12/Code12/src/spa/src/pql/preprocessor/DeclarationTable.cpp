@@ -1,3 +1,8 @@
+/**
+ * Implementation of a DeclarationTable for use in
+ * AbstractQuery to map synonyms to their types.
+ */
+
 #include "DeclarationTable.h"
 
 #include <algorithm>

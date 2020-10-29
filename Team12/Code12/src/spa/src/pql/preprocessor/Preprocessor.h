@@ -1,3 +1,8 @@
+/**
+ * Holds the main methods and classes for Query
+ * Preprocessor that are used by other components.
+ */
+
 #ifndef SPA_PQL_PREPROCESSOR_H
 #define SPA_PQL_PREPROCESSOR_H
 

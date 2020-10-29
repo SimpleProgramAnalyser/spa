@@ -1,3 +1,8 @@
+/**
+ * Implementation of Errorable, a class that represents
+ * a syntax or semantic error in the query preprocessor.
+ */
+
 #include "Errorable.h"
 
 #include <utility>

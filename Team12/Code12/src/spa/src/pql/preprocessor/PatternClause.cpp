@@ -1,3 +1,8 @@
+/**
+ * Implementation of an abstract representation of
+ * a Program Query Language query pattern clause.
+ */
+
 #include "PatternClause.h"
 
 /************************/

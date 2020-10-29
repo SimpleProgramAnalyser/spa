@@ -1,3 +1,8 @@
+/**
+ * Implementation of DesignEntity of a Synonym in
+ * an AbstractQuery.
+ */
+
 #include "DesignEntity.h"
 
 /************************/

@@ -1,5 +1,10 @@
-#ifndef SPA_DECLARATIONTABLE_H
-#define SPA_DECLARATIONTABLE_H
+/**
+ * DeclarationTable is a class that provides a way
+ * to map synonym names to their types.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_DECLARATION_TABLE_H
+#define SPA_PQL_PREPROCESSOR_DECLARATION_TABLE_H
 
 #include "AqTypesUtils.h"
 #include "DesignEntity.h"
@@ -34,4 +39,4 @@ public:
     Boolean operator==(const DeclarationTable& declarationTable) const;
 };
 
-#endif // SPA_DECLARATIONTABLE_H
+#endif // SPA_PQL_PREPROCESSOR_DECLARATION_TABLE_H

@@ -1,3 +1,8 @@
+/**
+ * Implementation of a ResultSynonym, or "Select"-ed
+ * synonym in a Program Query Language query.
+ */
+
 #include "ResultSynonym.h"
 
 #include <utility>

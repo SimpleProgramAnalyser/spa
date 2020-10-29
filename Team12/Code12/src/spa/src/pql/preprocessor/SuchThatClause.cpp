@@ -1,3 +1,8 @@
+/**
+ * Implementation of an abstract representation of
+ * a Program Query Language query such that clause.
+ */
+
 #include "SuchThatClause.h"
 
 /************************/

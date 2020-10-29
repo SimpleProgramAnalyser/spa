@@ -1,5 +1,10 @@
-#ifndef SPA_ATTRIBUTE_H
-#define SPA_ATTRIBUTE_H
+/**
+ * Representation of an Attribute (e.g. stmt#, varName)
+ * in a Program Query Language query.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_ATTRIBUTE_H
+#define SPA_PQL_PREPROCESSOR_ATTRIBUTE_H
 
 #include "AqTypesUtils.h"
 #include "DesignEntity.h"
@@ -51,4 +56,4 @@ public:
     Boolean operator!=(const Attribute& attribute) const;
 };
 
-#endif // SPA_ATTRIBUTE_H
+#endif // SPA_PQL_PREPROCESSOR_ATTRIBUTE_H

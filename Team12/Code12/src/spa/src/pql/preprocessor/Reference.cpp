@@ -1,3 +1,7 @@
+/**
+ * Implementation of a Reference for AbstractQuery Clauses.
+ */
+
 #include "Reference.h"
 
 #include <utility>

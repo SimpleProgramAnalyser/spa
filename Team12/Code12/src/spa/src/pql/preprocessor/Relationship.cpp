@@ -1,3 +1,8 @@
+/**
+ * Implementation of classes and methods that represent
+ * a Relationship in a such that clause of a query.
+ */
+
 #include "Relationship.h"
 
 #include <utility>

@@ -1,5 +1,11 @@
-#ifndef SPA_RELATIONSHIPREFERENCETYPE_H
-#define SPA_RELATIONSHIPREFERENCETYPE_H
+/**
+ * Relationships decide how a such that clause is
+ * evaluated, and correspond to certain SIMPLE program
+ * design abstractions like Parent, Follows, Next.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_RELATIONSHIP_H
+#define SPA_PQL_PREPROCESSOR_RELATIONSHIP_H
 
 #include "AqTypesUtils.h"
 #include "Reference.h"
@@ -91,4 +97,4 @@ public:
     Boolean operator==(const Relationship& relationship);
 };
 
-#endif // SPA_RELATIONSHIPREFERENCETYPE_H
+#endif // SPA_PQL_PREPROCESSOR_RELATIONSHIP_H

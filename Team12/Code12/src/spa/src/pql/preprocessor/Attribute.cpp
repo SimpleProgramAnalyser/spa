@@ -1,3 +1,8 @@
+/**
+ * Implementation of a class representing an Attribute
+ * (e.g. stmt#, varName) in a Program Query Language query.
+ */
+
 #include "Attribute.h"
 
 /************************/

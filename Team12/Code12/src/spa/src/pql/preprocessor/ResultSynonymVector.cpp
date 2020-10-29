@@ -1,3 +1,7 @@
+/**
+ * Implementation of ResultSynonymVector for AbstractQuery.
+ */
+
 #include "ResultSynonymVector.h"
 
 #include <utility>
