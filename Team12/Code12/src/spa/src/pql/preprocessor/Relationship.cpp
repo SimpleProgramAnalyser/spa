@@ -159,7 +159,7 @@ Relationship::Relationship(QueryErrorType queryErrorType, ErrorMessage errorMess
 /** Instance Methods    */
 /************************/
 
-Relationship Relationship::createRelationship(RelationshipType relRefType, Reference leftRef, Reference rightRef)
+Relationship Relationship::createRelationship(RelationshipType relRefType, Reference leftRef, const Reference& rightRef)
 {
 
     assert( // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
@@ -182,7 +182,8 @@ Relationship Relationship::createRelationship(RelationshipType relRefType, Refer
     return Relationship(relRefType, leftRef, rightRef);
 }
 
-Boolean Relationship::validateRelationshipSemantics(RelationshipType relRefType, Reference leftRef, Reference rightRef)
+Boolean Relationship::validateRelationshipSemantics(RelationshipType relRefType, const Reference& leftRef,
+                                                    const Reference& rightRef)
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(relRefType != InvalidRelationshipType);
@@ -227,7 +228,7 @@ Boolean Relationship::validateRelationshipSemantics(RelationshipType relRefType,
 /** Instance Methods    */
 /************************/
 
-RelationshipType Relationship::getRelRefType(String relRef)
+RelationshipType Relationship::getRelRefType(const String& relRef)
 {
     auto got = relationshipTypeMap.find(relRef);
 

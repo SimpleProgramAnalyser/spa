@@ -73,7 +73,8 @@ private:
 
     // Checks the validity of the Relationship and the left and right References
     // using the validity maps.
-    static Boolean validateRelationshipSemantics(RelationshipType relRefType, Reference leftRef, Reference rightRef);
+    static Boolean validateRelationshipSemantics(RelationshipType relRefType, const Reference& leftRef,
+                                                 const Reference& rightRef);
 
     // Instantiate a Relationship with the given RelationshipType, and the left and right References.
     Relationship(RelationshipType relRefType, Reference leftRef, Reference rightRef);
@@ -81,10 +82,10 @@ private:
 public:
     // Validates andd creates a Relationship based given RelationshipType,
     // and the left and right References.
-    static Relationship createRelationship(RelationshipType relRefType, Reference leftRef, Reference rightRef);
+    static Relationship createRelationship(RelationshipType relRefType, Reference leftRef, const Reference& rightRef);
 
     // Converts the given string into a RelationshipType.
-    static RelationshipType getRelRefType(String relRef);
+    static RelationshipType getRelRefType(const String& relRef);
 
     // Instantiates an erroneous Relationship with the given QueryErrorType
     // and ErrorMessage.
