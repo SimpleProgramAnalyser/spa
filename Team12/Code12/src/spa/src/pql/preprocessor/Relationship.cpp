@@ -57,7 +57,10 @@ std::unordered_map<RelationshipType, ReferenceTypeSet> Relationship::leftReferen
     {AffectsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
     {AffectsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
     // Branch Into Procedures extension (BIP)
-};
+    {NextBipType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {NextBipStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsBipType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsBipStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}}};
 
 std::unordered_map<RelationshipType, ReferenceTypeSet> Relationship::rightReferenceTypeValidationTable{
     {FollowsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
