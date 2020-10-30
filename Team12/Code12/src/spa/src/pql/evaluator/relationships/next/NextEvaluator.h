@@ -5,6 +5,7 @@
 #ifndef SPA_PQL_NEXT_EVALUATOR_H
 #define SPA_PQL_NEXT_EVALUATOR_H
 
+#include "NextEvaluatorFacade.h"
 #include "pql/evaluator/ResultsTable.h"
 #include "pql/evaluator/relationships/CacheSet.h"
 #include "pql/evaluator/relationships/CacheTable.h"
@@ -12,6 +13,10 @@
 class NextEvaluator {
 private:
     ResultsTable& resultsTable;
+    // The facade which this Next Evaluator uses to interact
+    // with components outside of Query Processor (i.e. PKB)
+    std::unique_ptr<NextEvaluatorFacade> facade;
+
     // caching of intermediate Next* clauses results
     CacheTable cacheNextStarTable;
     CacheTable cachePrevStarTable;
@@ -38,7 +43,18 @@ private:
     CacheSet getCachePrevStatement(StatementNumber stmtNum);
 
 public:
-    explicit NextEvaluator(ResultsTable& resultsTable);
+    /**
+     * Constructs a new NextEvaluator.
+     *
+     * @param resultsTable The results table for the Evaluator to
+     *                     store results in after evaluation.
+     * @param facade The facade used by NextEvaluator to access
+     *               other components of SIMPLE program analyser.
+     *               Note that this pointer will be managed by Next
+     *               Evaluator (the Facade will be deleted at the end
+     *               of the lifetime of the parent NextEvaluator)
+     */
+    explicit NextEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade);
     Void evaluateNextClause(const Reference& leftRef, const Reference& rightRef);
     Void evaluateNextStarClause(const Reference& leftRef, const Reference& rightRef);
 };

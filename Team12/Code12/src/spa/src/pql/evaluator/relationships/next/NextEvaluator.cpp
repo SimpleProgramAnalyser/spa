@@ -4,19 +4,16 @@
  */
 #include "NextEvaluator.h"
 
-#include <algorithm>
 #include <stdexcept>
 
 #include "pql/evaluator/relationships/RelationshipsUtil.h"
-
-StatementNumber getLastStatementNumberInWhileLoop(StatementNumber currentStmtNum, StatementNumber whileStmtNum);
 
 Void NextEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef) const
 {
     DesignEntityType rightSynonymType
         = rightRef.isWildCard() ? StmtType : resultsTable.getTypeOfSynonym(rightRef.getValue());
     resultsTable.storeResultsOne(
-        rightRef, convertToClauseResult(getAllNextStatements(leftRefVal, mapToStatementType(rightSynonymType))));
+        rightRef, convertToClauseResult(facade->getNext(leftRefVal, mapToStatementType(rightSynonymType))));
 }
 
 Void NextEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal) const
@@ -24,7 +21,7 @@ Void NextEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRe
     DesignEntityType leftSynonymType
         = leftRef.isWildCard() ? StmtType : resultsTable.getTypeOfSynonym(leftRef.getValue());
     resultsTable.storeResultsOne(
-        leftRef, convertToClauseResult(getAllPreviousStatements(rightRefVal, mapToStatementType(leftSynonymType))));
+        leftRef, convertToClauseResult(facade->getPrevious(rightRefVal, mapToStatementType(leftSynonymType))));
 }
 
 Void NextEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef) const
@@ -41,15 +38,15 @@ Void NextEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& r
         = leftRef.isWildCard() ? AnyStatement : mapToStatementType(resultsTable.getTypeOfSynonym(leftRef.getValue()));
     StatementType nextRefStmtType
         = rightRef.isWildCard() ? AnyStatement : mapToStatementType(resultsTable.getTypeOfSynonym(rightRef.getValue()));
-    ClauseResult leftResults = convertToClauseResult(getAllPreviousStatementsTyped(prevRefStmtType, nextRefStmtType));
-    ClauseResult rightResults = convertToClauseResult(getAllNextStatementsTyped(prevRefStmtType, nextRefStmtType));
-    PairedResult tuples = convertToPairedResult(getAllNextTuples(prevRefStmtType, nextRefStmtType));
+    ClauseResult leftResults = convertToClauseResult(facade->getPreviousMatching(prevRefStmtType, nextRefStmtType));
+    ClauseResult rightResults = convertToClauseResult(facade->getNextMatching(prevRefStmtType, nextRefStmtType));
+    PairedResult tuples = convertToPairedResult(facade->getNextPairs(prevRefStmtType, nextRefStmtType));
     resultsTable.storeResultsTwo(leftRef, leftResults, rightRef, rightResults, tuples);
 }
 
 Void NextEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const
 {
-    resultsTable.storeResultsZero(checkIfNextHolds(leftRefVal, rightRefVal));
+    resultsTable.storeResultsZero(facade->isNext(leftRefVal, rightRefVal));
 }
 
 Void NextEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
@@ -78,9 +75,9 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
 
     if (leftRef.isWildCard() && rightRef.isWildCard()) {
         // check if NextTable has at least one Next Relationship
-        Vector<StatementNumber> allStatements = getAllStatements(AnyStatement);
+        Vector<StatementNumber> allStatements = facade->getStatements(AnyStatement);
         for (StatementNumber stmtNum : allStatements) {
-            if (!getAllNextStatements(stmtNum, AnyStatement).empty()) {
+            if (!facade->getNext(stmtNum, AnyStatement).empty()) {
                 resultsTable.storeResultsZero(true);
                 return;
             }
@@ -91,12 +88,12 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
     }
 
     if (leftRef.isWildCard()) {
-        Vector<StatementNumber> nextTypeStatements = getAllStatements(nextRefStmtType);
+        Vector<StatementNumber> nextTypeStatements = facade->getStatements(nextRefStmtType);
         Vector<StatementNumber> results;
 
         for (StatementNumber stmtNum : nextTypeStatements) {
             // if it has any normal Previous relationship, add to results
-            Vector<StatementNumber> allPrevStatements = getAllPreviousStatements(stmtNum, AnyStatement);
+            Vector<StatementNumber> allPrevStatements = facade->getPrevious(stmtNum, AnyStatement);
             if (!allPrevStatements.empty()) {
                 results.push_back(stmtNum);
             }
@@ -108,12 +105,12 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
     }
 
     if (rightRef.isWildCard()) {
-        Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
+        Vector<StatementNumber> prevTypeStatements = facade->getStatements(prevRefStmtType);
         Vector<StatementNumber> results;
 
         for (StatementNumber stmtNum : prevTypeStatements) {
             // if it has any normal Next relationship, add to results
-            Vector<StatementNumber> allNextStatements = getAllNextStatements(stmtNum, AnyStatement);
+            Vector<StatementNumber> allNextStatements = facade->getNext(stmtNum, AnyStatement);
             if (!allNextStatements.empty()) {
                 results.push_back(stmtNum);
             }
@@ -126,7 +123,7 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
 
     // Both are same Synonyms
     if (leftRef == rightRef) {
-        Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
+        Vector<StatementNumber> prevTypeStatements = facade->getStatements(prevRefStmtType);
         Vector<StatementNumber> results;
         for (StatementNumber stmtNum : prevTypeStatements) {
             CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
@@ -141,7 +138,7 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
     }
 
     // Both are different Synonyms
-    Vector<StatementNumber> prevTypeStatements = getAllStatements(prevRefStmtType);
+    Vector<StatementNumber> prevTypeStatements = facade->getStatements(prevRefStmtType);
     Vector<Pair<Integer, String>> pairedResults;
     for (StatementNumber stmtNum : prevTypeStatements) {
         CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
@@ -161,8 +158,8 @@ Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVa
     resultsTable.storeResultsZero(nextStarAnyStmtResults.isCached(rightRefVal));
 }
 
-NextEvaluator::NextEvaluator(ResultsTable& resultsTable):
-    resultsTable(resultsTable), cacheNextStarTable(), cachePrevStarTable(), exploredNextStatements(),
+NextEvaluator::NextEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade):
+    resultsTable(resultsTable), facade(facade), cacheNextStarTable(), cachePrevStarTable(), exploredNextStatements(),
     exploredPrevStatements()
 {}
 
@@ -208,10 +205,10 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
         return cacheNextStarTable.get(stmtNum);
     }
 
-    Vector<StatementNumber> nextStatementList = getAllNextStatements(stmtNum, AnyStatement);
+    Vector<StatementNumber> nextStatementList = facade->getNext(stmtNum, AnyStatement);
     CacheSet currentCacheSet(nextStatementList);
 
-    if (getStatementType(stmtNum) == WhileStatement) {
+    if (facade->getType(stmtNum) == WhileStatement) {
         StatementNumber nextStatementNumber = stmtNum + 1;
 
         // First evaluate the statement that the current
@@ -233,7 +230,7 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
         }
 
         StatementNumber lastStatementNumberInWhileLoop
-            = getLastStatementNumberInWhileLoop(nextStatementNumber, stmtNum);
+            = facade->getLastStatementNumberInWhileLoop(nextStatementNumber, stmtNum);
 
         // Add all the statements in while statement's
         // statement list to the cache set of while statement
@@ -275,18 +272,19 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
         return cachePrevStarTable.get(stmtNum);
     }
 
-    Vector<StatementNumber> prevStatementList = getAllPreviousStatements(stmtNum, AnyStatement);
+    Vector<StatementNumber> prevStatementList = facade->getPrevious(stmtNum, AnyStatement);
     CacheSet currentCacheSet(prevStatementList);
     StatementNumber prevStatementNumber = stmtNum - 1;
 
-    if (getStatementType(stmtNum) == WhileStatement) {
+    if (facade->getType(stmtNum) == WhileStatement) {
         if (prevStatementList.size() != 1) {
             // this while statement is NOT the first statement in the procedure
             CacheSet prevNonWhileStatement = getCachePrevStatement(prevStatementNumber);
             currentCacheSet.combine(prevNonWhileStatement);
         }
 
-        StatementNumber lastStatementNumberInWhileLoop = getLastStatementNumberInWhileLoop(stmtNum + 1, stmtNum);
+        StatementNumber lastStatementNumberInWhileLoop
+            = facade->getLastStatementNumberInWhileLoop(stmtNum + 1, stmtNum);
         for (int i = stmtNum; i <= lastStatementNumberInWhileLoop; i++) {
             currentCacheSet.insert(i);
         }
@@ -309,22 +307,4 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
     cachePrevStarTable.insert(stmtNum, currentCacheSet);
     exploredPrevStatements.insert(stmtNum);
     return currentCacheSet;
-}
-
-/**
- * Retrieves the last statement number of the given while loop.
- * @param currentStmtNum    Current statement number to evaluate.
- * @param whileStmtNum      Statement number of the while statement.
- * @return                  Last statement number in the
- */
-StatementNumber getLastStatementNumberInWhileLoop(StatementNumber currentStmtNum, StatementNumber whileStmtNum)
-{
-    Vector<StatementNumber> prevStatementList = getAllPreviousStatements(whileStmtNum, AnyStatement);
-    StatementNumber maxNextStmtNum = *std::max_element(prevStatementList.begin(), prevStatementList.end());
-
-    if (getStatementType(maxNextStmtNum) == WhileStatement) {
-        return getLastStatementNumberInWhileLoop(currentStmtNum, maxNextStmtNum);
-    }
-
-    return maxNextStmtNum;
 }
