@@ -1,11 +1,14 @@
 #include "GroupedClauses.h"
 
+#include <functional>
+#include <numeric>
+
 /**
  * Create a new GroupClauses instance based on an AbstractQuery.
  *
  * @param abstractQuery
  */
-GroupedClauses::GroupedClauses(AbstractQuery& abstractQuery): clauseVector(abstractQuery.getClauses())
+GroupedClauses::GroupedClauses(AbstractQuery& abstractQuery): abstractQuery(abstractQuery)
 {
     Vector<Integer> newGroup;
     for (int i = 0; i < abstractQuery.getClauses().count(); i++) {
@@ -63,7 +66,7 @@ void GroupedClauses::mergeAndRemoveGroup(int groupToRemove, int groupToMergeInto
  */
 Clause* GroupedClauses::getClause(int groupIndex, int clauseIndex)
 {
-    return clauseVector.get(listOfGroups[groupIndex][clauseIndex]);
+    return abstractQuery.getClauses().get(listOfGroups[groupIndex][clauseIndex]);
 }
 
 /**
@@ -126,4 +129,153 @@ void GroupedClauses::swapGroups(int groupIndex1, int groupIndex2)
 int GroupedClauses::groupSize(int groupIndex)
 {
     return listOfGroups[groupIndex].size();
+}
+
+/**
+ * If any of the clauses in the group has a synonym, return true, otherwise false.
+ *
+ * @param groupIndex
+ * @return
+ */
+bool GroupedClauses::hasSynonym(int groupIndex)
+{
+    for (int clauseIndex = 0; clauseIndex < groupSize(groupIndex); clauseIndex++) {
+        auto clause = getClause(groupIndex, clauseIndex);
+        switch (clause->getType()) {
+        case SuchThatClauseType: { // has synyonum if left or right is synonym.
+            // NOLINTNEXTLINE
+            SuchThatClause* suchThatClause = static_cast<SuchThatClause*>(clause);
+            auto leftRefType = suchThatClause->getRelationship().getLeftRef().getReferenceType();
+            auto rightRefType = suchThatClause->getRelationship().getRightRef().getReferenceType();
+            if (leftRefType == SynonymRefType || rightRefType == SynonymRefType) {
+                return true;
+            }
+            break;
+        }
+        case PatternClauseType: { // patterns always have synonym.
+            return true;
+        }
+        case WithClauseType: {
+            // NOLINTNEXTLINE
+            WithClause* withClause = static_cast<WithClause*>(clause);
+            auto leftRefType = withClause->getLeftReference().getReferenceType();
+            auto rightRefType = withClause->getRightReference().getReferenceType();
+            if (leftRefType == SynonymRefType || leftRefType == AttributeRefType || rightRefType == SynonymRefType
+                || rightRefType == AttributeRefType) {
+                return true;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
+/**
+ * If any synonym in any clause is returned as a result of the PQL query, return true.
+ * Return false otherwise.
+ *
+ * @param groupIndex
+ * @return
+ */
+bool GroupedClauses::synonymIsReturned(int groupIndex)
+{
+    // get all returned synonyms
+    std::unordered_set<Synonym> returnedSynonyms;
+    auto resultSynonyms = abstractQuery.getSelectedSynonyms();
+    for (auto& resultSynonym : resultSynonyms) {
+        returnedSynonyms.insert(resultSynonym.getSynonym());
+    }
+
+    // match it clause by clause, return true whenever a returned synonym is found.
+    for (int clauseIndex = 0; clauseIndex < groupSize(groupIndex); clauseIndex++) {
+        auto clause = getClause(groupIndex, clauseIndex);
+        switch (clause->getType()) {
+        case SuchThatClauseType: {
+            // NOLINTNEXTLINE
+            SuchThatClause* suchThatClause = static_cast<SuchThatClause*>(clause);
+            auto leftRef = suchThatClause->getRelationship().getLeftRef();
+            auto rightRef = suchThatClause->getRelationship().getRightRef();
+            if (leftRef.getReferenceType() == SynonymRefType && returnedSynonyms.count(leftRef.getValue())) {
+                return true;
+            }
+            if (rightRef.getReferenceType() == SynonymRefType && returnedSynonyms.count(rightRef.getValue())) {
+                return true;
+            }
+            break;
+        }
+        case PatternClauseType: {
+            // NOLINTNEXTLINE
+            PatternClause* patternClause = static_cast<PatternClause*>(clause);
+            auto synonym = patternClause->getPatternSynonym();
+            if (returnedSynonyms.count(synonym)) {
+                return true;
+            }
+            break;
+        }
+        case WithClauseType: {
+            // NOLINTNEXTLINE
+            WithClause* withClause = static_cast<WithClause*>(clause);
+            auto leftRef = withClause->getLeftReference();
+            auto rightRef = withClause->getRightReference();
+            if ((leftRef.getReferenceType() == SynonymRefType || leftRef.getReferenceType() == AttributeRefType)
+                && returnedSynonyms.count(leftRef.getValue())) {
+                return true;
+            }
+            if ((rightRef.getReferenceType() == SynonymRefType || rightRef.getReferenceType() == AttributeRefType)
+                && returnedSynonyms.count(rightRef.getValue())) {
+                return true;
+            }
+            break;
+        }
+        case NonExistentClauseType:
+            break;
+        }
+    }
+    return false;
+}
+
+/**
+ * For use in sorting of groups.
+ *
+ * @param group1
+ * @param group2
+ * @return
+ */
+bool GroupedClauses::compareGroups(int group1, int group2, GroupedClauses* groupedClauses)
+{
+    /**
+     * clause1 is (strictly) before clause2 iff
+     * 1. clause1 has no synonyms
+     * 2. clause1's synonyms are not returned.
+     */
+    if (!groupedClauses->hasSynonym(group1)) {
+        return true;
+    } else if (!groupedClauses->synonymIsReturned(group1)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Sort the list of groups of clauses according to the default order.
+ */
+void GroupedClauses::sortGroups()
+{
+    Vector<Integer> indexList(listOfGroups.size());
+    std::iota(indexList.begin(), indexList.end(), 0);
+
+    // Keep the curried version, just in case
+    //    std::sort(indexList.begin(), indexList.end(),
+    //              std::bind(compareGroups, std::placeholders::_1, std::placeholders::_2, this));
+    std::sort(indexList.begin(), indexList.end(), [this](int a, int b) { return compareGroups(a, b, this); });
+
+    // apply permutation
+    Vector<Vector<Integer>> newListOfGroups(listOfGroups.size());
+    for (int i = 0; i < listOfGroups.size(); i++) {
+        newListOfGroups.push_back(listOfGroups[indexList[i]]);
+    }
+    listOfGroups = newListOfGroups;
 }

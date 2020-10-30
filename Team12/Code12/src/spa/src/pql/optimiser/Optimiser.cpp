@@ -49,7 +49,6 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery) {}
  * two vertices if and only if the clauses share at least one synonym.
  * 2. Every connected component should belong to one and only one group.
  *
- *
  * @param groupedClauses The abstract data type of grouped clauses.
  */
 Void groupQueryClauses(GroupedClauses& groupedClauses) {}
@@ -75,7 +74,10 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses) {}
  * @param groupedClauses
  * @return
  */
-Void sortGroups(GroupedClauses& groupedClauses) {}
+Void sortGroups(GroupedClauses& groupedClauses)
+{
+    groupedClauses.sortGroups();
+}
 
 /**
  * Sort the clauses in abstractQuery based on the order in GroupedClauses.
