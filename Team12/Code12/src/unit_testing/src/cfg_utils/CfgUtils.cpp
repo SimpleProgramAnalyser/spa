@@ -607,6 +607,10 @@ std::pair<CfgNode*, size_t> getProgram7CfgBip_computeCentroid()
     mainSecondCallNode->statementNodes->push_back(createPrintNode(8, Variable("cenY")));
     mainSecondCallNode->statementNodes->push_back(createPrintNode(9, Variable("normSq")));
 
+    // Last statement Call dummy node
+    CfgNode* lastStatementCallDummyNode = createCfgNode(0, currentNumberOfNodes);
+    mainSecondCallNode->childrenNodes->push_back(lastStatementCallDummyNode);
+
     return std::make_pair(expectedCfg, currentNumberOfNodes);
 }
 
