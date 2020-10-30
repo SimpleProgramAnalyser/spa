@@ -9,7 +9,7 @@
  */
 
 #include "../../ast_utils/AstUtils.h"
-#include "../parser/AbstractQueryBuilder.h"
+#include "../preprocessor/AbstractQueryBuilder.h"
 #include "catch.hpp"
 #include "pkb/PKB.h"
 #include "pql/evaluator/Evaluator.h"

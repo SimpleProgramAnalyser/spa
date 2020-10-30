@@ -1,3 +1,8 @@
+/**
+ * Implementation of classes and methods that represent
+ * a Relationship in a such that clause of a query.
+ */
+
 #include "Relationship.h"
 
 #include <utility>
@@ -142,14 +147,13 @@ std::unordered_map<RelationshipType, DesignEntityTypeSet> Relationship::rightRef
 /************************/
 
 Relationship::Relationship(RelationshipType relRefType, Reference leftRef, Reference rightRef):
-    relationshipType(relRefType), leftReference(std::move(leftRef)), rightReference(std::move(rightRef))
+    Errorable(), relationshipType(relRefType), leftReference(std::move(leftRef)), rightReference(std::move(rightRef))
 {}
 
 Relationship::Relationship(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    relationshipType{InvalidRelationshipType}
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+    Errorable(queryErrorType, std::move(errorMessage)), relationshipType{InvalidRelationshipType}, leftReference(),
+    rightReference()
+{}
 
 /************************/
 /** Instance Methods    */

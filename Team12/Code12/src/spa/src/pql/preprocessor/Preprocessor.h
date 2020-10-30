@@ -1,3 +1,8 @@
+/**
+ * Holds the main methods and classes for Query
+ * Preprocessor that are used by other components.
+ */
+
 #ifndef SPA_PQL_PREPROCESSOR_H
 #define SPA_PQL_PREPROCESSOR_H
 
@@ -50,6 +55,17 @@ DeclarationTable processDeclarations(const String& declarationString);
  *                      clausesString.
  */
 ClauseVector processClauses(const String& clausesString, DeclarationTable& declarationTable);
+
+/**
+ * Splits up the given string by the first
+ * non-alphanumeric character (or whitespace
+ * character). First character should be an
+ * alphanumeric character.
+ *
+ * @param str String to be split
+ * @return Vector of 2 strings
+ */
+StringVector splitByFirstNonAlphanum(const String& str);
 
 /**
  * Splits up the given string by the first
