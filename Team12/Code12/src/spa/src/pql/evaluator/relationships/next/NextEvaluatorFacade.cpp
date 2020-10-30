@@ -5,6 +5,8 @@
 
 #include "NextEvaluatorFacade.h"
 
+#include <algorithm>
+
 #include "pkb/PKB.h"
 
 Vector<Integer> NextEvaluatorFacade::getNext(Integer prev, StatementType nextType)
@@ -35,6 +37,23 @@ Vector<std::pair<Integer, Integer>> NextEvaluatorFacade::getNextPairs(StatementT
 Vector<Integer> NextEvaluatorFacade::getStatements(StatementType type)
 {
     return getAllStatements(type);
+}
+
+StatementType NextEvaluatorFacade::getType(Integer stmtNum)
+{
+    return getStatementType(stmtNum);
+}
+
+Integer NextEvaluatorFacade::getLastStatementNumberInWhileLoop(Integer currentStmtNum, Integer whileStmtNum)
+{
+    Vector<Integer> prevStatementList = this->getPrevious(whileStmtNum, AnyStatement);
+    Integer maxNextStmtNum = *std::max_element(prevStatementList.begin(), prevStatementList.end());
+
+    if (this->getType(maxNextStmtNum) == WhileStatement) {
+        return this->getLastStatementNumberInWhileLoop(currentStmtNum, maxNextStmtNum);
+    }
+
+    return maxNextStmtNum;
 }
 
 Boolean NextEvaluatorFacade::isNext(Integer prev, Integer next)

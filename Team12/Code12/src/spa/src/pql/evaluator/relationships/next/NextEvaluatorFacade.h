@@ -84,6 +84,20 @@ public:
     virtual Vector<Integer> getStatements(StatementType type);
 
     /**
+     * Returns the statement type of a statement in
+     * the program, given the statement's number.
+     */
+    virtual StatementType getType(Integer stmtNum);
+
+    /**
+     * Retrieves the last statement number of the given while loop.
+     * @param currentStmtNum    Current statement number to evaluate.
+     * @param whileStmtNum      Statement number of the while statement.
+     * @return                  Last statement number in the loop.
+     */
+    virtual Integer getLastStatementNumberInWhileLoop(Integer currentStmtNum, Integer whileStmtNum);
+
+    /**
      * Returns true, if Next(prev, next) holds.
      *
      * @param prev First statement that occurs in the Control Flow.
