@@ -11,10 +11,23 @@ template <typename T>
 Boolean isValidInTable(std::unordered_map<RelationshipType, std::unordered_set<T>> table, RelationshipType relRefType,
                        T type);
 
-std::unordered_map<String, RelationshipType> Relationship::relationshipTypeMap{
-    {"Follows", FollowsType}, {"Follows*", FollowsStarType}, {"Parent", ParentType},   {"Parent*", ParentStarType},
-    {"Uses", UsesType},       {"Modifies", ModifiesType},    {"Calls", CallsType},     {"Calls*", CallsStarType},
-    {"Next", NextType},       {"Next*", NextStarType},       {"Affects", AffectsType}, {"Affects*", AffectsStarType}};
+std::unordered_map<String, RelationshipType> Relationship::relationshipTypeMap{{"Follows", FollowsType},
+                                                                               {"Follows*", FollowsStarType},
+                                                                               {"Parent", ParentType},
+                                                                               {"Parent*", ParentStarType},
+                                                                               {"Uses", UsesType},
+                                                                               {"Modifies", ModifiesType},
+                                                                               {"Calls", CallsType},
+                                                                               {"Calls*", CallsStarType},
+                                                                               {"Next", NextType},
+                                                                               {"Next*", NextStarType},
+                                                                               {"Affects", AffectsType},
+                                                                               {"Affects*", AffectsStarType},
+                                                                               // Branch Into Procedures extension (BIP)
+                                                                               {"NextBip", NextBipType},
+                                                                               {"NextBip*", NextBipStarType},
+                                                                               {"AffectsBip", AffectsBipType},
+                                                                               {"AffectsBip*", AffectsBipStarType}};
 
 // Hash function for ReferenceType
 template <>
@@ -42,7 +55,12 @@ std::unordered_map<RelationshipType, ReferenceTypeSet> Relationship::leftReferen
     {NextType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
     {NextStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
     {AffectsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {AffectsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}}};
+    {AffectsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    // Branch Into Procedures extension (BIP)
+    {NextBipType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {NextBipStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsBipType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsBipStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}}};
 
 std::unordered_map<RelationshipType, ReferenceTypeSet> Relationship::rightReferenceTypeValidationTable{
     {FollowsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
@@ -60,7 +78,12 @@ std::unordered_map<RelationshipType, ReferenceTypeSet> Relationship::rightRefere
     {NextType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
     {NextStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
     {AffectsType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
-    {AffectsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}}};
+    {AffectsStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    // Branch Into Procedures extension (BIP)
+    {NextBipType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {NextBipStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsBipType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}},
+    {AffectsBipStarType, ReferenceTypeSet{SynonymRefType, WildcardRefType, IntegerRefType}}};
 
 std::unordered_map<RelationshipType, DesignEntityTypeSet> Relationship::leftReferenceSynonymValidationTable{
     {FollowsType,
@@ -86,7 +109,14 @@ std::unordered_map<RelationshipType, DesignEntityTypeSet> Relationship::leftRefe
     {NextStarType,
      DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
     {AffectsType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
-    {AffectsStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}}};
+    {AffectsStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
+    // Branch Into Procedures extension (BIP)
+    {NextBipType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {NextBipStarType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {AffectsBipType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
+    {AffectsBipStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}}};
 
 std::unordered_map<RelationshipType, DesignEntityTypeSet> Relationship::rightReferenceSynonymValidationTable{
     {FollowsType,
@@ -106,7 +136,14 @@ std::unordered_map<RelationshipType, DesignEntityTypeSet> Relationship::rightRef
     {NextStarType,
      DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
     {AffectsType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
-    {AffectsStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}}};
+    {AffectsStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
+    // Branch Into Procedures extension (BIP)
+    {NextBipType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {NextBipStarType,
+     DesignEntityTypeSet{StmtType, ReadType, PrintType, CallType, WhileType, IfType, AssignType, Prog_LineType}},
+    {AffectsBipType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}},
+    {AffectsBipStarType, DesignEntityTypeSet{StmtType, AssignType, Prog_LineType}}};
 
 /************************/
 /** Constructors        */
@@ -125,7 +162,7 @@ Relationship::Relationship(QueryErrorType queryErrorType, ErrorMessage errorMess
 /** Instance Methods    */
 /************************/
 
-Relationship Relationship::createRelationship(RelationshipType relRefType, Reference leftRef, Reference rightRef)
+Relationship Relationship::createRelationship(RelationshipType relRefType, Reference leftRef, const Reference& rightRef)
 {
 
     assert( // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
@@ -148,7 +185,8 @@ Relationship Relationship::createRelationship(RelationshipType relRefType, Refer
     return Relationship(relRefType, leftRef, rightRef);
 }
 
-Boolean Relationship::validateRelationshipSemantics(RelationshipType relRefType, Reference leftRef, Reference rightRef)
+Boolean Relationship::validateRelationshipSemantics(RelationshipType relRefType, const Reference& leftRef,
+                                                    const Reference& rightRef)
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(relRefType != InvalidRelationshipType);
@@ -193,7 +231,7 @@ Boolean Relationship::validateRelationshipSemantics(RelationshipType relRefType,
 /** Instance Methods    */
 /************************/
 
-RelationshipType Relationship::getRelRefType(String relRef)
+RelationshipType Relationship::getRelRefType(const String& relRef)
 {
     auto got = relationshipTypeMap.find(relRef);
 

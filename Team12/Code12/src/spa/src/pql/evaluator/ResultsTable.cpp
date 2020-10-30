@@ -14,8 +14,8 @@
 #include <utility>
 
 #include "pkb/PKB.h"
-#include "relationships/NextEvaluator.h"
 #include "relationships/affects/AffectsEvaluator.h"
+#include "relationships/next/NextEvaluator.h"
 
 /**
  * A method to compare two vectors, to see whether
