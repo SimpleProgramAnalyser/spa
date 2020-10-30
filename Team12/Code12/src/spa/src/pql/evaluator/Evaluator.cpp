@@ -14,6 +14,7 @@
 #include "relationships/SuchThatEvaluator.h"
 #include "relationships/affects/AffectsBipFacade.h"
 #include "relationships/affects/AffectsEvaluator.h"
+#include "relationships/next/NextBipFacade.h"
 #include "relationships/next/NextEvaluator.h"
 
 Vector<String> convertToTupleString(const PairedResult& resultPairs)
@@ -85,6 +86,7 @@ RawQueryResult Evaluator::evaluateValidQuery()
     resultsTable.manageEvaluator(new NextEvaluator(resultsTable, new NextEvaluatorFacade()));
     // initiate AffectsBip and NextBip evaluators
     resultsTable.manageEvaluatorBip(new AffectsEvaluator(resultsTable, new AffectsBipFacade()));
+    resultsTable.manageEvaluatorBip(new NextEvaluator(resultsTable, new NextBipFacade()));
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);
