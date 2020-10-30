@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "RelationshipsUtil.h"
+#include "pql/evaluator/relationships/RelationshipsUtil.h"
 
 StatementNumber getLastStatementNumberInWhileLoop(StatementNumber currentStmtNum, StatementNumber whileStmtNum);
 

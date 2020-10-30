@@ -5,9 +5,9 @@
 #ifndef SPA_PQL_NEXT_EVALUATOR_H
 #define SPA_PQL_NEXT_EVALUATOR_H
 
-#include "CacheSet.h"
-#include "CacheTable.h"
 #include "pql/evaluator/ResultsTable.h"
+#include "pql/evaluator/relationships/CacheSet.h"
+#include "pql/evaluator/relationships/CacheTable.h"
 
 class NextEvaluator {
 private:

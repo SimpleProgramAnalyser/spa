@@ -7,9 +7,9 @@
 #include "pkb/PKB.h"
 #include "pql/evaluator/relationships/FollowsEvaluator.h"
 #include "pql/evaluator/relationships/ModifiesEvaluator.h"
-#include "pql/evaluator/relationships/NextEvaluator.h"
 #include "pql/evaluator/relationships/ParentEvaluator.h"
 #include "pql/evaluator/relationships/UsesEvaluator.h"
+#include "pql/evaluator/relationships/next/NextEvaluator.h"
 
 TEST_CASE("Follows clauses are evaluated correctly")
 {
