@@ -19,6 +19,18 @@ public:
     AffectsBipFacade& operator=(AffectsBipFacade&&) = default;
 
     /**
+     * Returns a list of variables modified by a
+     * statement, given the statement's number, unless
+     * the statement is a Call statement.
+     *
+     * Because for the branching into procedures Affects
+     * relationship, Call statements should lead to other
+     * nodes where we can find the true source of variable
+     * modification, we ignore Calls here.
+     */
+    Vector<String> getModified(Integer stmtNum) override;
+
+    /**
      * Returns a list of statement numbers that are directly
      * after the statement number specified in the Control
      * Flow Graph with branching into other procedures,

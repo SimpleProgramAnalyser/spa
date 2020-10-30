@@ -8,6 +8,15 @@
 
 #include "pkb/PKB.h"
 
+Vector<String> AffectsBipFacade::getModified(Integer stmtNum)
+{
+    if (this->getType(stmtNum) == CallStatement) {
+        return Vector<String>();
+    } else {
+        return getModifiesVariablesFromStatement(stmtNum);
+    }
+}
+
 Vector<Integer> AffectsBipFacade::getNext(Integer stmtNum)
 {
     return getAllNextBipStatements(stmtNum, AnyStatement);
