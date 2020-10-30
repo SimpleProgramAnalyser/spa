@@ -1,4 +1,11 @@
+/**
+ * Implementation of classes and methods that represent
+ * a Relationship in a such that clause of a query.
+ */
+
 #include "Relationship.h"
+
+#include <utility>
 
 template <typename T>
 Boolean isValidInTable(std::unordered_map<RelationshipType, std::unordered_set<T>> table, RelationshipType relRefType,
@@ -106,14 +113,13 @@ std::unordered_map<RelationshipType, DesignEntityTypeSet> Relationship::rightRef
 /************************/
 
 Relationship::Relationship(RelationshipType relRefType, Reference leftRef, Reference rightRef):
-    relationshipType(relRefType), leftReference(leftRef), rightReference(rightRef)
+    Errorable(), relationshipType(relRefType), leftReference(std::move(leftRef)), rightReference(std::move(rightRef))
 {}
 
 Relationship::Relationship(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    relationshipType{InvalidRelationshipType}
-{
-    this->setError(queryErrorType, errorMessage);
-}
+    Errorable(queryErrorType, std::move(errorMessage)), relationshipType{InvalidRelationshipType}, leftReference(),
+    rightReference()
+{}
 
 /************************/
 /** Instance Methods    */

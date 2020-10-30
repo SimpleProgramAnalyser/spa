@@ -1,5 +1,15 @@
-#ifndef SPA_ABSTRACTQUERY_H
-#define SPA_ABSTRACTQUERY_H
+/**
+ * A data structure that stores the Program Query
+ * Language query after it is parsed.
+ *
+ * Three important pieces of information are relayed:
+ * 1. The synonym that is being selected
+ * 2. The declared Synonyms and their respective Design Entities
+ * 3. The Clauses that constrains the result of the query
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_ABSTRACT_QUERY_H
+#define SPA_PQL_PREPROCESSOR_ABSTRACT_QUERY_H
 
 #include "ClauseVector.h"
 #include "DeclarationTable.h"
@@ -15,7 +25,7 @@ private:
     // Stores all declarations.
     DeclarationTable declarationTable;
     // Set to true if query is semantically invalid and the result clause is BOOLEAN.
-    Boolean isToReturnFalseResult = false;
+    Boolean isToReturnFalseResult;
 
 public:
     /**
@@ -75,7 +85,7 @@ public:
     // Retrieves the error message.
     ErrorMessage getErrorMessage() const;
 
-    Boolean operator==(const AbstractQuery& abstractQuery);
+    Boolean operator==(const AbstractQuery& abstractQuery) const;
 };
 
-#endif // SPA_ABSTRACTQUERY_H
+#endif // SPA_PQL_PREPROCESSOR_ABSTRACT_QUERY_H

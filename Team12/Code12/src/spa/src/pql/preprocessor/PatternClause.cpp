@@ -1,3 +1,8 @@
+/**
+ * Implementation of an abstract representation of
+ * a Program Query Language query pattern clause.
+ */
+
 #include "PatternClause.h"
 
 /************************/
@@ -12,7 +17,7 @@ std::unordered_set<DesignEntityType> PatternClause::designEntityTypeValidationSe
 
 PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Reference entRef):
     Clause(PatternClauseType), patternSynonym(std::move(s)), patternStatementType(statementType),
-    entityReference(std::move(entRef))
+    entityReference(std::move(entRef)), expressionSpec()
 {}
 
 PatternClause::PatternClause(Synonym s, PatternStatementType statementType, Reference entRef, ExpressionSpec exprSpec):
@@ -73,7 +78,7 @@ Clause* PatternClause::processAssignPatternClause(Synonym patternSynonym, String
 
     ExpressionSpec rightExpressionSpec = ExpressionSpec::createExpressionSpec(secondConstraintString);
     if (rightExpressionSpec.isInvalid()) {
-        return new Clause(PatternClauseType, QuerySemanticsError,
+        return new Clause(PatternClauseType, rightExpressionSpec.getErrorType(),
                           "Invalid ExpressionSpec used in assign PatternClause: " + secondConstraintString);
     }
 

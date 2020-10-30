@@ -1,3 +1,8 @@
+/**
+ * Implementation of a DeclarationTable for use in
+ * AbstractQuery to map synonyms to their types.
+ */
+
 #include "DeclarationTable.h"
 
 #include <algorithm>
@@ -16,7 +21,7 @@ const ErrorMessage DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid decla
 DeclarationTable::DeclarationTable(): Errorable(), table() {}
 
 DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, std::move(errorMessage))
+    Errorable(queryErrorType, std::move(errorMessage)), table()
 {}
 
 /************************/

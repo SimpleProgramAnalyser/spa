@@ -1,5 +1,11 @@
-#ifndef SPA_REFERENCE_H
-#define SPA_REFERENCE_H
+/**
+ * Class that represents a Reference in an Abstract Query,
+ * which are used by clauses to represent the relationships
+ * between synonyms, or the constraints of a single synonym.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_REFERENCE_H
+#define SPA_PQL_PREPROCESSOR_REFERENCE_H
 
 #include "AqTypesUtils.h"
 #include "Attribute.h"
@@ -83,4 +89,4 @@ public:
     Boolean operator==(const Reference& reference) const;
 };
 
-#endif // SPA_REFERENCE_H
+#endif // SPA_PQL_PREPROCESSOR_REFERENCE_H

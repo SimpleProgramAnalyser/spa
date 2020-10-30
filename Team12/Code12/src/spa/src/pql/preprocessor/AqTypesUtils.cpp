@@ -1,3 +1,8 @@
+/**
+ * Implementation of utility classes and methods for
+ * parsing an Abstract Query.
+ */
+
 #include "AqTypesUtils.h"
 
 #include "DesignEntityType.h"

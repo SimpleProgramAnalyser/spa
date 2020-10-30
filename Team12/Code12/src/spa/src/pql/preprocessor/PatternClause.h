@@ -1,5 +1,9 @@
-#ifndef SPA_PATTERNCLAUSE_H
-#define SPA_PATTERNCLAUSE_H
+/**
+ * This class represents a pattern clause in the query.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_PATTERN_CLAUSE_H
+#define SPA_PQL_PREPROCESSOR_PATTERN_CLAUSE_H
 
 #include "AqTypesUtils.h"
 #include "Clause.h"
@@ -130,4 +134,4 @@ public:
     Boolean operator==(const PatternClause& patternClause);
 };
 
-#endif // SPA_PATTERNCLAUSE_H
+#endif // SPA_PQL_PREPROCESSOR_PATTERN_CLAUSE_H

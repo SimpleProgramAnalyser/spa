@@ -1,5 +1,11 @@
-#ifndef SPA_CLAUSEVECTOR_H
-#define SPA_CLAUSEVECTOR_H
+/**
+ * A wrapper class for a list of clauses, this class
+ * helps to handle the resources used for each clause
+ * (namely, it will delete the clauses automatically).
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_CLAUSE_VECTOR_H
+#define SPA_PQL_PREPROCESSOR_CLAUSE_VECTOR_H
 
 #include "Clause.h"
 
@@ -30,7 +36,7 @@ public:
     // Retrieves the ErrorMessage.
     ErrorMessage getErrorMessage() const;
 
-    Boolean operator==(const ClauseVector& clauseVector);
+    Boolean operator==(const ClauseVector& clauseVector) const;
     ~ClauseVector() = default;
     ClauseVector(const ClauseVector&) = delete;
     ClauseVector operator=(const ClauseVector&) = delete;
@@ -38,4 +44,4 @@ public:
     ClauseVector& operator=(ClauseVector&&) = default;
 };
 
-#endif // SPA_CLAUSEVECTOR_H
+#endif // SPA_PQL_PREPROCESSOR_CLAUSE_VECTOR_H

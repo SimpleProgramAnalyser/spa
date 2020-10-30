@@ -1,5 +1,10 @@
-#ifndef SPA_EXPRESSIONSPEC_H
-#define SPA_EXPRESSIONSPEC_H
+/**
+ * This class represents an Expression specification
+ * used in pattern clauses of a PQL query.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_EXPRESSION_SPEC_H
+#define SPA_PQL_PREPROCESSOR_EXPRESSION_SPEC_H
 
 #include "AqTypesUtils.h"
 #include "ast/AstTypes.h"
@@ -55,4 +60,4 @@ public:
     Boolean operator==(const ExpressionSpec& expressionSpec);
 };
 
-#endif // SPA_EXPRESSIONSPEC_H
+#endif // SPA_PQL_PREPROCESSOR_EXPRESSION_SPEC_H
