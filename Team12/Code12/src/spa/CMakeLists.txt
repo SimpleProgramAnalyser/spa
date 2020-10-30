@@ -166,6 +166,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluatorFacade.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluatorFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextBipFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextBipFacade.cpp
 
     # pql/evaluator/pattern
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/AssignMatcher.h

@@ -51,9 +51,9 @@ Integer NextEvaluatorFacade::getLastStatementNumberInWhileLoop(Integer currentSt
 
     if (this->getType(maxNextStmtNum) == WhileStatement) {
         return this->getLastStatementNumberInWhileLoop(currentStmtNum, maxNextStmtNum);
+    } else {
+        return maxNextStmtNum;
     }
-
-    return maxNextStmtNum;
 }
 
 Boolean NextEvaluatorFacade::isNext(Integer prev, Integer next)
