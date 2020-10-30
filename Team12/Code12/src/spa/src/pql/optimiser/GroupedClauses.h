@@ -22,6 +22,7 @@ public:
     // information retrieval
     int size();
     int groupSize(int groupIndex);
+    int getClauseNumber(int groupIndex, int clauseIndex);
     Clause* getClause(int groupIndex, int clauseIndex);
     bool hasSynonym(int groupIndex);
     bool synonymIsReturned(int groupIndex);

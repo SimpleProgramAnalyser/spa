@@ -34,6 +34,11 @@ const ClauseVector& AbstractQuery::getClauses() const
     return std::move(clauses);
 }
 
+ClauseVector AbstractQuery::getClausesUnsafe()
+{
+    return std::move(clauses);
+}
+
 DeclarationTable AbstractQuery::getDeclarationTable() const
 {
     return declarationTable;
@@ -54,4 +59,9 @@ Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
     return this->resultSynonyms == abstractQuery.resultSynonyms && this->clauses == abstractQuery.clauses
            && this->declarationTable == abstractQuery.declarationTable
            && this->isToReturnFalseResult == abstractQuery.isToReturnFalseResult;
+}
+
+Void AbstractQuery::setClauses(ClauseVector& clauseVector)
+{
+    clauses = std::move(clauseVector);
 }

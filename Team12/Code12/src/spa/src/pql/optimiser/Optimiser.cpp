@@ -32,7 +32,10 @@ Void optimiseQuery(AbstractQuery& abstractQuery)
  *
  * @param abstractQuery The PQL query to substitute in.
  */
-Void substituteWithValues(AbstractQuery& abstractQuery) {}
+Void substituteWithValues(AbstractQuery& abstractQuery)
+{
+    // TODO
+}
 
 /**
  * Remove clauses that are exactly the same. Eg. Next*(s1, s2) and Next*(s1, s2).
@@ -40,7 +43,10 @@ Void substituteWithValues(AbstractQuery& abstractQuery) {}
  * @param abstractQuery
  * @return
  */
-Void deleteDuplicateClauses(AbstractQuery& abstractQuery) {}
+Void deleteDuplicateClauses(AbstractQuery& abstractQuery)
+{
+    // TODO
+}
 
 /**
  * Group the clauses into a few groups, using the following principles:
@@ -51,7 +57,10 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery) {}
  *
  * @param groupedClauses The abstract data type of grouped clauses.
  */
-Void groupQueryClauses(GroupedClauses& groupedClauses) {}
+Void groupQueryClauses(GroupedClauses& groupedClauses)
+{
+    // TODO
+}
 
 /**
  * (Subjective) Sort the groups of clauses in the GroupedClauses object using the following principles, copied from
@@ -66,7 +75,10 @@ Void groupQueryClauses(GroupedClauses& groupedClauses) {}
  *
  * @param groupedClauses
  */
-Void sortWithinEachGroup(GroupedClauses& groupedClauses) {}
+Void sortWithinEachGroup(GroupedClauses& groupedClauses)
+{
+    // TODO
+}
 
 /**
  * Start with clauses without synonyms, and prioritize groups with synonyms that do not return result.
@@ -86,4 +98,14 @@ Void sortGroups(GroupedClauses& groupedClauses)
  * @param abstractQuery
  * @return
  */
-Void sortClauses(GroupedClauses& groupedClauses, AbstractQuery& abstractQuery) {}
+Void sortClauses(GroupedClauses& groupedClauses, AbstractQuery& abstractQuery)
+{
+    ClauseVector newClauseVector;
+    for (int group = 0; group < groupedClauses.size(); group++) {
+        for (int clauseIndex = 0; clauseIndex < groupedClauses.groupSize(group); clauseIndex++) {
+            newClauseVector.add(
+                abstractQuery.getClausesUnsafe().remove(groupedClauses.getClauseNumber(group, clauseIndex)));
+        }
+    }
+    abstractQuery.setClauses(newClauseVector);
+}

@@ -66,7 +66,19 @@ void GroupedClauses::mergeAndRemoveGroup(int groupToRemove, int groupToMergeInto
  */
 Clause* GroupedClauses::getClause(int groupIndex, int clauseIndex)
 {
-    return abstractQuery.getClauses().get(listOfGroups[groupIndex][clauseIndex]);
+    return abstractQuery.getClauses().get(getClauseNumber(groupIndex, clauseIndex));
+}
+
+/**
+ * Returns the position the clause given the group it is in, and its index in the group.
+ *
+ * @param groupIndex
+ * @param clauseIndex
+ * @return
+ */
+int GroupedClauses::getClauseNumber(int groupIndex, int clauseIndex)
+{
+    return listOfGroups[groupIndex][clauseIndex];
 }
 
 /**
