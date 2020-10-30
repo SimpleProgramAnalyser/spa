@@ -1054,7 +1054,7 @@ with `nextStmtType` into the Next Table.
 [#getAllNextStatements]
 `*STATEMENT_LIST* getAllNextStatements(*INTEGER* previous, *STATEMENT_TYPE* nextType);`
 
-*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT*s of `previous` that are of
+*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT* s of `previous` that are of
 `nextType`.
 *STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
 
@@ -1064,16 +1064,16 @@ with `nextStmtType` into the Next Table.
 `*STATEMENT_LIST* getAllNextStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
 *STATEMENT_TYPE* stmtTypeOfNext);`
 
-*Description*: Returns a *STATEMENT_LIST* of statements such that `Next*(previous,returned)`
+*Description*: Returns a *STATEMENT_LIST* of statements such that `Next(previous, returned)`
 holds and are of STATEMENT_TYPE `stmtType`.
 
 '''
 
 [#getAllPreviousStatements]
-`*STATEMENT_LIST* getPreviousStatement(*INTEGER* next, *STATEMENT_TYPE* previousType);`
+`*STATEMENT_LIST* getAllPreviousStatements(*INTEGER* next, *STATEMENT_TYPE* previousType);`
 
-*Description*: Returns a *STATEMENT_LIST* containing the previous *STATEMENT* of `next` that are of
-`previousType`.
+*Description*: Returns a *STATEMENT_LIST* containing all the previous *STATEMENT* s
+of `next` that are of `previousType`.
 *STATEMENT_LIST* returned is empty if there is no such relationship for `next`.
 
 '''
@@ -1091,8 +1091,9 @@ holds and are of STATEMENT_TYPE `stmtType`.
 `*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextTuple(*STATEMENT_TYPE* stmtTypeOfPrevious,
 *STATEMENT_TYPE* stmtTypeOfNext);`
 
-*Description*: Returns a list of pairs, where for each pair, the *Next* relationship holds between them, and the
-previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
+*Description*: Returns a list of pairs, where for each pair, the *Next* relationship
+holds between them, and the previous is of `stmtTypeOfPrevious`, and the next
+is of `stmtTypeOfNext`.
 
 === Calls API
 
@@ -1282,6 +1283,86 @@ If <<storeCFGBip>> was never called for the `proc` given, a *NULL_POINTER* will 
 
 *Description*: Retrieves the names of all procedures that have a *CFG*
 with branching into procedures in the Program Knowledge Base.
+
+=== Next BIP API
+
+*Overview*: The Next BIP API provides a Table to insert and extract information related
+to the NextBip relationships in the processed SIMPLE program. It is highly similar to
+the Next API, just that the information stored is different.
+
+* <<addNextBipRelationships>>
+* <<checkIfNextBipHolds>>
+* <<getAllNextBipStatements>>
+* <<getAllNextBipStatementsTyped>>
+* <<getAllPreviousBipStatements>>
+* <<getAllPreviousBipStatementsTyped>>
+* <<getAllNextBipTuples>>
+
+'''
+
+[#addNextBipRelationships]
+`*VOID* addNextBipRelationships(*INTEGER* previous, *STATEMENT_TYPE*, previousStmtType, *INTEGER* next,
+*STATEMENT_TYPE* nextStmtType);`
+
+*Requires*: `previousStmtType` and `nextStmtType` cannot be `AnyStatement` type.
+
+*Description*: Adds a NextBip relationship between `previous` with `previousStmtType` and `next`
+with `nextStmtType` into the Next BIP Table.
+
+'''
+
+[#checkIfNextBipHolds]
+`*BOOLEAN* checkIfNextBipHolds(*INTEGER* previous, *INTEGER* next);`
+
+*Description*: Returns `TRUE` if there is a NextBip relationship between `previous` and `next`,
+else returns `FALSE`.
+
+'''
+
+[#getAllNextBipStatements]
+`*STATEMENT_LIST* getAllNextBipStatements(*INTEGER* previous, *STATEMENT_TYPE* nextType);`
+
+*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT* s of `previous` that are of
+`nextType`, taking into account branching into procedures.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
+
+'''
+
+[#getAllNextBipStatementsTyped]
+`*STATEMENT_LIST* getAllNextBipStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a *STATEMENT_LIST* of statements such that `NextBip(previous, returned)`
+holds and are of STATEMENT_TYPE `stmtType`.
+
+'''
+
+[#getAllPreviousBipStatements]
+`*STATEMENT_LIST* getAllPreviousBipStatements(*INTEGER* next, *STATEMENT_TYPE* previousType);`
+
+*Description*: Returns a *STATEMENT_LIST* containing all the previous *STATEMENT* s
+of `next` that are of `previousType`, taking into account branching into procedures.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `next`.
+
+'''
+
+[#getAllPreviousBipStatementsTyped]
+`*STATEMENT_LIST* getAllPreviousBipStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a *STATEMENT_LIST* of all previous statements that are of *STATEMENT_TYPE*
+`stmtTypeOfPrevious`, with a next of *STATEMENT_TYPE* `stmtTypeOfNext` when
+taking into account branching into procedures.
+
+'''
+
+[#getAllNextBipTuples]
+`*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextBipTuples(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a list of pairs, where for each pair, the *NextBip* relationship
+holds between them, and the previous is of `stmtTypeOfPrevious`, and the next
+is of `stmtTypeOfNext`, when branching into procedures is taken into account.
 
 
 === Utilities API
