@@ -79,15 +79,26 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
 
                 CfgNode* calledNodeCfgBipPointer = visitedMap->at(procName).at(calledProcCfgRootNode->nodeNumber);
 
+                bool needToCreateNewProcedure = false;
+
                 // The called procedure has been called
                 if (calledNodeCfgBipPointer != nullptr) {
                     size_t indexOfLastCfgNodeOfCalledProc = visitedMap->at(procName).size() - 1;
                     // Last node of the CfgBipNode of the called procedure, to add current cfgBipNode as the last node's
                     // child
                     CfgNode* lastCfgNodeCfgBipNode = visitedMap->at(procName).at(indexOfLastCfgNodeOfCalledProc);
-                    currentCfgBipNode->childrenNodes->push_back(calledNodeCfgBipPointer);
-                    currentCfgBipNode = lastCfgNodeCfgBipNode;
+                    if (lastCfgNodeCfgBipNode->childrenNodes->empty()) {
+                        currentCfgBipNode->childrenNodes->push_back(calledNodeCfgBipPointer);
+                        currentCfgBipNode = lastCfgNodeCfgBipNode;
+                    } else {
+                        // create a new copy of procedure instead
+                        needToCreateNewProcedure = true;
+                    }
                 } else {
+                    needToCreateNewProcedure = true;
+                }
+
+                if (needToCreateNewProcedure) {
                     visitedCfgProcedure->at(procName) = true;
                     // Create new node to traverse the CFG of the called procedure
                     CfgNode* newCfgBipNode
@@ -97,6 +108,7 @@ CfgNode* buildCfgBipWithNode(CfgNode* cfgNode, std::unordered_map<Name, CfgNode*
                         = buildCfgBipWithNode(calledProcCfgRootNode, proceduresCfg, currentNumberOfNodes, newCfgBipNode,
                                               visitedMap, procName, visitedCfgProcedure, procNameOfRootNode);
                 }
+
                 prevStmtIsCallType = true;
                 break;
             }
