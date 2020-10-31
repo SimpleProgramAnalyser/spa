@@ -18,28 +18,26 @@
  *        Relationships. Solely for testing purposes
  */
 Void addNextRelationshipBetweenNodes(StatementNode* currentNode, StatementNode* nextNode,
-                                     std::vector<Pair<Integer, Integer>>* nextRelationships)
+                                     std::vector<Pair<Integer, Integer>>& nextRelationships)
 {
     addNextRelationships(currentNode->getStatementNumber(), currentNode->getStatementType(),
                          nextNode->getStatementNumber(), nextNode->getStatementType());
 
     // For testing
     Pair<Integer, Integer> nextRelationship(currentNode->getStatementNumber(), nextNode->getStatementNumber());
-    nextRelationships->push_back(nextRelationship);
+    nextRelationships.push_back(nextRelationship);
 }
 
-/**
- * Extracts Next Relationships between statement nodes with in a CFG node and with
- * the statement accessed before accessing the current CFG node.
- *
- * @param cfgNode The current CFG node
- * @param visitedArray Array of booleans to indicate if a node has been visited
- * @param prevStmtNode The most recent statement before accessing this CFG node
- * @param nextRelationships Vector of pairs of integers to represent Next
- *        Relationships. Solely for testing purposes
- */
-Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, StatementNode* prevStmtNode,
-                         std::vector<Pair<Integer, Integer>>* nextRelationships)
+NextExtractor::NextExtractor(const CfgNode* procedureNode, size_t numberOfNodes):
+    node(procedureNode), nextRelationships(), visitedArray()
+{
+    // Initialise the visitedArray to false
+    for (size_t i = 0; i < numberOfNodes + 1; i++) {
+        visitedArray.push_back(false);
+    }
+}
+
+Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* prevStmtNode)
 {
     Boolean nodeIsVisited = visitedArray->at(cfgNode->nodeNumber);
     Vector<StatementNode*>* stmtList = cfgNode->statementNodes;
@@ -67,7 +65,7 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
 
     // If the statement list is empty, we mark the current CFG as visited and terminate early
     if (stmtList->empty()) {
-        visitedArray->at(cfgNode->nodeNumber) = true;
+        visitedArray.at(cfgNode->nodeNumber) = true;
         return;
     }
 
@@ -85,7 +83,7 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
     if (nodeIsVisited) {
         return;
     } else {
-        visitedArray->at(cfgNode->nodeNumber) = true;
+        visitedArray.at(cfgNode->nodeNumber) = true;
 
         // We run for stmtList.size() - 1 because we do not consider the last node for
         // Next relationships within a node
@@ -100,37 +98,22 @@ Void extractNextFromNode(CfgNode* cfgNode, Vector<Boolean>* visitedArray, Statem
         StatementNode* lastNode = stmtList->back();
 
         for (auto& child : *childrenList) {
-            extractNextFromNode(child, visitedArray, lastNode, nextRelationships);
+            extractNextFromNode(child, lastNode);
         }
     }
 }
 
-/**
- * Extracts the Next relationships from the current program, represented with a CFG.
- * We can access the whole CFG with just its root node
- *
- * @param cfgInfo A pair container the pointer to the CFG root node and the number
- *        of CFG nodes it has
- * @return A vector of pairs of Integers that represents all the next relationships.
- *         Solely for testing purposes.
- */
-std::vector<Pair<Integer, Integer>> extractNext(std::pair<CfgNode*, size_t> cfgInfo)
+Vector<Pair<Integer, Integer>> NextExtractor::extractNext()
 {
-    // For testing
-    std::vector<std::pair<Integer, Integer>> nextRelationships;
-
-    CfgNode* rootNode = cfgInfo.first;
-    size_t numberOfNodes = cfgInfo.second;
-    Vector<Boolean> visitedArray;
-
-    // Initialise the visitedArray to false
-    for (size_t i = 0; i < numberOfNodes + 1; i++) {
-        visitedArray.push_back(false);
-    }
-
     // Start by extracting the Next relationship with th root node
-    extractNextFromNode(rootNode, &visitedArray, nullptr, &nextRelationships);
+    extractNextFromNode(node, nullptr);
 
     // Solely for testing purposes
     return nextRelationships;
+}
+
+std::vector<Pair<Integer, Integer>> extractNext(std::pair<CfgNode*, size_t> cfgInfo)
+{
+    NextExtractor extractor(cfgInfo.first, cfgInfo.second);
+    return extractor.extractNext();
 }
