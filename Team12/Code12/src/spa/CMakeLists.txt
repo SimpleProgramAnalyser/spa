@@ -51,6 +51,8 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextTableFacade.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextTableFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextBipTableFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextBipTableFacade.cpp
 
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
