@@ -21,6 +21,9 @@ public:
     // Retrieves a Clause* at the given index from the list.
     Clause* get(Integer index) const;
 
+    // Retrieves a Clause* at the given index from the list.
+    List<Clause>& getAllUnsafe();
+
     // Retrieves a Clause* at the given index from the list, and move the unique pointer.
     Clause* remove(Integer index);
 

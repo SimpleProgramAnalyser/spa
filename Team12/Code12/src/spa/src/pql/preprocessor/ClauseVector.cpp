@@ -50,3 +50,8 @@ Boolean ClauseVector::operator==(const ClauseVector& clauseVector)
 {
     return util::checkVectorOfPointersEqual(this->clauses, clauseVector.clauses);
 }
+
+List<Clause>& ClauseVector::getAllUnsafe()
+{
+    return clauses;
+}

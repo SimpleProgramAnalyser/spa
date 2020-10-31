@@ -219,6 +219,16 @@ Boolean Relationship::operator==(const Relationship& relationship)
            && this->rightReference == relationship.rightReference;
 }
 
+Void Relationship::setLeftRef(Reference newRef)
+{
+    leftReference = std::move(newRef);
+}
+
+Void Relationship::setRightRef(Reference newRef)
+{
+    rightReference = std::move(newRef);
+}
+
 template <typename T>
 Boolean isValidInTable(std::unordered_map<RelationshipType, std::unordered_set<T>> table, RelationshipType relRefType,
                        T type)
