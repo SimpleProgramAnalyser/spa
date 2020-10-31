@@ -81,4 +81,17 @@ public:
  */
 Vector<Pair<Integer, Integer>> extractNext(std::pair<CfgNode*, size_t> cfgInfo);
 
+/**
+ * Extracts the NextBip relationships from the current program,
+ * represented with a CFG BIP. We access the whole CFG BIP for
+ * procedures and other called procedures with just a root node.
+ *
+ * @param cfgBip Pointer to the CFG BIP root node.
+ * @param sizeOfCfgBip Total number of unique CFG nodes in the CFG BIP.
+ *
+ * @return A vector of pairs of integers that represents all the NextBip
+ *         relationships. Solely for testing purposes.
+ */
+Vector<Pair<Integer, Integer>> extractNextBip(CfgNode* cfgBip, size_t sizeOfCfgBip);
+
 #endif // SPA_FRONTEND_NEXT_EXTRACTOR_H

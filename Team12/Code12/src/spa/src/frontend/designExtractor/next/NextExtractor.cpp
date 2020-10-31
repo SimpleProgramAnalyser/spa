@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <unordered_set>
 
+#include "NextBipTableFacade.h"
 #include "pkb/PKB.h"
 
 Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* prevStmtNode)
@@ -97,4 +98,10 @@ std::vector<Pair<Integer, Integer>> extractNext(std::pair<CfgNode*, size_t> cfgI
 {
     NextExtractor extractor(cfgInfo.first, cfgInfo.second, new NextTableFacade());
     return extractor.extractNext();
+}
+
+Vector<Pair<Integer, Integer>> extractNextBip(CfgNode* cfgBip, size_t sizeOfCfgBip)
+{
+    NextExtractor bipExtractor(cfgBip, sizeOfCfgBip, new NextBipTableFacade());
+    return bipExtractor.extractNext();
 }

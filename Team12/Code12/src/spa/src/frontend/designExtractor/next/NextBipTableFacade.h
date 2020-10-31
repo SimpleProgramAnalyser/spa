@@ -11,7 +11,7 @@
 
 #include "NextTableFacade.h"
 
-class NextBipTableFacade: NextTableFacade {
+class NextBipTableFacade: public NextTableFacade {
 public:
     NextBipTableFacade() = default;
     NextBipTableFacade(const NextBipTableFacade&) = default;
