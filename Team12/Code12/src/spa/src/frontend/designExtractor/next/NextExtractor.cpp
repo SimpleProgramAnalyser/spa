@@ -9,7 +9,7 @@
 #include "pkb/PKB.h"
 
 /**
- * Calls the PKB API to add a Next realtionship between two statement nodes. Also updates
+ * Calls the PKB API to add a Next relationship between two statement nodes. Also updates
  * the nextRelationships vector to represent a next relationship for testing.
  *
  * @param currentNode The previous node in the Next relationship
@@ -39,7 +39,7 @@ NextExtractor::NextExtractor(const CfgNode* procedureNode, size_t numberOfNodes)
 
 Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* prevStmtNode)
 {
-    Boolean nodeIsVisited = visitedArray->at(cfgNode->nodeNumber);
+    Boolean nodeIsVisited = visitedArray.at(cfgNode->nodeNumber);
     Vector<StatementNode*>* stmtList = cfgNode->statementNodes;
     Vector<CfgNode*>* childrenList = cfgNode->childrenNodes;
 
