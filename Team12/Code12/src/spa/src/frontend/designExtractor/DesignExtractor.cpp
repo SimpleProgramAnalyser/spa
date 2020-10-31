@@ -10,10 +10,10 @@
 #include "CallsExtractor.h"
 #include "FollowsExtractor.h"
 #include "ModifiesExtractor.h"
-#include "NextExtractor.h"
 #include "ParentExtractor.h"
 #include "SemanticErrorsValidator.h"
 #include "UsesExtractor.h"
+#include "next/NextExtractor.h"
 
 Void storeCurrentCfg(CfgNode* cfgRootNode, Name procName, std::unordered_map<Name, CfgNode*>* proceduresCfg)
 {
