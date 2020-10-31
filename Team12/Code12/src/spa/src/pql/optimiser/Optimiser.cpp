@@ -4,6 +4,8 @@
 
 #include "Optimiser.h"
 
+#include <set>
+
 #include "GroupedClauses.h"
 
 /**
@@ -45,7 +47,29 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
  */
 Void deleteDuplicateClauses(AbstractQuery& abstractQuery)
 {
-    // TODO
+    // create a set, push all clauses in
+    Vector<Clause*> clauses;
+    for (int i = 0; i < abstractQuery.getClauses().count(); i++) {
+        clauses.push_back(abstractQuery.getClausesUnsafe().remove(i));
+    }
+
+    // O(n^2) remove duplicate
+    for (auto it = clauses.begin(); it != clauses.end(); it++) {
+        for (auto it2 = it; it2 != clauses.end(); it2++) {
+            if (**it == **it2) {
+                clauses.erase(it2);
+            }
+        }
+    }
+
+    // create a new ClauseVector objectj
+    ClauseVector newClauseVector;
+    for (Clause* clause : clauses) {
+        newClauseVector.add(clause);
+    }
+
+    // replace old ClauseVector object
+    abstractQuery.setClauses(newClauseVector);
 }
 
 /**
