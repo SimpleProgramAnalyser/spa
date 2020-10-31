@@ -7,11 +7,16 @@
 
 #include <unordered_set>
 
+#include "NextTableFacade.h"
 #include "ast/AstTypes.h"
 #include "cfg/CfgTypes.h"
 
 class NextExtractor {
 private:
+    /**
+     * Root Control Flow Graph node of the current
+     * procedure that NextExtractor is working on.
+     */
     const CfgNode* node;
     /**
      * Vector of pairs of integers to represent Next
@@ -25,6 +30,12 @@ private:
     Vector<Boolean> visitedArray;
 
     /**
+     * The facade which this extractor uses to interact
+     * and store Next relationships in the PKB.
+     */
+    std::unique_ptr<NextTableFacade> facade;
+
+    /**
      * Extracts Next Relationships between statement nodes with in a CFG node and with
      * the statement accessed before accessing the current CFG node.
      *
@@ -35,14 +46,19 @@ private:
 
 public:
     /**
-     * Constructor for a NextExtractor.
+     * Constructor for a NextExtractor. Memory management
+     * of the NextTableFacade pointer will be handled by
+     * the constructed NextExtractor when it is deleted.
      *
      * @param procedureNode The starting Control Flow Graph
      *                      node for a procedure.
      * @param numberOfNodes Number of nodes in the Control
      *                      Flow Graph given.
+     * @param facade Pointer to a NextTableFacade to be
+     *               used by this NextExtractor to interact
+     *               with the Program Knowledge Base.
      */
-    NextExtractor(const CfgNode* procedureNode, size_t numberOfNodes);
+    NextExtractor(const CfgNode* procedureNode, size_t numberOfNodes, NextTableFacade* facade);
 
     /**
      * Extracts Next relationships and stores the result in the PKB.

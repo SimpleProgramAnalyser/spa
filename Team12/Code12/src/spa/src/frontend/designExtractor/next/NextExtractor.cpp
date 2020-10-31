@@ -8,35 +8,6 @@
 
 #include "pkb/PKB.h"
 
-/**
- * Calls the PKB API to add a Next relationship between two statement nodes. Also updates
- * the nextRelationships vector to represent a next relationship for testing.
- *
- * @param currentNode The previous node in the Next relationship
- * @param previousNode The next node in the Next relationship
- * @param nextRelationships Vector of pairs of integers to represent Next
- *        Relationships. Solely for testing purposes
- */
-Void addNextRelationshipBetweenNodes(StatementNode* currentNode, StatementNode* nextNode,
-                                     std::vector<Pair<Integer, Integer>>& nextRelationships)
-{
-    addNextRelationships(currentNode->getStatementNumber(), currentNode->getStatementType(),
-                         nextNode->getStatementNumber(), nextNode->getStatementType());
-
-    // For testing
-    Pair<Integer, Integer> nextRelationship(currentNode->getStatementNumber(), nextNode->getStatementNumber());
-    nextRelationships.push_back(nextRelationship);
-}
-
-NextExtractor::NextExtractor(const CfgNode* procedureNode, size_t numberOfNodes):
-    node(procedureNode), nextRelationships(), visitedArray()
-{
-    // Initialise the visitedArray to false
-    for (size_t i = 0; i < numberOfNodes + 1; i++) {
-        visitedArray.push_back(false);
-    }
-}
-
 Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* prevStmtNode)
 {
     Boolean nodeIsVisited = visitedArray.at(cfgNode->nodeNumber);
@@ -46,8 +17,8 @@ Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* p
     // Dummy node with no statement nodes
     if (stmtList->empty() && childrenList->size() == 1) {
         if (!childrenList->at(0)->statementNodes->empty()) {
-            addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0)->statementNodes->at(0),
-                                            nextRelationships);
+            facade->addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0)->statementNodes->at(0),
+                                                    nextRelationships);
         } else {
             while (childrenList->at(0)->statementNodes->empty()) {
                 if (!childrenList->at(0)->childrenNodes->empty()) {
@@ -58,7 +29,8 @@ Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* p
             }
             Vector<StatementNode*>* currentChildStatementList = childrenList->at(0)->statementNodes;
             if (!currentChildStatementList->empty()) {
-                addNextRelationshipBetweenNodes(prevStmtNode, currentChildStatementList->at(0), nextRelationships);
+                facade->addNextRelationshipBetweenNodes(prevStmtNode, currentChildStatementList->at(0),
+                                                        nextRelationships);
             }
         }
     }
@@ -75,7 +47,7 @@ Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* p
     if (prevStmtNode != nullptr && !stmtList->empty()) {
         StatementNode* firstNode = stmtList->at(0);
 
-        addNextRelationshipBetweenNodes(prevStmtNode, firstNode, nextRelationships);
+        facade->addNextRelationshipBetweenNodes(prevStmtNode, firstNode, nextRelationships);
     }
 
     // We extract the Next relationships from consecutive statement nodes in the current CFG node'
@@ -91,7 +63,7 @@ Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* p
             StatementNode* prevStmtNodeI = stmtList->at(i);
             StatementNode* currentStmtNode = stmtList->at(i + 1);
 
-            addNextRelationshipBetweenNodes(prevStmtNodeI, currentStmtNode, nextRelationships);
+            facade->addNextRelationshipBetweenNodes(prevStmtNodeI, currentStmtNode, nextRelationships);
         }
 
         // We recurse with the last statement in the current CFG node and the current CFG node's children
@@ -100,6 +72,15 @@ Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* p
         for (auto& child : *childrenList) {
             extractNextFromNode(child, lastNode);
         }
+    }
+}
+
+NextExtractor::NextExtractor(const CfgNode* procedureNode, size_t numberOfNodes, NextTableFacade* facade):
+    node(procedureNode), nextRelationships(), visitedArray(), facade(facade)
+{
+    // Initialise the visitedArray to false
+    for (size_t i = 0; i < numberOfNodes + 1; i++) {
+        visitedArray.push_back(false);
     }
 }
 
@@ -114,6 +95,6 @@ Vector<Pair<Integer, Integer>> NextExtractor::extractNext()
 
 std::vector<Pair<Integer, Integer>> extractNext(std::pair<CfgNode*, size_t> cfgInfo)
 {
-    NextExtractor extractor(cfgInfo.first, cfgInfo.second);
+    NextExtractor extractor(cfgInfo.first, cfgInfo.second, new NextTableFacade());
     return extractor.extractNext();
 }
