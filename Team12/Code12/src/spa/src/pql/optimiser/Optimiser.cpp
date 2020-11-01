@@ -280,6 +280,7 @@ Void groupRest(GroupedClauses& groupedClauses)
         groupedClauses.moveClauseAcrossGroup(groupIndex, offset + component, node);
     }
     // finally first group should be empty. merge with any group (how about group 1)
+    // NOLINTNEXTLINE
     assert(groupedClauses.groupSize(groupIndex) == 0 && "Group is not empty, BFS might have failed");
     groupedClauses.mergeAndRemoveGroup(groupIndex, groupIndex + 1); // merge with any group
 }
