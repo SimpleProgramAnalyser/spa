@@ -183,6 +183,8 @@ add_library(spa
     # pql/optimiser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/optimiser/Optimiser.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/optimiser/Optimiser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/optimiser/OptimiserUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/optimiser/OptimiserUtils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/optimiser/GroupedClauses.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/optimiser/GroupedClauses.cpp
 

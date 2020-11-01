@@ -20,19 +20,21 @@ public:
     GroupedClauses(AbstractQuery& abstractQuery);
 
     // information retrieval
-    int size();
-    int groupSize(int groupIndex);
-    int getClauseNumber(int groupIndex, int clauseIndex);
+    int size() const;
+    int groupSize(int groupIndex) const;
+    int getClauseNumber(int groupIndex, int clauseIndex) const;
+    const Vector<Integer>& getGroup(int groupIndex) const;
     Clause* getClause(int groupIndex, int clauseIndex);
-    bool hasSynonym(int groupIndex);
+    bool groupHasSynonym(int groupIndex);
     bool synonymIsReturned(int groupIndex);
 
     // group/clause operations
-    void addGroup();
+    int addGroup();
     void mergeAndRemoveGroup(int groupToRemove, int groupToMergeInto);
     void swapGroups(int groupIndex1, int groupIndex2);
     void swapClauseWithinGroup(int groupIndex, int clause1, int clause2);
     void moveClauseAcrossGroup(int originalGroupIndex, int originalIndex, int destGroupIndex, int destIndex);
+    void moveClauseAcrossGroup(int originalGroupIndex, int destGroupIndex, int clauseNumber);
     void swapClausesAcrossGroup(int groupIndex1, int clause1, int groupIndex2, int clause2);
     GroupedClauses() = delete;
 

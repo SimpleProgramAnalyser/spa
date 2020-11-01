@@ -45,7 +45,7 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery);
  *
  * @param groupedClauses The abstract data type of grouped clauses.
  */
-Void groupQueryClauses(GroupedClauses& groupedClauses);
+GroupedClauses groupQueryClauses(AbstractQuery& abstractQuery);
 
 /**
  * (Subjective) Sort the groups of clauses in the GroupedClauses object using the following principles, copied from

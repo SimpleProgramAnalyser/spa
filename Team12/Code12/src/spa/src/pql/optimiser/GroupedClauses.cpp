@@ -3,6 +3,8 @@
 #include <functional>
 #include <numeric>
 
+#include "OptimiserUtils.h"
+
 /**
  * Create a new GroupClauses instance based on an AbstractQuery.
  *
@@ -20,9 +22,10 @@ GroupedClauses::GroupedClauses(AbstractQuery& abstractQuery): abstractQuery(abst
 /**
  * Add an empty group to the end of the list of GroupedClauses.
  */
-void GroupedClauses::addGroup()
+int GroupedClauses::addGroup()
 {
     listOfGroups.emplace_back();
+    return listOfGroups.size() - 1;
 }
 
 /**
@@ -76,7 +79,7 @@ Clause* GroupedClauses::getClause(int groupIndex, int clauseIndex)
  * @param clauseIndex
  * @return
  */
-int GroupedClauses::getClauseNumber(int groupIndex, int clauseIndex)
+int GroupedClauses::getClauseNumber(int groupIndex, int clauseIndex) const
 {
     return listOfGroups[groupIndex][clauseIndex];
 }
@@ -116,7 +119,7 @@ void GroupedClauses::swapClausesAcrossGroup(int groupIndex1, int clause1, int gr
  *
  * @return
  */
-int GroupedClauses::size()
+int GroupedClauses::size() const
 {
     return listOfGroups.size();
 }
@@ -138,7 +141,7 @@ void GroupedClauses::swapGroups(int groupIndex1, int groupIndex2)
  * @param groupIndex
  * @return
  */
-int GroupedClauses::groupSize(int groupIndex)
+int GroupedClauses::groupSize(int groupIndex) const
 {
     return listOfGroups[groupIndex].size();
 }
@@ -149,38 +152,12 @@ int GroupedClauses::groupSize(int groupIndex)
  * @param groupIndex
  * @return
  */
-bool GroupedClauses::hasSynonym(int groupIndex)
+bool GroupedClauses::groupHasSynonym(int groupIndex)
 {
     for (int clauseIndex = 0; clauseIndex < groupSize(groupIndex); clauseIndex++) {
-        auto clause = getClause(groupIndex, clauseIndex);
-        switch (clause->getType()) {
-        case SuchThatClauseType: { // has synyonum if left or right is synonym.
-            // NOLINTNEXTLINE
-            SuchThatClause* suchThatClause = static_cast<SuchThatClause*>(clause);
-            auto leftRefType = suchThatClause->getRelationship().getLeftRef().getReferenceType();
-            auto rightRefType = suchThatClause->getRelationship().getRightRef().getReferenceType();
-            if (leftRefType == SynonymRefType || rightRefType == SynonymRefType) {
-                return true;
-            }
-            break;
-        }
-        case PatternClauseType: { // patterns always have synonym.
+        Clause* clause = getClause(groupIndex, clauseIndex);
+        if (hasSynonym(clause))
             return true;
-        }
-        case WithClauseType: {
-            // NOLINTNEXTLINE
-            WithClause* withClause = static_cast<WithClause*>(clause);
-            auto leftRefType = withClause->getLeftReference().getReferenceType();
-            auto rightRefType = withClause->getRightReference().getReferenceType();
-            if (leftRefType == SynonymRefType || leftRefType == AttributeRefType || rightRefType == SynonymRefType
-                || rightRefType == AttributeRefType) {
-                return true;
-            }
-            break;
-        }
-        default:
-            break;
-        }
     }
     return false;
 }
@@ -263,7 +240,7 @@ bool GroupedClauses::compareGroups(int group1, int group2, GroupedClauses* group
      * 1. clause1 has no synonyms
      * 2. clause1's synonyms are not returned.
      */
-    if (!groupedClauses->hasSynonym(group1)) {
+    if (!groupedClauses->groupHasSynonym(group1)) {
         return true;
     } else if (!groupedClauses->synonymIsReturned(group1)) {
         return true;
@@ -290,4 +267,16 @@ void GroupedClauses::sortGroups()
         newListOfGroups.push_back(listOfGroups[indexList[i]]);
     }
     listOfGroups = newListOfGroups;
+}
+void GroupedClauses::moveClauseAcrossGroup(int originalGroupIndex, int destGroupIndex, int clauseNumber)
+{
+    auto originalGroup = listOfGroups[originalGroupIndex];
+    auto it = std::find(originalGroup.begin(), originalGroup.end(), clauseNumber);
+    moveClauseAcrossGroup(originalGroupIndex, it - originalGroup.begin(), destGroupIndex,
+                          listOfGroups[destGroupIndex].size() - 1);
+}
+
+const Vector<Integer>& GroupedClauses::getGroup(int groupIndex) const
+{
+    return listOfGroups[groupIndex];
 }
