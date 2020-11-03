@@ -22,6 +22,7 @@ Select s pattern w (_, _) with 1=1
 stmt s; assign a; while w; if i; call c; constant p; variable v;
 Select BOOLEAN pattern i (v, _, _) with i.stmt# = p.value
 TRUE
+5000
 6 - 0 common synonyms, if pattern, with right operand Integer
 stmt s; assign a; while w; if i; call c; constant p; variable v;
 Select i pattern i ("TryingToMakeLongVariableNamesToTestLimits", _, _) with s.stmt# = 57
@@ -82,7 +83,6 @@ stmt s; assign a; while w; if i; call c; constant p; variable v;
 Select v with p.value = s.stmt# pattern w (v, _)
 a, b, constantAssignment, d, doNothing, procedure, specialPattern, x
 5000
-5000
 18 - 1 common synonym, if pattern, with right operand Integer
 stmt s; assign a; while w; if i; call c; constant p; variable v;
 Select v pattern i (v, _, _) with i.stmt# = 57
@@ -130,7 +130,7 @@ constantAssignment, d, doNothing, specialPattern, x
 5000
 27 - 1 common synonym, while pattern, with right operand Integer, swap sequence
 stmt s; assign a; while w; if i; call c; constant p; variable v;
-Select v with 20 = w.stmt# v pattern w (v, _) 
+Select v with 20 = w.stmt# pattern w (v, _) 
 doNothing
 5000
 28 - 1 common synonym, while pattern, with right operand String, swap sequence
