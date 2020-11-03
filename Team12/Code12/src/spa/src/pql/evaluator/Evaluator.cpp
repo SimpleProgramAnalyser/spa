@@ -12,8 +12,10 @@
 #include "attribute/WithUnifier.h"
 #include "pattern/PatternMatcher.h"
 #include "relationships/SuchThatEvaluator.h"
+#include "relationships/affects/AffectsBipEvaluator.h"
 #include "relationships/affects/AffectsBipFacade.h"
 #include "relationships/affects/AffectsEvaluator.h"
+#include "relationships/next/NextBipEvaluator.h"
 #include "relationships/next/NextBipFacade.h"
 #include "relationships/next/NextEvaluator.h"
 
@@ -85,8 +87,10 @@ RawQueryResult Evaluator::evaluateValidQuery()
     resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable, new AffectsEvaluatorFacade()));
     resultsTable.manageEvaluator(new NextEvaluator(resultsTable, new NextEvaluatorFacade()));
     // initiate AffectsBip and NextBip evaluators
-    resultsTable.manageEvaluatorBip(new AffectsEvaluator(resultsTable, new AffectsBipFacade()));
-    resultsTable.manageEvaluatorBip(new NextEvaluator(resultsTable, new NextBipFacade()));
+    auto* nextBipEval = new NextBipEvaluator(resultsTable, new NextBipFacade());
+    resultsTable.manageEvaluatorBip(new AffectsBipEvaluator(resultsTable, new AffectsBipFacade(), *nextBipEval));
+    resultsTable.manageEvaluatorBip(nextBipEval);
+    // evaluate clauses in the list order
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);
