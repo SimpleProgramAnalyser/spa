@@ -6,7 +6,7 @@
 #include "../../ast_utils/AstUtils.h"
 #include "catch.hpp"
 #include "cfg/CfgBuilder.h"
-#include "frontend/designExtractor/NextExtractor.h"
+#include "frontend/designExtractor/next/NextExtractor.h"
 
 bool checkIfNextRelationshipsAreEqual(std::vector<std::pair<Integer, Integer>> actualNextRelationships,
                                       std::vector<std::pair<Integer, Integer>> expectedNextRelationships)

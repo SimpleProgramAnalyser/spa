@@ -30,7 +30,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBipBuilder.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBipBuilder.cpp
 
-    # design extractor
+    # designExtractor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
@@ -43,10 +43,16 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.cpp
+
+    # designExtractor/next
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextTableFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextTableFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextBipTableFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextBipTableFacade.cpp
 
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h

@@ -116,3 +116,8 @@ Boolean CfgNode::equals(CfgNode* cfgn, size_t numberOfNodes)
     isEqual = nodesAreEqual(this, cfgn, &visitedArray);
     return isEqual;
 }
+
+size_t CfgNode::size() const
+{
+    return findAllChildren().size();
+}
