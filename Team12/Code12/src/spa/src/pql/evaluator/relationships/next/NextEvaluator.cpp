@@ -143,7 +143,7 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
     for (StatementNumber stmtNum : prevTypeStatements) {
         CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
         ClauseResult filteredResults = nextStarAnyStmtResults.filterStatementType(nextRefStmtType);
-        /** Store result */
+        // Store results
         for (const String& result : filteredResults) {
             Pair<Integer, String> pairResult = std::make_pair(stmtNum, result);
             pairedResults.push_back(pairResult);

@@ -50,7 +50,10 @@ Reference Reference::createReference(String ref, DeclarationTable& declarationTa
         return reference;
     }
 
-    if (util::isLiteralIdent(ref)) {
+    if (util::isLiteral(ref)) {
+        if (!util::isLiteralIdent(ref)) {
+            return Reference(QuerySyntaxError, "Literal is not a valid Identifier: " + ref);
+        }
         // unquote the string literal
         Reference reference(LiteralRefType, util::removeCharFromBothEnds(ref));
         return reference;
