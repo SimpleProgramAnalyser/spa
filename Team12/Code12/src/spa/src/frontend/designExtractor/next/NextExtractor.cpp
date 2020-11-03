@@ -20,6 +20,8 @@ Void NextExtractor::extractNextFromNode(const CfgNode* cfgNode, StatementNode* p
         if (!childrenList->at(0)->statementNodes->empty()) {
             facade->addNextRelationshipBetweenNodes(prevStmtNode, childrenList->at(0)->statementNodes->at(0),
                                                     nextRelationships);
+
+            extractNextFromNode(childrenList->at(0), nullptr);
         } else {
             while (childrenList->at(0)->statementNodes->empty()) {
                 if (!childrenList->at(0)->childrenNodes->empty()) {
