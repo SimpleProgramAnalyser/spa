@@ -34,7 +34,8 @@ private:
     Boolean affectsBipSearch(Integer startingStmtNum, StatementPositionInCfg startingPosition, Boolean ignoreStarting,
                              std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns,
                              MaybeStatementNumber endValue);
-    Void cacheModifierBipStarAssigns(Integer leftRefVal);
+    Vector<Integer> cacheModifierBipStarAssigns(Integer leftRefVal);
+    Void cacheAllBipStar();
 
     Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) override;
     Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal) override;

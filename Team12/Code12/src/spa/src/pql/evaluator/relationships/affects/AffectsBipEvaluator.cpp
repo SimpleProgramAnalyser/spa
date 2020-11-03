@@ -259,7 +259,11 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
     return foundEndValue;
 }
 
-Void AffectsBipEvaluator::cacheModifierBipStarAssigns(Integer leftRefVal)
+/**
+ * Caches all statements that match s in AffectsBip*(leftRefVal, s),
+ * and returns a vector of all such statements.
+ */
+Vector<Integer> AffectsBipEvaluator::cacheModifierBipStarAssigns(Integer leftRefVal)
 {
     // find all positions of leftRefVal
     Vector<StatementPositionInCfg> allPositions = findAllCorrespondingPositions(leftRefVal);
@@ -273,6 +277,27 @@ Void AffectsBipEvaluator::cacheModifierBipStarAssigns(Integer leftRefVal)
     }
     cacheModifierBipStarTable.insert(leftRefVal, CacheSet(matchingStatements));
     exploredModifierBipStarAssigns.insert(leftRefVal);
+    return Vector<Integer>(matchingStatements.begin(), matchingStatements.end());
+}
+
+/**
+ * Caches all statements that match <s1, s2> in AffectsBip*(s1, s2).
+ */
+Void AffectsBipEvaluator::cacheAllBipStar()
+{
+    std::unordered_set<Integer> uniqueAffectedUsers;
+    Vector<Integer> allAssigns = facade->getAssigns();
+    for (Integer assignStmt : allAssigns) {
+        Vector<Integer> resultsForThisAssign = cacheModifierBipStarAssigns(assignStmt);
+        if (!resultsForThisAssign.empty()) {
+            allModifierBipStarAssigns.push_back(assignStmt);
+            for (Integer affectedUser : resultsForThisAssign) {
+                uniqueAffectedUsers.insert(affectedUser);
+                allAffectsBipStarTuples.emplace_back(assignStmt, affectedUser);
+            }
+        }
+    }
+    bipStarCacheFullyPopulated = true;
 }
 
 Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
@@ -291,12 +316,25 @@ Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Refere
 
 Void AffectsBipEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal)
 {
-    AffectsEvaluator::evaluateRightKnownStar(leftRef, rightRefVal);
+    // hard to do this without finding all results, since
+    // the CFG cannot be traversed backwards currently
+    cacheAllBipStar();
+    std::unordered_set<Integer> affectedUsers;
+    for (const Pair<Integer, Integer>& affectsBipStarTuple : allAffectsBipStarTuples) {
+        if (affectsBipStarTuple.second == rightRefVal) {
+            affectedUsers.insert(affectsBipStarTuple.first);
+        }
+    }
+    resultsTable.storeResultsOne(leftRef,
+                                 convertToClauseResult(Vector<Integer>(affectedUsers.begin(), affectedUsers.end())));
 }
 
 Void AffectsBipEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef)
 {
-    AffectsEvaluator::evaluateBothAnyStar(leftRef, rightRef);
+    cacheAllBipStar();
+    resultsTable.storeResultsTwo(leftRef, convertToClauseResult(allModifierBipStarAssigns), rightRef,
+                                 convertToClauseResult(allUserBipStarAssigns),
+                                 convertToPairedResult(allAffectsBipStarTuples));
 }
 
 Void AffectsBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
