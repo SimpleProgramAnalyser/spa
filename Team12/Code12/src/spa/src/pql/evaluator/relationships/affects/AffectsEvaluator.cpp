@@ -620,10 +620,11 @@ Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRe
 }
 
 AffectsEvaluator::AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade):
-    resultsTable(resultsTable), facade(facade), cacheUserTable(), cacheModifierTable(), exploredUserAssigns(),
-    exploredModifierAssigns(), allModifierAssigns(), allUserAssigns(), allAffectsTuples(), cacheFullyPopulated(false),
-    cacheUserStarTable(), cacheModifierStarTable(), partiallyCacheUserStarTable(), partiallyCacheModifierStarTable(),
-    exploredUserStarAssigns(), exploredModifierStarAssigns(), visitedUserStarAssigns(), visitedModifierStarAssigns()
+    cacheUserTable(), cacheModifierTable(), exploredUserAssigns(), exploredModifierAssigns(), allModifierAssigns(),
+    allUserAssigns(), allAffectsTuples(), cacheFullyPopulated(false), cacheUserStarTable(), cacheModifierStarTable(),
+    partiallyCacheUserStarTable(), partiallyCacheModifierStarTable(), exploredUserStarAssigns(),
+    exploredModifierStarAssigns(), visitedUserStarAssigns(), visitedModifierStarAssigns(), resultsTable(resultsTable),
+    facade(facade)
 {}
 
 Void AffectsEvaluator::evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef)

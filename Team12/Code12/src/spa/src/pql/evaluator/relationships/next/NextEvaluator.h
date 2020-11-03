@@ -12,11 +12,6 @@
 
 class NextEvaluator {
 private:
-    ResultsTable& resultsTable;
-    // The facade which this Next Evaluator uses to interact
-    // with components outside of Query Processor (i.e. PKB)
-    std::unique_ptr<NextEvaluatorFacade> facade;
-
     // caching of intermediate Next* clauses results
     CacheTable cacheNextStarTable;
     CacheTable cachePrevStarTable;
@@ -32,17 +27,33 @@ private:
     // case where both are known
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
 
-    Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
-    Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
-    Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
-    Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
     // DFS method to search and cache all Next* relationship for stmtNum.
     // If currentWhileStmtNum is set to -1, that means the function is
     // currently not operating on a statement in a while statement list.
     CacheSet getCacheNextStatement(StatementNumber stmtNum);
     CacheSet getCachePrevStatement(StatementNumber stmtNum);
 
+protected:
+    ResultsTable& resultsTable;
+    // The facade which this Next Evaluator uses to interact
+    // with components outside of Query Processor (i.e. PKB)
+    std::unique_ptr<NextEvaluatorFacade> facade;
+
+    // Allow AffectsBipEvaluator to call internal methods
+    friend class AffectsBipEvaluator;
+
+    virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
+    virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
+    virtual Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
+    virtual Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
+
 public:
+    NextEvaluator(NextEvaluator&&) = default;
+    NextEvaluator(const NextEvaluator&) = delete;
+    virtual ~NextEvaluator() = default;
+    NextEvaluator& operator=(const NextEvaluator&) = delete;
+    NextEvaluator& operator=(NextEvaluator&&) = delete;
+
     /**
      * Constructs a new NextEvaluator.
      *
