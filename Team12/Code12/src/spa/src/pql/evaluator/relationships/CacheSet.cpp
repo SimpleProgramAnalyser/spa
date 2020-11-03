@@ -36,6 +36,11 @@ ClauseResult CacheSet::toClauseResult() const
     return strList;
 }
 
+Vector<Integer> CacheSet::toVector() const
+{
+    return Vector<Integer>(set.begin(), set.end());
+}
+
 Boolean CacheSet::isCached(StatementNumber stmtNum) const
 {
     return set.find(stmtNum) != set.end();

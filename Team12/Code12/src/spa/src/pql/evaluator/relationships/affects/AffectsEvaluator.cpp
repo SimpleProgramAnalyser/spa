@@ -234,10 +234,6 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
     return nextNode;
 }
 
-/**
- * Caches all the statements that the
- * given statement affects.
- */
 Void AffectsEvaluator::cacheModifierAssigns(Integer leftRefVal)
 {
     Vector<Integer> nextStatements = facade->getNext(leftRefVal);
@@ -620,11 +616,10 @@ Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRe
 }
 
 AffectsEvaluator::AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade):
-    cacheUserTable(), cacheModifierTable(), exploredUserAssigns(), exploredModifierAssigns(), allModifierAssigns(),
-    allUserAssigns(), allAffectsTuples(), cacheFullyPopulated(false), cacheUserStarTable(), cacheModifierStarTable(),
-    partiallyCacheUserStarTable(), partiallyCacheModifierStarTable(), exploredUserStarAssigns(),
-    exploredModifierStarAssigns(), visitedUserStarAssigns(), visitedModifierStarAssigns(), resultsTable(resultsTable),
-    facade(facade)
+    cacheUserStarTable(), cacheModifierStarTable(), partiallyCacheUserStarTable(), partiallyCacheModifierStarTable(),
+    exploredUserStarAssigns(), exploredModifierStarAssigns(), visitedUserStarAssigns(), visitedModifierStarAssigns(),
+    resultsTable(resultsTable), facade(facade), cacheUserTable(), cacheModifierTable(), exploredUserAssigns(),
+    exploredModifierAssigns(), allModifierAssigns(), allUserAssigns(), allAffectsTuples(), cacheFullyPopulated(false)
 {}
 
 Void AffectsEvaluator::evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef)

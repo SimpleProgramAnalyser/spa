@@ -87,9 +87,8 @@ RawQueryResult Evaluator::evaluateValidQuery()
     resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable, new AffectsEvaluatorFacade()));
     resultsTable.manageEvaluator(new NextEvaluator(resultsTable, new NextEvaluatorFacade()));
     // initiate AffectsBip and NextBip evaluators
-    auto* nextBipEval = new NextBipEvaluator(resultsTable, new NextBipFacade());
-    resultsTable.manageEvaluatorBip(new AffectsBipEvaluator(resultsTable, new AffectsBipFacade(), *nextBipEval));
-    resultsTable.manageEvaluatorBip(nextBipEval);
+    resultsTable.manageEvaluatorBip(new AffectsBipEvaluator(resultsTable, new AffectsBipFacade()));
+    resultsTable.manageEvaluatorBip(new NextBipEvaluator(resultsTable, new NextBipFacade()));
     // evaluate clauses in the list order
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
