@@ -3387,7 +3387,7 @@ TEST_CASE("(vacuously true) query with such that Next* clause, left operand line
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
 
-TEST_CASE("(vacuously true) query with such that Affects clause, left operand line number, right operand synonym")
+TEST_CASE("(vacuously true) query with such that Affects clause, left operand line number, right operand line number")
 {
     // === Test set-up ===
     String query = "assign a, a1; Select a such that Affects(4,a1)";
@@ -3396,12 +3396,19 @@ TEST_CASE("(vacuously true) query with such that Affects clause, left operand li
 
     // Call PKB API to add some dummy relationships
     resetPKB();
-    insertIntoStatementTable(3, AssignmentStatement);
-    insertIntoStatementTable(4, "CallStatement");
-    insertIntoStatementTable(5, IfStatement);
-    insertIntoStatementTable(6, PrintStatement);
-    insertIntoStatementTable(7, ReadStatement);
-    insertIntoStatementTable(8, WhileStatement);
+    insertIntoStatementTable(4, AssignmentStatement);
+    insertIntoStatementTable(5, AssignmentStatement);
+
+    addNextRelationships(4, AssignmentStatement, 5, AssignmentStatement);
+
+    Vector<String> varNames;
+
+    String varName1 = "sum";
+
+    varNames.push_back(varName1);
+
+    addModifiesRelationships(4, AssignmentStatement, varNames);
+    addUsesRelationships(5, AssignmentStatement, varNames);
 
     CfgNode* rootNodeToAssign = getProgram1Cfg_compute().first;
     storeCFG(rootNodeToAssign, "compute");
@@ -3412,7 +3419,47 @@ TEST_CASE("(vacuously true) query with such that Affects clause, left operand li
     FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
 
     // === Expected test results ===
-    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    String expectedResultsStr = "4, 5";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+    // === Check expected test results ===
+    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Affects* clause, left operand line number, right operand line number")
+{
+    // === Test set-up ===
+    String query = "assign a, a1; Select a such that Affects*(4,a1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(4, AssignmentStatement);
+    insertIntoStatementTable(5, AssignmentStatement);
+
+    addNextRelationships(4, AssignmentStatement, 5, AssignmentStatement);
+
+    Vector<String> varNames;
+
+    String varName1 = "sum";
+
+    varNames.push_back(varName1);
+
+    addModifiesRelationships(4, AssignmentStatement, varNames);
+    addUsesRelationships(5, AssignmentStatement, varNames);
+
+    CfgNode* rootNodeToAssign = getProgram1Cfg_compute().first;
+    storeCFG(rootNodeToAssign, "compute");
+
+    UiStub ui;
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+
+    // === Expected test results ===
+    String expectedResultsStr = "4, 5";
     FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
 
     // === Check expected test results ===
