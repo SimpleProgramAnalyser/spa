@@ -26,6 +26,9 @@ using Vector = std::vector<T>;
 typedef std::pair<String, String> StringPair;
 typedef Vector<String> StringVector;
 
+template <typename T, typename U>
+using Pair = std::pair<T, U>;
+
 enum StatementType : char {
     AnyStatement = 0,
     AssignmentStatement = 1,

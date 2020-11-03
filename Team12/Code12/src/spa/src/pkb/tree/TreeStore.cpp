@@ -5,6 +5,8 @@
 
 #include "TreeStore.h"
 
+#include <iterator>
+
 // Instantiate a new TreeStore
 TreeStore::TreeStore():
     rootNode(nullptr), cfgByProcedure(), proceduresWithCfg(), cfgBipByProcedure(), proceduresWithCfgBip()
@@ -18,12 +20,12 @@ TreeStore::~TreeStore()
     // traverse CFG
     for (std::pair<ProcedureName, CfgNode*> mapEntry : cfgByProcedure) {
         std::vector<CfgNode*> childNodes = mapEntry.second->findAllChildren();
-        std::copy(childNodes.begin(), childNodes.end(), inserter(nodesToDelete, nodesToDelete.begin()));
+        std::copy(childNodes.begin(), childNodes.end(), std::inserter(nodesToDelete, nodesToDelete.begin()));
     }
     // traverse CFG BIP
     for (std::pair<ProcedureName, CfgNode*> mapEntry : cfgBipByProcedure) {
         std::vector<CfgNode*> childNodes = mapEntry.second->findAllChildren();
-        std::copy(childNodes.begin(), childNodes.end(), inserter(nodesToDelete, nodesToDelete.begin()));
+        std::copy(childNodes.begin(), childNodes.end(), std::inserter(nodesToDelete, nodesToDelete.begin()));
     }
     // delete the CFG nodes
     for (CfgNode* node : nodesToDelete) {
