@@ -1,5 +1,6 @@
 #ifndef SPA_OPTIMISERUTILS_H
 #define SPA_OPTIMISERUTILS_H
+
 #include <set>
 
 #include "GroupedClauses.h"
@@ -22,4 +23,5 @@ inline bool hasSynonym(const Reference& reference);
 bool hasSynonym(Clause* clause);
 uint countSynonym(Clause* clause);
 bool shareSynonym(Clause* clause1, Clause* clause2);
+
 #endif // SPA_OPTIMISERUTILS_H

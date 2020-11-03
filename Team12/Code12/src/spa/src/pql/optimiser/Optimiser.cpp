@@ -19,6 +19,11 @@
  */
 Void optimiseQuery(AbstractQuery& abstractQuery)
 {
+    // check if query is invalid
+    if (abstractQuery.isInvalid()) {
+        return;
+    }
+
     // preprocessing
     substituteWithValues(abstractQuery);
     deleteDuplicateClauses(abstractQuery);
