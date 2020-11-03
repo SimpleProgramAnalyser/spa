@@ -12,11 +12,6 @@
 
 class NextEvaluator {
 private:
-    ResultsTable& resultsTable;
-    // The facade which this Next Evaluator uses to interact
-    // with components outside of Query Processor (i.e. PKB)
-    std::unique_ptr<NextEvaluatorFacade> facade;
-
     // caching of intermediate Next* clauses results
     CacheTable cacheNextStarTable;
     CacheTable cachePrevStarTable;
@@ -32,15 +27,22 @@ private:
     // case where both are known
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
 
-    virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
-    virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
-    virtual Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
-    virtual Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
     // DFS method to search and cache all Next* relationship for stmtNum.
     // If currentWhileStmtNum is set to -1, that means the function is
     // currently not operating on a statement in a while statement list.
     CacheSet getCacheNextStatement(StatementNumber stmtNum);
     CacheSet getCachePrevStatement(StatementNumber stmtNum);
+
+protected:
+    ResultsTable& resultsTable;
+    // The facade which this Next Evaluator uses to interact
+    // with components outside of Query Processor (i.e. PKB)
+    std::unique_ptr<NextEvaluatorFacade> facade;
+
+    virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
+    virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
+    virtual Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
+    virtual Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
 
 public:
     NextEvaluator(NextEvaluator&&) = default;
@@ -62,7 +64,7 @@ public:
      */
     explicit NextEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade);
     Void evaluateNextClause(const Reference& leftRef, const Reference& rightRef);
-    virtual Void evaluateNextStarClause(const Reference& leftRef, const Reference& rightRef);
+    Void evaluateNextStarClause(const Reference& leftRef, const Reference& rightRef);
 };
 
 #endif // SPA_PQL_NEXT_EVALUATOR_H

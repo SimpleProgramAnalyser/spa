@@ -45,11 +45,6 @@ public:
 
 class AffectsEvaluator {
 private:
-    ResultsTable& resultsTable;
-    // The facade which this Affects Evaluator uses to interact
-    // with components outside of Query Processor (i.e. PKB)
-    std::unique_ptr<AffectsEvaluatorFacade> facade;
-
     // Cache for Affects(modifier, user)
     CacheTable cacheUserTable;          // cache tables to store individual Affects(a, b) for known a, b
     CacheTable cacheModifierTable;      //
@@ -88,6 +83,12 @@ private:
     Void evaluateBothAny(const Reference& leftRef, const Reference& rightRef);
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal);
 
+protected:
+    ResultsTable& resultsTable;
+    // The facade which this Affects Evaluator uses to interact
+    // with components outside of Query Processor (i.e. PKB)
+    std::unique_ptr<AffectsEvaluatorFacade> facade;
+
     // Methods for Affects*
     virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
     virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
@@ -114,7 +115,7 @@ public:
      */
     explicit AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade);
     Void evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef);
-    virtual Void evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef);
+    Void evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef);
 };
 
 #endif // SPA_PQL_AFFECTS_EVALUATOR_H
