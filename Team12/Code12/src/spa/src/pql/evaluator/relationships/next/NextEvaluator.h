@@ -39,6 +39,9 @@ protected:
     // with components outside of Query Processor (i.e. PKB)
     std::unique_ptr<NextEvaluatorFacade> facade;
 
+    // Allow AffectsBipEvaluator to call internal methods
+    friend class AffectsBipEvaluator;
+
     virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
     virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
     virtual Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
