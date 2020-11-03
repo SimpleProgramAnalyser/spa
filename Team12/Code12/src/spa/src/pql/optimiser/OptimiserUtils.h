@@ -1,5 +1,9 @@
-#ifndef SPA_OPTIMISERUTILS_H
-#define SPA_OPTIMISERUTILS_H
+/**
+ * Utility methods for use in Query Optimiser.
+ */
+
+#ifndef SPA_PQL_OPTIMISER_UTILS_H
+#define SPA_PQL_OPTIMISER_UTILS_H
 
 #include <set>
 
@@ -24,4 +28,4 @@ bool hasSynonym(Clause* clause);
 uint countSynonym(Clause* clause);
 bool shareSynonym(Clause* clause1, Clause* clause2);
 
-#endif // SPA_OPTIMISERUTILS_H
+#endif // SPA_PQL_OPTIMISER_UTILS_H
