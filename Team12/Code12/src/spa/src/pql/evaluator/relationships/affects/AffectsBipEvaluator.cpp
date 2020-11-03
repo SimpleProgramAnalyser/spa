@@ -5,6 +5,7 @@
 
 #include "AffectsBipEvaluator.h"
 
+#include "AffectsUtils.h"
 #include "pql/evaluator/relationships/next/NextEvaluator.h"
 
 // Helper class to express an optional statement number
@@ -232,7 +233,7 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
 
     // Find all s that match AffectsBip(starting, s)
     AffectsEvaluator::cacheModifierAssigns(startingStmtNum);
-    Vector<Integer> affectedBipStatements = cacheModifierTable.get(startingStmtNum).toVector();
+    Vector<Integer> affectedBipStatements = AffectsEvaluator::getModifierAssigns(startingStmtNum).toVector();
     // Terminate when endValue is found
     Boolean foundEndValue = false;
     for (Integer affectedStatement : affectedBipStatements) {
@@ -258,7 +259,7 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
     return foundEndValue;
 }
 
-Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
+Void AffectsBipEvaluator::cacheModifierBipStarAssigns(Integer leftRefVal)
 {
     // find all positions of leftRefVal
     Vector<StatementPositionInCfg> allPositions = findAllCorrespondingPositions(leftRefVal);
@@ -270,8 +271,22 @@ Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Refere
             matchingStatements.insert(visitedAssigns.getStatementNumber());
         }
     }
-    resultsTable.storeResultsOne(
-        rightRef, convertToClauseResult(Vector<Integer>(matchingStatements.begin(), matchingStatements.end())));
+    cacheModifierBipStarTable.insert(leftRefVal, CacheSet(matchingStatements));
+    exploredModifierBipStarAssigns.insert(leftRefVal);
+}
+
+Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
+{
+    if (facade->getType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef)) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+
+    if (!exploredModifierBipStarAssigns.isCached(leftRefVal)) {
+        cacheModifierBipStarAssigns(leftRefVal);
+    }
+
+    resultsTable.storeResultsOne(rightRef, cacheModifierBipStarTable.get(leftRefVal).toClauseResult());
 }
 
 Void AffectsBipEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal)
@@ -286,6 +301,19 @@ Void AffectsBipEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Re
 
 Void AffectsBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
 {
+    if (facade->getType(leftRefVal) != AssignmentStatement || facade->getType(rightRefVal) != AssignmentStatement) {
+        resultsTable.storeResultsZero(false);
+        return;
+    }
+    // check cache
+    if (bipStarCacheFullyPopulated) {
+        resultsTable.storeResultsZero(cacheModifierBipStarTable.check(leftRefVal, rightRefVal));
+        return;
+    }
+    if (cacheModifierBipStarTable.check(leftRefVal, rightRefVal)) {
+        resultsTable.storeResultsZero(true);
+        return;
+    }
     // find all positions of leftRefVal
     Vector<StatementPositionInCfg> allPositions = findAllCorrespondingPositions(leftRefVal);
     Boolean matchedRightRef = false;
@@ -297,9 +325,14 @@ Void AffectsBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer righ
             break;
         }
     }
+    if (matchedRightRef) {
+        cacheModifierBipStarTable.insertPartial(rightRefVal, leftRefVal);
+    }
     resultsTable.storeResultsZero(matchedRightRef);
 }
 
 AffectsBipEvaluator::AffectsBipEvaluator(ResultsTable& resultsTable, AffectsBipFacade* facade):
-    AffectsEvaluator(resultsTable, facade), bipFacade(facade)
+    AffectsEvaluator(resultsTable, facade), bipFacade(facade), cacheModifierBipStarTable(),
+    exploredModifierBipStarAssigns(), allModifierBipStarAssigns(), allUserBipStarAssigns(), allAffectsBipStarTuples(),
+    bipStarCacheFullyPopulated(false)
 {}

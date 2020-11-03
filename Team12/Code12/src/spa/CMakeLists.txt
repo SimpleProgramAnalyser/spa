@@ -168,6 +168,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsBipEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsBipFacade.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsBipFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsUtils.h
 
     # pql/evaluator/relationships/next
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluator.h

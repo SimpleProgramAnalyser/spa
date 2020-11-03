@@ -45,6 +45,16 @@ public:
 
 class AffectsEvaluator {
 private:
+    // Cache for Affects(modifier, user)
+    CacheTable cacheUserTable;          // cache tables to store individual Affects(a, b) for known a, b
+    CacheTable cacheModifierTable;      //
+    CacheSet exploredUserAssigns;       // cache set to tell if ALL Affects(a, ?) is stored in table for known a
+    CacheSet exploredModifierAssigns;   // same for Affects(?, b)
+    Vector<Integer> allModifierAssigns; // vectors to store every result for Affects(?, ?)
+    Vector<Integer> allUserAssigns;
+    Vector<Pair<Integer, Integer>> allAffectsTuples;
+    bool cacheFullyPopulated = false;
+
     // Cache for Affects*(modifierStar, userStar)
     CacheTable cacheUserStarTable;
     CacheTable cacheModifierStarTable;
@@ -78,16 +88,6 @@ protected:
     // with components outside of Query Processor (i.e. PKB)
     std::unique_ptr<AffectsEvaluatorFacade> facade;
 
-    // Cache for Affects(modifier, user)
-    CacheTable cacheUserTable;          // cache tables to store individual Affects(a, b) for known a, b
-    CacheTable cacheModifierTable;      //
-    CacheSet exploredUserAssigns;       // cache set to tell if ALL Affects(a, ?) is stored in table for known a
-    CacheSet exploredModifierAssigns;   // same for Affects(?, b)
-    Vector<Integer> allModifierAssigns; // vectors to store every result for Affects(?, ?)
-    Vector<Integer> allUserAssigns;
-    Vector<Pair<Integer, Integer>> allAffectsTuples;
-    bool cacheFullyPopulated = false;
-
     // Methods for Affects*
     virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
     virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
@@ -99,6 +99,12 @@ protected:
      * given statement affects.
      */
     Void cacheModifierAssigns(Integer leftRefVal);
+
+    /**
+     * Gets the unique set of statements that
+     * match Affects(stmtNum, _) from the cache.
+     */
+    CacheSet getModifierAssigns(Integer stmtNum);
 
 public:
     AffectsEvaluator(AffectsEvaluator&&) = default;

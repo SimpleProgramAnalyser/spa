@@ -21,12 +21,20 @@ class StatementPositionHasher;
 class AffectsBipEvaluator: public AffectsEvaluator {
 private:
     AffectsBipFacade* bipFacade;
+    // cache for AffectsBip*(modifier, user)
+    CacheTable cacheModifierBipStarTable;      // cache table to store AffectsBip*(a, _) for known a
+    CacheSet exploredModifierBipStarAssigns;   // cache set to tell if ALL AffectsBip*(a, _) is stored in table
+    Vector<Integer> allModifierBipStarAssigns; // vectors to store every result for AffectsBip*(_, _)
+    Vector<Integer> allUserBipStarAssigns;
+    Vector<Pair<Integer, Integer>> allAffectsBipStarTuples;
+    bool bipStarCacheFullyPopulated;
 
     // Helper methods for AffectsBip*
     Vector<StatementPositionInCfg> findAllCorrespondingPositions(Integer statementToFind);
     Boolean affectsBipSearch(Integer startingStmtNum, StatementPositionInCfg startingPosition, Boolean ignoreStarting,
                              std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns,
                              MaybeStatementNumber endValue);
+    Void cacheModifierBipStarAssigns(Integer leftRefVal);
 
     Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) override;
     Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal) override;
