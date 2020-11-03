@@ -1,15 +1,5 @@
 #include "OptimiserUtils.h"
 
-inline bool isValue(const Reference& reference)
-{
-    return reference.getReferenceType() == LiteralRefType || reference.getReferenceType() == IntegerRefType;
-}
-
-inline bool hasSynonym(const Reference& reference)
-{
-    return reference.getReferenceType() == AttributeRefType || reference.getReferenceType() == SynonymRefType;
-}
-
 bool hasSynonym(Clause* clause)
 {
     switch (clause->getType()) {

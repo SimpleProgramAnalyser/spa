@@ -15,7 +15,10 @@
  * @param reference
  * @return
  */
-inline bool isValue(const Reference& reference);
+inline bool isValue(const Reference& reference)
+{
+    return reference.getReferenceType() == LiteralRefType || reference.getReferenceType() == IntegerRefType;
+}
 
 /**
  * Given a
@@ -23,7 +26,11 @@ inline bool isValue(const Reference& reference);
  * @param reference
  * @return
  */
-inline bool hasSynonym(const Reference& reference);
+inline bool hasSynonym(const Reference& reference)
+{
+    return reference.getReferenceType() == AttributeRefType || reference.getReferenceType() == SynonymRefType;
+}
+
 bool hasSynonym(Clause* clause);
 uint countSynonym(Clause* clause);
 bool shareSynonym(Clause* clause1, Clause* clause2);
