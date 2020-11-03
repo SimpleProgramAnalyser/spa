@@ -32,10 +32,10 @@ private:
     // case where both are known
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) const;
 
-    Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
-    Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
-    Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
-    Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
+    virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
+    virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
+    virtual Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
+    virtual Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
     // DFS method to search and cache all Next* relationship for stmtNum.
     // If currentWhileStmtNum is set to -1, that means the function is
     // currently not operating on a statement in a while statement list.
@@ -43,6 +43,12 @@ private:
     CacheSet getCachePrevStatement(StatementNumber stmtNum);
 
 public:
+    NextEvaluator(NextEvaluator&&) = default;
+    NextEvaluator(const NextEvaluator&) = delete;
+    virtual ~NextEvaluator() = default;
+    NextEvaluator& operator=(const NextEvaluator&) = delete;
+    NextEvaluator& operator=(NextEvaluator&&) = delete;
+
     /**
      * Constructs a new NextEvaluator.
      *
@@ -56,7 +62,7 @@ public:
      */
     explicit NextEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade);
     Void evaluateNextClause(const Reference& leftRef, const Reference& rightRef);
-    Void evaluateNextStarClause(const Reference& leftRef, const Reference& rightRef);
+    virtual Void evaluateNextStarClause(const Reference& leftRef, const Reference& rightRef);
 };
 
 #endif // SPA_PQL_NEXT_EVALUATOR_H

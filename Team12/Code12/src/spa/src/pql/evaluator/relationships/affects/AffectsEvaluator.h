@@ -89,12 +89,18 @@ private:
     Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal);
 
     // Methods for Affects*
-    Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
-    Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
-    Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
-    Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
+    virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
+    virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
+    virtual Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
+    virtual Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
 
 public:
+    AffectsEvaluator(AffectsEvaluator&&) = default;
+    AffectsEvaluator(const AffectsEvaluator&) = delete;
+    virtual ~AffectsEvaluator() = default;
+    AffectsEvaluator& operator=(const AffectsEvaluator&) = delete;
+    AffectsEvaluator& operator=(AffectsEvaluator&&) = delete;
+
     /**
      * Constructs a new AffectsEvaluator.
      *
@@ -108,7 +114,7 @@ public:
      */
     explicit AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade);
     Void evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef);
-    Void evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef);
+    virtual Void evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef);
 };
 
 #endif // SPA_PQL_AFFECTS_EVALUATOR_H
