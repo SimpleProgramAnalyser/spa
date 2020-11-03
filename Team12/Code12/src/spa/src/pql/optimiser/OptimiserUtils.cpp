@@ -1,11 +1,11 @@
 #include "OptimiserUtils.h"
 
-bool isValue(const Reference& reference)
+inline bool isValue(const Reference& reference)
 {
     return reference.getReferenceType() == LiteralRefType || reference.getReferenceType() == IntegerRefType;
 }
 
-bool hasSynonym(const Reference& reference)
+inline bool hasSynonym(const Reference& reference)
 {
     return reference.getReferenceType() == AttributeRefType || reference.getReferenceType() == SynonymRefType;
 }
@@ -20,6 +20,7 @@ bool hasSynonym(Clause* clause)
         auto rightRef = suchThatClause->getRelationship().getRightRef();
         if (hasSynonym(leftRef) || hasSynonym(rightRef))
             return true;
+        break;
     }
     case PatternClauseType: { // patterns always have synonym.
         return true;
@@ -31,6 +32,36 @@ bool hasSynonym(Clause* clause)
         auto rightRef = withClause->getRightReference();
         if (hasSynonym(leftRef) || hasSynonym(rightRef))
             return true;
+        break;
+    }
+    default:
+        return false;
+    }
+    return false;
+}
+
+uint countSynonym(Clause* clause)
+{
+    switch (clause->getType()) {
+    case SuchThatClauseType: {
+        // NOLINTNEXTLINE
+        SuchThatClause* suchThatClause = static_cast<SuchThatClause*>(clause);
+        auto leftRef = suchThatClause->getRelationship().getLeftRef();
+        auto rightRef = suchThatClause->getRelationship().getRightRef();
+        return hasSynonym(leftRef) + hasSynonym(rightRef);
+    }
+    case PatternClauseType: {
+        // NOLINTNEXTLINE
+        PatternClause* patternClause = static_cast<PatternClause*>(clause);
+        // pattern has one fixed synonym, and might have at most one more in entRef
+        return 1 + hasSynonym(patternClause->getEntRef());
+    }
+    case WithClauseType: {
+        // NOLINTNEXTLINE
+        WithClause* withClause = static_cast<WithClause*>(clause);
+        auto leftRef = withClause->getLeftReference();
+        auto rightRef = withClause->getRightReference();
+        return hasSynonym(leftRef) + hasSynonym(rightRef);
     }
     default:
         return false;

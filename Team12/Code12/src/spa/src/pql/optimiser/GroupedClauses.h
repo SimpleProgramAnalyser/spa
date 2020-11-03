@@ -8,6 +8,7 @@
 #include <Types.h>
 #include <algorithm>
 #include <pql/preprocessor/AqTypes.h>
+#include <queue>
 
 class GroupedClauses {
 public:
@@ -36,6 +37,7 @@ public:
     void moveClauseAcrossGroup(int originalGroupIndex, int originalIndex, int destGroupIndex, int destIndex);
     void moveClauseAcrossGroup(int originalGroupIndex, int destGroupIndex, int clauseNumber);
     void swapClausesAcrossGroup(int groupIndex1, int clause1, int groupIndex2, int clause2);
+    void applyArrangementToGroup(std::queue<uint> arrangement, int groupIndex);
     GroupedClauses() = delete;
 
     // compare functions

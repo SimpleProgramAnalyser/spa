@@ -48,21 +48,6 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery);
 GroupedClauses groupQueryClauses(AbstractQuery& abstractQuery);
 
 /**
- * (Subjective) Sort the groups of clauses in the GroupedClauses object using the following principles, copied from
- * lecture notes:
- *
- * Prioritize clauses with one constant and one synonym
- * Prioritize clauses with less number of results: Follows, Modifies, etc.
- * Sort clauses such that at least one synonym has been computed in a previous clause
- * Prioritize with-clauses – more restrictive than such that clauses
- * Evaluating pattern-clauses – similar to any such that clause
- * Push Affects(*) clauses on the last positions in a group
- *
- * @param groupedClauses
- */
-Void sortWithinEachGroup(GroupedClauses& groupedClauses);
-
-/**
  * Start with clauses without synonyms, and prioritize groups with synonyms that do not return result.
  *
  * @param groupedClauses

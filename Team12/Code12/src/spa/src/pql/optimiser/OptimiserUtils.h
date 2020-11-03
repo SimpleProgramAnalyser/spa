@@ -20,5 +20,6 @@ inline bool isValue(const Reference& reference);
  */
 inline bool hasSynonym(const Reference& reference);
 bool hasSynonym(Clause* clause);
+uint countSynonym(Clause* clause);
 bool shareSynonym(Clause* clause1, Clause* clause2);
 #endif // SPA_OPTIMISERUTILS_H

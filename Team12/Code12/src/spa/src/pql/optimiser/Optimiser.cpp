@@ -8,6 +8,7 @@
 #include <queue>
 #include <set>
 
+#include "ClauseGroupSorter.h"
 #include "GroupedClauses.h"
 #include "OptimiserUtils.h"
 
@@ -300,24 +301,6 @@ GroupedClauses groupQueryClauses(AbstractQuery& abstractQuery)
     groupNoSynonym(groupedClauses);
     groupRest(groupedClauses);
     return groupedClauses;
-}
-
-/**
- * (Subjective) Sort the groups of clauses in the GroupedClauses object using the following principles, copied from
- * lecture notes:
- *
- * Prioritize clauses with one constant and one synonym
- * Prioritize clauses with less number of results: Follows, Modifies, etc.
- * Sort clauses such that at least one synonym has been computed in a previous clause
- * Prioritize with-clauses – more restrictive than such that clauses
- * Evaluating pattern-clauses – similar to any such that clause
- * Push Affects(*) clauses on the last positions in a group
- *
- * @param groupedClauses
- */
-Void sortWithinEachGroup(GroupedClauses& groupedClauses)
-{
-    // TODO
 }
 
 /**
