@@ -21,9 +21,14 @@ Boolean util::isPossibleConstant(const String& str)
     return isMatchingRegex(str, "\\d+");
 }
 
+Boolean util::isLiteral(const String& str)
+{
+    return str.size() > 2 && str[0] == '"' && str[str.size() - 1] == '"';
+}
+
 Boolean util::isLiteralIdent(const String& str)
 {
-    if (str.size() > 2 && str[0] == '"' && str[str.size() - 1] == '"') {
+    if (isLiteral(str)) {
         String possibleIdent = str.substr(1, str.size() - 2);
         return util::isPossibleIdentifier(possibleIdent);
     } else {
