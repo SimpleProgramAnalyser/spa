@@ -37,6 +37,9 @@ private:
     // cache results for Next, Affects
     AffectsEvaluator* affectsEvaluator;
     NextEvaluator* nextEvaluator;
+    // cache results for NextBip, AffectsBip
+    AffectsEvaluator* affectsBipEvaluator;
+    NextEvaluator* nextBipEvaluator;
 
     Boolean checkIfSynonymInMap(const Synonym& syn) const;
     void filterAfterVerification(const Synonym& syn, const ClauseResult& results);
@@ -169,6 +172,26 @@ public:
     NextEvaluator* getNextEvaluator() const;
 
     /**
+     * Returns the AffectsEvaluator used for AffectsBip evaluation,
+     * as stored previously by manageEvaluatorBip.
+     *
+     * @return The AffectsEvaluator storing cached results for
+     *         AffectsBip and AffectsBip*, specifically for this
+     *         query that the results table holds results for.
+     */
+    AffectsEvaluator* getAffectsBipEvaluator() const;
+
+    /**
+     * Returns the NextEvaluator used for NextBip evaluation,
+     * as stored previously by manageEvaluatorBip.
+     *
+     * @return The NextEvaluator storing cached results for
+     *         NextBip*, specifically for this query that
+     *         the results table is holding results for.
+     */
+    NextEvaluator* getNextBipEvaluator() const;
+
+    /**
      * Associates an AffectsEvaluator with this ResultsTable.
      * AffectsEvaluator will cache results for Affects, Affects* and
      * provide methods for the evaluation of Affects or Affects*.
@@ -199,6 +222,30 @@ public:
      * @param nextEval The NextEvaluator to manage.
      */
     Void manageEvaluator(NextEvaluator* nextEval);
+
+    /**
+     * Associates an AffectsEvaluator with this ResultsTable
+     * for use with AffectsBip, AffectsBip* such that it can
+     * cache results for a single query.
+     *
+     * The ResultsTable will handle deletion of the
+     * AffectsEvaluator, once this method is called.
+     *
+     * @param affectsBipEval The AffectsEvaluator to manage.
+     */
+    Void manageEvaluatorBip(AffectsEvaluator* affectsBipEval);
+
+    /**
+     * Associates a NextEvaluator with this ResultsTable
+     * for use with NextBip, NextBip* such that it can
+     * cache results for a single query.
+     *
+     * The ResultsTable will handle deletion of the
+     * NextEvaluator, once this method is called.
+     *
+     * @param nextBipEval The NextEvaluator to manage.
+     */
+    Void manageEvaluatorBip(NextEvaluator* nextBipEval);
 
     /**
      * Returns true if the result table is marked as having

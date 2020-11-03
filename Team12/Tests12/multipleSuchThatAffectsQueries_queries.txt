@@ -1,0 +1,320 @@
+1 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, n1> such that Affects(3, n) such that Parent*(n, n1)
+none
+5000
+2 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select BOOLEAN such that Affects(3, n) such that Follows*(n, n1)
+TRUE
+5000
+3 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <n,n1> such that Affects(56, n) such that Follows*(n, n1)
+56 57, 56 64, 56 65, 64 65, 66 67, 66 68, 66 69
+5000
+4 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select n such that Affects(82, n) such that Parent*(85, n)
+87, 92
+5000
+5 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, n1> such that Affects*(24, n) such that Parent*(n, n1)
+none
+5000
+6 - Affects 2 Select 1 common synonym *****
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, n1> such that Affects*(24, n) such that Follows*(n, n1)
+30 31, 30 32, 31 32
+5000
+7 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, n1> such that Affects*(24, n) such that Parent*(n, n1)
+none
+5000
+8 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <n,n1> such that Affects*(n, 87) such that Follows(n1, n)
+70 55, 73 72, 82 81, 84 83, 93 92
+5000
+9 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select n such that Affects*(n, 87) such that Follows(n, n1)
+58, 70, 73, 84, 87, 93
+5000
+10 - Affects 2 Select 1 common synonym FALSE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects(81, n) such that Modifies(n, v)
+none
+5000
+11 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects(84, n) such that Modifies(n, v)
+87 constantAssignment, 92 constantAssignment
+5000
+12 - Affects 2 Select 1 common synonym FALSE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects(81, n) such that Modifies(n, v)
+none
+5000
+13 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects(84, n) such that Uses(n, v)
+87 b, 87 constantAssignment, 92 b, 92 constantAssignment
+5000
+14 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects(n, 89) such that Uses(n, v)
+87 b, 87 constantAssignment
+5000
+15 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select v such that Affects(n, 89) such that Modifies(n, v)
+constantAssignment
+5000
+16 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select v such that Affects(84, n) such that Uses(n, v)
+b, constantAssignment
+5000
+17 - Affects 2 Select 1 common synonym
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select BOOLEAN such that Affects(84, n) such that Uses(n, v)
+TRUE
+5000
+18 - Affects 2 Select 1 common synonym FALSE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects*(81, n) such that Modifies(n, v)
+none
+5000
+19 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects*(84, n) such that Modifies(n, v)
+87 constantAssignment, 89 constantAssignment, 90 d, 92 constantAssignment, 97 Affects4
+5000
+20 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select v such that Affects*(84, n) such that Modifies(n, v)
+constantAssignment, d, Affects4
+5000
+21 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select <n, v> such that Affects*(84, n) such that Uses(n, v)
+87 b, 87 constantAssignment, 89 constantAssignment, 90 constantAssignment, 92 b, 92 constantAssignment, 97 d
+5000
+22 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2;
+Select v such that Affects*(84, n) such that Uses(n, v)
+b, constantAssignment, d
+5000
+23 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <n, v> such that Affects*(n, 89) such that Uses(n, v)
+70 x, 70 y, 73 x, 73 y, 82 x, 82 y, 84 a, 84 notModifiedBefore, 84 y, 87 b, 87 constantAssignment, 89 constantAssignment, 96 constantAssignment
+5000
+24 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <v> such that Affects*(n, 89) such that Uses(n, v)
+x, y, a, notModifiedBefore, b, constantAssignment
+5000
+25 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <n, v> such that Affects*(n, 89) such that Modifies(n, v)
+58 notModifiedBefore, 70 a, 73 a, 82 constantAssignment, 84 b, 87 constantAssignment, 89 constantAssignment, 93 b, 96 constantAssignment
+5000
+26 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <v> such that Affects*(n, 89) such that Modifies(n, v)
+notModifiedBefore, a, constantAssignment, b
+5000
+27 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p, p3; stmt n, n1, n2;
+Select <n, p, p1> such that Affects*(n, 89) such that Calls*(p, p1)
+58 doNothing doNothing2, 58 doNothing doNothing3, 58 doNothing2 doNothing3, 58 doNothing4 doNothing3, 58 doSomething changeNothing, 58 doSomething doNothing, 58 doSomething doNothing2, 58 doSomething doNothing3, 58 doSomething procedure, 58 mainPrint doNothing, 58 mainPrint doNothing2, 58 mainPrint doNothing3, 58 procedure doNothing3, 70 doNothing doNothing2, 70 doNothing doNothing3, 70 doNothing2 doNothing3, 70 doNothing4 doNothing3, 70 doSomething changeNothing, 70 doSomething doNothing, 70 doSomething doNothing2, 70 doSomething doNothing3, 70 doSomething procedure, 70 mainPrint doNothing, 70 mainPrint doNothing2, 70 mainPrint doNothing3, 70 procedure doNothing3, 73 doNothing doNothing2, 73 doNothing doNothing3, 73 doNothing2 doNothing3, 73 doNothing4 doNothing3, 73 doSomething changeNothing, 73 doSomething doNothing, 73 doSomething doNothing2, 73 doSomething doNothing3, 73 doSomething procedure, 73 mainPrint doNothing, 73 mainPrint doNothing2, 73 mainPrint doNothing3, 73 procedure doNothing3, 82 doNothing doNothing2, 82 doNothing doNothing3, 82 doNothing2 doNothing3, 82 doNothing4 doNothing3, 82 doSomething changeNothing, 82 doSomething doNothing, 82 doSomething doNothing2, 82 doSomething doNothing3, 82 doSomething procedure, 82 mainPrint doNothing, 82 mainPrint doNothing2, 82 mainPrint doNothing3, 82 procedure doNothing3, 84 doNothing doNothing2, 84 doNothing doNothing3, 84 doNothing2 doNothing3, 84 doNothing4 doNothing3, 84 doSomething changeNothing, 84 doSomething doNothing, 84 doSomething doNothing2, 84 doSomething doNothing3, 84 doSomething procedure, 84 mainPrint doNothing, 84 mainPrint doNothing2, 84 mainPrint doNothing3, 84 procedure doNothing3, 87 doNothing doNothing2, 87 doNothing doNothing3, 87 doNothing2 doNothing3, 87 doNothing4 doNothing3, 87 doSomething changeNothing, 87 doSomething doNothing, 87 doSomething doNothing2, 87 doSomething doNothing3, 87 doSomething procedure, 87 mainPrint doNothing, 87 mainPrint doNothing2, 87 mainPrint doNothing3, 87 procedure doNothing3, 89 doNothing doNothing2, 89 doNothing doNothing3, 89 doNothing2 doNothing3, 89 doNothing4 doNothing3, 89 doSomething changeNothing, 89 doSomething doNothing, 89 doSomething doNothing2, 89 doSomething doNothing3, 89 doSomething procedure, 89 mainPrint doNothing, 89 mainPrint doNothing2, 89 mainPrint doNothing3, 89 procedure doNothing3, 93 doNothing doNothing2, 93 doNothing doNothing3, 93 doNothing2 doNothing3, 93 doNothing4 doNothing3, 93 doSomething changeNothing, 93 doSomething doNothing, 93 doSomething doNothing2, 93 doSomething doNothing3, 93 doSomething procedure, 93 mainPrint doNothing, 93 mainPrint doNothing2, 93 mainPrint doNothing3, 93 procedure doNothing3, 96 doNothing doNothing2, 96 doNothing doNothing3, 96 doNothing2 doNothing3, 96 doNothing4 doNothing3, 96 doSomething changeNothing, 96 doSomething doNothing, 96 doSomething doNothing2, 96 doSomething doNothing3, 96 doSomething procedure, 96 mainPrint doNothing, 96 mainPrint doNothing2, 96 mainPrint doNothing3, 96 procedure doNothing3
+5000
+28 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <n1> such that Affects*(3, n) such that Next(n, n1)
+2, 4, 6, 8
+5000
+29 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select <n1> such that Affects(3, n) such that Next(n, n1)
+2, 4
+5000
+30 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
+Select n such that Affects*(3, n) such that Next*(n, n1)
+3, 4, 5, 7
+5000
+31 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; read r;
+Select r such that Affects*(n, 97) such that Next*(n, r)
+59, 61, 67, 76, 98, 108, 109
+5000
+32 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; read r; assign a;
+Select a such that Affects*(a, 97) such that Affects(a, 84)
+58, 70, 73
+5000
+33 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <i, w, a> such that Affects*(a, 89) such that Parent*(w, a) such that Parent*(i, a )
+54 55 58, 57 55 58, 86 85 87, 86 85 89, 86 85 93, 86 85 96, 86 95 96, 88 85 89
+5000
+34 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select a such that Affects*(a, 89) such that Parent*(w, a) such that Follows*(a, 60 )
+58
+5000
+35 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a, v> such that Affects*(a, 89) such that Parent*(w, a) such that Modifies(a, v)
+58 notModifiedBefore, 87 constantAssignment, 89 constantAssignment, 93 b, 96 constantAssignment
+5000
+36 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <n, v> such that Affects*(58, n) such that Parent*(w, n) such that Uses(n, v)
+87 b, 87 constantAssignment, 89 constantAssignment, 90 constantAssignment, 92 b, 92 constantAssignment, 97 d
+5000
+37 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select n such that Affects*(58, n) such that Parent*(w, n) such that Calls*(p2,p1)
+87, 89, 90, 92, 97
+5000
+38 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select n such that Affects*(58, n) such that Parent*(w, n) such that Next*(n,n1)
+87, 89, 90, 92, 97
+5000
+39 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select BOOLEAN such that Affects*(a, 89) such that Follows*(w, a) such that Follows*(a,r)
+FALSE
+5000
+40 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,c, v> such that Affects*(a, 89) such that Follows*(a, c) such that Uses(c,v)
+93 94 x, 93 94 y, 93 94 z
+5000
+41 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,c, v> such that Affects*(58, a) such that Follows*(a, c) such that Modifies(c,v)
+92 94 constantAssignment, 92 94 doNothing, 92 94 x, 92 94 y
+5000
+42 - Affects 3 Select 1 common synonym ***
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,r> such that Affects*(58, a) such that Next*(a, r) such that Next*(r, a)
+87 98, 87 108, 87 109, 89 98, 89 108, 89 109, 90 98, 90 108, 90 109, 92 98, 92 108, 92 109, 97 98, 97 108, 97 109
+5000
+43 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,r> such that Affects*(a, 97) such that Follows*(a, r) such that Next(a, r)
+58 59
+5000
+44 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,v> such that Affects*(a, 97) such that Modifies(a, v) such that Uses(a, v)
+87 constantAssignment, 89 constantAssignment, 96 constantAssignment
+5000
+45 - Affects 3 Select 1 common synonym  ***
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select a1 such that Affects*(a, 97) such that Modifies(a, v) such that Next*(a, a1)
+56, 58, 64, 66, 70, 73, 77, 80, 84, 87, 89, 90, 92, 93, 96, 97, 100, 103
+5000
+46 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select a such that Affects*(a, _) such that Modifies(a, v) such that Next*(a, a1)
+1, 3, 4, 5, 7, 9, 11, 15, 19, 22, 24, 30, 31, 38, 42, 45, 50, 56, 58, 64, 66, 70, 73, 77, 80, 81, 82, 84, 87, 89, 90, 92, 93, 96, 97, 100, 103
+5000
+47 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a;
+Select <n, n1> such that Affects*(n, a) such that Next(n, n1)
+1 2, 3 4, 4 2, 5 6, 9 10, 11 12, 15 16, 24 25, 30 31, 31 32, 50 51, 56 57, 58 59, 70 71, 73 74, 80 79, 82 83, 84 85, 87 88, 89 91, 90 91, 93 94, 96 95
+5000
+48 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a;
+Select <n, i> such that Affects*(n, a) such that Next*(n, i)
+9 10, 24 25, 24 29, 56 57, 56 71, 56 74, 56 86, 56 88, 56 105, 58 57, 58 71, 58 74, 58 86, 58 88, 58 105, 70 71, 70 74, 70 86, 70 88, 70 105, 73 74, 73 86, 73 88, 73 105, 80 86, 80 88, 80 105, 82 86, 82 88, 82 105, 84 86, 84 88, 84 105, 87 86, 87 88, 87 105, 89 86, 89 88, 89 105, 90 86, 90 88, 90 105, 93 86, 93 88, 93 105, 96 86, 96 88, 96 105
+5000
+49 - Affects 2 Select 1 common synonym TRUE 
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a;
+Select <n, a, n1> such that Affects(n, a) such that Affects(a, n1)
+1 3 3, 1 3 4, 3 3 3, 3 3 4, 3 4 5, 4 5 7, 4 5 8, 9 11 19, 9 11 23, 24 30 31, 30 31 32, 56 56 56, 56 56 64, 56 56 66, 56 56 80, 56 80 80, 58 84 87, 58 84 92, 70 84 87, 70 84 92, 73 84 87, 73 84 92, 80 80 80, 82 87 87, 82 87 89, 82 87 90, 82 87 92, 84 87 87, 84 87 89, 84 87 90, 84 87 92, 87 87 87, 87 87 89, 87 87 90, 87 87 92, 87 89 87, 87 89 92, 87 90 97, 89 87 87, 89 87 89, 89 87 90, 89 87 92, 93 87 87, 93 87 89, 93 87 90, 93 87 92, 96 87 87, 96 87 89, 96 87 90, 96 87 92, 96 96 87, 96 96 92, 96 96 96
+5000
+49 - Affects 2 Select 1 common synonym TRUE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a; while w;
+Select BOOLEAN such that Affects*(n, a) such that Parent(w, n)
+TRUE
+5000
+50 - Affects 2 Select 1 common synonym TRUE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a; while w; print p;
+Select n such that Affects*(n, a) such that Follows*(n, p)
+50, 58, 87
+5000
+51 - Affects 2 Select 1 common synonym TRUE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a; while w; print p;
+Select BOOLEAN such that Affects*(_, _) such that Modifies(n, v)
+TRUE
+5000
+52 - Affects 2 Select 1 common synonym TRUE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a; while w; print p;
+Select <n, v> such that Affects*(_, n) such that Uses(n, v)
+3 a, 4 a, 4 y, 5 b, 5 y, 5 z, 7 c, 8 c, 11 x, 11 y, 19 TryingToMakeLongVariableNamesToTestLimits, 19 a, 23 TryingToMakeLongVariableNamesToTestLimits, 23 a, 30 x, 30 y, 30 z, 31 x, 31 y, 31 z, 32 x, 32 y, 32 z, 52 x, 52 y, 52 z, 56 doNothing, 64 doNothing, 64 x, 64 y, 66 doNothing, 66 x, 66 y, 80 c, 80 doNothing, 84 a, 84 notModifiedBefore, 84 y, 87 b, 87 constantAssignment, 89 constantAssignment, 90 constantAssignment, 92 b, 92 constantAssignment, 96 constantAssignment, 97 d
+5000
+53 -  Affects 2 Select 2 common synonym FALSE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a; while w;
+Select BOOLEAN such that Affects*(n, a) such that Parent(n, a)
+FALSE
+5000
+54 -  Affects 2 Select 2 common synonym TRUE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; assign a; while w;
+Select <n, n1> such that Affects*(n, n1) such that Follows*(n, n1)
+1 5, 1 7, 1 8, 3 4, 5 7, 5 8, 9 19, 9 23, 30 31, 30 32, 31 32, 50 52, 56 64
+5000
+55 -  Affects 2 Select 2 common synonym FALSE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; assign a; while w;
+Select <n, a> such that Affects*(n, a) such that Next(n, a)
+3 4, 30 31, 31 32
+5000
+56 - Affects 3 Select 1 common synonym
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select n such that Affects*(a, n) such that Parent*(w, n) such that Calls*(p2,p1)
+3, 4, 56, 64, 66, 80, 87, 89, 90, 92, 96, 97
+5000
+57 - Affects 3 Select 1 common synonym (1,2,3)
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select n such that Affects*(w, n) such that Parent*(w, n) such that Next*(n,n1)
+none
+5000
+58 - Affects 3 Select 1 common synonym (1,2, 1,3)
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a, a1> such that Affects*(a, a1) such that Next*(r, a) such that Next*(a1,a)
+56 56, 56 64, 56 66, 80 80, 87 87, 87 89, 87 90, 87 92, 87 97, 89 87, 89 92, 90 97, 93 87, 93 89, 93 90, 93 92, 93 97, 96 87, 96 89, 96 90, 96 92, 96 96, 96 97
+5000
+59 - Affects 3 Select 1 common synonym (1,2,2,3)
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,c, v> such that Affects*(a, a1) such that Follows*(a, c) such that Uses(c,v)
+1 6 TryingToMakeLongVariableNamesToTestLimits, 1 6 a, 1 6 doNothing, 1 6 x, 1 6 y, 1 6 z, 5 6 TryingToMakeLongVariableNamesToTestLimits, 5 6 a, 5 6 doNothing, 5 6 x, 5 6 y, 5 6 z, 93 94 x, 93 94 y, 93 94 z
+5000
+60 - Affects 3 Select 1 common synonym (1,2,2,3)
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,c, v> such that Affects*(a, a1) such that Follows*(a, c) such that Uses(c,v)
+1 6 TryingToMakeLongVariableNamesToTestLimits, 1 6 a, 1 6 doNothing, 1 6 x, 1 6 y, 1 6 z, 5 6 TryingToMakeLongVariableNamesToTestLimits, 5 6 a, 5 6 doNothing, 5 6 x, 5 6 y, 5 6 z, 93 94 x, 93 94 y, 93 94 z
+5000
+61 - Affects 3 Select 1 common synonym (1,2,2,3)
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select <a,c> such that Affects(a, a1) such that Next*(a, c) such that Modifies(c, "constantAssignment")
+1 6, 3 6, 4 6, 5 6, 9 14, 11 14, 24 26, 24 28, 56 63, 56 68, 56 72, 56 94, 56 101, 58 63, 58 68, 58 72, 58 94, 58 101, 70 72, 70 94, 70 101, 73 94, 73 101, 80 94, 80 101, 82 94, 82 101, 84 94, 84 101, 87 94, 87 101, 89 94, 89 101, 90 94, 90 101, 93 94, 93 101, 96 94, 96 101
+5000
+62 - Affects 3 Select 1 common synonym (1,2,2,3)
+assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
+Select a such that Affects(a, a1) such that Modifies(a, v) such that Uses(a,v)
+3, 9, 30, 31, 50, 56, 80, 87, 89, 96
+5000
+63 -  Affects 2 Select 2 common synonym TRUE 
+variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; assign a; while w;
+Select <n, n1> such that Affects*(n, n1) such that Follows*(n, n1) such that Next*(n, n1)
+1 5, 1 7, 1 8, 3 4, 5 7, 5 8, 9 19, 9 23, 30 31, 30 32, 31 32, 50 52, 56 64
+5000

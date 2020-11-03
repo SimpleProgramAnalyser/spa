@@ -1,5 +1,11 @@
-#ifndef SPA_RELATIONSHIPREFERENCETYPE_H
-#define SPA_RELATIONSHIPREFERENCETYPE_H
+/**
+ * Relationships decide how a such that clause is
+ * evaluated, and correspond to certain SIMPLE program
+ * design abstractions like Parent, Follows, Next.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_RELATIONSHIP_H
+#define SPA_PQL_PREPROCESSOR_RELATIONSHIP_H
 
 #include "AqTypesUtils.h"
 #include "Reference.h"
@@ -18,10 +24,15 @@ enum RelationshipType : char {
     ModifiesProcedureType,
     CallsType,
     CallsStarType,
-    NextType,
-    NextStarType,
     AffectsType,
     AffectsStarType,
+    NextType,
+    NextStarType,
+    // branch into procedure (BIP) types
+    AffectsBipType,
+    AffectsBipStarType,
+    NextBipType,
+    NextBipStarType,
     InvalidRelationshipType
 };
 
@@ -62,7 +73,8 @@ private:
 
     // Checks the validity of the Relationship and the left and right References
     // using the validity maps.
-    static Boolean validateRelationshipSemantics(RelationshipType relRefType, Reference leftRef, Reference rightRef);
+    static Boolean validateRelationshipSemantics(RelationshipType relRefType, const Reference& leftRef,
+                                                 const Reference& rightRef);
 
     // Instantiate a Relationship with the given RelationshipType, and the left and right References.
     Relationship(RelationshipType relRefType, Reference leftRef, Reference rightRef);
@@ -70,10 +82,10 @@ private:
 public:
     // Validates andd creates a Relationship based given RelationshipType,
     // and the left and right References.
-    static Relationship createRelationship(RelationshipType relRefType, Reference leftRef, Reference rightRef);
+    static Relationship createRelationship(RelationshipType relRefType, Reference leftRef, const Reference& rightRef);
 
     // Converts the given string into a RelationshipType.
-    static RelationshipType getRelRefType(String relRef);
+    static RelationshipType getRelRefType(const String& relRef);
 
     // Instantiates an erroneous Relationship with the given QueryErrorType
     // and ErrorMessage.
@@ -91,4 +103,4 @@ public:
     Boolean operator==(const Relationship& relationship);
 };
 
-#endif // SPA_RELATIONSHIPREFERENCETYPE_H
+#endif // SPA_PQL_PREPROCESSOR_RELATIONSHIP_H

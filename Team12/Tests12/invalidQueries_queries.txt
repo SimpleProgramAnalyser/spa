@@ -56,7 +56,7 @@ none
 12 - Invalid Query With Clause comparing empty strings
 stmt s;
 Select BOOLEAN with '' = 'a'
-FALSE
+none
 5000
 13 - Invalid Query With Tuple no closing brackets
 stmt s;
@@ -577,4 +577,19 @@ none
 stmt s; while w;
 Select s such that pattern w("x", _)
 none
+5000
+117 - Invalid Query (Semantic) With Clause comparing string and integer
+stmt s;
+Select BOOLEAN with "a" = 12
+FALSE
+5000
+118 - Valid Query With Clause comparing strings (true result)
+stmt s;
+Select BOOLEAN with "a" = "a"
+TRUE
+5000
+119 - Valid Query With Clause comparind strings (false result)
+stmt s;
+Select BOOLEAN with "a" = "d"
+FALSE
 5000

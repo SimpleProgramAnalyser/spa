@@ -37,7 +37,7 @@ void UsesTable::addUsesRelationships(Integer stmtNum, StatementType stmtType, Ve
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     assert(
-        stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT
+        stmtType > AnyStatement && stmtType < StatementTypeCount
         && "Statement type cannot be AnyStatement or STATEMENT_TYPE_COUNT"); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     // add to stmtVarsetMap
     stmtVarsetMap[stmtNum].insert(varNames.begin(), varNames.end());

@@ -928,3 +928,73 @@ stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; pr
 Select proc2 such that Next*(i, w) pattern i (v,_, _) with v.varName = "constantAssignment" such that Calls*(proc1, proc2)
 doNothing, doNothing2, doNothing3, procedure
 5000
+184 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select <i, w, i1> such that Next*(i, w) such that Next*(w, i1) such that Parent*(i1, w) pattern w("d", _) pattern i1(v, _,_) with v.varName = "constantAssignment"
+54 96 86, 57 96 86, 71 96 86, 74 96 86, 86 96 86, 88 96 86, 107 96 86
+5000
+185 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select <i, w, a> such that Next*(i, w) such that Next*(w, i) such that Follows*(i, a) pattern i("doNothing", _, _) pattern a(v,_) with v.varName = "a"
+57 55 64, 57 65 64
+5000
+186 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select BOOLEAN such that Next*(i, w) such that Next*(w, i) such that Follows*(i, a) pattern i(v, _, _) pattern a(v,_) with v.varName = "a"
+FALSE
+5000
+187 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v, v1, v2; prog_line n; procedure proc1, proc2;
+Select  <i, w, v> such that Next*(i, w) such that Next*(w, i) such that Modifies(i, v) pattern i(v, _, _) pattern w(v1,_) with v.varName = v1.varName with v1.varName = v2.varName
+57 65 doNothing, 86 85 constantAssignment, 88 85 constantAssignment, 86 103 constantAssignment,88 103 constantAssignment
+5000
+188 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v, v1, v2; prog_line n; procedure proc1, proc2;
+Select  <i, w, v> such that Next*(i, w) such that Next*(w, i) such that Uses(i, v) pattern i(v, _, _) pattern w(v1,_) with v.varName = v1.varName with v1.varName = v2.varName
+57 65 doNothing, 86 85 constantAssignment, 88 85 constantAssignment, 86 103 constantAssignment,88 103 constantAssignment
+5000
+189 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows) swap seq
+stmt s; assign a; while w; if i; call c; constant p; variable v, v1; prog_line n, n1; procedure p1, p2;
+Select <w, i, v> such that Next(i, w) pattern i (v, _, _) pattern i (v1, _, _) with w.stmt# = n  such that Uses(i, v) and Uses(p1, v) with i.stmt# = n1
+55 54 TryingToMakeLongVariableNamesToTestLimits
+5000
+190 - 3 such taht 1 pattern w 1 pattern i 1 with Integer 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n, n1; procedure p1, p2;
+Select <p2, v> such that Next*(i,w) and Uses(p2, v) pattern w (v, _)  with v.varName = p2.procName such that Calls*(p1, p2) pattern i ("TryingToMakeLongVariableNamesToTestLimits", _, _)
+procedure procedure, doNothing doNothing
+5000
+191 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2, proc3;
+Select <proc1, proc2, proc3> such that Calls(proc1, proc2) pattern i (v,_, _) with proc3.procName = "doNothing3" such that Calls(proc2, proc3) 
+doNothing doNothing2 doNothing3, doSomething doNothing doNothing3, doSomething doNothing2 doNothing3, doSomething procedure doNothing3, mainPrint doNothing doNothing3
+5000
+192 - 2 such taht 1 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select proc2 pattern i (v,_, _) with v.varName = "constantAssignment" such that Next*(i, w) pattern i (v,_, _) with v.varName = "constantAssignment" such that Calls*(proc1, proc2)
+doNothing, doNothing2, doNothing3, procedure
+5000
+193 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select <i, w, i1> such that Next*(i, w) and Next*(w, i1) with v.varName = "constantAssignment" such that Parent*(i1, w) pattern w("d", _) pattern i1(v, _,_) 
+54 96 86, 57 96 86, 71 96 86, 74 96 86, 86 96 86, 88 96 86, 107 96 86
+5000
+194 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select <i, w, a> such that Next*(i, w) pattern i("doNothing", _, _) such that Next*(w, i) pattern a(v,_) such that Follows*(i, a) with v.varName = "a"
+57 55 64, 57 65 64
+5000
+195 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v; prog_line n; procedure proc1, proc2;
+Select BOOLEAN such that Next*(i, w) pattern i(v, _, _) pattern a(v,_) such that Next*(w, i) such that Follows*(i, a) with v.varName = "a"
+FALSE
+5000
+196 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v, v1, v2; prog_line n; procedure proc1, proc2;
+Select  <i, w, v> such that Next*(i, w) pattern i(v, _, _)  such that Next*(w, i) such that Modifies(i, v) pattern w(v1,_) with v.varName = v1.varName with v1.varName = v2.varName
+57 65 doNothing, 86 85 constantAssignment, 88 85 constantAssignment, 86 103 constantAssignment,88 103 constantAssignment
+5000
+197 - 3 such taht 2 pattern while 1 with Integer all share common pattern true (Follows)
+stmt s; assign a; while w; if i, i1; call c; constant p; variable v, v1, v2; prog_line n; procedure proc1, proc2;
+Select  <i, w, v> pattern i(v, _, _) pattern w(v1,_) such that Next*(i, w) and Uses(i, v)  with v.varName = v1.varName with v1.varName = v2.varName such that Next*(w, i) 
+57 65 doNothing, 86 85 constantAssignment, 88 85 constantAssignment, 86 103 constantAssignment,88 103 constantAssignment
+5000

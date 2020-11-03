@@ -99,7 +99,7 @@ Boolean CallsTable::checkIfCallsHoldsStar(const ProcedureName& caller, const Pro
 }
 
 /**
- * Returns a Vector<ProcedureName> containing all *ProcedureNameS* that calls callee directly. Vector<ProcedureName>
+ * Returns a Vector<ProcedureName> containing all procedure names that calls callee directly. Vector<ProcedureName>
  * returned is empty if there is no procedure that calls callee directly.
  *
  * @param callee
@@ -111,7 +111,7 @@ Vector<ProcedureName> CallsTable::getAllCallers(const ProcedureName& callee)
 }
 
 /**
- * Returns a Vector<ProcedureName> containing all *ProcedureNameS* that calls callee directly or indirectly.
+ * Returns a Vector<ProcedureName> containing all procedure names that calls callee directly or indirectly.
  * Vector<ProcedureName> returned is empty if there is no procedure that calls callee.
  *
  * @param callee
@@ -166,18 +166,41 @@ Vector<Pair<ProcedureName, ProcedureName>> CallsTable::getAllCallsTupleStar()
     return callsTuplesStar;
 }
 
+/**
+ * Returns a list of procedure names which procedure called some other procedure.
+ *
+ * @return
+ */
 Vector<ProcedureName> CallsTable::getAllCallers()
 {
     return callers;
 }
+
+/**
+ * Returns a list of procedure names which procedure was called by some other procedure.
+ *
+ * @return
+ */
 Vector<ProcedureName> CallsTable::getAllCallees()
 {
     return callees;
 }
+
+/**
+ * Returns a list of procedure names which procedure called some other procedure directly or indirectly.
+ *
+ * @return
+ */
 Vector<ProcedureName> CallsTable::getAllCallersStar()
 {
     return callersStar;
 }
+
+/**
+ * Returns a list of procedure names which procedure was called by some other procedure directly or indirectly.
+ *
+ * @return
+ */
 Vector<ProcedureName> CallsTable::getAllCalleesStar()
 {
     return calleesStar;

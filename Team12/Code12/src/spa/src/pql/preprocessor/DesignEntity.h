@@ -1,5 +1,11 @@
-#ifndef SPA_DESIGNENTITY_H
-#define SPA_DESIGNENTITY_H
+/**
+ * This class represents a Design Entity in the SIMPLE
+ * program. When a synonym is declared in a query, a
+ * certain Design Entity needs to be associated with it.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_DESIGN_ENTITY_H
+#define SPA_PQL_PREPROCESSOR_DESIGN_ENTITY_H
 
 #include "DesignEntityType.h"
 #include "Errorable.h"
@@ -30,4 +36,4 @@ public:
     Boolean operator==(const DesignEntity& designEntity) const;
 };
 
-#endif // SPA_DESIGNENTITY_H
+#endif // SPA_PQL_PREPROCESSOR_DESIGN_ENTITY_H

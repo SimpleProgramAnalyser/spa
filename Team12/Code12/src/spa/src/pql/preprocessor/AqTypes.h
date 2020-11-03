@@ -1,12 +1,12 @@
 /**
- * This class defines an AbstractQuery (and necessary
- * supporting substructures), which is used to represent
- * a PQL query, and passed to the query evaluator, for
- * further processing.
+ * This class defines headers for an AbstractQuery and
+ * its necessary supporting substructures. AbstractQuery
+ * is used to represent a PQL query, and it is passed to
+ * the query evaluator for further processing.
  */
 
-#ifndef SPA_PQL_AQTYPES_H
-#define SPA_PQL_AQTYPES_H
+#ifndef SPA_PQL_PREPROCESSOR_AQ_TYPES_H
+#define SPA_PQL_PREPROCESSOR_AQ_TYPES_H
 
 #include "AbstractQuery.h"
 #include "AqTypesUtils.h"
@@ -24,4 +24,4 @@
 #include "SuchThatClause.h"
 #include "WithClause.h"
 
-#endif // SPA_PQL_AQTYPES_H
+#endif // SPA_PQL_PREPROCESSOR_AQ_TYPES_H

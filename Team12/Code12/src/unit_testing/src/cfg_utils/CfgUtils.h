@@ -3,16 +3,16 @@
  * programs. These methods are meant to be used in the
  * unit tests of the Simple Program Analyser Frontend.
  *
- * Overall, these methods form a database of CFGs of 
+ * Overall, these methods form a database of CFGs of
  * SIMPLE programs, easily accessible
  * for unit testing purposes.
  *
  * In the methods, the same programs will share the same
- * program number with the AST in AstUtils. 
- * For example, getProgram1Cfg_compute() will return the 
- * Abstract Syntax Tree representing the program returned 
- * in getProgram1String_compute() where as 
- * getProgram1Cfg_compute() will return the Control 
+ * program number with the AST in AstUtils.
+ * For example, getProgram1Cfg_compute() will return the
+ * Abstract Syntax Tree representing the program returned
+ * in getProgram1String_compute() where as
+ * getProgram1Cfg_compute() will return the Control
  * Flow Graph representing the same program.
  */
 
@@ -68,8 +68,34 @@ std::pair<CfgNode*, size_t> getProgram15Cfg_complicatedConditional();
 // Program 18: Procedure ending with while statement, with multiple assign
 std::pair<CfgNode*, size_t> getProgram18Cfg_endWithWhile();
 
-// Program 19: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign - Not Applicable for CFG
+/** CFG BIP Builder**/
+// Program 7: computeCentroid, program with multiple procedures, with if, while, read, print, call, assign
+std::pair<CfgNode*, size_t> getProgram7CfgBip_computeCentroid();
 
-// Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign - Not Applicable for CFG
+// Program 19: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
+std::pair<CfgNode*, size_t> getProgram19CfgBip_multipleProcedures();
 
+// Program 20: mutipleProcedures, program with multiple procedures, with if, while, read, print, call, assign
+std::pair<CfgNode*, size_t> getProgram20Cfg_main();
+std::pair<CfgNode*, size_t> getProgram20Cfg_raymarch();
+std::pair<CfgNode*, size_t> getProgram20Cfg_spheresdf();
+std::pair<CfgNode*, size_t> getProgram20CfgBip_multipleProceduresSpheresdf();
+
+// Program 22: program with if, nested whiles, read, print, call, assign
+std::pair<CfgNode*, size_t> getProgram22CfgBip_whileNestedInWhile();
+
+// Program 24: program with nested ifs
+std::pair<CfgNode*, size_t> getProgram24CfgBip_nestedIfs();
+
+// Program 25: program with nested ifs in a while
+std::pair<CfgNode*, size_t> getProgram25CfgBip_nestedIfsInWhile();
+
+// Program 26: program with interleaving nested ifs in a while
+std::pair<CfgNode*, size_t> getProgram26CfgBip_nestedInterleavingIfsInWhile();
+
+// Program 27: program with if in if statement
+std::pair<CfgNode*, size_t> getProgram27CfgBip_ifInIf();
+
+// Program 28: program combining programs 27, 26 and 25
+std::pair<CfgNode*, size_t> getProgram28CfgBip_combineIfInIfAndNested3AndNested2();
 #endif // UNIT_TESTING_CFG_UTILS_H

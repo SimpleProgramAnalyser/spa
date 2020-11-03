@@ -27,8 +27,10 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBuilder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBipBuilder.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cfg/CfgBipBuilder.cpp
 
-    # design extractor
+    # designExtractor
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/DesignExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/SemanticErrorsValidator.h
@@ -41,10 +43,16 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/UsesExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/ModifiesExtractor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/NextExtractor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/CallsExtractor.cpp
+
+    # designExtractor/next
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextExtractor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextExtractor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextTableFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextTableFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextBipTableFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/designExtractor/next/NextBipTableFacade.cpp
 
     # frontend/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/frontend/parser/Parser.h
@@ -70,10 +78,14 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Uses.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Next.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/NextBip.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/NextBip.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/relationships/Calls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tables/Tables.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tree/TreeStore.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/tree/TreeStore.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PKB.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pkb/PkbTypes.h
@@ -119,7 +131,7 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/SuchThatClause.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/preprocessor/WithClause.cpp
 
-        # pql/evaluator
+    # pql/evaluator
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/Evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/EvaluatorUtils.h
@@ -129,8 +141,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/RelationshipsGraph.cpp
 
     # pql/evaluator/relationships
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/AffectsEvaluator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/AffectsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CallsEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CallsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/CacheSet.h
@@ -141,8 +151,6 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/FollowsEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ModifiesEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ModifiesEvaluator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/NextEvaluator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/NextEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/ParentEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/RelationshipsUtil.h
@@ -150,6 +158,22 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/SuchThatEvaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/UsesEvaluator.cpp
+
+    # pql/evaluator/relationships/affects
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsEvaluatorFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsEvaluatorFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsBipFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/affects/AffectsBipFacade.cpp
+
+    # pql/evaluator/relationships/next
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluatorFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextEvaluatorFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextBipFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextBipFacade.cpp
 
     # pql/evaluator/pattern
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/AssignMatcher.h
@@ -197,4 +221,3 @@ endif ()
 
 # this makes the headers accessible for other projects which uses spa lib
 target_include_directories(spa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-

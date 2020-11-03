@@ -161,4 +161,10 @@ ProgramNode* getProgram26Tree_nestedInterleavingIfsInWhile();
 String getProgram27String_ifInIf();
 // Program 27: program with if in if statement
 ProgramNode* getProgram27Tree_ifInIf();
+
+// Program 28: program combining programs 27, 26 and 25
+String getProgram28String_combineIfInIfAndNested3AndNested2();
+// Program 28: program combining programs 27, 26 and 25
+ProgramNode* getProgram28Tree_combineIfInIfAndNested3AndNested2();
+
 #endif // UNIT_TESTING_AST_UTILS_H

@@ -1,3 +1,8 @@
+/**
+ * Implementation of a class representing an Attribute
+ * (e.g. stmt#, varName) in a Program Query Language query.
+ */
+
 #include "Attribute.h"
 
 /************************/
@@ -25,7 +30,7 @@ Attribute::Attribute(): type{NoAttributeType} {}
 
 Attribute::Attribute(AttributeType attributeType): type{attributeType} {}
 
-Attribute::Attribute(String attributeTypeString)
+Attribute::Attribute(const String& attributeTypeString): type(NoAttributeType)
 {
     auto got = attributeMap.find(attributeTypeString);
     if (got == attributeMap.end()) {

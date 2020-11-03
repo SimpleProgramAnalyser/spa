@@ -1,3 +1,8 @@
+/**
+ * Implementation of a ResultSynonym, or "Select"-ed
+ * synonym in a Program Query Language query.
+ */
+
 #include "ResultSynonym.h"
 
 #include <utility>
@@ -12,15 +17,16 @@ const ErrorMessage ResultSynonym::INVALID_SYNONYM_MESSAGE = "Invalid naming for 
 /** Constructors        */
 /************************/
 
-ResultSynonym::ResultSynonym(String syn): synonym(std::move(syn)), attribute(NoAttributeType), Errorable() {}
+ResultSynonym::ResultSynonym(String syn): Errorable(), synonym(std::move(syn)), attribute() {}
 
-ResultSynonym::ResultSynonym(QueryErrorType queryErrorType): Errorable(queryErrorType) {}
+ResultSynonym::ResultSynonym(QueryErrorType queryErrorType): Errorable(queryErrorType), synonym(), attribute() {}
 
 ResultSynonym::ResultSynonym(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, std::move(errorMessage))
+    Errorable(queryErrorType, std::move(errorMessage)), synonym(), attribute()
 {}
 
-ResultSynonym::ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity): synonym(std::move(syn))
+ResultSynonym::ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity):
+    Errorable(), synonym(std::move(syn)), attribute()
 {
     auto got = Attribute::attributeMap.find(attr);
     if (got == Attribute::attributeMap.end()) {

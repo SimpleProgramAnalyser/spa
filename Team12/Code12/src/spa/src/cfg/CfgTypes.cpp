@@ -74,7 +74,7 @@ Boolean nodesAreEqual(CfgNode* node1, CfgNode* node2, Vector<Boolean>* visitedAr
     return isEqual;
 }
 
-void CfgNode::deleteAllChildren() const
+Vector<CfgNode*> CfgNode::findAllChildren() const
 {
     // breadth-first search to get all nodes
     std::unordered_set<CfgNode*> visitedNodes;
@@ -94,10 +94,8 @@ void CfgNode::deleteAllChildren() const
         }
         queue.pop();
     }
-    // delete all visited nodes
-    for (CfgNode* visited : visitedNodes) {
-        delete visited;
-    }
+    // return all visited nodes
+    return Vector<CfgNode*>(visitedNodes.begin(), visitedNodes.end());
 }
 
 /**
@@ -117,4 +115,9 @@ Boolean CfgNode::equals(CfgNode* cfgn, size_t numberOfNodes)
     }
     isEqual = nodesAreEqual(this, cfgn, &visitedArray);
     return isEqual;
+}
+
+size_t CfgNode::size() const
+{
+    return findAllChildren().size();
 }

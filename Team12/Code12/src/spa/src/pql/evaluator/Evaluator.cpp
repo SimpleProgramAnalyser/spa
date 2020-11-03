@@ -11,9 +11,11 @@
 #include "attribute/AttributeMap.h"
 #include "attribute/WithUnifier.h"
 #include "pattern/PatternMatcher.h"
-#include "relationships/AffectsEvaluator.h"
-#include "relationships/NextEvaluator.h"
 #include "relationships/SuchThatEvaluator.h"
+#include "relationships/affects/AffectsBipFacade.h"
+#include "relationships/affects/AffectsEvaluator.h"
+#include "relationships/next/NextBipFacade.h"
+#include "relationships/next/NextEvaluator.h"
 
 Vector<String> convertToTupleString(const PairedResult& resultPairs)
 {
@@ -80,8 +82,11 @@ RawQueryResult Evaluator::evaluateQuery()
 RawQueryResult Evaluator::evaluateValidQuery()
 {
     // initiate Affects and Next evaluators
-    resultsTable.manageEvaluator(new NextEvaluator(resultsTable));
-    resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable));
+    resultsTable.manageEvaluator(new AffectsEvaluator(resultsTable, new AffectsEvaluatorFacade()));
+    resultsTable.manageEvaluator(new NextEvaluator(resultsTable, new NextEvaluatorFacade()));
+    // initiate AffectsBip and NextBip evaluators
+    resultsTable.manageEvaluatorBip(new AffectsEvaluator(resultsTable, new AffectsBipFacade()));
+    resultsTable.manageEvaluatorBip(new NextEvaluator(resultsTable, new NextBipFacade()));
     const ClauseVector& clauses = query.getClauses();
     for (int i = 0; i < clauses.count(); i++) {
         Clause* clause = clauses.get(i);

@@ -34,7 +34,7 @@ private:
      */
     HashMap<Integer, StatementNumVectorsByType> stmtPreviousMap;
     HashMap<Integer, StatementNumVectorsByType> stmtNextMap;
-    // sets used to deduplicate the above structure
+    // sets used to deduplicate the above structures
     HashMap<Integer, StatementNumSetsByType> stmtPreviousSet;
     HashMap<Integer, StatementNumSetsByType> stmtNextSet;
 
@@ -46,11 +46,11 @@ private:
      * Secondary key: statement type
      * Result: Vector<Statement Number>
      */
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtPreviousType;
-    Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> stmtNextType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtPreviousType;
+    Array<StatementNumVectorsByType, StatementTypeCount> stmtNextType;
     // hashsets to prevent duplication in lists above
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtPreviousTypeSet;
-    Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> stmtNextTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtPreviousTypeSet;
+    Array<StatementNumSetsByType, StatementTypeCount> stmtNextTypeSet;
 
     // Tuples
     /**
@@ -66,8 +66,6 @@ private:
     void addIntoBasicTables(Integer previous, StatementType previousType, Integer next, StatementType nextType);
     void addIntoCollectionTables(Integer previous, StatementType previousType, Integer next, StatementType nextType);
     void addIntoTupleTables(Integer previous, StatementType previousType, Integer next, StatementType nextType);
-    // deprecated.
-    void typedShenanigans(Integer previous, StatementType previousType, Integer next, StatementType nextType);
 };
 
 #endif // SPA_NEXT_H
