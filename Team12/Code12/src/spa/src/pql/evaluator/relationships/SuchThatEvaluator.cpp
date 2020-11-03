@@ -7,13 +7,13 @@
 
 #include <stdexcept>
 
-#include "AffectsEvaluator.h"
 #include "CallsEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "ModifiesEvaluator.h"
-#include "NextEvaluator.h"
 #include "ParentEvaluator.h"
 #include "UsesEvaluator.h"
+#include "affects/AffectsEvaluator.h"
+#include "next/NextEvaluator.h"
 
 void evaluateAffectsNormal(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
 {
@@ -65,11 +65,32 @@ void evaluateNextTransitive(const Reference& leftRef, const Reference& rightRef,
     resultsTable->getNextEvaluator()->evaluateNextStarClause(leftRef, rightRef);
 }
 
-std::unordered_map<RelationshipReferenceType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>
+// ======================================== Branch Into Procedure (BIP) ========================================
+
+void evaluateAffectsBip(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getAffectsBipEvaluator()->evaluateAffectsClause(leftRef, rightRef);
+}
+
+void evaluateAffectsBipTransitive(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getAffectsBipEvaluator()->evaluateAffectsStarClause(leftRef, rightRef);
+}
+
+void evaluateNextBip(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getNextBipEvaluator()->evaluateNextClause(leftRef, rightRef);
+}
+
+void evaluateNextBipTransitive(const Reference& leftRef, const Reference& rightRef, ResultsTable* resultsTable)
+{
+    resultsTable->getNextBipEvaluator()->evaluateNextStarClause(leftRef, rightRef);
+}
+
+std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>
 getSuchThatEvaluatorMap()
 {
-    return std::unordered_map<RelationshipReferenceType,
-                              auto (*)(const Reference&, const Reference&, ResultsTable*)->void>(
+    return std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>(
         {{AffectsType, evaluateAffectsNormal},
          {AffectsStarType, evaluateAffectsTransitive},
          {CallsType, evaluateCallsNormal},
@@ -85,14 +106,19 @@ getSuchThatEvaluatorMap()
          {ModifiesStatementType, evaluateModifiesClause},
          {ModifiesProcedureType, evaluateModifiesClause},
          {NextType, evaluateNextNormal},
-         {NextStarType, evaluateNextTransitive}});
+         {NextStarType, evaluateNextTransitive},
+         // branch into procedures (BIP)
+         {AffectsBipType, evaluateAffectsBip},
+         {AffectsBipStarType, evaluateAffectsBipTransitive},
+         {NextBipType, evaluateNextBip},
+         {NextBipStarType, evaluateNextBipTransitive}});
 }
 
 Void evaluateSuchThat(SuchThatClause* stClause, ResultsTable* resultsTable)
 {
-    RelationshipReferenceType relRefType = stClause->getRelationship().getType();
-    std::unordered_map<RelationshipReferenceType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void>
-        evaluatorMap = getSuchThatEvaluatorMap();
+    RelationshipType relRefType = stClause->getRelationship().getType();
+    std::unordered_map<RelationshipType, auto (*)(const Reference&, const Reference&, ResultsTable*)->void> evaluatorMap
+        = getSuchThatEvaluatorMap();
     auto mapEntry = evaluatorMap.find(relRefType);
     if (mapEntry == evaluatorMap.end()) {
         throw std::runtime_error("Unknown relationship type in evaluateSuchThat");

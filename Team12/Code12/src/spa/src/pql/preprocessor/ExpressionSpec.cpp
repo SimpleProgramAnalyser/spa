@@ -1,37 +1,31 @@
+/**
+ * Implementation of ExpressionSpec, representation
+ * of an Expression in a pattern clause.
+ */
+
+#include "ExpressionSpec.h"
+
+#include <utility>
+
 #include "AqTypes.h"
 #include "frontend/parser/Parser.h"
-#include "lexer/Lexer.h"
 
-ExpressionSpec::ExpressionSpec(): expression(std::unique_ptr<Expression>()), expressionSpecType{InvalidExpressionType}
+ExpressionSpec::ExpressionSpec():
+    Errorable(), expression(std::unique_ptr<Expression>()), expressionSpecType{InvalidExpressionType}
 {}
 
 ExpressionSpec::ExpressionSpec(ExpressionSpecType exprSpecType):
-    expression(std::unique_ptr<Expression>()), expressionSpecType{exprSpecType}
+    Errorable(), expression(std::unique_ptr<Expression>()), expressionSpecType{exprSpecType}
 {}
 
 ExpressionSpec::ExpressionSpec(Expression* expr, ExpressionSpecType exprSpecType):
-    expression(expr), expressionSpecType{exprSpecType}
+    Errorable(), expression(expr), expressionSpecType{exprSpecType}
 {}
 
 ExpressionSpec::ExpressionSpec(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    expressionSpecType{InvalidExpressionType}
-{
-    this->setError(queryErrorType, errorMessage);
-}
+    Errorable{queryErrorType, std::move(errorMessage)}, expression(), expressionSpecType{InvalidExpressionType}
+{}
 
-/**
- * Creates an ExpressionSpec of based on the given
- * exprSpecString. It will determine the ExpressionSpecType
- * and call the parser from frontend to parse the expression
- * string into an Expression.
- *
- * If the exprSpecString is an invalid form of
- * ExpressionSpec, an invalid ExpressionSpec will be
- * returned.
- *
- * @param exprSpecString    The string to be parsed into an ExpressionSpec.
- * @return                  The ExpressionSpec constructed using exprSpectString.
- */
 ExpressionSpec ExpressionSpec::createExpressionSpec(const String& exprSpecString)
 {
     if (exprSpecString == "_") {

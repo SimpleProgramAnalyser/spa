@@ -40,16 +40,16 @@ private:
     HashMap<String, Vector<String>> varProclistMap;
 
     // for getAllVar
-    Array<Vector<String>, STATEMENT_TYPE_COUNT> stmttypeVarlistMap;
+    Array<Vector<String>, StatementTypeCount> stmttypeVarlistMap;
     HashSet<String> allVarUsedByProcSet;
     Vector<String> allVarUsedByProcList;
 
     // for tuples
-    Array<Vector<Pair<Integer, String>>, STATEMENT_TYPE_COUNT> statementTuples;
+    Array<Vector<Pair<Integer, String>>, StatementTypeCount> statementTuples;
     Vector<Pair<String, String>> procTuples;
 
     // for getAllStmt
-    Array<Vector<Integer>, STATEMENT_TYPE_COUNT> stmttypeStmtlistMap;
+    Array<Vector<Integer>, StatementTypeCount> stmttypeStmtlistMap;
 
     // for getAllProcedure
     Vector<String> allModifiesProc;

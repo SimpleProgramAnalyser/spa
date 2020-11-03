@@ -1,17 +1,21 @@
-#include <utility>
+/**
+ * Implementation of a class representing a list
+ * of Clauses in an AbstractQuery.
+ */
 
-#include "AqTypes.h"
+#include "ClauseVector.h"
+
+#include <utility>
 
 /************************/
 /** Constructors        */
 /************************/
 
-ClauseVector::ClauseVector() {}
+ClauseVector::ClauseVector(): Errorable(), clauses() {}
 
-ClauseVector::ClauseVector(QueryErrorType queryErrorType, ErrorMessage errorMessage)
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+ClauseVector::ClauseVector(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    Errorable(queryErrorType, std::move(errorMessage)), clauses()
+{}
 
 /************************/
 /** Instance Methods    */
@@ -32,7 +36,17 @@ Integer ClauseVector::count() const
     return clauses.size();
 }
 
-Boolean ClauseVector::operator==(const ClauseVector& clauseVector)
+QueryErrorType ClauseVector::getErrorType() const
+{
+    return errorType;
+}
+
+ErrorMessage ClauseVector::getErrorMessage() const
+{
+    return errorMessage;
+}
+
+Boolean ClauseVector::operator==(const ClauseVector& clauseVector) const
 {
     return util::checkVectorOfPointersEqual(this->clauses, clauseVector.clauses);
 }

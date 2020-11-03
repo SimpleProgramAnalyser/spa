@@ -5,9 +5,10 @@
 #ifndef SPA_PQL_AFFECTS_EVALUATOR_H
 #define SPA_PQL_AFFECTS_EVALUATOR_H
 
-#include "CacheTable.h"
+#include "AffectsEvaluatorFacade.h"
 #include "cfg/CfgTypes.h"
 #include "pql/evaluator/ResultsTable.h"
+#include "pql/evaluator/relationships/CacheTable.h"
 
 /**
  * A class to hold result lists for Affects.
@@ -45,6 +46,9 @@ public:
 class AffectsEvaluator {
 private:
     ResultsTable& resultsTable;
+    // The facade which this Affects Evaluator uses to interact
+    // with components outside of Query Processor (i.e. PKB)
+    std::unique_ptr<AffectsEvaluatorFacade> facade;
 
     // Cache for Affects(modifier, user)
     CacheTable cacheUserTable;          // cache tables to store individual Affects(a, b) for known a, b
@@ -59,13 +63,24 @@ private:
     // Cache for Affects*(modifierStar, userStar)
     CacheTable cacheUserStarTable;
     CacheTable cacheModifierStarTable;
+    CacheTable partiallyCacheUserStarTable;
+    CacheTable partiallyCacheModifierStarTable;
     CacheSet exploredUserStarAssigns;
     CacheSet exploredModifierStarAssigns;
+    CacheSet visitedUserStarAssigns;
+    CacheSet visitedModifierStarAssigns;
 
     // Helper methods for Affects
     const CfgNode* affectsSearch(const CfgNode* cfg,
                                  std::unordered_map<String, std::unordered_set<Integer>>& affectsMap,
                                  AffectsTuple& resultsLists);
+    Void cacheModifierAssigns(Integer leftRefVal);
+    Void cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb);
+    Void cacheAll();
+
+    // Helper methods for Affects*
+    CacheSet getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
+    CacheSet getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
 
     // Methods for Affects
     Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef);
@@ -80,7 +95,18 @@ private:
     Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
 
 public:
-    explicit AffectsEvaluator(ResultsTable& resultsTable);
+    /**
+     * Constructs a new AffectsEvaluator.
+     *
+     * @param resultsTable The results table for the Evaluator to
+     *                     store results in after evaluation.
+     * @param facade The facade used by AffectsEvaluator to access
+     *               other components of SIMPLE program analyser.
+     *               Note that this pointer will be managed by Affects
+     *               Evaluator (the Facade will be deleted at the end
+     *               of the lifetime of the parent AffectsEvaluator)
+     */
+    explicit AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade);
     Void evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef);
     Void evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef);
 };

@@ -1,6 +1,11 @@
-#include <utility>
+/**
+ * Implementation of a ResultSynonym, or "Select"-ed
+ * synonym in a Program Query Language query.
+ */
 
-#include "AqTypes.h"
+#include "ResultSynonym.h"
+
+#include <utility>
 
 /************************/
 /** Static Members      */
@@ -12,26 +17,25 @@ const ErrorMessage ResultSynonym::INVALID_SYNONYM_MESSAGE = "Invalid naming for 
 /** Constructors        */
 /************************/
 
-ResultSynonym::ResultSynonym(String syn): synonym(std::move(syn)), attribute(NoAttributeType) {}
+ResultSynonym::ResultSynonym(String syn): Errorable(), synonym(std::move(syn)), attribute() {}
 
-ResultSynonym::ResultSynonym(QueryErrorType queryErrorType)
-{
-    setError(queryErrorType);
-}
+ResultSynonym::ResultSynonym(QueryErrorType queryErrorType): Errorable(queryErrorType), synonym(), attribute() {}
 
-ResultSynonym::ResultSynonym(QueryErrorType queryErrorType, ErrorMessage errorMessage)
-{
-    setError(queryErrorType, std::move(errorMessage));
-}
+ResultSynonym::ResultSynonym(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    Errorable(queryErrorType, std::move(errorMessage)), synonym(), attribute()
+{}
 
-ResultSynonym::ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity): synonym(std::move(syn))
+ResultSynonym::ResultSynonym(Synonym syn, const String& attr, DesignEntity& designEntity):
+    Errorable(), synonym(std::move(syn)), attribute()
 {
     auto got = Attribute::attributeMap.find(attr);
     if (got == Attribute::attributeMap.end()) {
-        setError(QuerySyntaxError, "Attribute " + attr + " does not exist for Synonym " + syn);
+        this->errorType = QuerySyntaxError;
+        this->errorMessage = "Attribute " + attr + " does not exist for Synonym " + syn;
     } else {
         if (!Attribute::validateDesignEntityAttributeSemantics(designEntity.getType(), got->second)) {
-            setError(QuerySemanticsError, "Attribute " + attr + " cannot be used for Synonym " + syn);
+            this->errorType = QuerySemanticsError;
+            this->errorMessage = "Attribute " + attr + " cannot be used for Synonym " + syn;
         } else {
             attribute = Attribute(got->second);
         }
@@ -50,6 +54,16 @@ Synonym ResultSynonym::getSynonym() const
 Attribute ResultSynonym::getAttribute() const
 {
     return attribute;
+}
+
+QueryErrorType ResultSynonym::getErrorType() const
+{
+    return errorType;
+}
+
+ErrorMessage ResultSynonym::getErrorMessage() const
+{
+    return errorMessage;
 }
 
 Boolean ResultSynonym::operator==(const ResultSynonym& resultSynonym) const

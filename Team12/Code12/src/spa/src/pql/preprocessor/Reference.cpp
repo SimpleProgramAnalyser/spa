@@ -1,47 +1,42 @@
-#include <utility>
+/**
+ * Implementation of a Reference for AbstractQuery Clauses.
+ */
 
-#include "AqTypes.h"
+#include "Reference.h"
+
+#include <utility>
 
 /************************/
 /** Constructors        */
 /************************/
 
-Reference::Reference(): referenceType{InvalidRefType}, designEntity{}, attribute{NoAttributeType} {}
+Reference::Reference():
+    Errorable(), referenceType{InvalidRefType}, referenceValue(), designEntity{}, attribute{NoAttributeType}
+{}
 
 Reference::Reference(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    referenceType{InvalidRefType}, attribute{NoAttributeType}
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+    Errorable(queryErrorType, std::move(errorMessage)), referenceType{InvalidRefType}, referenceValue(),
+    designEntity(), attribute{NoAttributeType}
+{}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue):
-    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, attribute{NoAttributeType}
+    Errorable(), referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{}, attribute{NoAttributeType}
 {}
 
 Reference::Reference(ReferenceType refType, ReferenceValue refValue, DesignEntity designEnt):
-    referenceType{refType}, referenceValue{std::move(refValue)}, designEntity{designEnt}, attribute{NoAttributeType}
+    Errorable(), referenceType{refType}, referenceValue{std::move(refValue)},
+    designEntity{designEnt}, attribute{NoAttributeType}
 {}
 
 Reference::Reference(ReferenceValue refValue, DesignEntity designEnt, Attribute attr):
-    referenceType{AttributeRefType}, referenceValue{std::move(refValue)}, designEntity{designEnt}, attribute{attr}
+    Errorable(), referenceType{AttributeRefType}, referenceValue{std::move(refValue)},
+    designEntity{designEnt}, attribute{attr}
 {}
 
 /************************/
 /** Static Methods      */
 /************************/
 
-/**
- * Creates a Reference using the given ref String. It will
- * determine the ReferenceType based on the ref given.
- * If the ref is a synonym, the design entity of the synonym
- * will be stored in the Reference object.
- *
- * If the ref is an invalid form of a Reference, an invalid
- * Reference will be returned.
- *
- * @param ref   String of the reference to be constructed.
- * @return      A Reference based on ref.
- */
 Reference Reference::createReference(String ref, DeclarationTable& declarationTable)
 {
     if (ref == "_") {

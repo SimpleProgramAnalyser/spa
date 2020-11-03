@@ -1,4 +1,9 @@
-#include "AqTypes.h"
+/**
+ * Implementation of an abstract representation of
+ * a Program Query Language query such that clause.
+ */
+
+#include "SuchThatClause.h"
 
 /************************/
 /** Constructors        */
@@ -10,23 +15,13 @@ SuchThatClause::SuchThatClause(Relationship& r): Clause(SuchThatClauseType), rel
 /** Static Methods      */
 /************************/
 
-/**
- * Processes the clause constraint string for a
- * SuchThatClause, by abstracting it into its relevant
- * Relationship and References.
- *
- * @param clauseConstraint  String of the clause constraint with all
- *                          whitespaces removed.
- * @return                  A Clause pointer of the SuchThatClause
- *                          that was constructed.
- */
 Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, DeclarationTable& declarationTable)
 {
     StringPair pair = util::splitByFirstDelimiter(clauseConstraint, '(');
 
     String relRef = pair.first;
 
-    RelationshipReferenceType relRefType = Relationship::getRelRefType(relRef);
+    RelationshipType relRefType = Relationship::getRelRefType(relRef);
     if (relRefType == InvalidRelationshipType) {
         return new Clause(SuchThatClauseType, QuerySyntaxError, "Invalid Relationship type " + relRef);
     }
@@ -48,7 +43,7 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
 
     Relationship relationship = Relationship::createRelationship(relRefType, leftReference, rightReference);
     if (relationship.isInvalid()) {
-        return new Clause(SuchThatClauseType, QuerySemanticsError, relationship.getErrorMessage());
+        return new Clause(SuchThatClauseType, relationship.getErrorType(), relationship.getErrorMessage());
     }
 
     return new SuchThatClause(relationship);

@@ -1,23 +1,28 @@
-#include <utility>
+/**
+ * Implementation of a DeclarationTable for use in
+ * AbstractQuery to map synonyms to their types.
+ */
 
-#include "AqTypes.h"
+#include "DeclarationTable.h"
+
+#include <algorithm>
+#include <utility>
 
 /************************/
 /** Static Methods      */
 /************************/
 
-const String DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
+const ErrorMessage DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid declaration syntax";
 
 /************************/
 /** Constructors        */
 /************************/
 
-DeclarationTable::DeclarationTable(): table{} {}
+DeclarationTable::DeclarationTable(): Errorable(), table() {}
 
-DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, String errorMessage)
-{
-    this->setError(queryErrorType, std::move(errorMessage));
-}
+DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    Errorable(queryErrorType, std::move(errorMessage)), table()
+{}
 
 /************************/
 /** Instance Methods    */
@@ -28,9 +33,9 @@ Void DeclarationTable::addDeclaration(const Synonym& s, DesignEntity& designEnti
     table.insert({s, designEntity});
 }
 
-Boolean DeclarationTable::hasSynonym(Synonym s)
+Boolean DeclarationTable::hasSynonym(const Synonym& s) const
 {
-    std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
+    auto got = table.find(s);
     if (got == table.end()) {
         return false;
     }
@@ -38,9 +43,9 @@ Boolean DeclarationTable::hasSynonym(Synonym s)
     return true;
 }
 
-DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s) const
+DesignEntity DeclarationTable::getDesignEntityOfSynonym(const Synonym& s) const
 {
-    std::unordered_map<Synonym, DesignEntity>::const_iterator got = table.find(s);
+    auto got = table.find(s);
     if (got == table.end()) {
         DesignEntity nonExistentType("NonExistentType");
         return nonExistentType;
@@ -49,22 +54,19 @@ DesignEntity DeclarationTable::getDesignEntityOfSynonym(Synonym s) const
     }
 }
 
+ErrorMessage DeclarationTable::getErrorMessage() const
+{
+    return errorMessage;
+}
+
 Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable) const
 {
     if (this->table.size() != declarationTable.table.size()) {
         return false;
     }
 
-    for (const auto& entry : this->table) {
-        auto key = entry.first;
-        DesignEntity designEntityThis = this->getDesignEntityOfSynonym(key);
-        DesignEntity designEntity = declarationTable.getDesignEntityOfSynonym(key);
-        if (designEntityThis == designEntity) {
-            continue;
-        } else {
-            return false;
-        }
-    }
-
-    return true;
+    return std::all_of(
+        this->table.begin(), this->table.end(), [this, declarationTable](const std::pair<String, DesignEntity>& key) {
+            return this->getDesignEntityOfSynonym(key.first) == declarationTable.getDesignEntityOfSynonym(key.first);
+        });
 }

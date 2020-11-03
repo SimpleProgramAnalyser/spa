@@ -6,13 +6,6 @@ PKB pkb = PKB();
 
 void resetPKB()
 {
-    // delete CFG
-    for (std::pair<ProcedureName, CfgNode*> mapEntry : pkb.cfgByProcedure) {
-        mapEntry.second->deleteAllChildren();
-        delete mapEntry.second;
-    }
-    // delete AST
-    delete pkb.rootNode;
     pkb = PKB();
 }
 
@@ -324,11 +317,11 @@ StatementType getStatementType(StatementNumber stmtNum)
 // RootNode
 void assignRootNode(ProgramNode* rootNodeToAssign)
 {
-    pkb.rootNode = rootNodeToAssign;
+    pkb.treeStore.assignRootNode(rootNodeToAssign);
 }
 ProgramNode* getRootNode()
 {
-    return pkb.rootNode;
+    return pkb.treeStore.getRootNode();
 }
 
 // Constant
@@ -436,13 +429,57 @@ Vector<ProcedureName> getAllCalleesStar()
 // CFG
 void storeCFG(CfgNode* cfg, const ProcedureName& procedureName)
 {
-    pkb.cfgByProcedure[procedureName] = cfg;
+    pkb.treeStore.storeCFG(cfg, procedureName);
 }
 CfgNode* getCFG(const ProcedureName& procedureName)
 {
-    if (pkb.cfgByProcedure.find(procedureName) == pkb.cfgByProcedure.end()) {
-        return nullptr;
-    } else {
-        return pkb.cfgByProcedure[procedureName];
-    }
+    return pkb.treeStore.getCFG(procedureName);
+}
+Vector<String> getProceduresWithCFG()
+{
+    return pkb.treeStore.getProceduresWithCFG();
+}
+
+// CFG Bip
+void storeCFGBip(CfgNode* cfgBip, const ProcedureName& procedureName)
+{
+    pkb.treeStore.storeCFGBip(cfgBip, procedureName);
+}
+CfgNode* getCFGBip(const ProcedureName& procedureName)
+{
+    return pkb.treeStore.getCFGBip(procedureName);
+}
+Vector<String> getProceduresWithCFGBip()
+{
+    return pkb.treeStore.getProceduresWithCFGBip();
+}
+
+// NextBip
+void addNextBipRelationships(StatementNumber prev, StatementType prevType, StatementNumber next, StatementType nextType)
+{
+    pkb.nextBipTable.addNextBipRelationships(prev, prevType, next, nextType);
+}
+Boolean checkIfNextBipHolds(StatementNumber prev, StatementNumber next)
+{
+    return pkb.nextBipTable.checkIfNextBipHolds(prev, next);
+}
+Vector<StatementNumber> getAllNextBipStatements(StatementNumber prev, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllNextBipStatements(prev, nextType);
+}
+Vector<StatementNumber> getAllPreviousBipStatements(StatementNumber next, StatementType prevType)
+{
+    return pkb.nextBipTable.getAllPreviousBipStatements(next, prevType);
+}
+Vector<StatementNumber> getAllNextBipStatementsTyped(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllNextBipStatementsTyped(prevType, nextType);
+}
+Vector<StatementNumber> getAllPreviousBipStatementsTyped(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllPreviousBipStatementsTyped(prevType, nextType);
+}
+Vector<Pair<StatementNumber, StatementNumber>> getAllNextBipTuples(StatementType prevType, StatementType nextType)
+{
+    return pkb.nextBipTable.getAllNextBipTuples(prevType, nextType);
 }

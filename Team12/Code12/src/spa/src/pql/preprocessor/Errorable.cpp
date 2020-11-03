@@ -1,4 +1,23 @@
+/**
+ * Implementation of Errorable, a class that represents
+ * a syntax or semantic error in the query preprocessor.
+ */
+
 #include "Errorable.h"
+
+#include <utility>
+
+/************************/
+/** Constructors        */
+/************************/
+
+Errorable::Errorable(): errorType(NoQueryErrorType), errorMessage() {}
+
+Errorable::Errorable(QueryErrorType queryErrorType): errorType(queryErrorType), errorMessage() {}
+
+Errorable::Errorable(QueryErrorType queryErrorType, ErrorMessage message):
+    errorType(queryErrorType), errorMessage(std::move(message))
+{}
 
 /************************/
 /** Instance Methods    */
@@ -32,7 +51,7 @@ Void Errorable::setSyntaxError()
 Void Errorable::setError(QueryErrorType queryErrorType, String message)
 {
     setError(queryErrorType);
-    this->errorMessage = message;
+    this->errorMessage = std::move(message);
 }
 
 Void Errorable::setError(QueryErrorType queryErrorType)
@@ -49,12 +68,12 @@ Void Errorable::setError(QueryErrorType queryErrorType)
     }
 }
 
-String Errorable::getErrorMessage() const
+String Errorable::getErrorMessage()
 {
     return errorMessage;
 }
 
-QueryErrorType Errorable::getErrorType() const
+QueryErrorType Errorable::getErrorType()
 {
     return errorType;
 }

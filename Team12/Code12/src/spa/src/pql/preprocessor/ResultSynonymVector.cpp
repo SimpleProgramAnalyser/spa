@@ -1,30 +1,46 @@
-#include "AqTypes.h"
+/**
+ * Implementation of ResultSynonymVector for AbstractQuery.
+ */
 
-ResultSynonymVector::ResultSynonymVector(ResultSynonym synonym)
-{
-    resultSynonyms.push_back(synonym);
-}
+#include "ResultSynonymVector.h"
 
-ResultSynonymVector::ResultSynonymVector(Vector<ResultSynonym> synonyms): resultSynonyms{synonyms} {}
+#include <utility>
 
-ResultSynonymVector::ResultSynonymVector(QueryErrorType queryErrorType, ErrorMessage errorMessage)
-{
-    this->setError(queryErrorType, errorMessage);
-}
+ResultSynonymVector::ResultSynonymVector(): Errorable(), resultSynonyms() {}
+
+ResultSynonymVector::ResultSynonymVector(const ResultSynonym& synonym): Errorable(), resultSynonyms({synonym}) {}
+
+ResultSynonymVector::ResultSynonymVector(Vector<ResultSynonym> synonyms):
+    Errorable(), resultSynonyms{std::move(synonyms)}
+{}
+
+ResultSynonymVector::ResultSynonymVector(QueryErrorType queryErrorType, ErrorMessage errorMessage):
+    Errorable(queryErrorType, std::move(errorMessage)), resultSynonyms()
+{}
 
 Vector<ResultSynonym> ResultSynonymVector::getSynonyms() const
 {
     return resultSynonyms;
 }
 
-Void ResultSynonymVector::add(ResultSynonym resultSynonym)
+Void ResultSynonymVector::add(const ResultSynonym& resultSynonym)
 {
     resultSynonyms.push_back(resultSynonym);
 }
 
-Boolean ResultSynonymVector::isSelectBoolean()
+Boolean ResultSynonymVector::isSelectBoolean() const
 {
     return resultSynonyms.empty();
+}
+
+QueryErrorType ResultSynonymVector::getErrorType() const
+{
+    return errorType;
+}
+
+ErrorMessage ResultSynonymVector::getErrorMessage() const
+{
+    return errorMessage;
 }
 
 Boolean ResultSynonymVector::operator==(const ResultSynonymVector& resultSynonymVector) const

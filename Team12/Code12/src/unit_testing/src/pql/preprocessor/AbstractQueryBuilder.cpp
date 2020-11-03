@@ -56,8 +56,8 @@ AbstractQueryBuilder& AbstractQueryBuilder::addWithClause(ReferenceType leftRefT
     return *this;
 }
 
-AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipReferenceType relRefType,
-                                                              ReferenceType leftRefType, ReferenceValue leftRefValue,
+AbstractQueryBuilder& AbstractQueryBuilder::addSuchThatClause(RelationshipType relRefType, ReferenceType leftRefType,
+                                                              ReferenceValue leftRefValue,
                                                               DesignEntityType leftDesignEntityType,
                                                               ReferenceType rightRefType, ReferenceValue rightRefValue,
                                                               DesignEntityType rightDesignEntityType)
@@ -116,5 +116,5 @@ Expression* AbstractQueryBuilder::createExpression(const String& expressionStrin
 
 AbstractQuery AbstractQueryBuilder::build()
 {
-    return AbstractQuery(resultSynonyms, declarationTable, clauseVector);
+    return AbstractQuery(ResultSynonymVector(resultSynonyms), declarationTable, clauseVector);
 }
