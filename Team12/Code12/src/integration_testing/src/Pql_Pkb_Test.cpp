@@ -3408,6 +3408,7 @@ TEST_CASE("(vacuously true) query with such that Affects clause, left operand li
     varNames.push_back(varName1);
 
     addModifiesRelationships(4, AssignmentStatement, varNames);
+    addModifiesRelationships(5, AssignmentStatement, varNames);
     addUsesRelationships(5, AssignmentStatement, varNames);
 
     CfgNode* rootNodeToAssign = getProgram1Cfg_compute().first;
@@ -3449,6 +3450,7 @@ TEST_CASE("(vacuously true) query with such that Affects* clause, left operand l
 
     addModifiesRelationships(4, AssignmentStatement, varNames);
     addUsesRelationships(5, AssignmentStatement, varNames);
+    addModifiesRelationships(5, AssignmentStatement, varNames);
 
     CfgNode* rootNodeToAssign = getProgram1Cfg_compute().first;
     storeCFG(rootNodeToAssign, "compute");
