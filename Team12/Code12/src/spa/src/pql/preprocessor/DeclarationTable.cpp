@@ -1,5 +1,11 @@
+/**
+ * Implementation of a DeclarationTable for use in
+ * AbstractQuery to map synonyms to their types.
+ */
+
 #include "DeclarationTable.h"
 
+#include <algorithm>
 #include <utility>
 
 /************************/
@@ -12,10 +18,10 @@ const ErrorMessage DeclarationTable::INVALID_DECLARATION_SYNTAX = "Invalid decla
 /** Constructors        */
 /************************/
 
-DeclarationTable::DeclarationTable(): table(), Errorable() {}
+DeclarationTable::DeclarationTable(): Errorable(), table() {}
 
 DeclarationTable::DeclarationTable(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, std::move(errorMessage))
+    Errorable(queryErrorType, std::move(errorMessage)), table()
 {}
 
 /************************/
@@ -59,16 +65,8 @@ Boolean DeclarationTable::operator==(const DeclarationTable& declarationTable) c
         return false;
     }
 
-    for (const auto& entry : this->table) {
-        auto key = entry.first;
-        DesignEntity designEntityThis = this->getDesignEntityOfSynonym(key);
-        DesignEntity designEntity = declarationTable.getDesignEntityOfSynonym(key);
-        if (designEntityThis == designEntity) {
-            continue;
-        } else {
-            return false;
-        }
-    }
-
-    return true;
+    return std::all_of(
+        this->table.begin(), this->table.end(), [this, declarationTable](const std::pair<String, DesignEntity>& key) {
+            return this->getDesignEntityOfSynonym(key.first) == declarationTable.getDesignEntityOfSynonym(key.first);
+        });
 }

@@ -1,5 +1,9 @@
-#ifndef SPA_WITHCLAUSE_H
-#define SPA_WITHCLAUSE_H
+/**
+ * This class represents a "with" clause in the query.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_WITH_CLAUSE_H
+#define SPA_PQL_PREPROCESSOR_WITH_CLAUSE_H
 
 #include "Clause.h"
 #include "Reference.h"
@@ -40,4 +44,4 @@ public:
     Boolean operator==(const WithClause& withClause);
 };
 
-#endif // SPA_WITHCLAUSE_H
+#endif // SPA_PQL_PREPROCESSOR_WITH_CLAUSE_H

@@ -1,5 +1,9 @@
-#ifndef SPA_DESIGNENTITYTYPE_H
-#define SPA_DESIGNENTITYTYPE_H
+/**
+ * An enumeration of the different Design Entity types.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_DESIGN_ENTITY_TYPE_H
+#define SPA_PQL_PREPROCESSOR_DESIGN_ENTITY_TYPE_H
 
 #include "Types.h"
 
@@ -39,4 +43,4 @@ struct std::hash<DesignEntityType> {
     }
 };
 
-#endif // SPA_DESIGNENTITYTYPE_H
+#endif // SPA_PQL_PREPROCESSOR_DESIGN_ENTITY_TYPE_H

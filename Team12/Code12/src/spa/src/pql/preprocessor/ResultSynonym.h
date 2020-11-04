@@ -1,5 +1,11 @@
-#ifndef SPA_RESULTSYNONYM_H
-#define SPA_RESULTSYNONYM_H
+/**
+ * ResultSynonym represents a synonym and its attributes
+ * (optional). Specifically, ResultSynonym is a synonym
+ * that will decide the results returned by the query.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_RESULT_SYNONYM_H
+#define SPA_PQL_PREPROCESSOR_RESULT_SYNONYM_H
 
 #include "Attribute.h"
 #include "Errorable.h"
@@ -45,4 +51,4 @@ public:
     Boolean operator!=(const ResultSynonym& resultSynonym) const;
 };
 
-#endif // SPA_RESULTSYNONYM_H
+#endif // SPA_PQL_PREPROCESSOR_RESULT_SYNONYM_H

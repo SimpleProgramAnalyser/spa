@@ -375,9 +375,9 @@ If a same `stmtNum` already exists in the table, any attributes associated with 
 [#getStatementType]
 `*STATEMENT_TYPE* getStatementType(INTEGER stmtNum);`
 
-*Requires*: `stmtNum` must be a valid statement number in SIMPLE program.
-
-*Description*: Returns the *STATEMENT_TYPE* of `stmtNum`.
+*Description*: Returns the *STATEMENT_TYPE* of `stmtNum`. If
+`stmtNum` is not a valid statement number in SIMPLE program,
+this method returns NON_EXISTENT_STATEMENT_TYPE.
 
 === Variable Table API
 
@@ -1020,7 +1020,8 @@ holds and are of STATEMENT_TYPE `stmtType`.
 === Next API
 
 *Overview*: The Next API describes the methods exposed by Next Table to insert and extract
-information related to the Next relationships in the processed SIMPLE program.
+information related to the Next relationships in the processed SIMPLE program. This API
+differs from the other relationships as the transitive relationship (Next*) is not stored.
 
 * <<addNextRelationships>>
 * <<checkIfNextHolds>>
@@ -1053,7 +1054,7 @@ with `nextStmtType` into the Next Table.
 [#getAllNextStatements]
 `*STATEMENT_LIST* getAllNextStatements(*INTEGER* previous, *STATEMENT_TYPE* nextType);`
 
-*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT*s of `previous` that are of
+*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT* s of `previous` that are of
 `nextType`.
 *STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
 
@@ -1063,16 +1064,16 @@ with `nextStmtType` into the Next Table.
 `*STATEMENT_LIST* getAllNextStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
 *STATEMENT_TYPE* stmtTypeOfNext);`
 
-*Description*: Returns a *STATEMENT_LIST* of statements such that `Next*(previous,returned)`
+*Description*: Returns a *STATEMENT_LIST* of statements such that `Next(previous, returned)`
 holds and are of STATEMENT_TYPE `stmtType`.
 
 '''
 
 [#getAllPreviousStatements]
-`*STATEMENT_LIST* getPreviousStatement(*INTEGER* next, *STATEMENT_TYPE* previousType);`
+`*STATEMENT_LIST* getAllPreviousStatements(*INTEGER* next, *STATEMENT_TYPE* previousType);`
 
-*Description*: Returns a *STATEMENT_LIST* containing the previous *STATEMENT* of `next` that are of
-`previousType`.
+*Description*: Returns a *STATEMENT_LIST* containing all the previous *STATEMENT* s
+of `next` that are of `previousType`.
 *STATEMENT_LIST* returned is empty if there is no such relationship for `next`.
 
 '''
@@ -1090,8 +1091,9 @@ holds and are of STATEMENT_TYPE `stmtType`.
 `*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextTuple(*STATEMENT_TYPE* stmtTypeOfPrevious,
 *STATEMENT_TYPE* stmtTypeOfNext);`
 
-*Description*: Returns a list of pairs, where for each pair, the *Next* relationship holds between them, and the
-previous is of `stmtTypeOfPrevious`, and the next is of `stmtTypeOfNext`.
+*Description*: Returns a list of pairs, where for each pair, the *Next* relationship
+holds between them, and the previous is of `stmtTypeOfPrevious`, and the next
+is of `stmtTypeOfNext`.
 
 === Calls API
 
@@ -1204,21 +1206,22 @@ between them.
 *Description*: Returns a list of pairs of *PROCEDURE*, where for each pair, the *Calls** relationship holds
 between them.
 
-=== Utilities API
+=== Trees API
 
-* <<resetPKB>>
+*Overview*: The Trees API describes the methods related to various
+trees created in the Frontend and used by Query Processor. Namely,
+Trees API provides a database to store and retrieve the Abstract
+Syntax Tree of the entire program, and the Control Flow Graph
+for procedures in the program.
+
 * <<assignRootNode>>
 * <<getRootNode>>
-* <<setCFG>>
+* <<storeCFG>>
 * <<getCFG>>
-
-'''
-
-[#resetPKB]
-`*VOID* resetPKB()`
-
-*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
-PKB from memory.This is an irreversible action.
+* <<getProceduresWithCFG>>
+* <<storeCFGBip>>
+* <<getCFGBip>>
+* <<getProceduresWithCFGBip>>
 
 '''
 
@@ -1236,7 +1239,7 @@ PKB from memory.This is an irreversible action.
 
 '''
 
-[#setCFG]
+[#storeCFG]
 `*VOID* storeCFG(*CFG* cfg, *PROCEDURE* proc)`
 
 *Description*: Store `cfg` as the *CFG* for the *PROCEDURE* `proc` in PKB.
@@ -1247,8 +1250,132 @@ PKB from memory.This is an irreversible action.
 `*CFG* getCFG(*PROCEDURE* proc)`
 
 *Description*: Retrieves the *CFG* for `proc` stored in PKB.
-If <<setCFG>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
+If <<storeCFG>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
 
+'''
+
+[#getProceduresWithCFG]
+`*PROCEDURE_LIST* getProceduresWithCFG()`
+
+*Description*: Retrieves the names of all procedures that have a *CFG*
+associated with them in the Program Knowledge Base.
+
+'''
+
+[#storeCFGBip]
+`*VOID* storeCFGBip(*CFG* cfgBip, *PROCEDURE* proc)`
+
+*Description*: Store `cfgBip` as the *CFG* with branching into procedures
+for the *PROCEDURE* `proc` in PKB.
+
+'''
+
+[#getCFGBip]
+`*CFG* getCFGBip(*PROCEDURE* proc)`
+
+*Description*: Retrieves the *CFG* with branching into procedures for `proc` stored in PKB.
+If <<storeCFGBip>> was never called for the `proc` given, a *NULL_POINTER* will be returned.
+
+'''
+
+[#getProceduresWithCFGBip]
+`*PROCEDURE_LIST* getProceduresWithCFGBip()`
+
+*Description*: Retrieves the names of all procedures that have a *CFG*
+with branching into procedures in the Program Knowledge Base.
+
+=== Next BIP API
+
+*Overview*: The Next BIP API provides a Table to insert and extract information related
+to the NextBip relationships in the processed SIMPLE program. It is highly similar to
+the Next API, just that the information stored is different.
+
+* <<addNextBipRelationships>>
+* <<checkIfNextBipHolds>>
+* <<getAllNextBipStatements>>
+* <<getAllNextBipStatementsTyped>>
+* <<getAllPreviousBipStatements>>
+* <<getAllPreviousBipStatementsTyped>>
+* <<getAllNextBipTuples>>
+
+'''
+
+[#addNextBipRelationships]
+`*VOID* addNextBipRelationships(*INTEGER* previous, *STATEMENT_TYPE*, previousStmtType, *INTEGER* next,
+*STATEMENT_TYPE* nextStmtType);`
+
+*Requires*: `previousStmtType` and `nextStmtType` cannot be `AnyStatement` type.
+
+*Description*: Adds a NextBip relationship between `previous` with `previousStmtType` and `next`
+with `nextStmtType` into the Next BIP Table.
+
+'''
+
+[#checkIfNextBipHolds]
+`*BOOLEAN* checkIfNextBipHolds(*INTEGER* previous, *INTEGER* next);`
+
+*Description*: Returns `TRUE` if there is a NextBip relationship between `previous` and `next`,
+else returns `FALSE`.
+
+'''
+
+[#getAllNextBipStatements]
+`*STATEMENT_LIST* getAllNextBipStatements(*INTEGER* previous, *STATEMENT_TYPE* nextType);`
+
+*Description*: Returns a *STATEMENT_LIST* containing the next *STATEMENT* s of `previous` that are of
+`nextType`, taking into account branching into procedures.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `previous`.
+
+'''
+
+[#getAllNextBipStatementsTyped]
+`*STATEMENT_LIST* getAllNextBipStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a *STATEMENT_LIST* of statements such that `NextBip(previous, returned)`
+holds and are of STATEMENT_TYPE `stmtType`.
+
+'''
+
+[#getAllPreviousBipStatements]
+`*STATEMENT_LIST* getAllPreviousBipStatements(*INTEGER* next, *STATEMENT_TYPE* previousType);`
+
+*Description*: Returns a *STATEMENT_LIST* containing all the previous *STATEMENT* s
+of `next` that are of `previousType`, taking into account branching into procedures.
+*STATEMENT_LIST* returned is empty if there is no such relationship for `next`.
+
+'''
+
+[#getAllPreviousBipStatementsTyped]
+`*STATEMENT_LIST* getAllPreviousBipStatementsTyped(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a *STATEMENT_LIST* of all previous statements that are of *STATEMENT_TYPE*
+`stmtTypeOfPrevious`, with a next of *STATEMENT_TYPE* `stmtTypeOfNext` when
+taking into account branching into procedures.
+
+'''
+
+[#getAllNextBipTuples]
+`*LIST<PAIR<STATEMENT,STATEMENT>>* getAllNextBipTuples(*STATEMENT_TYPE* stmtTypeOfPrevious,
+*STATEMENT_TYPE* stmtTypeOfNext);`
+
+*Description*: Returns a list of pairs, where for each pair, the *NextBip* relationship
+holds between them, and the previous is of `stmtTypeOfPrevious`, and the next
+is of `stmtTypeOfNext`, when branching into procedures is taken into account.
+
+
+=== Utilities API
+
+* <<resetPKB>>
+
+'''
+
+[#resetPKB]
+`*VOID* resetPKB()`
+
+*Description*: Resets *ALL* information stored in *PKB*, as well as deleting the `RootNode` saved in
+PKB from memory.This is an irreversible action.
 
 == PQL
 

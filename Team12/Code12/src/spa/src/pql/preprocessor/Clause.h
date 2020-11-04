@@ -1,5 +1,11 @@
-#ifndef SPA_CLAUSE_H
-#define SPA_CLAUSE_H
+/**
+ * A polymorphic class representing a clause in the
+ * Program Query Language. This clause is evaluated
+ * in different ways depending on its type.
+ */
+
+#ifndef SPA_PQL_PREPROCESSOR_CLAUSE_H
+#define SPA_PQL_PREPROCESSOR_CLAUSE_H
 
 #include "AqTypesUtils.h"
 
@@ -48,4 +54,4 @@ public:
     virtual Boolean operator==(Clause& clause);
 };
 
-#endif // SPA_CLAUSE_H
+#endif // SPA_PQL_PREPROCESSOR_CLAUSE_H

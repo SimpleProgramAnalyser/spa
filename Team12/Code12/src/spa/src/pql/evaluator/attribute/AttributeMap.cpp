@@ -141,7 +141,7 @@ NtupledResult mapAttributesN(const ResultsTable& results, const NtupledResult& t
                              const Vector<ResultSynonym>& syns)
 {
     SignificanceMap significanceMap = getSignificanceMap();
-    NtupledResult attributesResult;
+    std::unordered_set<std::vector<std::string>, NtupleHasher> attributesResult;
     for (const std::vector<std::string>& tuple : tuples) {
         std::vector<std::string> mappedTuple;
         size_t length = tuple.size();
@@ -152,7 +152,7 @@ NtupledResult mapAttributesN(const ResultsTable& results, const NtupledResult& t
                                                           results.getTypeOfSynonym(currentSynonym.getSynonym()),
                                                           currentSynonym.getAttribute().getType(), significanceMap));
         }
-        attributesResult.push_back(mappedTuple);
+        attributesResult.insert(mappedTuple);
     }
-    return attributesResult;
+    return NtupledResult(attributesResult.begin(), attributesResult.end());
 }

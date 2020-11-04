@@ -1,7 +1,6 @@
-//
-// Created by Chester Sim on 17/10/20.
-//
-
+/**
+ * Implementation of CacheSet class for Query Evaluator.
+ */
 #include "CacheSet.h"
 
 #include <utility>
@@ -34,6 +33,11 @@ ClauseResult CacheSet::toClauseResult() const
         strList.push_back(std::to_string(i));
     }
     return strList;
+}
+
+Vector<Integer> CacheSet::toVector() const
+{
+    return Vector<Integer>(set.begin(), set.end());
 }
 
 Boolean CacheSet::isCached(StatementNumber stmtNum) const

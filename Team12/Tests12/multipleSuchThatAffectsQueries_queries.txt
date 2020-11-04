@@ -136,12 +136,12 @@ Select <n, p, p1> such that Affects*(n, 89) such that Calls*(p, p1)
 28 - Affects 2 Select 1 common synonym TRUE 
 while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
 Select <n1> such that Affects*(3, n) such that Next(n, n1)
-2, 4, 6, 7, 8
+2, 4, 6, 8
 5000
 29 - Affects 2 Select 1 common synonym TRUE 
 while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
 Select <n1> such that Affects(3, n) such that Next(n, n1)
-2
+2, 4
 5000
 30 - Affects 2 Select 1 common synonym TRUE 
 while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2;
@@ -154,7 +154,7 @@ Select r such that Affects*(n, 97) such that Next*(n, r)
 59, 61, 67, 76, 98, 108, 109
 5000
 32 - Affects 2 Select 1 common synonym TRUE 
-while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; read r;
+while s; variable v; prog_line s2; if i; procedure p1, p2, p3; stmt n, n1, n2; read r; assign a;
 Select a such that Affects*(a, 97) such that Affects(a, 84)
 58, 70, 73
 5000
@@ -206,7 +206,7 @@ Select <a,c, v> such that Affects*(58, a) such that Follows*(a, c) such that Mod
 42 - Affects 3 Select 1 common synonym ***
 assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
 Select <a,r> such that Affects*(58, a) such that Next*(a, r) such that Next*(r, a)
-84 94, 84 101, 87 94, 87 101, 89 94, 89 101, 90 94, 90 101, 92 94, 92 101, 97 94, 97 101
+87 98, 87 108, 87 109, 89 98, 89 108, 89 109, 90 98, 90 108, 90 109, 92 98, 92 108, 92 109, 97 98, 97 108, 97 109
 5000
 43 - Affects 3 Select 1 common synonym
 assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;

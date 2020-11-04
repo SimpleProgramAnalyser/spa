@@ -26,22 +26,22 @@ template <typename K, typename V>
 using Pair = std::pair<K, V>;
 
 typedef struct {
-    Array<Vector<Integer>, STATEMENT_TYPE_COUNT> byType;
+    Array<Vector<Integer>, StatementTypeCount> byType;
 } StatementNumVectorsByType;
 
 typedef struct {
-    Array<HashSet<Integer>, STATEMENT_TYPE_COUNT> byType;
+    Array<HashSet<Integer>, StatementTypeCount> byType;
 } StatementNumSetsByType;
 
-typedef Array<StatementNumVectorsByType, STATEMENT_TYPE_COUNT> ArrayArrayList;
+typedef Array<StatementNumVectorsByType, StatementTypeCount> ArrayArrayList;
 
-typedef Array<StatementNumSetsByType, STATEMENT_TYPE_COUNT> ArrayArraySet;
+typedef Array<StatementNumSetsByType, StatementTypeCount> ArrayArraySet;
 
 typedef Pair<Integer, StatementType> StatementNumWithType;
 
 template <typename K, typename V>
 using ArrayArrayTupleList
-    = std::array<std::array<std::vector<std::pair<K, V>>, STATEMENT_TYPE_COUNT>, STATEMENT_TYPE_COUNT>;
+    = std::array<std::array<std::vector<std::pair<K, V>>, StatementTypeCount>, StatementTypeCount>;
 
 typedef String ProcedureName;
 

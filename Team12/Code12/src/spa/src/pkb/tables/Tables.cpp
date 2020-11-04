@@ -61,6 +61,9 @@ Vector<ProcedureName> ProcedureTable::getContainingProcedure(StatementNumber sta
      */
     auto lowerBoundIT = firstStmtToProc.upper_bound(statementNumber);
     if (lowerBoundIT == firstStmtToProc.begin()) {
+        if (lowerBoundIT->first == statementNumber) {
+            toReturn.push_back(lowerBoundIT->second);
+        }
         return toReturn;
     } else {
         // decrement pointer so procedure's range contains statementNumber
@@ -110,7 +113,7 @@ Boolean VariableTable::isVariableInProgram(const String& varName)
 void StatementTable::insertIntoStatementTable(Integer stmtNum, StatementType stmtType)
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    assert(stmtType > AnyStatement && stmtType < STATEMENT_TYPE_COUNT && stmtType != CallStatement
+    assert(stmtType > AnyStatement && stmtType < StatementTypeCount && stmtType != CallStatement
            && "Statement type cannot be AnyStatement, CallStatement or STATEMENT_TYPE_COUNT. Use overloaded method for "
               "CallStatement."); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
@@ -212,15 +215,15 @@ Vector<String> StatementTable::getAllProceduresCalled()
 /**
  * Returns the StatementType of statement stmtNum.
  *
- * @param stmtNum   StatementNumber of statement. StatementNumber
- *                  must be valid.
+ * @param stmtNum   StatementNumber of statement. If StatementNumber
+ *                  is not valid, return NonExistentStatement type.
  * @return
  */
 StatementType StatementTable::getStatementType(StatementNumber stmtNum)
 {
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    assert(statementTypes.find(stmtNum) != statementTypes.end());
-
+    if (statementTypes.find(stmtNum) == statementTypes.end()) {
+        return NonExistentStatement;
+    }
     return statementTypes.find(stmtNum)->second;
 }
 

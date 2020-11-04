@@ -1,30 +1,41 @@
+/**
+ * Implementation of Abstract Query, a class that
+ * represents a parsed Program Query Language query.
+ */
+
 #include "AbstractQuery.h"
+
+#include <utility>
 
 /************************/
 /** Constructors        */
 /************************/
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage):
-    Errorable(queryErrorType, errorMessage)
+    Errorable(queryErrorType, std::move(errorMessage)), resultSynonyms(), clauses(), declarationTable(),
+    isToReturnFalseResult(false)
 {}
 
 AbstractQuery::AbstractQuery(QueryErrorType queryErrorType, ErrorMessage errorMessage, Boolean returnFalseResult):
-    isToReturnFalseResult(returnFalseResult), Errorable(queryErrorType, errorMessage)
+    Errorable(queryErrorType, std::move(errorMessage)), resultSynonyms(), clauses(), declarationTable(),
+    isToReturnFalseResult(returnFalseResult)
 {}
 
 AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations):
-    resultSynonyms(std::move(synonyms)), declarationTable(declarations)
+    Errorable(), resultSynonyms(std::move(synonyms)), clauses(), declarationTable(declarations),
+    isToReturnFalseResult(false)
 {}
 
 AbstractQuery::AbstractQuery(ResultSynonymVector synonyms, DeclarationTable& declarations, ClauseVector& clauseVector):
-    resultSynonyms(std::move(synonyms)), clauses(std::move(clauseVector)), declarationTable(declarations)
+    Errorable(), resultSynonyms(std::move(synonyms)), clauses(std::move(clauseVector)), declarationTable(declarations),
+    isToReturnFalseResult(false)
 {}
 
 /*************************/
 /** Instance Methods    */
 /************************/
 
-const Vector<ResultSynonym> AbstractQuery::getSelectedSynonyms() const
+Vector<ResultSynonym> AbstractQuery::getSelectedSynonyms() const
 {
     return resultSynonyms.getSynonyms();
 }
@@ -54,7 +65,7 @@ ErrorMessage AbstractQuery::getErrorMessage() const
     return errorMessage;
 }
 
-Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery)
+Boolean AbstractQuery::operator==(const AbstractQuery& abstractQuery) const
 {
     return this->resultSynonyms == abstractQuery.resultSynonyms && this->clauses == abstractQuery.clauses
            && this->declarationTable == abstractQuery.declarationTable

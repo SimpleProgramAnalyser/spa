@@ -25,11 +25,16 @@ public:
     CfgNode(CfgNode&&) = delete;
     CfgNode& operator=(CfgNode&&) = delete;
 
-    // A method to delete all children of this node.
+    // A method to find all unique children of this node.
     // This method is non-recursive.
-    void deleteAllChildren() const;
+    Vector<CfgNode*> findAllChildren() const;
 
+    // Checks if this CFG is equal to another CFG,
+    // including all accessible children.
     Boolean equals(CfgNode* cfgn, size_t numberOfNodes);
+
+    // Counts the number of unique children of this node.
+    size_t size() const;
 };
 
 #endif // SPA_CFG_TYPES_H

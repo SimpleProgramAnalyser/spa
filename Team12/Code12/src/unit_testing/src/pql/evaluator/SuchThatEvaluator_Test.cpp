@@ -7,9 +7,9 @@
 #include "pkb/PKB.h"
 #include "pql/evaluator/relationships/FollowsEvaluator.h"
 #include "pql/evaluator/relationships/ModifiesEvaluator.h"
-#include "pql/evaluator/relationships/NextEvaluator.h"
 #include "pql/evaluator/relationships/ParentEvaluator.h"
 #include "pql/evaluator/relationships/UsesEvaluator.h"
+#include "pql/evaluator/relationships/next/NextEvaluator.h"
 
 TEST_CASE("Follows clauses are evaluated correctly")
 {
@@ -667,6 +667,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
     declTable.addDeclaration("w", whileDesignEntity);
     declTable.addDeclaration("if", ifDesignEntity);
     ResultsTable resTable(declTable);
+    NextEvaluator evaluator(resTable, new NextEvaluatorFacade());
 
     SECTION("Left integer, right synonym")
     {
@@ -674,7 +675,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("s"),
                                            Vector<String>({"2", "3", "4", "5", "6", "7", "8"}));
         }
@@ -683,7 +684,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(SynonymRefType, "re", readDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"7"}));
         }
 
@@ -691,7 +692,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(SynonymRefType, "pn", printDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
         }
 
@@ -699,7 +700,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(SynonymRefType, "a", assignDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
         }
 
@@ -707,7 +708,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(SynonymRefType, "w", whileDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
         }
 
@@ -715,7 +716,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(SynonymRefType, "ifs", ifDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
         }
     }
@@ -726,7 +727,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
             Reference rightRef(IntegerRefType, "8");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("s"),
                                            Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
         }
@@ -735,7 +736,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "re", readDesignEntity);
             Reference rightRef(IntegerRefType, "8");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"1", "7"}));
         }
 
@@ -743,7 +744,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "pn", printDesignEntity);
             Reference rightRef(IntegerRefType, "8");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
         }
 
@@ -751,7 +752,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "a", assignDesignEntity);
             Reference rightRef(IntegerRefType, "8");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
         }
 
@@ -759,7 +760,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "w", whileDesignEntity);
             Reference rightRef(IntegerRefType, "8");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
         }
 
@@ -767,7 +768,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "ifs", ifDesignEntity);
             Reference rightRef(IntegerRefType, "8");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
         }
 
@@ -775,8 +776,9 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
             Reference rightRef(IntegerRefType, "7");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
-            requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
+            requireVectorsHaveSameElements(resTable.getResultsOne("s"),
+                                           Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
         }
     }
 
@@ -786,7 +788,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(IntegerRefType, "6");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             REQUIRE(resTable.hasResults());
         }
 
@@ -794,7 +796,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "7");
             Reference rightRef(IntegerRefType, "3");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             REQUIRE(!resTable.hasResults());
         }
 
@@ -802,7 +804,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(IntegerRefType, "1");
             Reference rightRef(IntegerRefType, "9");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             REQUIRE(!resTable.hasResults());
         }
     }
@@ -814,7 +816,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(WildcardRefType, "_");
             Reference rightRef(WildcardRefType, "_");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             REQUIRE(resTable.hasResults());
         }
 
@@ -823,7 +825,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(WildcardRefType, "_");
             Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("s"),
                                            Vector<String>({"2", "3", "4", "5", "6", "7", "8"}));
         }
@@ -832,7 +834,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(WildcardRefType, "_");
             Reference rightRef(SynonymRefType, "re", readDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"7"}));
         }
 
@@ -840,7 +842,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(WildcardRefType, "_");
             Reference rightRef(SynonymRefType, "pn", printDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
         }
 
@@ -848,7 +850,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(WildcardRefType, "_");
             Reference rightRef(SynonymRefType, "a", assignDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
         }
 
@@ -856,7 +858,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(WildcardRefType, "_");
             Reference rightRef(SynonymRefType, "w", whileDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
         }
 
@@ -864,7 +866,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(WildcardRefType, "_");
             Reference rightRef(SynonymRefType, "ifs", ifDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
         }
 
@@ -873,7 +875,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
             Reference rightRef(WildcardRefType, "_");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("s"),
                                            Vector<String>({"1", "2", "3", "4", "5", "6", "7", "8"}));
         }
@@ -882,7 +884,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "re", readDesignEntity);
             Reference rightRef(WildcardRefType, "_");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"1", "7"}));
         }
 
@@ -890,7 +892,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "pn", printDesignEntity);
             Reference rightRef(WildcardRefType, "_");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("pn"), Vector<String>({"2"}));
         }
 
@@ -898,7 +900,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "a", assignDesignEntity);
             Reference rightRef(WildcardRefType, "_");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
         }
 
@@ -906,7 +908,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "w", whileDesignEntity);
             Reference rightRef(WildcardRefType, "_");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("w"), Vector<String>({"6"}));
         }
 
@@ -914,7 +916,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "ifs", ifDesignEntity);
             Reference rightRef(WildcardRefType, "_");
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("ifs"), Vector<String>({"3"}));
         }
 
@@ -923,7 +925,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "re", readDesignEntity);
             Reference rightRef(SynonymRefType, "a", assignDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("re"), Vector<String>({"1", "7"}));
             requireVectorsHaveSameElements(resTable.getResultsOne("a"), Vector<String>({"4", "5", "8"}));
             requireVectorsHaveSameElements(
@@ -935,7 +937,7 @@ TEST_CASE("Next* clauses are evaluated correctly")
         {
             Reference leftRef(SynonymRefType, "s", stmtDesignEntity);
             Reference rightRef(SynonymRefType, "s", stmtDesignEntity);
-            NextEvaluator(resTable).evaluateNextStarClause(leftRef, rightRef);
+            evaluator.evaluateNextStarClause(leftRef, rightRef);
             requireVectorsHaveSameElements(resTable.getResultsOne("s"), Vector<String>({"6", "7", "8"}));
         }
     }

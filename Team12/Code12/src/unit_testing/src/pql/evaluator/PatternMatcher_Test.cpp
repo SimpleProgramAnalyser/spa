@@ -3,7 +3,7 @@
  * clauses in Query Evaluator.
  */
 #include "../../ast_utils/AstUtils.h"
-#include "../parser/AbstractQueryBuilder.h"
+#include "../preprocessor/AbstractQueryBuilder.h"
 #include "EvaluatorTestingUtils.h"
 #include "ast/AstLibrary.h"
 #include "catch.hpp"

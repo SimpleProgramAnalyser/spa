@@ -1,3 +1,8 @@
+/**
+ * Implementation of an abstract representation of
+ * a Program Query Language query such that clause.
+ */
+
 #include "SuchThatClause.h"
 
 /************************/
@@ -38,7 +43,7 @@ Clause* SuchThatClause::createSuchThatClause(const String& clauseConstraint, Dec
 
     Relationship relationship = Relationship::createRelationship(relRefType, leftReference, rightReference);
     if (relationship.isInvalid()) {
-        return new Clause(SuchThatClauseType, QuerySemanticsError, relationship.getErrorMessage());
+        return new Clause(SuchThatClauseType, relationship.getErrorType(), relationship.getErrorMessage());
     }
 
     return new SuchThatClause(relationship);

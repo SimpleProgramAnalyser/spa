@@ -5,12 +5,12 @@
  * (In this series of tests, we mainly focus on the
  * Autotester format (instead of the UI format).)
  */
-
-#include "../../unit_testing/src/ast_utils/AstUtils.h"
-#include "Utils.h"
 #include "catch.hpp"
+#include "Utils.h"
 #include "pkb/PKB.h"
 #include "pql/PqlManager.h"
+#include "../../unit_testing/src/cfg_utils/CfgUtils.h"
+#include "../../unit_testing/src/ast_utils/AstUtils.h"
 
 TEST_CASE("syntatically invalid query")
 {
@@ -3227,5 +3227,244 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
 
     // === Check expected test results ===
     // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("Query selecting attributes should not return duplicates - Print # VariableName;;")
+{
+    resetPKB();
+    String varName = "aprendoEspanol";
+    String procName = "aprendesEspanol";
+    Vector<String> varNames1({varName});
+    Vector<String> varNames2({varName});
+    insertIntoVariableTable(varName);
+    insertIntoProcedureTable(procName, 1, 2);
+    insertIntoStatementTable(1, PrintStatement);
+    insertIntoStatementTable(2, PrintStatement);
+    addUsesRelationships(1, PrintStatement, varNames1);
+    addUsesRelationships(2, PrintStatement, varNames2);
+
+    String query = "print pn; Select pn.varName";
+    QueryResultFormatType format = AutotesterFormat;
+    UiStub ui;
+    FormattedQueryResult actual = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult expected("aprendoEspanol");
+    REQUIRE(actual == expected);
+
+    String query2 = "print pn; procedure p; Select <pn.varName, p>";
+    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui);
+    FormattedQueryResult expected2("aprendoEspanol aprendesEspanol");
+    REQUIRE(actual2 == expected2);
+
+    String query3 = "print pn; variable v; procedure p; Select <pn.varName, v, p>";
+    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui);
+    FormattedQueryResult expected3("aprendoEspanol aprendoEspanol aprendesEspanol");
+    REQUIRE(actual3 == expected3);
+}
+
+TEST_CASE("Query selecting attributes should not return duplicates - Read # VariableName;;")
+{
+    resetPKB();
+    String varName = "aprendamosEspanol";
+    String procName = "aprendeisEspanol";
+    Vector<String> varNames1({varName});
+    Vector<String> varNames2({varName});
+    insertIntoVariableTable(varName);
+    insertIntoProcedureTable(procName, 1, 2);
+    insertIntoStatementTable(1, ReadStatement);
+    insertIntoStatementTable(2, ReadStatement);
+    addModifiesRelationships(1, ReadStatement, varNames1);
+    addModifiesRelationships(2, ReadStatement, varNames2);
+
+    UiStub ui;
+    QueryResultFormatType format = AutotesterFormat;
+    String query1 = "read r; Select r.varName";
+    FormattedQueryResult actual1 = PqlManager::executeQuery(query1, format, ui);
+    FormattedQueryResult expected1("aprendamosEspanol");
+    REQUIRE(actual1 == expected1);
+
+    String query2 = "read r; variable v; Select <r.varName, v>";
+    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui);
+    FormattedQueryResult expected2("aprendamosEspanol aprendamosEspanol");
+    REQUIRE(actual2 == expected2);
+
+    String query3 = "read r; variable v; procedure p; Select <r.varName, v, p>";
+    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui);
+    FormattedQueryResult expected3("aprendamosEspanol aprendamosEspanol aprendeisEspanol");
+    REQUIRE(actual3 == expected3);
+}
+
+TEST_CASE("Query selecting attributes should not return duplicates - Call # ProcedureName;;")
+{
+    resetPKB();
+    String procName1 = "porLaMananaAprendenEspanol";
+    String procName2 = "porLaNocheAprendenEspanol";
+    String varName = "porLaTardeAprendeEspanol";
+    insertIntoVariableTable(varName);
+    insertIntoStatementTable(1, procName1);
+    insertIntoStatementTable(2, procName1);
+    insertIntoProcedureTable(procName2, 1, 2);
+
+    String query1 = "call cl; Select cl.procName";
+    QueryResultFormatType format = AutotesterFormat;
+    UiStub ui;
+    FormattedQueryResult actual1 = PqlManager::executeQuery(query1, format, ui);
+    FormattedQueryResult expected1("porLaMananaAprendenEspanol");
+    REQUIRE(actual1 == expected1);
+
+    String query2 = "call cl; variable v; Select <cl.procName, v>";
+    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui);
+    FormattedQueryResult expected2("porLaMananaAprendenEspanol porLaTardeAprendeEspanol");
+    REQUIRE(actual2 == expected2);
+
+    String query3 = "call cl; variable v; procedure p; Select <cl.procName, v, p>";
+    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui);
+    FormattedQueryResult expected3("porLaMananaAprendenEspanol porLaTardeAprendeEspanol porLaNocheAprendenEspanol");
+    REQUIRE(actual3 == expected3);
+}
+
+TEST_CASE("(vacuously true) query with such that Next clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; Select s such that Next(2,s1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, "CallStatement");
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addNextRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+
+    UiStub ui;
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+    // === Check expected test results ===
+    // REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Next* clause, left operand line number, right operand synonym")
+{
+    // === Test set-up ===
+    String query = "stmt s, s1; Select s such that Next*(2,s1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(3, AssignmentStatement);
+    insertIntoStatementTable(4, "CallStatement");
+    insertIntoStatementTable(5, IfStatement);
+    insertIntoStatementTable(6, PrintStatement);
+    insertIntoStatementTable(7, ReadStatement);
+    insertIntoStatementTable(8, WhileStatement);
+
+    addNextRelationships(2, AssignmentStatement, 3, AssignmentStatement);
+
+    UiStub ui;
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+
+    // === Expected test results ===
+    String expectedResultsStr = "3, 4, 5, 6, 7, 8";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+    // === Check expected test results ===
+    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Affects clause, left operand line number, right operand line number")
+{
+    // === Test set-up ===
+    String query = "assign a, a1; Select a such that Affects(4,a1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(4, AssignmentStatement);
+    insertIntoStatementTable(5, AssignmentStatement);
+
+    addNextRelationships(4, AssignmentStatement, 5, AssignmentStatement);
+
+    Vector<String> varNames;
+
+    String varName1 = "sum";
+
+    varNames.push_back(varName1);
+
+    addModifiesRelationships(4, AssignmentStatement, varNames);
+    addModifiesRelationships(5, AssignmentStatement, varNames);
+    addUsesRelationships(5, AssignmentStatement, varNames);
+
+    CfgNode* rootNodeToAssign = getProgram1Cfg_compute().first;
+    storeCFG(rootNodeToAssign, "compute");
+
+    UiStub ui;
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+
+    // === Expected test results ===
+    String expectedResultsStr = "4, 5";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+    // === Check expected test results ===
+    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
+    REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
+}
+
+TEST_CASE("(vacuously true) query with such that Affects* clause, left operand line number, right operand line number")
+{
+    // === Test set-up ===
+    String query = "assign a, a1; Select a such that Affects*(4,a1)";
+
+    QueryResultFormatType format = AutotesterFormat;
+
+    // Call PKB API to add some dummy relationships
+    resetPKB();
+    insertIntoStatementTable(4, AssignmentStatement);
+    insertIntoStatementTable(5, AssignmentStatement);
+
+    addNextRelationships(4, AssignmentStatement, 5, AssignmentStatement);
+
+    Vector<String> varNames;
+
+    String varName1 = "sum";
+
+    varNames.push_back(varName1);
+
+    addModifiesRelationships(4, AssignmentStatement, varNames);
+    addUsesRelationships(5, AssignmentStatement, varNames);
+    addModifiesRelationships(5, AssignmentStatement, varNames);
+
+    CfgNode* rootNodeToAssign = getProgram1Cfg_compute().first;
+    storeCFG(rootNodeToAssign, "compute");
+
+    UiStub ui;
+
+    // === Execute test method ===
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+
+    // === Expected test results ===
+    String expectedResultsStr = "4, 5";
+    FormattedQueryResult expectedFormattedQueryResults(expectedResultsStr);
+
+    // === Check expected test results ===
+    REQUIRE(formattedQueryResult.getResults() == expectedResultsStr);
     REQUIRE(formattedQueryResult == expectedFormattedQueryResults);
 }
