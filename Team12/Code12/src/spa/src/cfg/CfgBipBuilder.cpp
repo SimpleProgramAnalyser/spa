@@ -174,7 +174,14 @@ CfgNode* buildCfgBipWithNode(const CfgNode* cfgNode, std::unordered_map<Name, Cf
                                     currentProcName, visitedCfgProcedure, procNameOfRootNode);
             }
         }
+
+        // Adds the CfgBip join node to If/else nodes of the If Statement
+        // The CfgBip join node will be the CFGBip equivalent of the CFG's dummy node
+        if (stmtList->at(0)->getStatementType() == IfStatement) {
+            newCfgBipNode->ifJoinNode = visitedMap->at(currentProcName).at(currentChild->ifJoinNode->nodeNumber);
+        }
     }
+
     return returnedCfgBipNode;
 }
 /**

@@ -17,8 +17,9 @@ public:
     Vector<StatementNode*>* statementNodes;
     Vector<CfgNode*>* childrenNodes;
     size_t nodeNumber;
+    CfgNode* ifJoinNode;
 
-    CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber);
+    CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber, CfgNode* joinNode);
     ~CfgNode();
     CfgNode(const CfgNode&) = delete;
     CfgNode& operator=(const CfgNode&) = delete;

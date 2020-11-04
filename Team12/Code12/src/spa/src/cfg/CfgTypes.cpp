@@ -11,14 +11,15 @@
 
 #include "Util.h"
 
-CfgNode::CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber):
-    statementNodes(statements), childrenNodes(children), nodeNumber(cfgNodeNumber)
+CfgNode::CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber, CfgNode* joinNode):
+    statementNodes(statements), childrenNodes(children), nodeNumber(cfgNodeNumber), ifJoinNode(joinNode)
 {}
 
 CfgNode::~CfgNode()
 {
     delete statementNodes;
     delete childrenNodes;
+    delete ifJoinNode;
 }
 
 /**
