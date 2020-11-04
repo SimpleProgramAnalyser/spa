@@ -156,8 +156,8 @@ CfgNode* buildCfgBipWithNode(const CfgNode* cfgNode, std::unordered_map<Name, Cf
                 returnedCfgBipNode->childrenNodes->push_back(childNodeCfgBipPointer);
             }
 
-            //Assign the return node as the CFGBip equivalent of the last node 
-            // in the CFG of the current procedure 
+            // Assign the return node as the CFGBip equivalent of the last node
+            // in the CFG of the current procedure
             size_t sizeOfCfgOfCurrentProcedure = visitedMap->at(currentProcName).size();
             returnedCfgBipNode = visitedMap->at(currentProcName).at(sizeOfCfgOfCurrentProcedure - 1);
         } else {
