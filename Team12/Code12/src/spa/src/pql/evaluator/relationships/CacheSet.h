@@ -53,6 +53,14 @@ public:
      */
     ClauseResult toClauseResult() const;
 
+    /**
+     * Converts the encapsulated set into a
+     * Vector of Statement Numbers (integers).
+     *
+     * @return Vector of Integers.
+     */
+    Vector<Integer> toVector() const;
+
     // Checks if StatementNumber is already cached
     Boolean isCached(StatementNumber stmtNum) const;
 

@@ -61,6 +61,9 @@ Vector<ProcedureName> ProcedureTable::getContainingProcedure(StatementNumber sta
      */
     auto lowerBoundIT = firstStmtToProc.lower_bound(statementNumber);
     if (lowerBoundIT == firstStmtToProc.begin()) {
+        if (lowerBoundIT->first == statementNumber) {
+            toReturn.push_back(lowerBoundIT->second);
+        }
         return toReturn;
     } else {
         // decrement pointer so procedure's range contains statementNumber
