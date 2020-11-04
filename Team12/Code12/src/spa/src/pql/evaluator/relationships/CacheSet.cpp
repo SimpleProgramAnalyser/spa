@@ -41,20 +41,20 @@ Boolean CacheSet::isCached(StatementNumber stmtNum) const
     return set.find(stmtNum) != set.end();
 }
 
-ClauseResult CacheSet::filterStatementType(StatementType stmtType) const
+CacheSet CacheSet::filterStatementType(StatementType stmtType) const
 {
     if (stmtType == AnyStatement) {
-        return this->toClauseResult();
+        return *this;
     }
 
-    ClauseResult filteredStrList;
+    CacheSet filteredCacheSet;
     for (StatementNumber i : set) {
         StatementType currentType = getStatementType(i);
         if (currentType == stmtType) {
-            filteredStrList.push_back(std::to_string(i));
+            filteredCacheSet.insert(i);
         }
     }
-    return filteredStrList;
+    return filteredCacheSet;
 }
 
 Vector<StatementNumber> CacheSet::toList() const
@@ -69,4 +69,9 @@ Vector<StatementNumber> CacheSet::toList() const
 Boolean CacheSet::empty() const
 {
     return set.empty();
+}
+
+size_t CacheSet::size() const
+{
+    return set.size();
 }

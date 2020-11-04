@@ -60,7 +60,11 @@ Vector<ProcedureName> ProcedureTable::getContainingProcedure(StatementNumber sta
      * hence we declare the call invalid if begin() iterator is found.
      */
     auto lowerBoundIT = firstStmtToProc.lower_bound(statementNumber);
-    if (lowerBoundIT == firstStmtToProc.begin()) {
+
+    if (lowerBoundIT->first == statementNumber) {
+        toReturn.push_back(lowerBoundIT->second);
+        return toReturn;
+    } else if (lowerBoundIT == firstStmtToProc.begin()) {
         return toReturn;
     } else {
         // decrement pointer so procedure's range contains statementNumber

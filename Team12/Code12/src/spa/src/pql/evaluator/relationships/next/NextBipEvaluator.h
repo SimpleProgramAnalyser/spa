@@ -5,6 +5,7 @@
 #ifndef SPA_PQL_NEXT_BIP_EVALUATOR_H
 #define SPA_PQL_NEXT_BIP_EVALUATOR_H
 
+#include "NextBipFacade.h"
 #include "NextEvaluator.h"
 
 class NextBipEvaluator: public NextEvaluator {
@@ -34,6 +35,19 @@ public:
      *               of the lifetime of the parent NextBipEvaluator).
      */
     explicit NextBipEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade);
+
+    /**
+     * Filters out invalid transitive closure NextBip* relationships.
+     *
+     * @param procName  ProcedureName of the containing procedure
+     *                  known reference.
+     * @param isCaller  True if known reference's containing
+     *                  procedure is the caller.
+     * @param list      Original list of NextBip* results with
+     *                  transitive closure.
+     */
+    Vector<StatementNumber> filterValidResults(ProcedureName procName, Boolean isCaller,
+                                                                 Vector<StatementNumber> list);
 };
 
 #endif // SPA_PQL_NEXT_BIP_EVALUATOR_H

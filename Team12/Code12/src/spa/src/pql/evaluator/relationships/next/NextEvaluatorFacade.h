@@ -10,7 +10,11 @@
 #ifndef SPA_PQL_NEXT_EVALUATOR_FACADE_H
 #define SPA_PQL_NEXT_EVALUATOR_FACADE_H
 
+#include <cfg/CfgTypes.h>
+#include <pkb/PkbTypes.h>
+
 #include "Types.h"
+#include "ast/AstTypes.h"
 
 class NextEvaluatorFacade {
 public:
@@ -104,6 +108,17 @@ public:
      * @param next Next statement that occurs in the Control Flow.
      */
     virtual Boolean isNext(Integer prev, Integer next);
+
+    /**
+     * Returns true if the first Procedure has a Calls* relationship
+     * with the second Procedure.
+     */
+    virtual Boolean checksIfCallsStarHolds(ProcedureName p1, ProcedureName p2);
+
+    /**
+     * Returns the containing Procedure of the given statement.
+     */
+    virtual ProcedureName getProcedureOfStmt(StatementNumber stmtNum);
 };
 
 #endif // SPA_PQL_NEXT_EVALUATOR_FACADE_H
