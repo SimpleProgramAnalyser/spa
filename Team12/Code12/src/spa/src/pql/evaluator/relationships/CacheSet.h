@@ -78,7 +78,6 @@ public:
 
     // Removes the given StatementNumber
     void remove(StatementNumber stmtNumToRemove);
-
 };
 
 #endif // SPA_PQL_CACHE_SET_H

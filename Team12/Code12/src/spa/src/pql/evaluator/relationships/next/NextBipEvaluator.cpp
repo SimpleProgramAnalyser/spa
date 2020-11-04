@@ -81,8 +81,7 @@ Void NextBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference
 
     DesignEntityType rightSynonymType
         = rightRef.isWildCard() ? StmtType : resultsTable.getTypeOfSynonym(rightRef.getValue());
-    ClauseResult filteredResults
-        = results.filterStatementType(mapToStatementType(rightSynonymType)).toClauseResult();
+    ClauseResult filteredResults = results.filterStatementType(mapToStatementType(rightSynonymType)).toClauseResult();
     resultsTable.storeResultsOne(rightRef, filteredResults);
 }
 
