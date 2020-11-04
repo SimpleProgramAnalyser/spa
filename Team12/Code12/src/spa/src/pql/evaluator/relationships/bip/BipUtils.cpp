@@ -39,28 +39,33 @@ std::size_t StatementPositionHasher::operator()(const StatementPositionInCfg& sp
                + (hashedPointer / 4)));
 }
 
-StatementPositionInCfg findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
-                                             std::unordered_set<CfgNode*>& visitedCfgNodes)
+StatementPositionInCfg
+findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
+                      std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedCfgPositions)
 {
     CfgNode* startingNode = startingPosition.getNodePosition();
     Integer startingIndex = startingPosition.getStatementIndex();
 
     // if visited before, we could not find the statementToFind here
-    if (visitedCfgNodes.find(startingNode) != visitedCfgNodes.end()) {
+    if (visitedCfgPositions.find(startingPosition) != visitedCfgPositions.end()) {
         return {nullptr, -1};
     }
+    visitedCfgPositions.insert(startingPosition);
 
     // first, try to search the untraversed statements
     Integer maxLength = startingNode->statementNodes->size();
     for (Integer i = startingIndex + 1; i < maxLength; i++) {
         if (startingNode->statementNodes->at(i)->getStatementNumber() == statementToFind) {
             return {startingNode, i};
+        } else {
+            visitedCfgPositions.insert({startingNode, i});
         }
     }
 
     // else, search the children recursively
     for (CfgNode* child : *startingNode->childrenNodes) {
-        StatementPositionInCfg resultsFromChild = findCorrespondingNode({child, -1}, statementToFind, visitedCfgNodes);
+        StatementPositionInCfg resultsFromChild
+            = findCorrespondingNode({child, -1}, statementToFind, visitedCfgPositions);
         if (resultsFromChild.getNodePosition() != nullptr) {
             return resultsFromChild;
         }
@@ -89,7 +94,7 @@ Vector<StatementPositionInCfg> findAllCorrespondingPositions(Integer statementTo
         if (startingNode == nullptr) {
             continue;
         }
-        std::unordered_set<CfgNode*> uniqueStatementsVisited;
+        std::unordered_set<StatementPositionInCfg, StatementPositionHasher> uniqueStatementsVisited;
         StatementPositionInCfg positionInProcedure
             = findCorrespondingNode({startingNode, -1}, statementToFind, uniqueStatementsVisited);
         if (positionInProcedure.getNodePosition() != nullptr) {

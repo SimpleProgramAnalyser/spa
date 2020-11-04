@@ -69,16 +69,17 @@ public:
  *                         the index to begin searching the AST
  *                         statement nodes of the CFG starting node.
  * @param statement The statement to be found.
- * @param visitedCfgNodes The set of visitedCfgNodes, to prevent
- *                        infinite recursion over a while loop.
+ * @param visitedCfgPositions The set of visitedCfgPositions, to prevent
+ *                            infinite recursion over a while loop.
  *
  * @return Pair of pointer to the CFG node with the index
  *         of the statement in the CFG, if found.
  *         Otherwise, if not found, nullptr and -1.
  *         The pair is represented as a StatementPosition.
  */
-StatementPositionInCfg findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
-                                             std::unordered_set<CfgNode*>& visitedCfgNodes);
+StatementPositionInCfg
+findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
+                      std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedCfgPositions);
 
 /**
  * Given a statement number, find all positions of that
