@@ -32,6 +32,7 @@ public:
 
     // group/clause operations
     int addGroup();
+    int getNoSynonymGroupIndex();
     void mergeAndRemoveGroup(int groupToRemove, int groupToMergeInto);
     void swapGroups(int groupIndex1, int groupIndex2);
     void swapClauseWithinGroup(int groupIndex, int clause1, int clause2);
@@ -51,6 +52,7 @@ private:
     // each clause is represented as a integer, its position in the List<Clause> from the original
     Vector<Vector<Integer>> listOfGroups;
     const AbstractQuery& abstractQuery;
+    int noSynonymGroup = -1;
 };
 
 #endif // SPA_PQL_GROUPED_CLAUSES_H

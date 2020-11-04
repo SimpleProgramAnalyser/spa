@@ -59,26 +59,23 @@ Vector<ProcedureName> ProcedureTable::getContainingProcedure(StatementNumber sta
      * lower bound will return iterator to 15, but it is the procedure that contains 8-14 that we want to consider.
      * hence we declare the call invalid if begin() iterator is found.
      */
-    auto lowerBoundIT = firstStmtToProc.upper_bound(statementNumber);
-    if (lowerBoundIT == firstStmtToProc.begin()) {
-        if (lowerBoundIT->first == statementNumber) {
-            toReturn.push_back(lowerBoundIT->second);
-        }
+    auto upperBoundIT = firstStmtToProc.upper_bound(statementNumber);
+    if (upperBoundIT == firstStmtToProc.begin()) {
         return toReturn;
     } else {
         // decrement pointer so procedure's range contains statementNumber
-        lowerBoundIT--;
+        upperBoundIT--;
         /**
          * Here, we just check if the statement number is in the range, for the cases where statement number given is
          * more than even that contained by the last procedure.
          */
-        StatementNumberRange range = procNameStmtRangeMap[lowerBoundIT->second];
+        StatementNumberRange range = procNameStmtRangeMap[upperBoundIT->second];
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         assert(range.first <= statementNumber && "Should have been filtered out by begin()");
         if (range.last < statementNumber) { // illegal
             return toReturn;
         }
-        toReturn.push_back(lowerBoundIT->second);
+        toReturn.push_back(upperBoundIT->second);
         return toReturn;
     }
 }

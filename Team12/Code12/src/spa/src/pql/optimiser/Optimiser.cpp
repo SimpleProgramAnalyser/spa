@@ -44,10 +44,10 @@ Void substituteSuchThat(SuchThatClause* suchThatClause, const Reference& target,
     auto leftRef = suchThatClause->getRelationship().getLeftRef();
     auto rightRef = suchThatClause->getRelationship().getRightRef();
     if (leftRef.getValue() == target.getValue()) {
-        suchThatClause->getRelationship().setLeftRef(value);
+        suchThatClause->getRelationshipUnsafe().setLeftRef(value);
     }
     if (rightRef.getValue() == target.getValue()) {
-        suchThatClause->getRelationship().setRightRef(value);
+        suchThatClause->getRelationshipUnsafe().setRightRef(value);
     }
 }
 
@@ -63,9 +63,13 @@ Void substituteWith(WithClause* withClause, const Reference& target, const Refer
     }
 }
 
-Void substituteClauseList(List<Clause>& clauseList, const Reference& target, const Reference& value)
+Void substituteClauseList(List<Clause>& clauseList, const Reference& target, const Reference& value, int current)
 {
-    for (auto& clause : clauseList) {
+    for (auto it = clauseList.begin(); it != clauseList.end(); it++) {
+        // do not substitute the clause which induced this substitution
+        if (it == clauseList.begin() + current)
+            continue;
+        auto& clause = *it;
         switch (clause->getType()) {
         case SuchThatClauseType: {
             // NOLINTNEXTLINE
@@ -100,17 +104,21 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
      * 2. One side is identifier, eg v.varName = "hello"
      */
     List<Clause>& clauseList = abstractQuery.getClausesUnsafe().getAllUnsafe();
-    for (auto& clause : clauseList) {
+    //    std::unordered_set<int> toRemove;
+    for (int i = 0; i < clauseList.size(); i++) {
+        Clause* clause = clauseList[i].get();
         switch (clause->getType()) {
         case WithClauseType: {
             // NOLINTNEXTLINE
-            WithClause* withClause = static_cast<WithClause*>(clause.get());
+            WithClause* withClause = static_cast<WithClause*>(clause);
             auto leftRef = withClause->getLeftReference();
             auto rightRef = withClause->getRightReference();
             if (isValue(leftRef) && hasSynonym(rightRef)) {
-                substituteClauseList(clauseList, rightRef, leftRef);
+                substituteClauseList(clauseList, rightRef, leftRef, i);
+                //                toRemove.insert(i);
             } else if (isValue(rightRef) && hasSynonym(leftRef)) {
-                substituteClauseList(clauseList, leftRef, rightRef);
+                substituteClauseList(clauseList, leftRef, rightRef, i);
+                //                toRemove.insert(i);
             }
             break;
         }
@@ -118,6 +126,22 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
             break;
         }
     }
+
+    //    // remove the with clauses which substitutions stem from
+    //    Vector<Clause*> clauses;
+    //    for (int i=0; i<clauseList.size(); i++) {
+    //        // if it is not in toRemove, save it into a vector
+    //        if (!toRemove.count(i)) {
+    //            clauses.push_back(clauseList[i].release());
+    //        }
+    //    }
+    //    // create a new ClauseVector objectj
+    //    ClauseVector newClauseVector;
+    //    for (Clause* clause : clauses) {
+    //        newClauseVector.add(clause);
+    //    }
+    //    // replace old ClauseVector object
+    //    abstractQuery.setClauses(newClauseVector);
 }
 
 /**
@@ -163,12 +187,13 @@ Void groupNoSynonym(GroupedClauses& groupedClauses)
 {
     int originalGroup = 0;
     // add all the non-synonym clauses to a group.
-    int noSynonymGroup = groupedClauses.addGroup();
+    int noSynonymGroup = groupedClauses.getNoSynonymGroupIndex();
     // check the main group for non-synonym clauses, move it into the noSynonymGroup (usually 1).
     int clauseIndex = 0;
     while (clauseIndex < groupedClauses.groupSize(originalGroup)) {
-        // if has synonym, remove and don't increment
-        if (hasSynonym(groupedClauses.getClause(originalGroup, clauseIndex))) {
+        // if has NO synonym, remove and don't increment
+        bool clauseHasSynonym = hasSynonym(groupedClauses.getClause(originalGroup, clauseIndex));
+        if (!clauseHasSynonym) {
             groupedClauses.moveClauseAcrossGroup(originalGroup, clauseIndex, noSynonymGroup,
                                                  groupedClauses.groupSize(noSynonymGroup));
         } else {
@@ -227,13 +252,13 @@ std::unordered_map<int, int> BFS(Vector<int> nodes, std::map<Integer, std::set<I
     if (nodes.empty()) { // no need to BFS if nothing to BFS
         return visited;
     }
-    int seed = nodes[0];
-    while (seed < nodes.size()) {
-        if (visited[seed] != UNVISITED) { // visited, skip
-            seed++;
+    auto it = nodes.begin();
+    while (it != nodes.end()) {
+        if (visited[*it] != UNVISITED) { // visited, skip
+            it++;
             continue;
         }
-        toVisit.push(seed);
+        toVisit.push(*it);
         while (!toVisit.empty()) {
             // visit the node in the queue
             int curr = toVisit.front();
@@ -265,8 +290,8 @@ Void groupRest(GroupedClauses& groupedClauses)
     const int groupIndex = 0;
     auto nodes = groupedClauses.getGroup(groupIndex);
 
-    // if there are no nodes, no need to group
-    if (nodes.empty())
+    // if there are no nodes or only one node, no need to group
+    if (nodes.size() <= 1)
         return;
 
     std::map<Integer, std::set<Integer>> adjList = createAdjacencyList(groupedClauses, groupIndex);

@@ -58,6 +58,11 @@ Relationship SuchThatClause::getRelationship()
     return relationship;
 }
 
+Relationship& SuchThatClause::getRelationshipUnsafe()
+{
+    return relationship;
+}
+
 Boolean SuchThatClause::operator==(const SuchThatClause& suchThatClause)
 {
     return this->relationship == suchThatClause.relationship;

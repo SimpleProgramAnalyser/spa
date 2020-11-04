@@ -108,8 +108,8 @@ std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, ui
         }
     }
     // Update DP Table
-    dp[currentNode].weight = minWeight;
-    dp[currentNode].next = minWeightNode;
+    dp[nodesLeft].weight = minWeight;
+    dp[nodesLeft].next = minWeightNode;
 
     // return the minimum
     return std::make_pair(bestQueue, minWeight);
@@ -230,22 +230,28 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
         // Instead of just DPing, we provide sensible starting points - start from the nodes where
         // weight is lowest.
         auto lowestIT = weightNodes.equal_range(minWeight);
-        // nodesLeft is 1111111 as many 1s as groupSize.
-        uint nodesLeft = ((uint)1 << groupSize) - 1;
         // take minimum across all starting points
         Arrangement arr;
         uint minCost = INF;
         for (auto it = lowestIT.first; it != lowestIT.second; it++) {
+            // nodesLeft is 1111111 as many 1s as groupSize, taken away the current node (which is it->second)
             uint currentNode = it->second;
-            nodesLeft = markVisited(nodesLeft, it->second);
+            // DO NOT SWAP THE TWO LINES BELOW. updateReachableBitmap assumes the currentNode is marked as visited
+            uint nodesLeft = markVisited(((uint)1 << groupSize) - 1, currentNode);
             uint nodesReachable = updateReachableBitmap(nodesLeft, currentNode, 0);
-            arr.push(it->second);
-            auto results = arrange(nodesLeft, nodesReachable, groupSize - 1, it->second, it->first * groupSize, arr);
+            Arrangement currentArr;
+            currentArr.push(it->second);
+            auto results
+                = arrange(nodesLeft, nodesReachable, groupSize - 1, it->second, it->first * groupSize, currentArr);
             if (results.second < minCost) {
                 minCost = results.second;
-                arr = results.first;
+                arr = std::move(results.first);
             }
         }
         groupedClauses.applyArrangementToGroup(arr, i);
     }
+    // TODO: Move global variables into scope so they will be deleted automatically.
+    dp.clear();
+    weights.clear();
+    adj.clear();
 }

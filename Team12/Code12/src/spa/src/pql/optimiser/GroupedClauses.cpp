@@ -29,6 +29,18 @@ int GroupedClauses::addGroup()
 }
 
 /**
+ * Add an empty group to the end of the list of GroupedClauses, and mark it as the noSynonymGroup
+ */
+int GroupedClauses::getNoSynonymGroupIndex()
+{
+    if (noSynonymGroup == -1) {
+        listOfGroups.emplace_back();
+        noSynonymGroup = listOfGroups.size() - 1;
+    }
+    return noSynonymGroup;
+}
+
+/**
  * Move a clause from a group to another.
  *
  * @param originalGroupIndex
@@ -53,11 +65,31 @@ void GroupedClauses::moveClauseAcrossGroup(int originalGroupIndex, int originalI
  */
 void GroupedClauses::mergeAndRemoveGroup(int groupToRemove, int groupToMergeInto)
 {
+    // merging a group into itself has no effects whatsoever.
+    if (groupToMergeInto == groupToRemove) {
+        return;
+    }
+
     // push all clauses into the target group
     listOfGroups[groupToMergeInto].insert(listOfGroups[groupToMergeInto].end(), listOfGroups[groupToRemove].begin(),
                                           listOfGroups[groupToRemove].end());
     // and remove the copied group
     listOfGroups.erase(listOfGroups.begin() + groupToRemove);
+
+    // Adjust noSynonymGroup if it is merged/deleted
+    if (groupToRemove == noSynonymGroup || groupToMergeInto == noSynonymGroup) {
+        // naively noSynonymGroup should end up groupToMergeInto, but is actually
+        // groupToMergeInto - 1 if groupToRemove is BEFORE groupToMergeInto
+        noSynonymGroup = groupToMergeInto;
+        if (groupToRemove < groupToMergeInto) {
+            noSynonymGroup--;
+        }
+    } else {
+        // need to shift back by one if a group is removed before it.
+        if (groupToRemove < noSynonymGroup) {
+            noSynonymGroup--;
+        }
+    }
 }
 
 /**
@@ -262,7 +294,7 @@ void GroupedClauses::sortGroups()
     std::sort(indexList.begin(), indexList.end(), [this](int a, int b) { return compareGroups(a, b, this); });
 
     // apply permutation
-    Vector<Vector<Integer>> newListOfGroups(listOfGroups.size());
+    Vector<Vector<Integer>> newListOfGroups;
     for (int i = 0; i < listOfGroups.size(); i++) {
         newListOfGroups.push_back(listOfGroups[indexList[i]]);
     }
