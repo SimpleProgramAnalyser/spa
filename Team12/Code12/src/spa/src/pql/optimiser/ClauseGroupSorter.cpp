@@ -2,6 +2,7 @@
 
 #include <map>
 #include <set>
+#include <stdexcept>
 
 #include "GroupedClauses.h"
 #include "OptimiserUtils.h"
@@ -73,8 +74,8 @@ Arrangement constructQueue(Arrangement currArrangement, bitmap nodesLeft)
 // an arrangement is a permutation of the n nodes.
 // this DP aims to MINIMIZE i * weights(p_i) where p_1, p_2, ... ,p_n represent the permutation
 // arrangementQueue is GREEDY: it contains the currentNode when called.
-std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, uint multiplier, uint currentNode,
-                                     uint currentWeight, const Arrangement& arrangementQueue)
+std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, uint multiplier, uint currentWeight,
+                                     const Arrangement& arrangementQueue)
 {
     // Base case: no more node to visit
     if (nodesLeft == 0) {
@@ -99,8 +100,8 @@ std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, ui
         bitmap currReachable = updateReachableBitmap(nodesLeft, reachable, nodesReachable);
         Arrangement currQueue(arrangementQueue);
         currQueue.push(reachable);
-        auto result = arrange(currNodesLeft, currReachable, multiplier - 1, reachable,
-                              currentWeight + weights[reachable], currQueue);
+        auto result
+            = arrange(currNodesLeft, currReachable, multiplier - 1, currentWeight + weights[reachable], currQueue);
         if (result.second < minWeight) {
             minWeight = std::min(minWeight, result.second);
             minWeightNode = reachable;
@@ -118,7 +119,8 @@ std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, ui
 // weights of a clause is the estimated time it takes to evaluate.
 uint getWeight(Clause* clause)
 {
-    const uint SYNONYM_COUNT_MULTIPLIER = 100, WITH = 0, FOLLOWS_MODIFIES = 2, PATTERN_REST = 4, AFFECTS = 100;
+    const uint SYNONYM_COUNT_MULTIPLIER = 100, WITH = 0, FOLLOWS_MODIFIES = 2, PATTERN_REST = 4, AFFECTS = 100,
+               BIP = 150;
     uint clauseWeight = 0;
     clauseWeight += SYNONYM_COUNT_MULTIPLIER * (countSynonym(clause) - 1);
     /**
@@ -161,9 +163,17 @@ uint getWeight(Clause* clause)
             clauseWeight += AFFECTS;
             break;
         }
-        case InvalidRelationshipType:
+        case AffectsBipType:
+        case AffectsBipStarType:
+        case NextBipType:
+        case NextBipStarType: {
+            clauseWeight += BIP;
             break;
         }
+        default:
+            throw std::runtime_error("Error: unknown SuchThatClauseType in ClauseGroupSorter::getWeight");
+        }
+        break;
     }
     case PatternClauseType: {
         clauseWeight += PATTERN_REST;
@@ -213,9 +223,9 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
 
         uint minWeight = INF;
         std::unordered_multimap<uint, uint> weightNodes;
-        for (int j = 0; j < groupSize; j++) {
+        for (std::size_t j = 0; j < groupSize; j++) {
             Clause* clause1 = groupedClauses.getClause(i, j);
-            for (int k = j + 1; k < groupSize; k++) {
+            for (std::size_t k = j + 1; k < groupSize; k++) {
                 Clause* clause2 = groupedClauses.getClause(i, k);
                 if (shareSynonym(clause1, clause2)) {
                     adj[j].insert(k);
@@ -241,8 +251,7 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
             uint nodesReachable = updateReachableBitmap(nodesLeft, currentNode, 0);
             Arrangement currentArr;
             currentArr.push(it->second);
-            auto results
-                = arrange(nodesLeft, nodesReachable, groupSize - 1, it->second, it->first * groupSize, currentArr);
+            auto results = arrange(nodesLeft, nodesReachable, groupSize - 1, it->first * groupSize, currentArr);
             if (results.second < minCost) {
                 minCost = results.second;
                 arr = std::move(results.first);

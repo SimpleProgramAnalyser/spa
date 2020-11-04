@@ -61,7 +61,7 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results)
     AutotesterUi ui;
     // store the answers to the query in the results list (it is initially empty)
     // each result must be a string.
-    FormattedQueryResult result = PqlManager::executeQuery(query, AutotesterFormat, ui);
+    FormattedQueryResult result = PqlManager::executeQuery(query, AutotesterFormat, ui, true);
 
     // retrieve String and perform split operation by delimiter "," to add into results
     std::string::size_type pos_begin, pos_end = 0;
