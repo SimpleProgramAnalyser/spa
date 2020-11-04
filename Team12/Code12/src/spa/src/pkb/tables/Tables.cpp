@@ -59,7 +59,7 @@ Vector<ProcedureName> ProcedureTable::getContainingProcedure(StatementNumber sta
      * lower bound will return iterator to 15, but it is the procedure that contains 8-14 that we want to consider.
      * hence we declare the call invalid if begin() iterator is found.
      */
-    auto lowerBoundIT = firstStmtToProc.lower_bound(statementNumber);
+    auto lowerBoundIT = firstStmtToProc.upper_bound(statementNumber);
     if (lowerBoundIT == firstStmtToProc.begin()) {
         return toReturn;
     } else {

@@ -70,7 +70,7 @@ public:
     Void setClauses(ClauseVector& clauseVector);
 
     // Retrieves all the clauses in the query, allows mutation of the ClauseVector.
-    ClauseVector getClausesUnsafe();
+    ClauseVector& getClausesUnsafe();
 
     // Retrieves the DeclarationTable of all declarations.
     DeclarationTable getDeclarationTable() const;

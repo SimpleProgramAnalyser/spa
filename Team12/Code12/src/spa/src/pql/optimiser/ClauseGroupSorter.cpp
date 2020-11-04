@@ -74,7 +74,7 @@ Arrangement constructQueue(Arrangement currArrangement, bitmap nodesLeft)
 // this DP aims to MINIMIZE i * weights(p_i) where p_1, p_2, ... ,p_n represent the permutation
 // arrangementQueue is GREEDY: it contains the currentNode when called.
 std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, uint multiplier, uint currentNode,
-                                     uint currentWeight, Arrangement arrangementQueue)
+                                     uint currentWeight, const Arrangement& arrangementQueue)
 {
     // Base case: no more node to visit
     if (nodesLeft == 0) {
@@ -95,12 +95,12 @@ std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, ui
     uint minWeightNode = -1;
     Arrangement bestQueue;
     for (auto reachable : getReachableNodes(nodesReachable)) {
-        bitmap currNodesLeft = markVisited(nodesLeft, currentNode);
-        bitmap currReachable = updateReachableBitmap(nodesLeft, currentNode, nodesReachable);
+        bitmap currNodesLeft = markVisited(nodesLeft, reachable);
+        bitmap currReachable = updateReachableBitmap(nodesLeft, reachable, nodesReachable);
         Arrangement currQueue(arrangementQueue);
         currQueue.push(reachable);
         auto result = arrange(currNodesLeft, currReachable, multiplier - 1, reachable,
-                              currentWeight + weights[reachable], arrangementQueue);
+                              currentWeight + weights[reachable], currQueue);
         if (result.second < minWeight) {
             minWeight = std::min(minWeight, result.second);
             minWeightNode = reachable;
@@ -153,6 +153,7 @@ uint getWeight(Clause* clause)
         case CallsStarType:
         case NextType: {
             clauseWeight += PATTERN_REST;
+            break;
         }
         case NextStarType:
         case AffectsType:
@@ -166,6 +167,7 @@ uint getWeight(Clause* clause)
     }
     case PatternClauseType: {
         clauseWeight += PATTERN_REST;
+        break;
     }
     case NonExistentClauseType: // unexpected
         break;
@@ -204,7 +206,7 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
         if (!groupedClauses.groupHasSynonym(i))
             continue;
 
-        uint groupSize = groupedClauses.size();
+        uint groupSize = groupedClauses.groupSize(i);
         // create graph
         adj.clear();
         weights.clear();
@@ -213,7 +215,7 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
         std::unordered_multimap<uint, uint> weightNodes;
         for (int j = 0; j < groupSize; j++) {
             Clause* clause1 = groupedClauses.getClause(i, j);
-            for (int k = j; k < groupSize; k++) {
+            for (int k = j + 1; k < groupSize; k++) {
                 Clause* clause2 = groupedClauses.getClause(i, k);
                 if (shareSynonym(clause1, clause2)) {
                     adj[j].insert(k);
@@ -229,7 +231,7 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
         // weight is lowest.
         auto lowestIT = weightNodes.equal_range(minWeight);
         // nodesLeft is 1111111 as many 1s as groupSize.
-        uint nodesLeft = ~((uint)1 << groupSize);
+        uint nodesLeft = ((uint)1 << groupSize) - 1;
         // take minimum across all starting points
         Arrangement arr;
         uint minCost = INF;

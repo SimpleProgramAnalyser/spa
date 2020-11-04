@@ -1,11 +1,11 @@
 #include "OptimiserUtils.h"
 
-inline bool isValue(const Reference& reference)
+bool isValue(const Reference& reference)
 {
     return reference.getReferenceType() == LiteralRefType || reference.getReferenceType() == IntegerRefType;
 }
 
-inline bool hasSynonym(const Reference& reference)
+bool hasSynonym(const Reference& reference)
 {
     return reference.getReferenceType() == AttributeRefType || reference.getReferenceType() == SynonymRefType;
 }

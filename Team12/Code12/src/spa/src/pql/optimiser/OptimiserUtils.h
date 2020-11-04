@@ -10,7 +10,7 @@
  * @param reference
  * @return
  */
-inline bool isValue(const Reference& reference);
+bool isValue(const Reference& reference);
 
 /**
  * Given a

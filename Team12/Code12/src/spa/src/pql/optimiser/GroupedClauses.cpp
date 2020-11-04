@@ -38,8 +38,8 @@ int GroupedClauses::addGroup()
  */
 void GroupedClauses::moveClauseAcrossGroup(int originalGroupIndex, int originalIndex, int destGroupIndex, int destIndex)
 {
-    auto originalGroup = listOfGroups[originalGroupIndex];
-    auto destGroup = listOfGroups[destGroupIndex];
+    auto& originalGroup = listOfGroups[originalGroupIndex];
+    auto& destGroup = listOfGroups[destGroupIndex];
     // copy to destGroup, then delete from originalGroup
     destGroup.insert(destGroup.begin() + destIndex, originalGroup[originalIndex]);
     originalGroup.erase(originalGroup.begin() + originalIndex);
@@ -273,7 +273,7 @@ void GroupedClauses::moveClauseAcrossGroup(int originalGroupIndex, int destGroup
     auto originalGroup = listOfGroups[originalGroupIndex];
     auto it = std::find(originalGroup.begin(), originalGroup.end(), clauseNumber);
     moveClauseAcrossGroup(originalGroupIndex, it - originalGroup.begin(), destGroupIndex,
-                          listOfGroups[destGroupIndex].size() - 1);
+                          listOfGroups[destGroupIndex].size());
 }
 
 const Vector<Integer>& GroupedClauses::getGroup(int groupIndex) const
@@ -290,4 +290,27 @@ void GroupedClauses::applyArrangementToGroup(std::queue<uint> arrangement, int g
         newGroup.push_back(getClauseNumber(groupIndex, clauseIndex));
     }
     listOfGroups[groupIndex] = newGroup;
+}
+
+void GroupedClauses::cleanUpEmptyGroups()
+{
+    if (listOfGroups.size() == 1)
+        return;
+
+    auto it = listOfGroups.begin();
+    while (it != listOfGroups.end()) {
+        int currGroupIndex = it - listOfGroups.begin();
+        if (it->empty()) {
+            if (it + 1 != listOfGroups.end()) {
+                mergeAndRemoveGroup(currGroupIndex, currGroupIndex + 1);
+                continue;
+            } else if (it != listOfGroups.begin()) {
+                mergeAndRemoveGroup(currGroupIndex, currGroupIndex - 1);
+                continue;
+            } else { // the only empty group
+                return;
+            }
+        }
+        it++;
+    }
 }

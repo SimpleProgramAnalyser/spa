@@ -44,6 +44,8 @@ public:
     static bool compareGroups(int group1, int group2, GroupedClauses* groupedClauses);
     void sortGroups();
 
+    void cleanUpEmptyGroups();
+
 private:
     // each clause is represented as a integer, its position in the List<Clause> from the original
     Vector<Vector<Integer>> listOfGroups;

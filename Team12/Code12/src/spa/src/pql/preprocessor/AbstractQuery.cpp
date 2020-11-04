@@ -34,9 +34,9 @@ const ClauseVector& AbstractQuery::getClauses() const
     return std::move(clauses);
 }
 
-ClauseVector AbstractQuery::getClausesUnsafe()
+ClauseVector& AbstractQuery::getClausesUnsafe()
 {
-    return std::move(clauses);
+    return clauses;
 }
 
 DeclarationTable AbstractQuery::getDeclarationTable() const

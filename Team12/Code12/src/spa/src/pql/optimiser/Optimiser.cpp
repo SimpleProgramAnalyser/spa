@@ -19,6 +19,9 @@
  */
 Void optimiseQuery(AbstractQuery& abstractQuery)
 {
+    if (abstractQuery.isInvalid())
+        return;
+
     // preprocessing
     substituteWithValues(abstractQuery);
     deleteDuplicateClauses(abstractQuery);
@@ -131,7 +134,7 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery)
 
     // O(n^2) remove duplicate
     for (auto it = clauses.begin(); it != clauses.end(); it++) {
-        for (auto it2 = it; it2 != clauses.end(); it2++) {
+        for (auto it2 = it + 1; it2 != clauses.end(); it2++) {
             if (**it == **it2) {
                 clauses.erase(it2);
             }
@@ -165,11 +168,12 @@ Void groupNoSynonym(GroupedClauses& groupedClauses)
         // if has synonym, remove and don't increment
         if (hasSynonym(groupedClauses.getClause(originalGroup, clauseIndex))) {
             groupedClauses.moveClauseAcrossGroup(originalGroup, clauseIndex, noSynonymGroup,
-                                                 groupedClauses.groupSize(noSynonymGroup) - 1);
+                                                 groupedClauses.groupSize(noSynonymGroup));
         } else {
             clauseIndex++;
         }
     }
+    groupedClauses.cleanUpEmptyGroups();
 }
 
 /**
@@ -185,7 +189,7 @@ std::map<Integer, std::set<Integer>> createAdjacencyList(GroupedClauses& grouped
 {
     std::map<Integer, std::set<Integer>> adjList;
     for (int i = 0; i < groupedClauses.groupSize(groupIndex); i++) {
-        for (int j = 0; j < groupedClauses.groupSize(groupIndex); j++) {
+        for (int j = i + 1; j < groupedClauses.groupSize(groupIndex); j++) {
             Clause* clause1 = groupedClauses.getClause(groupIndex, i);
             Clause* clause2 = groupedClauses.getClause(groupIndex, j);
             int clauseNumber1 = groupedClauses.getClauseNumber(groupIndex, i);
@@ -218,6 +222,9 @@ std::unordered_map<int, int> BFS(Vector<int> nodes, std::map<Integer, std::set<I
     for (int node : nodes)
         visited[node] = UNVISITED;
     std::queue<Integer> toVisit;
+    if (nodes.empty()) { // no need to BFS if nothing to BFS
+        return visited;
+    }
     int seed = nodes[0];
     while (seed < nodes.size()) {
         if (visited[seed] != UNVISITED) { // visited, skip
@@ -255,6 +262,11 @@ Void groupRest(GroupedClauses& groupedClauses)
     // edges: each pair of vertices have an edge iff they share at least one synonym
     const int groupIndex = 0;
     auto nodes = groupedClauses.getGroup(groupIndex);
+
+    // if there are no nodes, no need to group
+    if (nodes.empty())
+        return;
+
     std::map<Integer, std::set<Integer>> adjList = createAdjacencyList(groupedClauses, groupIndex);
 
     // BFS
@@ -267,6 +279,7 @@ Void groupRest(GroupedClauses& groupedClauses)
         assert(node_component.second != -1 && "Should have been visited");
         componentCount = std::max(node_component.second, componentCount);
     }
+    componentCount++; // the components are 0-indexed. If the max component is 2, there are 0,1,2 -> 3 components.
 
     // count number of new groups needed, is the range of values.
     // remember the # of groups, this is the offset
@@ -278,6 +291,7 @@ Void groupRest(GroupedClauses& groupedClauses)
     for (auto node_component : visited) {
         int node = node_component.first;
         int component = node_component.second;
+        // the ith component in graph should go into the (offset+i)th group
         groupedClauses.moveClauseAcrossGroup(groupIndex, offset + component, node);
     }
     // finally first group should be empty. merge with any group (how about group 1)

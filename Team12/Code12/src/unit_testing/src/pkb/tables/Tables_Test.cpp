@@ -161,7 +161,7 @@ SCENARIO("Iteration 1 Tables Test")
         {
             procedureTable.insertIntoProcedureTable("main", 1, 3);
             procedureTable.insertIntoProcedureTable("raymarch", 4, 14);
-            procedureTable.insertIntoProcedureTable("spheresdf", 14, 23);
+            procedureTable.insertIntoProcedureTable("spheresdf", 15, 23);
 
             THEN("correct procedures can be found")
             {
@@ -174,6 +174,21 @@ SCENARIO("Iteration 1 Tables Test")
             {
                 REQUIRE_FALSE(procedureTable.isProcedureInProgram(""));
                 REQUIRE_FALSE(procedureTable.isProcedureInProgram("main1"));
+            }
+            THEN("given statements, correct containing procedures can be found")
+            {
+                Vector<ProcedureName> expectedName = {"main"};
+                for (int i = 1; i <= 23; i++) {
+                    REQUIRE_THAT(procedureTable.getContainingProcedure(i), Catch::UnorderedEquals(expectedName));
+                    if (i == 4) {
+                        expectedName[0] = "raymarch";
+                        continue;
+                    }
+                    if (i == 14) {
+                        expectedName[0] = "spheresdf";
+                        continue;
+                    }
+                }
             }
         }
     }
