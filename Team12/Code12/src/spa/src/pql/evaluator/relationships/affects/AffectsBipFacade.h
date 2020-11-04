@@ -8,8 +8,9 @@
 #define SPA_PQL_AFFECTS_BIP_FACADE_H
 
 #include "AffectsEvaluatorFacade.h"
+#include "pql/evaluator/relationships/bip/BipFacade.h"
 
-class AffectsBipFacade: public AffectsEvaluatorFacade {
+class AffectsBipFacade: public AffectsEvaluatorFacade, public BipFacade {
 public:
     AffectsBipFacade() = default;
     AffectsBipFacade(const AffectsBipFacade&) = default;
@@ -73,19 +74,6 @@ public:
      *         that modifies variable. Otherwise false.
      */
     Boolean doesStatementModify(Integer stmtNum, const String& variable) override;
-
-    /**
-     * Returns a list of procedures that contain the statement
-     * number provided. This list should only contain 0 or 1
-     * procedures, as no two procedures can have the same statement.
-     */
-    Vector<String> getProcedure(Integer stmtNum);
-
-    /**
-     * Returns a list of procedures that calls or indirectly
-     * calls the procedureName given.s
-     */
-    Vector<String> getCallersStar(const String& procedureName);
 };
 
 #endif // SPA_PQL_AFFECTS_BIP_FACADE_H

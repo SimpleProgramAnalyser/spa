@@ -180,6 +180,12 @@ add_library(spa
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextBipFacade.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/next/NextBipFacade.cpp
 
+    # pql/evaluator/relationships/bip
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/bip/BipFacade.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/bip/BipFacade.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/bip/BipUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/relationships/bip/BipUtils.cpp
+
     # pql/evaluator/pattern
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/AssignMatcher.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pql/evaluator/pattern/AssignMatcher.cpp

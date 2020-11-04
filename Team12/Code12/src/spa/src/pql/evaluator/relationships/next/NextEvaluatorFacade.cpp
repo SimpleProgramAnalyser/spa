@@ -60,3 +60,18 @@ Boolean NextEvaluatorFacade::isNext(Integer prev, Integer next)
 {
     return checkIfNextHolds(prev, next);
 }
+
+Boolean NextEvaluatorFacade::checksIfCallsStarHolds(ProcedureName p1, ProcedureName p2)
+{
+    return checkIfCallsHoldsStar(p1, p2);
+}
+
+ProcedureName NextEvaluatorFacade::getProcedureOfStmt(StatementNumber stmtNum)
+{
+    Vector<ProcedureName> optional = getContainingProcedure(stmtNum);
+    if (optional.empty()) {
+        return "";
+    }
+
+    return optional.at(0);
+}

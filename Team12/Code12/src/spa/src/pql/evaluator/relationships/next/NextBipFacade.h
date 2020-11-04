@@ -8,8 +8,9 @@
 #define SPA_PQL_NEXT_BIP_FACADE_H
 
 #include "NextEvaluatorFacade.h"
+#include "pql/evaluator/relationships/bip/BipFacade.h"
 
-class NextBipFacade: public NextEvaluatorFacade {
+class NextBipFacade: public NextEvaluatorFacade, public BipFacade {
 public:
     NextBipFacade() = default;
     NextBipFacade(const NextBipFacade&) = default;
@@ -83,6 +84,17 @@ public:
      *             with branching into procedures.
      */
     Boolean isNext(Integer prev, Integer next) override;
+
+    /**
+     * Returns true if the first Procedure has a Calls* relationship
+     * with the second Procedure.
+     */
+    Boolean checksIfCallsStarHolds(ProcedureName p1, ProcedureName p2) override;
+
+    /**
+     * Returns the containing Procedure of the given statement.
+     */
+    ProcedureName getProcedureOfStmt(StatementNumber stmtNum) override;
 };
 
 #endif // SPA_PQL_NEXT_BIP_FACADE_H
