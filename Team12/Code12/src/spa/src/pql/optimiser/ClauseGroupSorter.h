@@ -1,9 +1,11 @@
-//
-// Created by titanx on 3/11/20.
-//
+/**
+ * A class that handles sorting of clauses within
+ * a small group of clauses.
+ */
 
-#ifndef AUTOTESTER_CLAUSEGROUPSORTER_H
-#define AUTOTESTER_CLAUSEGROUPSORTER_H
+#ifndef SPA_PQL_CLAUSE_GROUP_SORTER_H
+#define SPA_PQL_CLAUSE_GROUP_SORTER_H
+
 #include <algorithm>
 #include <queue>
 
@@ -46,4 +48,4 @@ typedef std::unordered_map<unsigned long long, IntWithNext> DP;
 typedef std::unordered_map<unsigned int, std::unordered_set<uint>> AdjacencyList;
 typedef unsigned long long bitmap;
 
-#endif // AUTOTESTER_CLAUSEGROUPSORTER_H
+#endif // SPA_PQL_CLAUSE_GROUP_SORTER_H

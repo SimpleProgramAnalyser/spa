@@ -19,8 +19,10 @@
  */
 Void optimiseQuery(AbstractQuery& abstractQuery)
 {
-    if (abstractQuery.isInvalid())
+    // check if query is invalid
+    if (abstractQuery.isInvalid()) {
         return;
+    }
 
     // preprocessing
     substituteWithValues(abstractQuery);
@@ -134,7 +136,7 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery)
 
     // O(n^2) remove duplicate
     for (auto it = clauses.begin(); it != clauses.end(); it++) {
-        for (auto it2 = it + 1; it2 != clauses.end(); it2++) {
+        for (auto it2 = it; it2 != clauses.end(); it2++) {
             if (**it == **it2) {
                 clauses.erase(it2);
             }

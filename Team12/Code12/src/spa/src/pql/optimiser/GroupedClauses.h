@@ -1,9 +1,10 @@
-//
-// Created by titanx on 30/10/20.
-//
+/**
+ * A class handling the grouping of clauses
+ * to speed up the query evaluation.
+ */
 
-#ifndef SPA_GROUPEDCLAUSES_H
-#define SPA_GROUPEDCLAUSES_H
+#ifndef SPA_PQL_GROUPED_CLAUSES_H
+#define SPA_PQL_GROUPED_CLAUSES_H
 
 #include <Types.h>
 #include <algorithm>
@@ -51,4 +52,5 @@ private:
     Vector<Vector<Integer>> listOfGroups;
     const AbstractQuery& abstractQuery;
 };
-#endif // SPA_GROUPEDCLAUSES_H
+
+#endif // SPA_PQL_GROUPED_CLAUSES_H
