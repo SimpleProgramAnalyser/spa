@@ -34,7 +34,7 @@ bool parse(const String& program, CmdLineUi& ui)
  */
 void evaluate(const String& query, CmdLineUi& ui)
 {
-    FormattedQueryResult result = PqlManager::executeQuery(query, UiFormat, ui);
+    FormattedQueryResult result = PqlManager::executeQuery(query, UiFormat, ui, true);
     std::cout << result.getResults() << std::endl;
 }
 
