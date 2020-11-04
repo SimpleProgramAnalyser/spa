@@ -80,7 +80,7 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
     // Terminate when endValue is found
     Boolean foundEndValue = false;
     for (Integer affectedStatement : affectedBipStatements) {
-        std::unordered_set<CfgNode*> uniqueStatementsVisited;
+        std::unordered_set<StatementPositionInCfg, StatementPositionHasher> uniqueStatementsVisited;
         StatementPositionInCfg correspondingPosition
             = findCorrespondingNode(startingPosition, affectedStatement, uniqueStatementsVisited);
         Boolean foundCorrespondingNode = correspondingPosition.getNodePosition() != nullptr;
