@@ -25,7 +25,7 @@ GroupedClauses::GroupedClauses(AbstractQuery& abstractQuery): abstractQuery(abst
 int GroupedClauses::addGroup()
 {
     listOfGroups.emplace_back();
-    return listOfGroups.size() - 1;
+    return static_cast<int>(listOfGroups.size()) - 1;
 }
 
 /**
@@ -35,7 +35,7 @@ int GroupedClauses::getNoSynonymGroupIndex()
 {
     if (noSynonymGroup == -1) {
         listOfGroups.emplace_back();
-        noSynonymGroup = listOfGroups.size() - 1;
+        noSynonymGroup = static_cast<int>(listOfGroups.size()) - 1;
     }
     return noSynonymGroup;
 }
@@ -327,7 +327,7 @@ void GroupedClauses::sortGroups()
 
     // apply permutation
     Vector<Vector<Integer>> newListOfGroups;
-    for (int i = 0; i < listOfGroups.size(); i++) {
+    for (std::size_t i = 0; i < listOfGroups.size(); i++) {
         newListOfGroups.push_back(listOfGroups[indexList[i]]);
     }
     listOfGroups = newListOfGroups;
