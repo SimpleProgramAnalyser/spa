@@ -43,10 +43,10 @@ Void substituteSuchThat(SuchThatClause* suchThatClause, const Reference& target,
     // whose synonym matches target, and replace it with value.
     auto leftRef = suchThatClause->getRelationship().getLeftRef();
     auto rightRef = suchThatClause->getRelationship().getRightRef();
-    if (leftRef.getValue() == target.getValue()) {
+    if (hasSynonym(leftRef) && leftRef.getValue() == target.getValue()) {
         suchThatClause->getRelationshipUnsafe().setLeftRef(value);
     }
-    if (rightRef.getValue() == target.getValue()) {
+    if (hasSynonym(rightRef) && rightRef.getValue() == target.getValue()) {
         suchThatClause->getRelationshipUnsafe().setRightRef(value);
     }
 }
@@ -55,10 +55,10 @@ Void substituteWith(WithClause* withClause, const Reference& target, const Refer
 {
     auto leftRef = withClause->getLeftReference();
     auto rightRef = withClause->getRightReference();
-    if (leftRef.getValue() == target.getValue()) {
+    if (hasSynonym(leftRef) && leftRef.getValue() == target.getValue()) {
         withClause->setLeftReference(value);
     }
-    if (rightRef.getValue() == target.getValue()) {
+    if (hasSynonym(rightRef) && rightRef.getValue() == target.getValue()) {
         withClause->setRightReference(value);
     }
 }
@@ -91,6 +91,12 @@ Void substituteClauseList(List<Clause>& clauseList, const Reference& target, con
     }
 }
 
+bool isCallProcName(const Reference& reference)
+{
+    return reference.getReferenceType() == AttributeRefType && reference.getDesignEntity().getType() == CallType
+           && reference.getAttribute().getType() == ProcNameType;
+}
+
 /**
  * For with clauses such as s.stmt# = 5, substitute all occurences of the synonym "s" with the value 5.
  *
@@ -103,8 +109,8 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
      * 1. One side is integer, eg s.stmt# = 5
      * 2. One side is identifier, eg v.varName = "hello"
      */
+    // FIXME: calls.stmt# and calls.procName are substituted without distinction
     List<Clause>& clauseList = abstractQuery.getClausesUnsafe().getAllUnsafe();
-    //    std::unordered_set<int> toRemove;
     for (int i = 0; i < clauseList.size(); i++) {
         Clause* clause = clauseList[i].get();
         switch (clause->getType()) {
@@ -113,12 +119,10 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
             WithClause* withClause = static_cast<WithClause*>(clause);
             auto leftRef = withClause->getLeftReference();
             auto rightRef = withClause->getRightReference();
-            if (isValue(leftRef) && hasSynonym(rightRef)) {
+            if (isValue(leftRef) && hasSynonym(rightRef) && !isCallProcName(rightRef)) {
                 substituteClauseList(clauseList, rightRef, leftRef, i);
-                //                toRemove.insert(i);
-            } else if (isValue(rightRef) && hasSynonym(leftRef)) {
+            } else if (isValue(rightRef) && hasSynonym(leftRef) && !isCallProcName(leftRef)) {
                 substituteClauseList(clauseList, leftRef, rightRef, i);
-                //                toRemove.insert(i);
             }
             break;
         }
@@ -126,22 +130,6 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
             break;
         }
     }
-
-    //    // remove the with clauses which substitutions stem from
-    //    Vector<Clause*> clauses;
-    //    for (int i=0; i<clauseList.size(); i++) {
-    //        // if it is not in toRemove, save it into a vector
-    //        if (!toRemove.count(i)) {
-    //            clauses.push_back(clauseList[i].release());
-    //        }
-    //    }
-    //    // create a new ClauseVector objectj
-    //    ClauseVector newClauseVector;
-    //    for (Clause* clause : clauses) {
-    //        newClauseVector.add(clause);
-    //    }
-    //    // replace old ClauseVector object
-    //    abstractQuery.setClauses(newClauseVector);
 }
 
 /**
@@ -160,10 +148,15 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery)
 
     // O(n^2) remove duplicate
     for (auto it = clauses.begin(); it != clauses.end(); it++) {
-        for (auto it2 = it + 1; it2 != clauses.end(); it2++) {
+        int diff = 1;
+        auto it2 = it + diff;
+        while (diff < clauses.end() - it) {
             if (**it == **it2) {
                 clauses.erase(it2);
+            } else {
+                diff++;
             }
+            it2 = it + diff;
         }
     }
 

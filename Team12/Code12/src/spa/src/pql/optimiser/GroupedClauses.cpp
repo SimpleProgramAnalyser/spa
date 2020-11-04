@@ -269,15 +269,37 @@ bool GroupedClauses::compareGroups(int group1, int group2, GroupedClauses* group
 {
     /**
      * clause1 is (strictly) before clause2 iff
-     * 1. clause1 has no synonyms
-     * 2. clause1's synonyms are not returned.
+     * 1. clause1 has no synonyms while clause 2 has.
+     * 2. clause1's synonyms are not returned while clause 2's synonyms are.
+     * Otherwise sort them by length, shortest goes first
      */
-    if (!groupedClauses->groupHasSynonym(group1)) {
+    if (!groupedClauses->groupHasSynonym(group1) && groupedClauses->groupHasSynonym(group2)) {
         return true;
-    } else if (!groupedClauses->synonymIsReturned(group1)) {
+    } else if (groupedClauses->groupHasSynonym(group1) && !groupedClauses->groupHasSynonym(group2)) {
+        return false;
+    } else if (!groupedClauses->synonymIsReturned(group1) && groupedClauses->synonymIsReturned(group2)) {
         return true;
+    } else if (groupedClauses->synonymIsReturned(group1) && !groupedClauses->synonymIsReturned(group2)) {
+        return false;
+    } else {
+        return groupedClauses->groupSize(group1) < groupedClauses->groupSize(group2);
     }
-    return false;
+}
+
+bool compare(int group1, int group2, const Vector<bool>& groupHasSynonym, const Vector<bool>& synonymIsReturned,
+             const Vector<int>& groupSize)
+{
+    if (!groupHasSynonym[group1] && groupHasSynonym[group2]) {
+        return true;
+    } else if (groupHasSynonym[group1] && !groupHasSynonym[group2]) {
+        return false;
+    } else if (!synonymIsReturned[group1] && synonymIsReturned[group2]) {
+        return true;
+    } else if (synonymIsReturned[group1] && !synonymIsReturned[group2]) {
+        return false;
+    } else {
+        return groupSize[group1] < groupSize[group2];
+    }
 }
 
 /**
@@ -291,7 +313,17 @@ void GroupedClauses::sortGroups()
     // Keep the curried version, just in case
     //    std::sort(indexList.begin(), indexList.end(),
     //              std::bind(compareGroups, std::placeholders::_1, std::placeholders::_2, this));
-    std::sort(indexList.begin(), indexList.end(), [this](int a, int b) { return compareGroups(a, b, this); });
+    Vector<bool> hasSynonym, isReturned;
+    Vector<int> groupSize;
+    std::transform(indexList.begin(), indexList.end(), std::back_inserter(hasSynonym),
+                   [this](int a) { return this->groupHasSynonym(a); });
+    std::transform(indexList.begin(), indexList.end(), std::back_inserter(isReturned),
+                   [this](int a) { return this->synonymIsReturned(a); });
+    std::transform(indexList.begin(), indexList.end(), std::back_inserter(groupSize),
+                   [this](int a) { return this->groupSize(a); });
+    std::sort(indexList.begin(), indexList.end(), [hasSynonym, isReturned, groupSize](int a, int b) {
+        return compare(a, b, hasSynonym, isReturned, groupSize);
+    });
 
     // apply permutation
     Vector<Vector<Integer>> newListOfGroups;
