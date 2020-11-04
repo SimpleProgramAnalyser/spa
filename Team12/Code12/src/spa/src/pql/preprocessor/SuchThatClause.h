@@ -31,6 +31,9 @@ public:
     // Retrieves the Relationship of the SuchThatClause.
     Relationship getRelationship();
 
+    // Retrieves the Relationship of the SuchThatClause.
+    Relationship& getRelationshipUnsafe();
+
     Boolean operator==(const SuchThatClause& suchThatClause);
 };
 

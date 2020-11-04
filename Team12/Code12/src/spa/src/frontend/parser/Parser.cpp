@@ -931,6 +931,41 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
     }
 }
 
+/**
+ * Recursively gets the last statement number inside the stmtList.
+ *
+ * @param stmtlstNode
+ * @return
+ */
+StatementNumber getLastStatementNumber(const StmtlstNode* stmtlstNode)
+{
+    StatementType lastStatementType = (stmtlstNode->statementList.end() - 1)->get()->getStatementType();
+    switch (lastStatementType) {
+    case AnyStatement:
+    case AssignmentStatement:
+    case CallStatement:
+    case PrintStatement:
+    case NonExistentStatement:
+    case StatementTypeCount:
+    case ReadStatement:
+        break;
+    case IfStatement: {
+        // NOLINTNEXTLINE
+        IfStatementNode* ifStatementNode = static_cast<IfStatementNode*>((stmtlstNode->statementList.end() - 1)->get());
+        return getLastStatementNumber(ifStatementNode->elseStatementList);
+        break;
+    }
+    case WhileStatement: {
+        // NOLINTNEXTLINE
+        WhileStatementNode* whileStatementNode
+            = static_cast<WhileStatementNode*>((stmtlstNode->statementList.end() - 1)->get());
+        return getLastStatementNumber(whileStatementNode->statementList);
+        break;
+    }
+    }
+    return (stmtlstNode->statementList.end() - 1)->get()->getStatementNumber();
+}
+
 ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenList* programTokens,
                                                                 TokenListIndex startIndex)
 {
@@ -963,7 +998,7 @@ ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenL
         return getSyntaxError<ProcedureNode>(-nextUnparsed);
     } else {
         StatementNumber first = statementListNode->statementList.begin()->get()->getStatementNumber();
-        StatementNumber last = (statementListNode->statementList.end() - 1)->get()->getStatementNumber();
+        StatementNumber last = getLastStatementNumber(statementListNode);
         insertIntoProcedureTable(procedureName, first, last);
         return ParserReturnType<std::unique_ptr<ProcedureNode>>(
             std::unique_ptr<ProcedureNode>(createProcedureNode(procedureName, statementListNode)), nextUnparsed);

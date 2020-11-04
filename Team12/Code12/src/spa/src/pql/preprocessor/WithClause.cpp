@@ -5,6 +5,8 @@
 
 #include "WithClause.h"
 
+#include <utility>
+
 /************************/
 /** Constructors        */
 /************************/
@@ -61,4 +63,14 @@ Reference WithClause::getRightReference()
 Boolean WithClause::operator==(const WithClause& withClause)
 {
     return this->leftReference == withClause.leftReference && this->rightReference == withClause.rightReference;
+}
+
+Void WithClause::setLeftReference(Reference reference)
+{
+    leftReference = std::move(reference);
+}
+
+Void WithClause::setRightReference(Reference reference)
+{
+    rightReference = std::move(reference);
 }

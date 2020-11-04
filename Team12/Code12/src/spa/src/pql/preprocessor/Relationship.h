@@ -100,6 +100,12 @@ public:
     // Retrieves the right Reference of the Relationship.
     Reference getRightRef();
 
+    // Sets the left Reference of the Relationship.
+    Void setLeftRef(Reference newRef);
+
+    // Sets the right Reference of the Relationship.
+    Void setRightRef(Reference newRef);
+
     Boolean operator==(const Relationship& relationship);
 };
 

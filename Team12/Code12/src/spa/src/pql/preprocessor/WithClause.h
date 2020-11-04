@@ -35,6 +35,12 @@ public:
     // Retrieves the right Reference of the WithClause.
     Reference getRightReference();
 
+    // Sets the left Reference of the WithClause.
+    Void setLeftReference(Reference reference);
+
+    // Sets the right Reference of the WithClause.
+    Void setRightReference(Reference reference);
+
     Boolean operator==(const WithClause& withClause);
 };
 

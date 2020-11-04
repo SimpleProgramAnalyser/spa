@@ -76,6 +76,12 @@ public:
     // Retrieves all the clauses in the query.
     const ClauseVector& getClauses() const;
 
+    // Retrieves all the clauses in the query.
+    Void setClauses(ClauseVector& clauseVector);
+
+    // Retrieves all the clauses in the query, allows mutation of the ClauseVector.
+    ClauseVector& getClausesUnsafe();
+
     // Retrieves the DeclarationTable of all declarations.
     DeclarationTable getDeclarationTable() const;
 
