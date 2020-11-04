@@ -10,11 +10,16 @@
 
 class NextBipEvaluator: public NextEvaluator {
 private:
+    NextBipFacade* bipFacade;
+
     // Methods for NextBip*
     Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) override;
     Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal) override;
     Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) override;
     Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) override;
+
+    // Helper methods
+    CacheSet processLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
 
 public:
     NextBipEvaluator(NextBipEvaluator&&) = default;
@@ -34,20 +39,7 @@ public:
      *               Evaluator (the Facade will be deleted at the end
      *               of the lifetime of the parent NextBipEvaluator).
      */
-    explicit NextBipEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade);
-
-    /**
-     * Filters out invalid transitive closure NextBip* relationships.
-     *
-     * @param procName  ProcedureName of the containing procedure
-     *                  known reference.
-     * @param isCaller  True if known reference's containing
-     *                  procedure is the caller.
-     * @param list      Original list of NextBip* results with
-     *                  transitive closure.
-     */
-    Vector<StatementNumber> filterValidResults(ProcedureName procName, Boolean isCaller,
-                                                                 Vector<StatementNumber> list);
+    explicit NextBipEvaluator(ResultsTable& resultsTable, NextBipFacade* facade);
 };
 
 #endif // SPA_PQL_NEXT_BIP_EVALUATOR_H

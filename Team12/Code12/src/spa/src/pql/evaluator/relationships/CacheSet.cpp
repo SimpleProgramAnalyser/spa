@@ -79,3 +79,8 @@ size_t CacheSet::size() const
 {
     return set.size();
 }
+
+void CacheSet::remove(StatementNumber stmtNumToRemove)
+{
+    set.erase(stmtNumToRemove);
+}

@@ -76,6 +76,9 @@ public:
     // Returns size of set.
     size_t size() const;
 
+    // Removes the given StatementNumber
+    void remove(StatementNumber stmtNumToRemove);
+
 };
 
 #endif // SPA_PQL_CACHE_SET_H
