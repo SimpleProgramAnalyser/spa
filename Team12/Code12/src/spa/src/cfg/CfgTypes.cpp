@@ -11,8 +11,10 @@
 
 #include "Util.h"
 
-CfgNode::CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber, CfgNode* joinNode):
-    statementNodes(statements), childrenNodes(children), nodeNumber(cfgNodeNumber), ifJoinNode(joinNode)
+CfgNode::CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber,
+                 CfgNode* joinNode):
+    statementNodes(statements),
+    childrenNodes(children), nodeNumber(cfgNodeNumber), ifJoinNode(joinNode)
 {}
 
 CfgNode::~CfgNode()
