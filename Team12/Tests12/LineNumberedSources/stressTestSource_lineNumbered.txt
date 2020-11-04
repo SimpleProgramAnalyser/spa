@@ -1,0 +1,574 @@
+procedure mainPrint {
+1   a = x + y + z;
+2   while (a > b) {
+3       print b;
+4       a = 10 + x;
+5       b = x + y + 10;
+    }   
+6   c = x * y / z;
+7   call doNothing;
+8   y = y + 100;
+}
+  
+
+procedure doNothing {
+9   y = y + y + 100 + y;
+10  if (a < 10) then {
+11      a = 20 + y + 10 + x;
+12      while (x > 10) {
+13          read y;
+14          call doNothing2; 
+        }   
+
+    } else {
+15      TryingToMakeLongVariableNamesToTestLimits = 10 * x;
+
+16      read x;
+17      read y;
+18      read doNothing;
+    }
+19  y = y + 100 + y * x;
+20  while (doNothing > 100) {
+21          read doNothing;
+22          doNothing = doNothing + 1;
+    }
+23      call doNothing3;
+}
+
+procedure doNothing2 {
+24  z = x * y * y * x;
+25  if (TryingToMakeLongVariableNamesToTestLimits < x) then {
+26      call doNothing3;
+27      TryingToMakeLongVariableNamesToTestLimits = TryingToMakeLongVariableNamesToTestLimits * 10;
+    } else {
+28      call doNothing3;
+29       if (doNothing < 100) then {
+30          z = x * (x + y) + 10 - x % y;
+31          constantAssignment = 10 * (100 + 3) * 100;
+32          print TryingToMakeLongVariableNamesToTestLimits;
+        } else {
+33          print x;
+34          read y;
+35          constantAssignment = x + 100 - y + 100;
+        }
+    }
+}
+
+
+procedure doNothing4 {
+36  if (y < 12) then {
+37      print x;
+38      y = y + 10;
+39      call doNothing3;
+    } else {
+40      call doNothing3;
+41      read x;
+    }
+42  a = 0;
+43  while (doNothing > 100) {
+44      read doNothing;
+45      doNothing = doNothing + 1;
+    }
+46      call doNothing3;
+}
+
+procedure procedure {
+47  procedure = procedure;
+48  call doNothing3;
+}
+
+procedure doNothing3 {
+49  read y;
+50  x = y * x * x * (y + 100) * 1000;
+51  print y;
+52  constantAssignment = x + x * y % z;
+53  read doNothing;
+}
+
+procedure doSomething {
+54	if (TryingToMakeLongVariableNamesToTestLimits != 0) then {
+55 		while (procedure == 0) {
+56 			doNothing = doNothing + 1;
+57 			if (doNothing < 0) then {
+58 				print doNothing;
+59 				read c;
+60 				print d;
+  				} else {
+61 				read d;
+62 				print c;
+63 				call doNothing3;
+  				}
+64 				a = y * x * (y * 100) * 1000;
+65 			while (doNothing != 100) {
+66 				a = y * (x * y) * 100 * 1000;
+67 				read y;
+68 				call procedure;
+69 				print a;
+  				}
+  			}
+70		a = y * x * y * (100 * 1000);
+71		if (procedure > 0 ) then {
+72 			call doNothing;
+73			a = (y * x) * y * (100 * 1000);
+74			if (a < 0) then {
+75				print b;
+			} else {
+76				read c;
+			}
+  		} else {
+77 			b = (y * x * y) * 100 * 1000;
+78 			print b;
+79 			while (d ==0) {
+80 				doNothing = doNothing * c;
+  			}
+  		}
+  	} else {
+81 		b = c + constantAssignment;
+82 		constantAssignment = y * (x * y * 100) * 1000;
+  	}
+83 	call doNothing2;
+84 	b = y * x * (y * 100 * 1000);
+85 	while (constantAssignment != 3) {
+86 		if (constantAssignment == 100) then {
+87 			constantAssignment = 10 * (100 - 100) / 1000;
+88 			if (constantAssignment != 0) then {
+89 				constantAssignment = 10 * (100 - 100 / 1000);
+  				} else {
+90 				d = 10 * (100 + 100 / 1000);
+  				}
+91 			print print;
+92			read constantAssignment;
+  			} else {
+93 			constantAssignment = (10 * 100) - 100 / 1000;
+94 			d = (10 * 100 - 100) / 1000;
+95 			call doNothing3;
+96 			while (d < 0) {
+97				constantAssignment = 10 * 100 - (100 / 1000);
+98 				print print;
+  				}
+  			}
+99 		read d;
+100		while (d > 0) {
+101			constantAssignment = y * (x * y * 100 * 1000);
+102			call procedure;
+103			while (((!(constantAssignment * 10 < 0)) && (specialPattern < 0))) {
+104				read read;
+105				print print;
+106				print constantAssignment;
+				}
+
+107			if (read > 0) then {
+108				print print;
+109 			print y;
+110					assignmentConstval = 115;
+  			    } else {
+111				read read;
+112  			read x;
+  				}
+  		}
+113		readConstantVal = 13 + 103 * x + 61 + ( y / 67 );
+114	  		call doNothing3;
+115	  		printConstantVal = 104 * x / 107;
+116	  		callConstantVal = 94 / 101 * ( 7 / x);
+117			call procedure;
+118			ifStmtConstVal = 57 % (x - 86) * y;
+  	}
+}
+
+procedure lotsOfVariables {
+119 a1 = 100000;
+120 a2 = 11234;
+121 a3 = 9183;
+122 a4 = 189299;
+123 a5 = 198183;
+124 a6 = 1919111;
+125 a7 = 11111;
+126 a8 = 99998;
+127 a9 = 819019;
+128 a10 = 19182;
+129 a11 = 19191;
+130 a12 = 19172727;
+131 a13 = 17178;
+132 a14 = 8191199;
+133 a15 = 19191;
+134 a16 = 1991;
+135 a17 = 1822;
+136 a18 = 82919;
+137 a19 = 18181;
+138 a20 = 1991;
+139 a21 = 1918919;
+140 a22 = 1981981;
+141 a23 = 174363;
+142 a24 = 178274;
+143 a25 = 272671;
+144 a26 = 278237;
+145 a27 = 27674;
+146 a28 = 66;
+147 a29 = 67777;
+148 a30 = 1981;
+149 a31 = 1981661;
+150 a32 = 771674;
+151 a33 = 7848943;
+151 a34 = 7438734;
+152 a35 = 2322333;
+153 a36 = 346281;
+154 a37 = 1728233;
+155 a38 = 19102;
+156 a39 = 17182;
+157 a40 = 12782;
+158 a41 = 12849;
+159 a42 = 184823;
+160 a43 = 18283;
+161 a44 = 9999;
+162 a45 = 19821;
+163 a46 = 19834;
+164 a47 = 5628;
+165 a48 = 17484;
+166 a49 = 18474747;
+167 a50 = 7574788;
+168 a51 = 28474748;
+169 a52 = 47575;
+170 a53 = 47475;
+171 a54 = 4277577;
+172 a55 = 275457;
+173 a56 = 4757544;
+174 a57 = 278984;
+175 a58 = 284832;
+176 a59 = 3773;
+177 a60 = 676233;
+178 a61 = 787823;
+179 a62 = 78712;
+180 a63 = 2734746;
+181 a64 = 27374;
+182 a65 = 173737;
+183 a66 = 274747;
+184 a67 = 3743847;
+185 a68 = 238931;
+186 a69 = 47747;
+187 a70 = 12737;
+}
+
+procedure veryDeeplyNestedStatementLists {
+188 a = 1;
+189 b = 2;
+190 c = 3;
+
+191 if (((a == 1) && (b < 0)) || (b == 1)) then {
+192     if (((a == 1) && (b < 0)) || (b == 1)) then {
+193         g = 8;
+        } else {
+194         while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+195             while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+196                 while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+197                     while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+198                         while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+199                             while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+200                                 while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+201                                     while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+202                                         a = 3989;
+                                        }
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+        }
+    } else {
+203     if (((a == 1) && (b < 0)) || (b == 1)) then {
+204         i = 1000000;
+205         if (((a == 1) && (b < 0)) || (b == 1)) then {
+206             i = 1000000;
+207             if (((a == 1) && (b < 0)) || (b == 1)) then {
+208                 i = 1000000;
+                } else {
+209                 j = 1000000;
+210                 if (((a == 1) && (b < 0)) || (b == 1)) then {
+211                     i = 1000000;
+                    } else {
+212                     j = 1000000;
+213                     if (((a == 1) && (b < 0)) || (b == 1)) then {
+214                         i = 1000000;
+                        } else {
+215                         j = 1000000;
+                        }
+                    }
+                }
+            } else {
+216             j = 1000000;
+            }
+        } else {
+217         j = 1000000;
+        }
+    }
+}
+
+procedure a1 {
+218 a = 3;
+}
+
+procedure a2 {
+219 a = 3;
+}
+
+procedure a3 {
+220 a = 3;
+}
+
+procedure a4 {
+221 a = 3;
+}
+
+procedure a5 {
+222 a = 3;
+}
+
+procedure a6 {
+223 a = 3;
+}
+
+procedure a7 {
+224 a = 3;
+}
+
+procedure a8 {
+225 a = 3;
+}
+
+procedure a9 {
+226 a = 3;
+}
+
+procedure a10 {
+227 a = 3;
+}
+
+procedure a11 {
+228 a = 3;
+}
+
+procedure a12 {
+229 a = 3;
+}
+
+procedure a13 {
+230 a = 3;
+}
+
+procedure a14 {
+231 a = 3;
+}
+
+procedure a15 {
+232 a = 3;
+}
+
+procedure a16 {
+233 a = 3;
+}
+
+procedure a17 {
+234 a = 3;
+}
+
+procedure a18 {
+235 a = 3;
+}
+
+procedure a19 {
+236 a = 3;
+}
+
+procedure a20 {
+237 a = 3;
+}
+
+procedure a21 {
+238 a = 3;
+}
+
+procedure a22 {
+239 a = 3;
+}
+
+procedure a23 {
+240 a = 3;
+}
+
+procedure a24 {
+241 a = 3;
+}
+
+procedure a25 {
+242 a = 3;
+}
+
+procedure a26 {
+243 a = 3;
+}
+
+procedure a27 {
+244 a = 3;
+}
+
+procedure a28 {
+245 a = 3;
+}
+
+procedure a29 {
+246 a = 3;
+}
+
+procedure a30 {
+247 a = 3;
+}
+
+procedure complicatedArithmeticExpr {
+248 a = (a + (a + (a + (a + (a + (a + (a + a)))))));
+249 b = ((((((b + b) + b) + b) + b) + b) + b);
+250 c = 100 - 2934 / 1983 + 23 * 23 + 28 / 192 * (1983 - 8283 + 100) + 183 / 2 * 1298928 - 2934 / 1983 + 23 * 23 + 28 / 192 * 1983 - 8283;
+}
+
+procedure lotsOfVariables2 {
+251 a1 = 100000;
+252 a2 = 11234;
+253 a3 = 9183;
+254 a4 = 189299;
+255 a5 = 198183;
+256 a6 = 1919111;
+257 a7 = 11111;
+258 a8 = 99998;
+259 a9 = 819019;
+260 a10 = 19182;
+261 a11 = 19191;
+262 a12 = 19172727;
+263 a13 = 17178;
+264 a14 = 8191199;
+265 a15 = 19191;
+266 a16 = 1991;
+267 a17 = 1822;
+268 a18 = 82919;
+269 a19 = 18181;
+270 a20 = 1991;
+271 a21 = 1918919;
+272 a22 = 1981981;
+273 a23 = 174363;
+274 a24 = 178274;
+275 a25 = 272671;
+276 a26 = 278237;
+277 a27 = 27674;
+278 a28 = 66;
+279 a29 = 67777;
+280 a30 = 1981;
+281 a31 = 1981661;
+282 a32 = 771674;
+283 a33 = 7848943;
+284 a34 = 7438734;
+285 a35 = 2322333;
+286 a36 = 346281;
+287 a37 = 1728233;
+288 a38 = 19102;
+289 a39 = 17182;
+290 a40 = 12782;
+291 a41 = 12849;
+292 a42 = 184823;
+293 a43 = 18283;
+294 a44 = 9999;
+295 a45 = 19821;
+296 a46 = 19834;
+297 a47 = 5628;
+298 a48 = 17484;
+300 a49 = 18474747;
+301 a50 = 7574788;
+302 a51 = 28474748;
+303 a52 = 47575;
+304 a53 = 47475;
+305 a54 = 4277577;
+306 a55 = 275457;
+307 a56 = 4757544;
+308 a57 = 278984;
+309 a58 = 284832;
+310 a59 = 3773;
+311 a60 = 676233;
+312 a61 = 787823;
+313 a62 = 78712;
+314 a63 = 2734746;
+315 a64 = 27374;
+316 a65 = 173737;
+317 a66 = 274747;
+318 a67 = 3743847;
+319 a68 = 238931;
+320 a69 = 47747;
+321 a70 = 12737;
+}
+
+procedure veryDeeplyNestedStatementLists2 {
+322 a = 1;
+323 b = 2;
+324    c = 3;
+
+325 if (((a == 1) && (b < 0)) || (b == 1)) then {
+326     if (((a == 1) && (b < 0)) || (b == 1)) then {
+327         g = 8;
+        } else {
+328         while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+329             while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+330                 while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+331                     while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+332                         while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+333                             while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+334                                 while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+335                                     while ((((a == 1) && (a == 1)) && (a == 1)) && (a == 1)) {
+336                                         a = 3989;
+                                        }
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+        }
+    } else {
+337     if (((a == 1) && (b < 0)) || (b == 1)) then {
+338         i = 1000000;
+339         if (((a == 1) && (b < 0)) || (b == 1)) then {
+340             i = 1000000;
+341             if (((a == 1) && (b < 0)) || (b == 1)) then {
+342                 i = 1000000;
+                } else {
+343                 j = 1000000;
+344                 if (((a == 1) && (b < 0)) || (b == 1)) then {
+345                     i = 1000000;
+                    } else {
+346                     j = 1000000;
+347                     if (((a == 1) && (b < 0)) || (b == 1)) then {
+348                         i = 1000000;
+                        } else {
+349                         j = 1000000;
+                        }
+                    }
+                }
+            } else {
+350             j = 1000000;
+            }
+        } else {
+351         j = 1000000;
+        }
+    }
+}

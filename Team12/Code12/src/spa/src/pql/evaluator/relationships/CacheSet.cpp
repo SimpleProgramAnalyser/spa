@@ -1,7 +1,6 @@
-//
-// Created by Chester Sim on 17/10/20.
-//
-
+/**
+ * Implementation of CacheSet class for Query Evaluator.
+ */
 #include "CacheSet.h"
 
 #include <utility>
