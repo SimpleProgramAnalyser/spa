@@ -43,7 +43,6 @@ CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
 {
     Vector<StatementPositionInCfg> allCgfNodes = findAllCorrespondingPositions(leftRefVal, *bipFacade);
     CacheSet results;
-    std::unordered_set<size_t> visited;
 
     if (allCgfNodes.empty()) {
         return CacheSet();
@@ -51,6 +50,7 @@ CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
 
     Boolean hasNextBipToItself = false; // if the node has a NextBip* relationship with itself
     for (StatementPositionInCfg startingPosition : allCgfNodes) {
+        std::unordered_set<size_t> visited;
         CfgNode* startingCfgNode = startingPosition.getNodePosition();
         hasNextBipToItself
             = findAllNextBipFromCfgNode(startingCfgNode, leftRefVal, true, visited, results) || hasNextBipToItself;
