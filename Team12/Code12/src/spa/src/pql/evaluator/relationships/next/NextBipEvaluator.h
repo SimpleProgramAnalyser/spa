@@ -19,7 +19,7 @@ private:
     Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) override;
 
     // Helper methods
-    CacheSet processLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
+    CacheSet processLeftKnownStar(Integer leftRefVal);
 
 public:
     NextBipEvaluator(NextBipEvaluator&&) = default;
