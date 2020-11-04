@@ -1,5 +1,5 @@
 /**
- * Cache set class for Query Evaluator.
+ * CacheSet class for Query Evaluator.
  * Guarantees amortised constant time access and insertion.
  */
 
@@ -52,6 +52,14 @@ public:
      * @return ClauseResult format of the set.
      */
     ClauseResult toClauseResult() const;
+
+    /**
+     * Converts the encapsulated set into a
+     * Vector of Statement Numbers (integers).
+     *
+     * @return Vector of Integers.
+     */
+    Vector<Integer> toVector() const;
 
     // Checks if StatementNumber is already cached
     Boolean isCached(StatementNumber stmtNum) const;

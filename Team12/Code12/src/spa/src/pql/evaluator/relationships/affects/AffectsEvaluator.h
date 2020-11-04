@@ -69,7 +69,6 @@ private:
     const CfgNode* affectsSearch(const CfgNode* cfg,
                                  std::unordered_map<String, std::unordered_set<Integer>>& affectsMap,
                                  AffectsTuple& resultsLists);
-    Void cacheModifierAssigns(Integer leftRefVal);
     Void cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb);
     Void cacheAll();
 
@@ -94,6 +93,18 @@ protected:
     virtual Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal);
     virtual Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef);
     virtual Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
+
+    /**
+     * Caches all the statements that the
+     * given statement affects.
+     */
+    Void cacheModifierAssigns(Integer leftRefVal);
+
+    /**
+     * Gets the unique set of statements that
+     * match Affects(stmtNum, _) from the cache.
+     */
+    CacheSet getModifierAssigns(Integer stmtNum);
 
 public:
     AffectsEvaluator(AffectsEvaluator&&) = default;

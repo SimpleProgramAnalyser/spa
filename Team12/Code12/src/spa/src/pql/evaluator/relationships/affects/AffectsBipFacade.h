@@ -60,6 +60,32 @@ public:
      * will return nullptr.
      */
     CfgNode* getCfg(const String& procedureName) override;
+
+    /**
+     * Checks whether a statement number modifies a variable,
+     * under the rules described by AffectsBip/AffectsBip*. Namely,
+     * statement has to be an assignment or read and
+     * it has to modify the variable.
+     *
+     * @param stmtNum Statement number to be checked.
+     * @param variable Variable to be checked.
+     * @return True, if statement is an Assignment or Read
+     *         that modifies variable. Otherwise false.
+     */
+    Boolean doesStatementModify(Integer stmtNum, const String& variable) override;
+
+    /**
+     * Returns a list of procedures that contain the statement
+     * number provided. This list should only contain 0 or 1
+     * procedures, as no two procedures can have the same statement.
+     */
+    Vector<String> getProcedure(Integer stmtNum);
+
+    /**
+     * Returns a list of procedures that calls or indirectly
+     * calls the procedureName given.s
+     */
+    Vector<String> getCallersStar(const String& procedureName);
 };
 
 #endif // SPA_PQL_AFFECTS_BIP_FACADE_H
