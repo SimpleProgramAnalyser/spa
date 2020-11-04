@@ -7,16 +7,10 @@
 
 #include "AffectsBipFacade.h"
 #include "AffectsEvaluator.h"
+#include "pql/evaluator/relationships/bip/BipUtils.h"
 
 // Forward declaration of an optional statement number
 class MaybeStatementNumber;
-
-// A class representing the exact position of a statement
-// number within the CFG with branching into procedures
-class StatementPositionInCfg;
-
-// Hash function for a StatementPosition
-class StatementPositionHasher;
 
 class AffectsBipEvaluator: public AffectsEvaluator {
 private:
@@ -30,7 +24,6 @@ private:
     bool bipStarCacheFullyPopulated;
 
     // Helper methods for AffectsBip*
-    Vector<StatementPositionInCfg> findAllCorrespondingPositions(Integer statementToFind);
     Boolean affectsBipSearch(Integer startingStmtNum, StatementPositionInCfg startingPosition, Boolean ignoreStarting,
                              std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns,
                              MaybeStatementNumber endValue);

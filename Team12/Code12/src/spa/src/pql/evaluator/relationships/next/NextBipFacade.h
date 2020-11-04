@@ -8,8 +8,9 @@
 #define SPA_PQL_NEXT_BIP_FACADE_H
 
 #include "NextEvaluatorFacade.h"
+#include "pql/evaluator/relationships/bip/BipFacade.h"
 
-class NextBipFacade: public NextEvaluatorFacade {
+class NextBipFacade: public NextEvaluatorFacade, public BipFacade {
 public:
     NextBipFacade() = default;
     NextBipFacade(const NextBipFacade&) = default;

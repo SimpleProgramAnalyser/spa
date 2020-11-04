@@ -34,163 +34,6 @@ public:
     }
 };
 
-// Helper class to represent the exact manifestation of
-// a statement number within the CFG BIP. There can be
-// multiple statement positions for one statement, if
-// the CFG BIP is duplicated by multiple calls.
-class StatementPositionInCfg {
-private:
-    CfgNode* nodePosition;
-    std::size_t statementIndex;
-
-    friend class StatementPositionHasher;
-
-public:
-    /**
-     * Constructor for a StatementPosition representing
-     * the exact position of a statement instance in the
-     * Control Flow Graph with branching into procedures.
-     *
-     * @param node Pointer to the CFG BIP node. If this
-     *             is nullptr, it may indicate that the
-     *             StatementPosition is invalid.
-     * @param index Index of the statement within node.
-     *              If this is negative, it may indicate
-     *              that the StatementPosition is invalid.
-     */
-    StatementPositionInCfg(CfgNode* node, Integer index): nodePosition(node), statementIndex(index) {}
-
-    /**
-     * Constructor for a StatementPosition with a pair of
-     * the node location and the statement index.
-     */
-    explicit StatementPositionInCfg(Pair<CfgNode*, Integer> positionPair):
-        nodePosition(positionPair.first), statementIndex(positionPair.second)
-    {}
-
-    bool operator==(const StatementPositionInCfg& sp) const
-    {
-        return this->nodePosition == sp.nodePosition && this->statementIndex == sp.statementIndex;
-    }
-
-    CfgNode* getNodePosition() const
-    {
-        return nodePosition;
-    }
-
-    Integer getStatementIndex() const
-    {
-        return statementIndex;
-    }
-
-    Integer getStatementNumber() const
-    {
-        return nodePosition->statementNodes->at(statementIndex)->getStatementNumber();
-    }
-};
-
-// Hash function for a StatementPosition.
-class StatementPositionHasher {
-public:
-    std::size_t operator()(const StatementPositionInCfg& sp) const
-    {
-        std::size_t hashedPointer = std::hash<CfgNode*>()(sp.nodePosition);
-        return (hashedPointer
-                ^ (std::hash<Integer>()(sp.statementIndex) + uint32_t(2654435769) + (hashedPointer * 64)
-                   + (hashedPointer / 4)));
-    }
-};
-
-/**
- * Tries to find the statement with number specified
- * in the CFG BIP, given a pointer to the starting
- * node where the traversal is to begin from, and
- * the index of the statement in the node to begin.
- *
- * Ignores the statement specified at startingIndex,
- * so the method works for self-influencing statements.
- * To search all statements in the CfgNode, use a
- * value of -1 for startingIndex.
- *
- * @param startingPosition Starting node of the CFG BIP, with
- *                         the index to begin searching the AST
- *                         statement nodes of the CFG starting node.
- * @param statement The statement to be found.
- * @param visitedCfgNodes The set of visitedCfgNodes, to prevent
- *                        infinite recursion over a while loop.
- *
- * @return Pair of pointer to the CFG node with the index
- *         of the statement in the CFG, if found.
- *         Otherwise, if not found, nullptr and -1.
- *         The pair is represented as a StatementPosition.
- */
-StatementPositionInCfg findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
-                                             std::unordered_set<CfgNode*>& visitedCfgNodes)
-{
-    CfgNode* startingNode = startingPosition.getNodePosition();
-    Integer startingIndex = startingPosition.getStatementIndex();
-
-    // if visited before, we could not find the statementToFind here
-    if (visitedCfgNodes.find(startingNode) != visitedCfgNodes.end()) {
-        return {nullptr, -1};
-    }
-
-    // first, try to search the untraversed statements
-    Integer maxLength = startingNode->statementNodes->size();
-    for (Integer i = startingIndex + 1; i < maxLength; i++) {
-        if (startingNode->statementNodes->at(i)->getStatementNumber() == statementToFind) {
-            return {startingNode, i};
-        }
-    }
-
-    // else, search the children recursively
-    for (CfgNode* child : *startingNode->childrenNodes) {
-        StatementPositionInCfg resultsFromChild = findCorrespondingNode({child, -1}, statementToFind, visitedCfgNodes);
-        if (resultsFromChild.getNodePosition() != nullptr) {
-            return resultsFromChild;
-        }
-    }
-
-    // we searched all paths and could not find anything
-    return {nullptr, -1};
-}
-
-/**
- * Given a statement number, find all positions of that
- * statement in the CFG BIP that exist.
- *
- * @param statementToFind The statement to find.
- * @return Every position of that statement in the CFG BIP.
- */
-Vector<StatementPositionInCfg> AffectsBipEvaluator::findAllCorrespondingPositions(Integer statementToFind)
-{
-    // first, get all procedures that possibly have CFG BIPs with statement
-    Vector<String> directContainerProcedures = bipFacade->getProcedure(statementToFind);
-    std::unordered_set<String> indirectContainerProcedures;
-    for (const String& procedure : directContainerProcedures) {
-        for (const String& indirectProcedures : bipFacade->getCallersStar(procedure)) {
-            indirectContainerProcedures.insert(indirectProcedures);
-        }
-        indirectContainerProcedures.insert(procedure);
-    }
-
-    // next, find the matching positions of those CFG BIPs
-    std::unordered_set<StatementPositionInCfg, StatementPositionHasher> matchingPositions;
-    for (const String& procedure : indirectContainerProcedures) {
-        CfgNode* startingNode = bipFacade->getCfg(procedure);
-        if (startingNode == nullptr) {
-            continue;
-        }
-        std::unordered_set<CfgNode*> uniqueStatementsVisited;
-        StatementPositionInCfg positionInProcedure
-            = findCorrespondingNode({startingNode, -1}, statementToFind, uniqueStatementsVisited);
-        if (positionInProcedure.getNodePosition() != nullptr) {
-            matchingPositions.insert(positionInProcedure);
-        }
-    }
-    return Vector<StatementPositionInCfg>(matchingPositions.begin(), matchingPositions.end());
-}
-
 /**
  * Searches the CFG BIP for the statement with number
  * endValue, and returns true if the value is found.
@@ -266,7 +109,7 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
 Vector<Integer> AffectsBipEvaluator::cacheModifierBipStarAssigns(Integer leftRefVal)
 {
     // find all positions of leftRefVal
-    Vector<StatementPositionInCfg> allPositions = findAllCorrespondingPositions(leftRefVal);
+    Vector<StatementPositionInCfg> allPositions = findAllCorrespondingPositions(leftRefVal, *bipFacade);
     std::unordered_set<Integer> matchingStatements;
     for (StatementPositionInCfg position : allPositions) {
         std::unordered_set<StatementPositionInCfg, StatementPositionHasher> visitedAssignsWithinProcedure;
@@ -353,7 +196,7 @@ Void AffectsBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer righ
         return;
     }
     // find all positions of leftRefVal
-    Vector<StatementPositionInCfg> allPositions = findAllCorrespondingPositions(leftRefVal);
+    Vector<StatementPositionInCfg> allPositions = findAllCorrespondingPositions(leftRefVal, *bipFacade);
     Boolean matchedRightRef = false;
     for (StatementPositionInCfg position : allPositions) {
         std::unordered_set<StatementPositionInCfg, StatementPositionHasher> visitedAssignsWithinProcedure;

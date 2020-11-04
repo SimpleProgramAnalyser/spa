@@ -112,7 +112,7 @@ Void NextBipEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
 //    }
 }
 
-Void NextBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
+Void NextBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) {
 //{
 //    Vector<StatementNumber> nextStarBipAnyStmtResults = NextEvaluator::getCacheNextStatement(leftRefVal).toList();
 //    ProcedureName leftRefContainingProcName = facade->getProcedureOfStmt(leftRefVal);
