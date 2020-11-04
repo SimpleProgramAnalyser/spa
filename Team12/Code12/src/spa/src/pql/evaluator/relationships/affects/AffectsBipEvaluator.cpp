@@ -81,9 +81,9 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
     Boolean foundEndValue = false;
     for (Integer affectedStatement : affectedBipStatements) {
         std::unordered_set<StatementPositionInCfg, StatementPositionHasher> uniqueStatementsVisited;
-        StatementPositionInCfg correspondingPosition
-            = findCorrespondingNode(startingPosition, affectedStatement, uniqueStatementsVisited);
-        Boolean foundCorrespondingNode = correspondingPosition.getNodePosition() != nullptr;
+        Vector<StatementPositionInCfg> correspondingPositions
+            = findCorrespondingNodes(startingPosition, affectedStatement, uniqueStatementsVisited);
+        Boolean foundCorrespondingNode = !correspondingPositions.empty();
 
         if (foundCorrespondingNode && endValue.isMatched(affectedStatement)) {
             // we found the end value and it is reachable
@@ -93,7 +93,12 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
 
         if (foundCorrespondingNode) {
             // did not find end value, but there are still nodes we can search
-            foundEndValue = affectsBipSearch(affectedStatement, correspondingPosition, false, visitedAssigns, endValue);
+            for (StatementPositionInCfg position : correspondingPositions) {
+                foundEndValue = affectsBipSearch(affectedStatement, position, false, visitedAssigns, endValue);
+                if (foundEndValue) {
+                    break;
+                }
+            }
             if (foundEndValue) {
                 break;
             }
