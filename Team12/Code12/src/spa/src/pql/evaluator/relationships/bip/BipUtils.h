@@ -55,10 +55,15 @@ public:
 };
 
 /**
- * Tries to find the statement with number specified
- * in the CFG BIP, given a pointer to the starting
- * node where the traversal is to begin from, and
- * the index of the statement in the node to begin.
+ * Tries to find the first occurrence of all statements
+ * with number specified in the CFG BIP, given a
+ * pointer to the starting node where the traversal
+ * is to begin from, and the index of the statement
+ * in the node to begin.
+ *
+ * Note that the first occurrence can happen at multiple
+ * places if there is an if/else mutually exclusive branch.
+ * Hence, this method returns a list of first occurrences.
  *
  * Ignores the statement specified at startingIndex,
  * so the method works for self-influencing statements.
@@ -72,14 +77,14 @@ public:
  * @param visitedCfgPositions The set of visitedCfgPositions, to prevent
  *                            infinite recursion over a while loop.
  *
- * @return Pair of pointer to the CFG node with the index
+ * @return All pairs of pointer to the CFG node with the index
  *         of the statement in the CFG, if found.
- *         Otherwise, if not found, nullptr and -1.
- *         The pair is represented as a StatementPosition.
+ *         Otherwise, if not found, an empty list.
+ *         The pairs are represented as StatementPositions.
  */
-StatementPositionInCfg
-findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
-                      std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedCfgPositions);
+Vector<StatementPositionInCfg>
+findCorrespondingNodes(StatementPositionInCfg startingPosition, Integer statementToFind,
+                       std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedCfgPositions);
 
 /**
  * Given a statement number, find all positions of that

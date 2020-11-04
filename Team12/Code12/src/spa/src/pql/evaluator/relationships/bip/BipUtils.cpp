@@ -4,6 +4,8 @@
 
 #include "BipUtils.h"
 
+#include <iterator>
+
 StatementPositionInCfg::StatementPositionInCfg(CfgNode* node, Integer index): nodePosition(node), statementIndex(index)
 {}
 
@@ -39,16 +41,17 @@ std::size_t StatementPositionHasher::operator()(const StatementPositionInCfg& sp
                + (hashedPointer / 4)));
 }
 
-StatementPositionInCfg
-findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
-                      std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedCfgPositions)
+Vector<StatementPositionInCfg>
+findCorrespondingNodes(StatementPositionInCfg startingPosition, Integer statementToFind,
+                       std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedCfgPositions)
 {
     CfgNode* startingNode = startingPosition.getNodePosition();
     Integer startingIndex = startingPosition.getStatementIndex();
+    std::unordered_set<StatementPositionInCfg, StatementPositionHasher> matchingPositions;
 
-    // if visited before, we could not find the statementToFind here
+    // if visited before, we will not find the statementToFind here
     if (visitedCfgPositions.find(startingPosition) != visitedCfgPositions.end()) {
-        return {nullptr, -1};
+        return Vector<StatementPositionInCfg>();
     }
     visitedCfgPositions.insert(startingPosition);
 
@@ -56,7 +59,8 @@ findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statement
     Integer maxLength = startingNode->statementNodes->size();
     for (Integer i = startingIndex + 1; i < maxLength; i++) {
         if (startingNode->statementNodes->at(i)->getStatementNumber() == statementToFind) {
-            return {startingNode, i};
+            // for this branch, we found the first occurrence so we terminate
+            return Vector<StatementPositionInCfg>({{startingNode, i}});
         } else {
             visitedCfgPositions.insert({startingNode, i});
         }
@@ -64,15 +68,18 @@ findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statement
 
     // else, search the children recursively
     for (CfgNode* child : *startingNode->childrenNodes) {
-        StatementPositionInCfg resultsFromChild
-            = findCorrespondingNode({child, -1}, statementToFind, visitedCfgPositions);
-        if (resultsFromChild.getNodePosition() != nullptr) {
-            return resultsFromChild;
+        Vector<StatementPositionInCfg> resultsFromChild
+            = findCorrespondingNodes({child, -1}, statementToFind, visitedCfgPositions);
+        if (!resultsFromChild.empty()) {
+            // we use a set to handle branching paths that both find the same
+            // first occurrence after the paths have joined back with each other
+            std::copy(resultsFromChild.begin(), resultsFromChild.end(),
+                      std::inserter(matchingPositions, matchingPositions.begin()));
         }
     }
 
-    // we searched all paths and could not find anything
-    return {nullptr, -1};
+    // we searched all paths and now we can return the positions
+    return Vector<StatementPositionInCfg>(matchingPositions.begin(), matchingPositions.end());
 }
 
 Vector<StatementPositionInCfg> findAllCorrespondingPositions(Integer statementToFind, BipFacade& bipFacade)
@@ -95,10 +102,11 @@ Vector<StatementPositionInCfg> findAllCorrespondingPositions(Integer statementTo
             continue;
         }
         std::unordered_set<StatementPositionInCfg, StatementPositionHasher> uniqueStatementsVisited;
-        StatementPositionInCfg positionInProcedure
-            = findCorrespondingNode({startingNode, -1}, statementToFind, uniqueStatementsVisited);
-        if (positionInProcedure.getNodePosition() != nullptr) {
-            matchingPositions.insert(positionInProcedure);
+        Vector<StatementPositionInCfg> positionsInProcedure
+            = findCorrespondingNodes({startingNode, -1}, statementToFind, uniqueStatementsVisited);
+        if (!positionsInProcedure.empty()) {
+            std::copy(positionsInProcedure.begin(), positionsInProcedure.end(),
+                      std::inserter(matchingPositions, matchingPositions.begin()));
         }
     }
     return Vector<StatementPositionInCfg>(matchingPositions.begin(), matchingPositions.end());
