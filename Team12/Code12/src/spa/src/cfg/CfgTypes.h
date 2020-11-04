@@ -26,6 +26,10 @@ public:
     CfgNode(CfgNode&&) = delete;
     CfgNode& operator=(CfgNode&&) = delete;
 
+    // Gets the joining node of this node, which is the
+    // place where two if/else branches will meet again
+    CfgNode* getJoinNode() const;
+
     // A method to find all unique children of this node.
     // This method is non-recursive.
     Vector<CfgNode*> findAllChildren() const;

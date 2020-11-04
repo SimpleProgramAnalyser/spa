@@ -21,7 +21,6 @@ CfgNode::~CfgNode()
 {
     delete statementNodes;
     delete childrenNodes;
-    delete ifJoinNode;
 }
 
 /**
@@ -75,6 +74,11 @@ Boolean nodesAreEqual(CfgNode* node1, CfgNode* node2, Vector<Boolean>* visitedAr
         }
     }
     return isEqual;
+}
+
+CfgNode* CfgNode::getJoinNode() const
+{
+    return ifJoinNode;
 }
 
 Vector<CfgNode*> CfgNode::findAllChildren() const
