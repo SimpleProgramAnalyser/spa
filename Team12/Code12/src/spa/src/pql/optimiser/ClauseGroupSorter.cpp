@@ -17,7 +17,7 @@ AdjacencyList adj;
 // digit at visited (LSD) should be 1. Mark it as 0.
 bitmap markVisited(bitmap nodesLeft, unsigned int visited)
 {
-    return nodesLeft & ~((unsigned int)1 << visited);
+    return nodesLeft & ~(static_cast<unsigned int>(1) << visited);
 }
 
 // aim: update nodesReachable so it
@@ -31,10 +31,10 @@ bitmap updateReachableBitmap(bitmap nodesLeft, unsigned int currentNode, bitmap 
     for (auto neighbour : adj[currentNode]) {
         unsigned int u = neighbour;
         // the uth LSB in nodesLeft is set, which means it is to be visited
-        bool notVisited = ((unsigned int)1 << u) & nodesLeft;
+        bool notVisited = (static_cast<unsigned int>(1) << u) & nodesLeft;
         if (notVisited) {
             // set the uth bit in nodesReachable
-            nodesReachable |= ((unsigned int)1 << u);
+            nodesReachable |= (static_cast<unsigned int>(1) << u);
         }
     }
     // 2. remove current node
@@ -56,7 +56,7 @@ Vector<unsigned int> getReachableNodes(bitmap nodesReachable)
         if ((unsigned int)1 & nodesReachable) {
             toReturn.push_back(count);
         }
-        nodesReachable = nodesReachable >> (unsigned int)1;
+        nodesReachable = nodesReachable >> static_cast<unsigned int>(1);
         count++;
     }
     return toReturn;
@@ -247,7 +247,7 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
             // nodesLeft is 1111111 as many 1s as groupSize, taken away the current node (which is it->second)
             unsigned int currentNode = it->second;
             // DO NOT SWAP THE TWO LINES BELOW. updateReachableBitmap assumes the currentNode is marked as visited
-            unsigned int nodesLeft = markVisited(((unsigned int)1 << groupSize) - 1, currentNode);
+            unsigned int nodesLeft = markVisited((static_cast<unsigned int>(1) << groupSize) - 1, currentNode);
             unsigned int nodesReachable = updateReachableBitmap(nodesLeft, currentNode, 0);
             Arrangement currentArr;
             currentArr.push(it->second);
