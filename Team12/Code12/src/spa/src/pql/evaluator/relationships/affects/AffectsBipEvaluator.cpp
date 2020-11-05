@@ -75,8 +75,8 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
     }
 
     // Find all s that match AffectsBip(starting, s)
-    AffectsEvaluator::cacheModifierAssigns(startingStmtNum);
-    Vector<Integer> affectedBipStatements = AffectsEvaluator::getModifierAssigns(startingStmtNum).toVector();
+    cacheAll();
+    Vector<Integer> affectedBipStatements = getModifierAssigns(startingStmtNum).toVector();
     // Terminate when endValue is found
     Boolean foundEndValue = false;
     for (Integer affectedStatement : affectedBipStatements) {
@@ -148,6 +148,13 @@ Void AffectsBipEvaluator::cacheAllBipStar()
     bipStarCacheFullyPopulated = true;
 }
 
+Void AffectsBipEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRefVal)
+{
+    cacheAll();
+    CacheSet resultsForLeft = getModifierAssigns(leftRefVal);
+    resultsTable.storeResultsZero(resultsForLeft.isCached(rightRefVal));
+}
+
 Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
 {
     if (facade->getType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef)) {
@@ -215,6 +222,24 @@ Void AffectsBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer righ
         cacheModifierBipStarTable.insertPartial(rightRefVal, leftRefVal);
     }
     resultsTable.storeResultsZero(matchedRightRef);
+}
+
+Void AffectsBipEvaluator::cacheModifierAssigns(Integer)
+{
+    // For Affects BIP, we don't use the Next BIP table as we cannot
+    // tell which exact call path the statement number belongs to.
+    //
+    // Instead we traverse the CFG BIP manually to find all results.
+    cacheAll();
+}
+
+Void AffectsBipEvaluator::cacheUserAssigns(Integer, Vector<String>)
+{
+    // For Affects BIP, we don't use the Next BIP table as we cannot
+    // tell which exact call path the statement number belongs to.
+    //
+    // Instead we traverse the CFG BIP manually to find all results.
+    cacheAll();
 }
 
 AffectsBipEvaluator::AffectsBipEvaluator(ResultsTable& resultsTable, AffectsBipFacade* facade):
