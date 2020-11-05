@@ -32,7 +32,7 @@ inline bool hasSynonym(const Reference& reference)
 }
 
 bool hasSynonym(Clause* clause);
-uint countSynonym(Clause* clause);
+unsigned int countSynonym(Clause* clause);
 bool shareSynonym(Clause* clause1, Clause* clause2);
 
 #endif // SPA_PQL_OPTIMISER_UTILS_H

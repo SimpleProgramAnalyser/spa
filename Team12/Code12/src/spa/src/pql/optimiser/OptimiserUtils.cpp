@@ -30,7 +30,7 @@ bool hasSynonym(Clause* clause)
     return false;
 }
 
-uint countSynonym(Clause* clause)
+unsigned int countSynonym(Clause* clause)
 {
     switch (clause->getType()) {
     case SuchThatClauseType: {
