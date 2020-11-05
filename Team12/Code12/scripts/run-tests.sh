@@ -13,6 +13,19 @@ echo_usage() {
   echo "Specify skip-tests to skip unit tests and integration tests e.g. ./run-tests.sh build skip-tests"
 }
 
+echo_spaser() {
+  echo "           ,     ,"
+  echo "  .   ,--'<\"-._.-\">'--,"
+  echo "<. .>/   (o )   (o )   \\"
+  echo " | | |   _.        ..   )"
+  echo " | | /    '-.__________.'"
+  echo " | |/    /            /"
+  echo " \\ /   .' simple    ,'"
+  echo "  |   :   program   |"
+  echo "  |   :   analyser  ',"
+  echo "  |    \\              \\"
+}
+
 build_all() {
   cd "${rootdir}"
   cd Team12/Code12/
@@ -78,7 +91,8 @@ else
   exit
 fi
 
-echo "Run autotester..."
+echo_spaser
+echo "Hi! I am SPA-SER! Let's run the autotester!"
 autotester="${builddir}/src/autotester/autotester"
 outdir="${rootdir}/Team12/Code12/tests/output"
 rm -rf "${outdir}"
