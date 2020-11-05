@@ -79,43 +79,53 @@ String readProgram()
 int main(int argv, char** args)
 {
     // Constant declarations
-    const String GreetMsg = "Welcome to our SIMPLE SPA!";
-    const String SimpleProgramPromptMsg
+    const String greetMsg = "Hi! I am SPA-SER! Welcome to our SIMPLE SPA!";
+    const String simpleProgramPromptMsg
         = "Please enter a SIMPLE source program (when done, enter a '\\' on a new line):";
-    const String TryAgainMsg = "\nPlease check your program and try again.";
-    const String DoneFeedbackMsg = "Done...";
-    const String PqlQueryPromptMsg = "Please enter a PQL query (enter '\\' on a new line when done, or 'exit' to end):";
-    const String ByeMsg = "Thank you for using our SIMPLE SPA!";
-    const String SimpleProgramProcessingMsg = "Passing SIMPLE program to SPA frontend...";
-    const String LinefeedChar = "\n";
-    const String PqlEndStr = "\\";
-    const String PqlExitStr = "exit";
+    const String tryAgainMsg = "\nPlease check your program and try again.";
+    const String doneFeedbackMsg = "Done...";
+    const String pqlQueryPromptMsg = "Please enter a PQL query (enter '\\' on a new line when done, or 'exit' to end):";
+    const String byeMsg = "Thank you for using our SIMPLE SPA!";
+    const String simpleProgramProcessingMsg = "Passing SIMPLE program to SPA frontend...";
+    const String linefeedChar = "\n";
+    const String pqlEndStr = "\\";
+    const String pqlExitStr = "exit";
+    const String spaSer = "           ,     ,\n"
+                          "  .   ,--'<\"-._.-\">'--,\n"
+                          "<. .>/   (o )   (o )   \\\n"
+                          " | | |   _.        ..   )\n"
+                          " | | /    '-.__________.'\n"
+                          " | |/    /            /\n"
+                          " \\ /   .' simple    ,'\n"
+                          "  |   :   program   |\n"
+                          "  |   :   analyser  ',\n"
+                          "  |    \\              \\\n";
 
     // UI to print messages to
     CmdLineUi ui;
 
-    std::cout << GreetMsg << std::endl;
+    std::cout << spaSer << greetMsg << std::endl;
     bool parsingNotYetSucceeded = true;
     while (parsingNotYetSucceeded) {
-        std::cout << SimpleProgramPromptMsg << std::endl;
+        std::cout << simpleProgramPromptMsg << std::endl;
 
         String program = readProgram();
 
         std::cout << std::endl << std::endl;
-        std::cout << SimpleProgramProcessingMsg << std::endl;
+        std::cout << simpleProgramProcessingMsg << std::endl;
 
         bool parsingSucceeded = parse(program, ui);
         if (parsingSucceeded) {
             parsingNotYetSucceeded = false;
         } else {
-            std::cout << TryAgainMsg << std::endl;
+            std::cout << tryAgainMsg << std::endl;
             ui.hasError = false;
         }
     }
 
-    std::cout << DoneFeedbackMsg << std::endl;
+    std::cout << doneFeedbackMsg << std::endl;
 
-    std::cout << PqlQueryPromptMsg << std::endl;
+    std::cout << pqlQueryPromptMsg << std::endl;
     std::string query;
     while (true) {
         std::string current;
@@ -124,16 +134,16 @@ int main(int argv, char** args)
             // error
             std::cout << "Error in reading from command line input!" << std::endl;
             break;
-        } else if (current == PqlExitStr) {
+        } else if (current == pqlExitStr) {
             break;
-        } else if (current == PqlEndStr) {
+        } else if (current == pqlEndStr) {
             evaluate(query, ui);
             query.clear();
-            std::cout << PqlQueryPromptMsg << std::endl;
+            std::cout << pqlQueryPromptMsg << std::endl;
         } else {
             query.append(current);
         }
     }
-    std::cout << ByeMsg << std::endl;
+    std::cout << byeMsg << std::endl;
     return 0;
 }
