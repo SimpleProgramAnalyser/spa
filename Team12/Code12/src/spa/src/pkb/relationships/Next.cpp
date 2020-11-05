@@ -86,6 +86,9 @@ void NextTable::addNextRelationships(Integer previous, StatementType previousStm
  */
 Boolean NextTable::checkIfNextHolds(Integer previous, Integer next)
 {
+    if (stmtNextSet.find(previous) == stmtNextSet.end()) {
+        return false;
+    }
     auto targetSet = stmtNextSet[previous].byType[AnyStatement];
     return targetSet.find(next) != targetSet.end();
 }

@@ -30,10 +30,30 @@ private:
     Vector<Integer> cacheModifierBipStarAssigns(Integer leftRefVal);
     Void cacheAllBipStar();
 
+    // Method for Affects
+    Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal) override;
+
+    // Methods for Affects*
     Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) override;
     Void evaluateRightKnownStar(const Reference& leftRef, Integer rightRefVal) override;
     Void evaluateBothAnyStar(const Reference& leftRef, const Reference& rightRef) override;
     Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal) override;
+
+    /**
+     * Runs a search over the CFG BIP to populate the cache
+     * with all assignments that affect another (modifies
+     * a variable used by another assignment), with
+     * branching into procedures considered.
+     */
+    Void cacheModifierAssigns(Integer) override;
+
+    /**
+     * Runs a search over the CFG BIP to populate the cache
+     * with all assignments that are affected (uses a
+     * variable previously modified by another assignment),
+     * with branching into procedures considered.
+     */
+    Void cacheUserAssigns(Integer, Vector<String>) override;
 
 public:
     AffectsBipEvaluator(AffectsBipEvaluator&&) = default;

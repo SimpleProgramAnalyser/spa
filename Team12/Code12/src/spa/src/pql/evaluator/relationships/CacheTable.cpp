@@ -23,9 +23,10 @@ Void CacheTable::insertPartial(StatementNumber key, StatementNumber value)
 
 CacheSet CacheTable::get(StatementNumber stmtNum)
 {
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    assert(table.find(stmtNum) != table.end());
-
+    if (table.find(stmtNum) == table.end()) {
+        // return empty set if not found
+        return CacheSet();
+    }
     return table.find(stmtNum)->second;
 }
 

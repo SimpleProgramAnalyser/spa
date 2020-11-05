@@ -69,8 +69,6 @@ private:
     const CfgNode* affectsSearch(const CfgNode* cfg,
                                  std::unordered_map<String, std::unordered_set<Integer>>& affectsMap,
                                  AffectsTuple& resultsLists);
-    Void cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb);
-    Void cacheAll();
 
     // Helper methods for Affects*
     CacheSet getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
@@ -79,17 +77,17 @@ private:
     CacheSet evaluateUserStar(StatementNumber stmtNum, StatementNumber prevUserStmtNum);
     static void cleanup(CacheSet& partiallyCacheSet, CacheTable& cacheTable);
 
-    // Methods for Affects
-    Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef);
-    Void evaluateRightKnown(const Reference& leftRef, Integer rightRefVal);
-    Void evaluateBothAny(const Reference& leftRef, const Reference& rightRef);
-    Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal);
-
 protected:
     ResultsTable& resultsTable;
     // The facade which this Affects Evaluator uses to interact
     // with components outside of Query Processor (i.e. PKB)
     std::unique_ptr<AffectsEvaluatorFacade> facade;
+
+    // Methods for Affects
+    virtual Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef);
+    virtual Void evaluateRightKnown(const Reference& leftRef, Integer rightRefVal);
+    virtual Void evaluateBothAny(const Reference& leftRef, const Reference& rightRef);
+    virtual Void evaluateBothKnown(Integer leftRefVal, Integer rightRefVal);
 
     // Methods for Affects*
     virtual Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef);
@@ -98,10 +96,31 @@ protected:
     virtual Void evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal);
 
     /**
+     * Runs the Affects search through the Control Flow Graph,
+     * storing all results for Affects in the cache. If this
+     * method is called more than once, calls after the first
+     * will be ignored because the cache is already populated.
+     *
+     * In other words, this method caches all the modifiers
+     * and users in the entire SIMPLE source program. This
+     * caching is only done a maximum of 1 time per query.
+     */
+    Void cacheAll();
+
+    /**
      * Caches all the statements that the
      * given statement affects.
      */
-    Void cacheModifierAssigns(Integer leftRefVal);
+    virtual Void cacheModifierAssigns(Integer leftRefVal);
+
+    /**
+     * Caches all the statements that the
+     * given statement is affected by.
+     *
+     * @param usedFromPkb List of variables used by the assignment
+     *                    statement with number rightRefVal.
+     */
+    virtual Void cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb);
 
     /**
      * Gets the unique set of statements that

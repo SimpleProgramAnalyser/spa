@@ -177,7 +177,8 @@ void ParentTable::addParentRelationshipsStar(StatementNumber parent, StatementTy
  */
 Boolean ParentTable::checkIfParentHolds(StatementNumber parent, StatementNumber child)
 {
-    return stmtChildSet[parent].byType[AnyStatement].find(child) != stmtChildSet[parent].byType[AnyStatement].end();
+    return stmtChildSet.find(parent) != stmtChildSet.end()
+           && stmtChildSet[parent].byType[AnyStatement].find(child) != stmtChildSet[parent].byType[AnyStatement].end();
 }
 
 /**
@@ -189,6 +190,9 @@ Boolean ParentTable::checkIfParentHolds(StatementNumber parent, StatementNumber 
  */
 Boolean ParentTable::checkIfParentHoldsStar(StatementNumber parent, StatementNumber child)
 {
+    if (stmtChildStarSet.find(parent) == stmtChildStarSet.end()) {
+        return false;
+    }
     auto stmtSet = stmtChildStarSet[parent].byType[AnyStatement];
     return stmtSet.find(child) != stmtSet.end();
 }

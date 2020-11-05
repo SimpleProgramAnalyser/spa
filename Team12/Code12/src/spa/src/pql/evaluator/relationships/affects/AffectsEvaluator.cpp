@@ -6,7 +6,6 @@
 #include "AffectsEvaluator.h"
 
 #include <cassert>
-#include <functional>
 #include <set>
 #include <stdexcept>
 
@@ -158,15 +157,18 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
             assert(cfg->childrenNodes->size() == 2); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             const CfgNode* afterIf = affectsSearch(cfg->childrenNodes->at(0), affectsMap, resultsLists);
             const CfgNode* afterElse = affectsSearch(cfg->childrenNodes->at(1), elseCopy, resultsLists);
-            // if and else should eventually point to
+            const CfgNode* joinNode = cfg->ifJoinNode;
+            assert(joinNode != nullptr); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+            // if and else should eventually point to joinNode
             while (afterIf != afterElse) {
-                bool isIfFurtherBehind = afterIf->nodeNumber < afterElse->nodeNumber; // else path is possibly end node
-                if (isIfFurtherBehind) {
+                bool isIfFinished = afterIf == joinNode; // preferentially evaluate if first
+                if (!isIfFinished) {
                     afterIf = affectsSearch(afterIf, affectsMap, resultsLists);
                 } else {
                     afterElse = affectsSearch(afterElse, elseCopy, resultsLists);
                 }
             }
+            assert(afterElse == joinNode); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             // combine both maps
             combineIntoFirst(affectsMap, elseCopy);
             nextNode = afterIf;
@@ -232,75 +234,6 @@ Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& ri
     resultsTable.storeResultsOne(rightRef, cacheModifierTable.get(leftRefVal).toClauseResult());
 }
 
-/**
- * Caches all the statements that the
- * given statement is affected by.
- */
-Void AffectsEvaluator::cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb)
-{
-    Vector<Integer> prevStatements = facade->getPrevious(rightRefVal);
-    std::shared_ptr<std::unordered_set<String>> originalUsedVariables
-        = std::make_shared<std::unordered_set<String>>(usedFromPkb.begin(), usedFromPkb.end());
-    // A priority queue that returns larger statements first
-    UniquePriorityQueue<Integer, std::greater<Integer>> statementsQueue;
-    // A map to tell which statements still can modify which variables
-    std::unordered_map<Integer, std::shared_ptr<std::unordered_set<String>>> statementVariablesMap;
-    for (Integer prev : prevStatements) {
-        statementsQueue.insert(prev);
-        statementVariablesMap.emplace(prev, originalUsedVariables);
-    }
-    std::unordered_set<Integer> affectingStatements;
-    // a set to break out of a loop
-    std::unordered_set<Integer> visitedStatementsSet;
-
-    while (!statementsQueue.empty()) {
-        Integer currentStatement = statementsQueue.popOff();
-        if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
-            // if we have visited before, we ignore
-            continue;
-        }
-        visitedStatementsSet.insert(currentStatement);
-
-        StatementType currentStatementType = facade->getType(currentStatement);
-        bool doesCurrentModifyAnyVariables = false;
-        std::unordered_set<String> remainingVariables = *statementVariablesMap.at(currentStatement);
-        for (const String& variable : *statementVariablesMap.at(currentStatement)) {
-            if (facade->doesStatementModify(currentStatement, variable)) {
-                doesCurrentModifyAnyVariables = true;
-                remainingVariables.erase(variable);
-            }
-        }
-        if (currentStatementType == AssignmentStatement && doesCurrentModifyAnyVariables) {
-            // this assignment Affects rightRefVal
-            affectingStatements.insert(currentStatement);
-        }
-
-        if (doesCurrentModifyAnyVariables && remainingVariables.empty()) {
-            // before this statement, all variables used in rightRefVal have been
-            // modified, so there can no longer be any Affects found along this branch
-            continue;
-        }
-
-        // continue traversal of the branch, put all Previous statements into a queue
-        // also, associate the current set with Previous statements
-        for (Integer prev : facade->getPrevious(currentStatement)) {
-            statementsQueue.insert(prev);
-            if (statementVariablesMap.find(prev) != statementVariablesMap.end()) {
-                // if already exists in map, merge the sets
-                for (const String& variable : remainingVariables) {
-                    statementVariablesMap.at(prev)->insert(variable);
-                }
-            } else if (doesCurrentModifyAnyVariables) {
-                statementVariablesMap.emplace(prev, std::make_shared<std::unordered_set<String>>(remainingVariables));
-            } else {
-                statementVariablesMap.emplace(prev, statementVariablesMap.at(currentStatement));
-            }
-        }
-    }
-    cacheUserTable.insert(rightRefVal, CacheSet(affectingStatements));
-    exploredUserAssigns.insert(rightRefVal);
-}
-
 Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer rightRefVal)
 {
     if (!isAffectable(leftRef) || facade->getType(rightRefVal) != AssignmentStatement) {
@@ -318,42 +251,6 @@ Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer righ
         cacheUserAssigns(rightRefVal, usedFromPkb);
     }
     resultsTable.storeResultsOne(leftRef, cacheUserTable.get(rightRefVal).toClauseResult());
-}
-
-/**
- * Caches all the modifiers and users in the entire
- * SIMPLE source program. This caching is only done
- * a maximum of 1 time per query.
- */
-Void AffectsEvaluator::cacheAll()
-{
-    if (!cacheFullyPopulated) {
-        // we just need certain procedures for computation of Affects
-        Vector<String> procedures = facade->getRelevantProcedures();
-        AffectsTuple resultsLists;
-        for (const String& proc : procedures) {
-            std::unordered_map<String, std::unordered_set<Integer>> modifiedVariablesMap;
-            const CfgNode* end = affectsSearch(facade->getCfg(proc), modifiedVariablesMap, resultsLists);
-            while (end != nullptr) {
-                end = affectsSearch(end, modifiedVariablesMap, resultsLists);
-            }
-        }
-        // store in cache
-        allModifierAssigns = resultsLists.getModifyingStatements();
-        allUserAssigns = resultsLists.getUsingStatements();
-        allAffectsTuples = resultsLists.getAffects();
-        for (Integer modifier : allModifierAssigns) {
-            exploredModifierAssigns.insert(modifier);
-        }
-        for (Integer user : allUserAssigns) {
-            exploredUserAssigns.insert(user);
-        }
-        for (const std::pair<Integer, Integer>& affectsRelation : allAffectsTuples) {
-            cacheModifierTable.insertPartial(affectsRelation.first, affectsRelation.second);
-            cacheUserTable.insertPartial(affectsRelation.second, affectsRelation.first);
-        }
-        cacheFullyPopulated = true;
-    }
 }
 
 Void AffectsEvaluator::evaluateBothAny(const Reference& leftRef, const Reference& rightRef)
@@ -552,6 +449,37 @@ Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRe
     resultsTable.storeResultsZero(modifierStarAnyStmtResults.isCached(rightRefVal));
 }
 
+Void AffectsEvaluator::cacheAll()
+{
+    if (!cacheFullyPopulated) {
+        // we just need certain procedures for computation of Affects
+        Vector<String> procedures = facade->getRelevantProcedures();
+        AffectsTuple resultsLists;
+        for (const String& proc : procedures) {
+            std::unordered_map<String, std::unordered_set<Integer>> modifiedVariablesMap;
+            const CfgNode* end = affectsSearch(facade->getCfg(proc), modifiedVariablesMap, resultsLists);
+            while (end != nullptr) {
+                end = affectsSearch(end, modifiedVariablesMap, resultsLists);
+            }
+        }
+        // store in cache
+        allModifierAssigns = resultsLists.getModifyingStatements();
+        allUserAssigns = resultsLists.getUsingStatements();
+        allAffectsTuples = resultsLists.getAffects();
+        for (Integer modifier : allModifierAssigns) {
+            exploredModifierAssigns.insert(modifier);
+        }
+        for (Integer user : allUserAssigns) {
+            exploredUserAssigns.insert(user);
+        }
+        for (const std::pair<Integer, Integer>& affectsRelation : allAffectsTuples) {
+            cacheModifierTable.insertPartial(affectsRelation.first, affectsRelation.second);
+            cacheUserTable.insertPartial(affectsRelation.second, affectsRelation.first);
+        }
+        cacheFullyPopulated = true;
+    }
+}
+
 Void AffectsEvaluator::cacheModifierAssigns(Integer leftRefVal)
 {
     Vector<Integer> nextStatements = facade->getNext(leftRefVal);
@@ -596,6 +524,71 @@ Void AffectsEvaluator::cacheModifierAssigns(Integer leftRefVal)
     }
     cacheModifierTable.insert(leftRefVal, CacheSet(affectedStatements));
     exploredModifierAssigns.insert(leftRefVal);
+}
+
+Void AffectsEvaluator::cacheUserAssigns(Integer rightRefVal, Vector<String> usedFromPkb)
+{
+    Vector<Integer> prevStatements = facade->getPrevious(rightRefVal);
+    std::shared_ptr<std::unordered_set<String>> originalUsedVariables
+        = std::make_shared<std::unordered_set<String>>(usedFromPkb.begin(), usedFromPkb.end());
+    // A priority queue that returns larger statements first
+    UniquePriorityQueue<Integer, std::greater<Integer>> statementsQueue;
+    // A map to tell which statements still can modify which variables
+    std::unordered_map<Integer, std::shared_ptr<std::unordered_set<String>>> statementVariablesMap;
+    for (Integer prev : prevStatements) {
+        statementsQueue.insert(prev);
+        statementVariablesMap.emplace(prev, originalUsedVariables);
+    }
+    std::unordered_set<Integer> affectingStatements;
+    // a set to break out of a loop
+    std::unordered_set<Integer> visitedStatementsSet;
+
+    while (!statementsQueue.empty()) {
+        Integer currentStatement = statementsQueue.popOff();
+        if (visitedStatementsSet.find(currentStatement) != visitedStatementsSet.end()) {
+            // if we have visited before, we ignore
+            continue;
+        }
+        visitedStatementsSet.insert(currentStatement);
+
+        StatementType currentStatementType = facade->getType(currentStatement);
+        bool doesCurrentModifyAnyVariables = false;
+        std::unordered_set<String> remainingVariables = *statementVariablesMap.at(currentStatement);
+        for (const String& variable : *statementVariablesMap.at(currentStatement)) {
+            if (facade->doesStatementModify(currentStatement, variable)) {
+                doesCurrentModifyAnyVariables = true;
+                remainingVariables.erase(variable);
+            }
+        }
+        if (currentStatementType == AssignmentStatement && doesCurrentModifyAnyVariables) {
+            // this assignment Affects rightRefVal
+            affectingStatements.insert(currentStatement);
+        }
+
+        if (doesCurrentModifyAnyVariables && remainingVariables.empty()) {
+            // before this statement, all variables used in rightRefVal have been
+            // modified, so there can no longer be any Affects found along this branch
+            continue;
+        }
+
+        // continue traversal of the branch, put all Previous statements into a queue
+        // also, associate the current set with Previous statements
+        for (Integer prev : facade->getPrevious(currentStatement)) {
+            statementsQueue.insert(prev);
+            if (statementVariablesMap.find(prev) != statementVariablesMap.end()) {
+                // if already exists in map, merge the sets
+                for (const String& variable : remainingVariables) {
+                    statementVariablesMap.at(prev)->insert(variable);
+                }
+            } else if (doesCurrentModifyAnyVariables) {
+                statementVariablesMap.emplace(prev, std::make_shared<std::unordered_set<String>>(remainingVariables));
+            } else {
+                statementVariablesMap.emplace(prev, statementVariablesMap.at(currentStatement));
+            }
+        }
+    }
+    cacheUserTable.insert(rightRefVal, CacheSet(affectingStatements));
+    exploredUserAssigns.insert(rightRefVal);
 }
 
 CacheSet AffectsEvaluator::getModifierAssigns(Integer stmtNum)

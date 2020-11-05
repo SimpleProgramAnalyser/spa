@@ -17,6 +17,7 @@ CfgNode* createCfgNode(size_t stmtListSize, size_t& currentNumberOfNodes)
 {
     auto* statements = new Vector<StatementNode*>();
     auto* children = new Vector<CfgNode*>();
+    CfgNode* ifJoinNode = nullptr;
 
     // Reserve enough space for the statements in the node
     // At least the size of the statement list, in case the whole
@@ -26,7 +27,7 @@ CfgNode* createCfgNode(size_t stmtListSize, size_t& currentNumberOfNodes)
     children->reserve(2);
     currentNumberOfNodes++;
 
-    return new CfgNode(statements, children, currentNumberOfNodes);
+    return new CfgNode(statements, children, currentNumberOfNodes, ifJoinNode);
 }
 
 /**
@@ -138,6 +139,8 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         CfgNode* ifDummyNode = createCfgNode(wholeStmtListSize, currentNumberOfNodes);
         (*ifNode->childrenNodes).push_back(ifDummyNode);
         (*elseNode->childrenNodes).push_back(ifDummyNode);
+        // Connect the fork node to the join node for Affects Evaluator
+        ifNewNode->ifJoinNode = ifDummyNode;
         return ifDummyNode;
     }
     default:

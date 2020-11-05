@@ -6,6 +6,8 @@
 
 #include "AffectsBipFacade.h"
 
+#include <cassert>
+
 #include "pkb/PKB.h"
 
 Vector<String> AffectsBipFacade::getModified(Integer stmtNum)
