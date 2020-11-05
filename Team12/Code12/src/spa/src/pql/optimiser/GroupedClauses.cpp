@@ -1,6 +1,7 @@
 #include "GroupedClauses.h"
 
 #include <functional>
+#include <iterator>
 #include <numeric>
 
 #include "OptimiserUtils.h"

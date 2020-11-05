@@ -32,7 +32,7 @@ void sortWithinEachGroup(GroupedClauses& groupedClauses);
  * Constant declarations
  */
 const unsigned int INF = 2e9;
-const uint startingNode = 0;
+const unsigned int startingNode = 0;
 
 /**
  * Type/struct declarations
@@ -45,7 +45,7 @@ typedef std::queue<unsigned int> Arrangement;
 // DP is a matrix with rows a bitmap, columns the weights.
 // Each cells save the best ending weights along with the next node to visit
 typedef std::unordered_map<unsigned long long, IntWithNext> DP;
-typedef std::unordered_map<unsigned int, std::unordered_set<uint>> AdjacencyList;
+typedef std::unordered_map<unsigned int, std::unordered_set<unsigned int>> AdjacencyList;
 typedef unsigned long long bitmap;
 
 #endif // SPA_PQL_CLAUSE_GROUP_SORTER_H
