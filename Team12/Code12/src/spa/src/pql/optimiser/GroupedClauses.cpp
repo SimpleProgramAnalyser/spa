@@ -363,20 +363,19 @@ void GroupedClauses::cleanUpEmptyGroups()
         return;
     }
 
-    auto it = listOfGroups.begin();
-    while (it != listOfGroups.end()) {
-        int currGroupIndex = it - listOfGroups.begin();
-        if (it->empty()) {
-            if (it + 1 != listOfGroups.end()) {
-                mergeAndRemoveGroup(currGroupIndex, currGroupIndex + 1);
+    int index = 0;
+    while (index < listOfGroups.size()) {
+        if (listOfGroups.at(index).empty()) {
+            if (index + 1 != listOfGroups.size() - 1) { // not the last element
+                mergeAndRemoveGroup(index, index + 1);
                 continue;
-            } else if (it != listOfGroups.begin()) {
-                mergeAndRemoveGroup(currGroupIndex, currGroupIndex - 1);
+            } else if (index != 0) {
+                mergeAndRemoveGroup(index, index - 1);
                 continue;
             } else { // the only empty group
                 return;
             }
         }
-        it++;
+        index++;
     }
 }
