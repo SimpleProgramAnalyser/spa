@@ -359,23 +359,15 @@ void GroupedClauses::applyArrangementToGroup(std::queue<unsigned int> arrangemen
 
 void GroupedClauses::cleanUpEmptyGroups()
 {
-    if (listOfGroups.size() == 1) {
+    if (listOfGroups.size() <= 1) {
         return;
     }
 
-    int index = 0;
-    while (index < listOfGroups.size()) {
-        if (listOfGroups.at(index).empty()) {
-            if (index + 1 != listOfGroups.size() - 1) { // not the last element
-                mergeAndRemoveGroup(index, index + 1);
-                continue;
-            } else if (index != 0) {
-                mergeAndRemoveGroup(index, index - 1);
-                continue;
-            } else { // the only empty group
-                return;
-            }
+    Vector<Vector<Integer>> newListOfGroups;
+    for (auto& group : listOfGroups) {
+        if (!group.empty()) {
+            newListOfGroups.push_back(std::move(group));
         }
-        index++;
     }
+    listOfGroups = std::move(newListOfGroups);
 }
