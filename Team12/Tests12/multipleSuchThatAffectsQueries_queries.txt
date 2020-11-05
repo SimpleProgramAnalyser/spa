@@ -291,7 +291,7 @@ none
 58 - Affects 3 Select 1 common synonym (1,2, 1,3)
 assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
 Select <a, a1> such that Affects*(a, a1) such that Next*(r, a) such that Next*(a1,a)
-56 56, 56 64, 56 66, 80 80, 87 87, 87 89, 87 90, 87 92, 87 97, 89 87, 89 92, 90 97, 93 87, 93 89, 93 90, 93 92, 93 97, 96 87, 96 89, 96 90, 96 92, 96 96, 96 97
+56 56, 56 64, 56 66, 80 80, 87 87, 87 89, 87 90, 87 92, 87 97, 89 87, 89 89, 89 90, 89 92, 89 97, 90 97, 93 87, 93 89, 93 90, 93 92, 93 97, 96 87, 96 89, 96 90, 96 92, 96 96, 96 97
 5000
 59 - Affects 3 Select 1 common synonym (1,2,2,3)
 assign a, a1; while w; variable v; prog_line s2; if i; procedure p1, p2, p3; prog_line n, n1, n2; call c; read r;
