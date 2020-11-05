@@ -1388,11 +1388,16 @@ Query Language (PQL) queries.
 '''
 
 [#executeQuery]
-`*FORMATTED_QUERY_RESULT* executeQuery(*STRING* query, *QUERY_RESULT_FORMAT_TYPE* format);`
+`*FORMATTED_QUERY_RESULT* executeQuery(*STRING* query, *QUERY_RESULT_FORMAT_TYPE* format,
+*UI* ui, *BOOLEAN* optimise);`
 
 *Description*: Returns a *FORMATTED_QUERY_RESULT* after processing and evaluating a
 `query` in *Processed Query Language* (PQL) form. Results are formatted according to
-specified `format`.
+specified `format`. If there is a syntax or semantic error, `ui` will be called to
+display the error.
+
+If `optimise` is set to true, the Query Optimiser will be used to optimise the query
+namely by reordering the clauses within the query.
 
 === Preprocessor API
 *Overview*: Handles the business logic for pre-processing PQL queries, including validating

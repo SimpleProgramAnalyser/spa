@@ -34,7 +34,7 @@ Vector<String> AffectsBipFacade::getRelevantProcedures()
 
 CfgNode* AffectsBipFacade::getCfg(const String& procedureName)
 {
-    return getCFGBip(procedureName);
+    return BipFacade::getCfg(procedureName);
 }
 
 Boolean AffectsBipFacade::doesStatementModify(Integer stmtNum, const String& variable)
@@ -46,14 +46,4 @@ Boolean AffectsBipFacade::doesStatementModify(Integer stmtNum, const String& var
     } else {
         return checkIfStatementModifies(stmtNum, variable);
     }
-}
-
-Vector<String> AffectsBipFacade::getProcedure(Integer stmtNum)
-{
-    return getContainingProcedure(stmtNum);
-}
-
-Vector<String> AffectsBipFacade::getCallersStar(const String& procedureName)
-{
-    return getAllCallersStar(procedureName);
 }

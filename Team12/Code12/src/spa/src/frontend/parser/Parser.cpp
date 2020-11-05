@@ -102,6 +102,38 @@ TokenListIndex getBracketEnd(frontend::TokenList* programTokens, TokenListIndex 
 }
 
 /**
+ * Recursively gets the last statement number inside the stmtList.
+ * The last statement number is not simply the last statement in
+ * the statement list node, as the last statement could be a
+ * container statement holding the true last statement.
+ *
+ * @param stmtlstNode The statement list node to traverse.
+ * @return The last statement number that can be found from
+ *         within the statement list node.
+ */
+StatementNumber getLastStatementNumber(const StmtlstNode* stmtlstNode)
+{
+    StatementType lastStatementType = (stmtlstNode->statementList.end() - 1)->get()->getStatementType();
+    switch (lastStatementType) {
+    case IfStatement: {
+        // NOLINTNEXTLINE
+        IfStatementNode* ifStatementNode = static_cast<IfStatementNode*>((stmtlstNode->statementList.end() - 1)->get());
+        // else statements will contain later statement numbers than if statements
+        return getLastStatementNumber(ifStatementNode->elseStatementList);
+    }
+    case WhileStatement: {
+        WhileStatementNode* whileStatementNode
+            // NOLINTNEXTLINE
+            = static_cast<WhileStatementNode*>((stmtlstNode->statementList.end() - 1)->get());
+        return getLastStatementNumber(whileStatementNode->statementList);
+    }
+    default: {
+        return (stmtlstNode->statementList.end() - 1)->get()->getStatementNumber();
+    }
+    }
+}
+
+/**
  * Returns a ParserReturnType signifying a syntax error.
  * (nextUnparsedToken is set to negative value)
  *
@@ -929,41 +961,6 @@ ParserReturnType<std::unique_ptr<StmtlstNode>> parseStatementList(frontend::Toke
         return ParserReturnType<std::unique_ptr<StmtlstNode>>(
             std::unique_ptr<StmtlstNode>(createStmtlstNode(statements)), nextUnparsed + 1 /* ignore closing braces */);
     }
-}
-
-/**
- * Recursively gets the last statement number inside the stmtList.
- *
- * @param stmtlstNode
- * @return
- */
-StatementNumber getLastStatementNumber(const StmtlstNode* stmtlstNode)
-{
-    StatementType lastStatementType = (stmtlstNode->statementList.end() - 1)->get()->getStatementType();
-    switch (lastStatementType) {
-    case AnyStatement:
-    case AssignmentStatement:
-    case CallStatement:
-    case PrintStatement:
-    case NonExistentStatement:
-    case StatementTypeCount:
-    case ReadStatement:
-        break;
-    case IfStatement: {
-        // NOLINTNEXTLINE
-        IfStatementNode* ifStatementNode = static_cast<IfStatementNode*>((stmtlstNode->statementList.end() - 1)->get());
-        return getLastStatementNumber(ifStatementNode->elseStatementList);
-        break;
-    }
-    case WhileStatement: {
-        // NOLINTNEXTLINE
-        WhileStatementNode* whileStatementNode
-            = static_cast<WhileStatementNode*>((stmtlstNode->statementList.end() - 1)->get());
-        return getLastStatementNumber(whileStatementNode->statementList);
-        break;
-    }
-    }
-    return (stmtlstNode->statementList.end() - 1)->get()->getStatementNumber();
 }
 
 ParserReturnType<std::unique_ptr<ProcedureNode>> parseProcedure(frontend::TokenList* programTokens,

@@ -19,8 +19,8 @@
  */
 Void optimiseQuery(AbstractQuery& abstractQuery)
 {
-    // check if query is invalid
-    if (abstractQuery.isInvalid()) {
+    // check if query is invalid, or 1 clause and less
+    if (abstractQuery.isInvalid() || abstractQuery.getClauses().count() <= 1) {
         return;
     }
 
@@ -111,7 +111,7 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
      */
     // FIXME: calls.stmt# and calls.procName are substituted without distinction
     List<Clause>& clauseList = abstractQuery.getClausesUnsafe().getAllUnsafe();
-    for (int i = 0; i < clauseList.size(); i++) {
+    for (std::size_t i = 0; i < clauseList.size(); i++) {
         Clause* clause = clauseList[i].get();
         switch (clause->getType()) {
         case WithClauseType: {

@@ -36,3 +36,18 @@ Boolean NextBipFacade::isNext(Integer prev, Integer next)
 {
     return checkIfNextBipHolds(prev, next);
 }
+
+Boolean NextBipFacade::checksIfCallsStarHolds(ProcedureName p1, ProcedureName p2)
+{
+    return checkIfCallsHoldsStar(p1, p2);
+}
+
+ProcedureName NextBipFacade::getProcedureOfStmt(StatementNumber stmtNum)
+{
+    Vector<ProcedureName> optional = getContainingProcedure(stmtNum);
+    if (optional.empty()) {
+        return "";
+    }
+
+    return optional.at(0);
+}

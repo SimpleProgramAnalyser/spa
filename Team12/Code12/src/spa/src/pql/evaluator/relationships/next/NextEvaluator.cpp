@@ -53,7 +53,8 @@ Void NextEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& r
 {
     DesignEntityType rightSynonymType = rightRef.isWildCard() ? StmtType : rightRef.getDesignEntity().getType();
     CacheSet nextStarAnyStmtResults = getCacheNextStatement(leftRefVal);
-    ClauseResult filteredResults = nextStarAnyStmtResults.filterStatementType(mapToStatementType(rightSynonymType));
+    ClauseResult filteredResults
+        = nextStarAnyStmtResults.filterStatementType(mapToStatementType(rightSynonymType)).toClauseResult();
     resultsTable.storeResultsOne(rightRef, filteredResults);
 }
 
@@ -61,7 +62,8 @@ Void NextEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer rig
 {
     DesignEntityType leftSynonymType = leftRef.isWildCard() ? StmtType : leftRef.getDesignEntity().getType();
     CacheSet prevStarAnyStmtResults = getCachePrevStatement(rightRefVal);
-    ClauseResult filteredResults = prevStarAnyStmtResults.filterStatementType(mapToStatementType(leftSynonymType));
+    ClauseResult filteredResults
+        = prevStarAnyStmtResults.filterStatementType(mapToStatementType(leftSynonymType)).toClauseResult();
     resultsTable.storeResultsOne(leftRef, filteredResults);
 }
 
@@ -142,7 +144,7 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
     Vector<Pair<Integer, String>> pairedResults;
     for (StatementNumber stmtNum : prevTypeStatements) {
         CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
-        ClauseResult filteredResults = nextStarAnyStmtResults.filterStatementType(nextRefStmtType);
+        ClauseResult filteredResults = nextStarAnyStmtResults.filterStatementType(nextRefStmtType).toClauseResult();
         // Store results
         for (const String& result : filteredResults) {
             Pair<Integer, String> pairResult = std::make_pair(stmtNum, result);

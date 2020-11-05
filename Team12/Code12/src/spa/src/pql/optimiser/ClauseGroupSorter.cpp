@@ -2,6 +2,7 @@
 
 #include <map>
 #include <set>
+#include <stdexcept>
 
 #include "GroupedClauses.h"
 #include "OptimiserUtils.h"
@@ -9,36 +10,36 @@
 /**
  * Global Variables
  */
-std::unordered_map<uint, uint> weights;
+std::unordered_map<unsigned int, unsigned int> weights;
 DP dp;
 AdjacencyList adj;
 
 // digit at visited (LSD) should be 1. Mark it as 0.
-bitmap markVisited(bitmap nodesLeft, uint visited)
+bitmap markVisited(bitmap nodesLeft, unsigned int visited)
 {
-    return nodesLeft & ~((uint)1 << visited);
+    return nodesLeft & ~(static_cast<unsigned int>(1) << visited);
 }
 
 // aim: update nodesReachable so it
 // 1. is all reachable
 // 2. does not contain currentNode
 // 3. does not contain anything from the zeroes of nodesLeft
-bitmap updateReachableBitmap(bitmap nodesLeft, uint currentNode, bitmap nodesReachable)
+bitmap updateReachableBitmap(bitmap nodesLeft, unsigned int currentNode, bitmap nodesReachable)
 {
     // 1. make sure everything is reachable.
     // for neighbours of current node, if it is yet to be visited (in nodesLeft), update nodesReachable
     for (auto neighbour : adj[currentNode]) {
-        uint u = neighbour;
+        unsigned int u = neighbour;
         // the uth LSB in nodesLeft is set, which means it is to be visited
-        bool notVisited = ((uint)1 << u) & nodesLeft;
+        bool notVisited = (static_cast<unsigned int>(1) << u) & nodesLeft;
         if (notVisited) {
             // set the uth bit in nodesReachable
-            nodesReachable |= ((uint)1 << u);
+            nodesReachable |= (static_cast<unsigned int>(1) << u);
         }
     }
     // 2. remove current node
     // finally remove currentNode by AND with 11111011111
-    nodesReachable &= ~((uint)1 << currentNode);
+    nodesReachable &= ~(static_cast<unsigned int>(1) << currentNode);
 
     // 3. remove nodesLeft
     // say nodesLeft is 1110001, just AND it with nodesReachable
@@ -46,16 +47,16 @@ bitmap updateReachableBitmap(bitmap nodesLeft, uint currentNode, bitmap nodesRea
     return nodesReachable;
 }
 
-Vector<uint> getReachableNodes(bitmap nodesReachable)
+Vector<unsigned int> getReachableNodes(bitmap nodesReachable)
 {
-    Vector<uint> toReturn;
-    uint count = startingNode;
+    Vector<unsigned int> toReturn;
+    unsigned int count = startingNode;
     while (nodesReachable) {
         // if LSD is 1, push it into the vector
-        if ((uint)1 & nodesReachable) {
+        if (static_cast<unsigned int>(1) & nodesReachable) {
             toReturn.push_back(count);
         }
-        nodesReachable = nodesReachable >> (uint)1;
+        nodesReachable = nodesReachable >> static_cast<unsigned int>(1);
         count++;
     }
     return toReturn;
@@ -73,8 +74,8 @@ Arrangement constructQueue(Arrangement currArrangement, bitmap nodesLeft)
 // an arrangement is a permutation of the n nodes.
 // this DP aims to MINIMIZE i * weights(p_i) where p_1, p_2, ... ,p_n represent the permutation
 // arrangementQueue is GREEDY: it contains the currentNode when called.
-std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, uint multiplier, uint currentNode,
-                                     uint currentWeight, const Arrangement& arrangementQueue)
+std::pair<Arrangement, unsigned int> arrange(bitmap nodesLeft, bitmap nodesReachable, unsigned int multiplier,
+                                             unsigned int currentWeight, const Arrangement& arrangementQueue)
 {
     // Base case: no more node to visit
     if (nodesLeft == 0) {
@@ -91,16 +92,16 @@ std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, ui
 
     // Backtracking (or top-down DP)
     // explore the reachable ones.
-    uint minWeight = INF;
-    uint minWeightNode = -1;
+    unsigned int minWeight = INF;
+    unsigned int minWeightNode = -1;
     Arrangement bestQueue;
     for (auto reachable : getReachableNodes(nodesReachable)) {
         bitmap currNodesLeft = markVisited(nodesLeft, reachable);
         bitmap currReachable = updateReachableBitmap(nodesLeft, reachable, nodesReachable);
         Arrangement currQueue(arrangementQueue);
         currQueue.push(reachable);
-        auto result = arrange(currNodesLeft, currReachable, multiplier - 1, reachable,
-                              currentWeight + weights[reachable], currQueue);
+        auto result
+            = arrange(currNodesLeft, currReachable, multiplier - 1, currentWeight + weights[reachable], currQueue);
         if (result.second < minWeight) {
             minWeight = std::min(minWeight, result.second);
             minWeightNode = reachable;
@@ -116,10 +117,11 @@ std::pair<Arrangement, uint> arrange(bitmap nodesLeft, bitmap nodesReachable, ui
 }
 
 // weights of a clause is the estimated time it takes to evaluate.
-uint getWeight(Clause* clause)
+unsigned int getWeight(Clause* clause)
 {
-    const uint SYNONYM_COUNT_MULTIPLIER = 100, WITH = 0, FOLLOWS_MODIFIES = 2, PATTERN_REST = 4, AFFECTS = 100;
-    uint clauseWeight = 0;
+    const unsigned int SYNONYM_COUNT_MULTIPLIER = 100, WITH = 0, FOLLOWS_MODIFIES = 2, PATTERN_REST = 4, AFFECTS = 100,
+                       BIP = 150;
+    unsigned int clauseWeight = 0;
     clauseWeight += SYNONYM_COUNT_MULTIPLIER * (countSynonym(clause) - 1);
     /**
      * with clause: +0
@@ -161,9 +163,17 @@ uint getWeight(Clause* clause)
             clauseWeight += AFFECTS;
             break;
         }
-        case InvalidRelationshipType:
+        case AffectsBipType:
+        case AffectsBipStarType:
+        case NextBipType:
+        case NextBipStarType: {
+            clauseWeight += BIP;
             break;
         }
+        default:
+            throw std::runtime_error("Error: unknown SuchThatClauseType in ClauseGroupSorter::getWeight");
+        }
+        break;
     }
     case PatternClauseType: {
         clauseWeight += PATTERN_REST;
@@ -206,16 +216,16 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
         if (!groupedClauses.groupHasSynonym(i))
             continue;
 
-        uint groupSize = groupedClauses.groupSize(i);
+        unsigned int groupSize = groupedClauses.groupSize(i);
         // create graph
         adj.clear();
         weights.clear();
 
-        uint minWeight = INF;
-        std::unordered_multimap<uint, uint> weightNodes;
-        for (int j = 0; j < groupSize; j++) {
+        unsigned int minWeight = INF;
+        std::unordered_multimap<unsigned int, unsigned int> weightNodes;
+        for (std::size_t j = 0; j < groupSize; j++) {
             Clause* clause1 = groupedClauses.getClause(i, j);
-            for (int k = j + 1; k < groupSize; k++) {
+            for (std::size_t k = j + 1; k < groupSize; k++) {
                 Clause* clause2 = groupedClauses.getClause(i, k);
                 if (shareSynonym(clause1, clause2)) {
                     adj[j].insert(k);
@@ -232,17 +242,16 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
         auto lowestIT = weightNodes.equal_range(minWeight);
         // take minimum across all starting points
         Arrangement arr;
-        uint minCost = INF;
+        unsigned int minCost = INF;
         for (auto it = lowestIT.first; it != lowestIT.second; it++) {
             // nodesLeft is 1111111 as many 1s as groupSize, taken away the current node (which is it->second)
-            uint currentNode = it->second;
+            unsigned int currentNode = it->second;
             // DO NOT SWAP THE TWO LINES BELOW. updateReachableBitmap assumes the currentNode is marked as visited
-            uint nodesLeft = markVisited(((uint)1 << groupSize) - 1, currentNode);
-            uint nodesReachable = updateReachableBitmap(nodesLeft, currentNode, 0);
+            unsigned int nodesLeft = markVisited((static_cast<unsigned int>(1) << groupSize) - 1, currentNode);
+            unsigned int nodesReachable = updateReachableBitmap(nodesLeft, currentNode, 0);
             Arrangement currentArr;
             currentArr.push(it->second);
-            auto results
-                = arrange(nodesLeft, nodesReachable, groupSize - 1, it->second, it->first * groupSize, currentArr);
+            auto results = arrange(nodesLeft, nodesReachable, groupSize - 1, it->first * groupSize, currentArr);
             if (results.second < minCost) {
                 minCost = results.second;
                 arr = std::move(results.first);

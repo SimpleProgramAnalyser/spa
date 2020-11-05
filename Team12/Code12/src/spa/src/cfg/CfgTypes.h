@@ -17,13 +17,18 @@ public:
     Vector<StatementNode*>* statementNodes;
     Vector<CfgNode*>* childrenNodes;
     size_t nodeNumber;
+    CfgNode* ifJoinNode;
 
-    CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber);
+    CfgNode(Vector<StatementNode*>* statements, Vector<CfgNode*>* children, size_t cfgNodeNumber, CfgNode* joinNode);
     ~CfgNode();
     CfgNode(const CfgNode&) = delete;
     CfgNode& operator=(const CfgNode&) = delete;
     CfgNode(CfgNode&&) = delete;
     CfgNode& operator=(CfgNode&&) = delete;
+
+    // Gets the joining node of this node, which is the
+    // place where two if/else branches will meet again
+    CfgNode* getJoinNode() const;
 
     // A method to find all unique children of this node.
     // This method is non-recursive.

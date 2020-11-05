@@ -64,14 +64,20 @@ public:
     // Checks if StatementNumber is already cached
     Boolean isCached(StatementNumber stmtNum) const;
 
-    // Returns a ClauseResult with the StatementNumber filtered for stmtType
-    ClauseResult filterStatementType(StatementType stmtType) const;
+    // Returns a CacheSet with the StatementNumber filtered for stmtType
+    CacheSet filterStatementType(StatementType stmtType) const;
 
     // Converts CacheSet into a Vector of StatementNumbers.
     Vector<StatementNumber> toList() const;
 
     // Returns true if CacheSet is empty.
     Boolean empty() const;
+
+    // Returns size of set.
+    size_t size() const;
+
+    // Removes the given StatementNumber
+    void remove(StatementNumber stmtNumToRemove);
 };
 
 #endif // SPA_PQL_CACHE_SET_H

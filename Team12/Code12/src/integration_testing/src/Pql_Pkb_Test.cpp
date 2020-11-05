@@ -5,12 +5,12 @@
  * (In this series of tests, we mainly focus on the
  * Autotester format (instead of the UI format).)
  */
-#include "catch.hpp"
+#include "../../unit_testing/src/ast_utils/AstUtils.h"
+#include "../../unit_testing/src/cfg_utils/CfgUtils.h"
 #include "Utils.h"
+#include "catch.hpp"
 #include "pkb/PKB.h"
 #include "pql/PqlManager.h"
-#include "../../unit_testing/src/cfg_utils/CfgUtils.h"
-#include "../../unit_testing/src/ast_utils/AstUtils.h"
 
 TEST_CASE("syntatically invalid query")
 {
@@ -31,7 +31,7 @@ TEST_CASE("syntatically invalid query")
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -60,7 +60,7 @@ TEST_CASE("semantically invalid query")
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -89,7 +89,7 @@ TEST_CASE("vacuously true query no clauses")
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -116,7 +116,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "3";
@@ -135,7 +135,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "3";
@@ -154,7 +154,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "3";
@@ -173,7 +173,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "3";
@@ -192,7 +192,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "3";
@@ -211,7 +211,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "3";
@@ -243,7 +243,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -275,7 +275,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -306,7 +306,7 @@ TEST_CASE("query with such that Follows clause, left operand line number, right 
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -344,7 +344,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "2";
@@ -375,7 +375,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -407,7 +407,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand li
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -440,7 +440,7 @@ TEST_CASE(
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -466,7 +466,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -492,7 +492,7 @@ TEST_CASE("query with such that Follows clause, left operand wildcard, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "4, 3";
@@ -524,7 +524,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand wi
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -555,7 +555,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -576,7 +576,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -596,7 +596,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -616,7 +616,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -636,7 +636,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -656,7 +656,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -688,7 +688,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -720,7 +720,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -751,7 +751,7 @@ TEST_CASE("query with such that Parent clause, left operand line number, right o
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -789,7 +789,7 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "2";
@@ -821,7 +821,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -853,7 +853,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand lin
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -886,7 +886,7 @@ TEST_CASE(
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -912,7 +912,7 @@ TEST_CASE("query with such that Parent clause, left operand synonym, right opera
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -938,7 +938,7 @@ TEST_CASE("query with such that Parent clause, left operand wildcard, right oper
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "4, 3";
@@ -970,7 +970,7 @@ TEST_CASE("(vacuously true) query with such that Parent clause, left operand wil
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -1004,7 +1004,7 @@ TEST_CASE("query with such that Uses clause, left operand line number, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = varName2 + ", " + varName1;
@@ -1043,7 +1043,7 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand line 
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
@@ -1082,7 +1082,7 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand line 
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
@@ -1112,7 +1112,7 @@ TEST_CASE("query with such that Uses clause, left operand line number, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -1162,7 +1162,7 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -1209,7 +1209,7 @@ TEST_CASE("(vacuously true) query with such that Uses clause, left operand proce
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = procName1 + ", " + procName2;
@@ -1243,7 +1243,7 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -1277,7 +1277,7 @@ TEST_CASE("query with such that Modifies clause, left operand line number, right
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = varName2 + ", " + varName1;
@@ -1316,7 +1316,7 @@ TEST_CASE("(vacuously true) query with such that Modifies clause, left operand l
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
@@ -1355,7 +1355,7 @@ TEST_CASE("(vacuously true) query with such that Modifies clause, left operand l
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = varName1 + ", " + varName2;
@@ -1385,7 +1385,7 @@ TEST_CASE("query with such that Modifies clause, left operand line number, right
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -1435,7 +1435,7 @@ TEST_CASE("query with such that Modifies clause, left operand synonym, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -1483,7 +1483,7 @@ TEST_CASE(
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = procName1 + ", " + procName2;
@@ -1517,7 +1517,7 @@ TEST_CASE("query with such that Modifies clause, left operand synonym, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -1553,7 +1553,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -1581,7 +1581,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -1609,7 +1609,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -1637,7 +1637,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -1665,7 +1665,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -1693,7 +1693,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -1733,7 +1733,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -1773,7 +1773,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -1804,7 +1804,7 @@ TEST_CASE("query with such that Follows* clause, left operand line number, right
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -1856,7 +1856,7 @@ TEST_CASE("query with such that Follows* clause, left operand synonym, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "2, 1";
@@ -1895,7 +1895,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand w
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -1935,7 +1935,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand l
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -1982,7 +1982,7 @@ TEST_CASE(
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -2025,7 +2025,7 @@ TEST_CASE("query with such that Follows* clause, left operand synonym, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -2068,7 +2068,7 @@ TEST_CASE("query with such that Follows* clause, left operand wildcard, right op
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "5, 4, 3";
@@ -2108,7 +2108,7 @@ TEST_CASE("(vacuously true) query with such that Follows* clause, left operand w
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2144,7 +2144,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -2172,7 +2172,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -2200,7 +2200,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -2228,7 +2228,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -2256,7 +2256,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -2284,7 +2284,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
         UiStub ui;
 
         // === Execute test method ===
-        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+        FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
         // === Expected test results ===
         String expectedResultsStr = "4, 3";
@@ -2324,7 +2324,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2364,7 +2364,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2395,7 +2395,7 @@ TEST_CASE("query with such that Parent* clause, left operand line number, right 
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -2447,7 +2447,7 @@ TEST_CASE("query with such that Parent* clause, left operand synonym, right oper
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "2, 1";
@@ -2487,7 +2487,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wi
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2527,7 +2527,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand li
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2574,7 +2574,7 @@ TEST_CASE(
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -2617,7 +2617,7 @@ TEST_CASE("query with such that Parent* clause, left operand synonym, right oper
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 2";
@@ -2660,7 +2660,7 @@ TEST_CASE("query with such that Parent* clause, left operand wildcard, right ope
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "5, 4, 3";
@@ -2700,7 +2700,7 @@ TEST_CASE("(vacuously true) query with such that Parent* clause, left operand wi
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2738,7 +2738,7 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand variable nam
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2772,7 +2772,7 @@ TEST_CASE(
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2805,7 +2805,7 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand variable nam
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -2839,7 +2839,7 @@ TEST_CASE("query with Pattern clause, left operand variable name, right operand 
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -2874,7 +2874,7 @@ TEST_CASE("query with Pattern clause, left operand synonym, right operand full e
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "sum";
@@ -2901,7 +2901,7 @@ TEST_CASE("query with Pattern clause, left operand synonym, right operand wildca
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "sum";
@@ -2928,7 +2928,7 @@ TEST_CASE("query with Pattern clause, left operand synonym, right operand wildca
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "ave, sum";
@@ -2962,7 +2962,7 @@ TEST_CASE("query with Pattern clause, left operand variable synonym, right opera
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -2995,7 +2995,7 @@ TEST_CASE("(vacuously true) query with Pattern clause, left operand wildcard, ri
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -3037,7 +3037,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand sy
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -3074,7 +3074,7 @@ TEST_CASE("(vacuously true) query with such that Follows clause, left operand sy
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -3109,7 +3109,7 @@ TEST_CASE("query with such that Follows clause, left operand synonym, right oper
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr;
@@ -3164,7 +3164,7 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "6, 5";
@@ -3219,7 +3219,7 @@ TEST_CASE("query with such that Uses clause, left operand synonym, right operand
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "6, 5, 4";
@@ -3247,17 +3247,17 @@ TEST_CASE("Query selecting attributes should not return duplicates - Print # Var
     String query = "print pn; Select pn.varName";
     QueryResultFormatType format = AutotesterFormat;
     UiStub ui;
-    FormattedQueryResult actual = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult actual = PqlManager::executeQuery(query, format, ui, true);
     FormattedQueryResult expected("aprendoEspanol");
     REQUIRE(actual == expected);
 
     String query2 = "print pn; procedure p; Select <pn.varName, p>";
-    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui);
+    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui, true);
     FormattedQueryResult expected2("aprendoEspanol aprendesEspanol");
     REQUIRE(actual2 == expected2);
 
     String query3 = "print pn; variable v; procedure p; Select <pn.varName, v, p>";
-    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui);
+    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui, true);
     FormattedQueryResult expected3("aprendoEspanol aprendoEspanol aprendesEspanol");
     REQUIRE(actual3 == expected3);
 }
@@ -3279,17 +3279,17 @@ TEST_CASE("Query selecting attributes should not return duplicates - Read # Vari
     UiStub ui;
     QueryResultFormatType format = AutotesterFormat;
     String query1 = "read r; Select r.varName";
-    FormattedQueryResult actual1 = PqlManager::executeQuery(query1, format, ui);
+    FormattedQueryResult actual1 = PqlManager::executeQuery(query1, format, ui, true);
     FormattedQueryResult expected1("aprendamosEspanol");
     REQUIRE(actual1 == expected1);
 
     String query2 = "read r; variable v; Select <r.varName, v>";
-    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui);
+    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui, true);
     FormattedQueryResult expected2("aprendamosEspanol aprendamosEspanol");
     REQUIRE(actual2 == expected2);
 
     String query3 = "read r; variable v; procedure p; Select <r.varName, v, p>";
-    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui);
+    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui, true);
     FormattedQueryResult expected3("aprendamosEspanol aprendamosEspanol aprendeisEspanol");
     REQUIRE(actual3 == expected3);
 }
@@ -3308,17 +3308,17 @@ TEST_CASE("Query selecting attributes should not return duplicates - Call # Proc
     String query1 = "call cl; Select cl.procName";
     QueryResultFormatType format = AutotesterFormat;
     UiStub ui;
-    FormattedQueryResult actual1 = PqlManager::executeQuery(query1, format, ui);
+    FormattedQueryResult actual1 = PqlManager::executeQuery(query1, format, ui, true);
     FormattedQueryResult expected1("porLaMananaAprendenEspanol");
     REQUIRE(actual1 == expected1);
 
     String query2 = "call cl; variable v; Select <cl.procName, v>";
-    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui);
+    FormattedQueryResult actual2 = PqlManager::executeQuery(query2, format, ui, true);
     FormattedQueryResult expected2("porLaMananaAprendenEspanol porLaTardeAprendeEspanol");
     REQUIRE(actual2 == expected2);
 
     String query3 = "call cl; variable v; procedure p; Select <cl.procName, v, p>";
-    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui);
+    FormattedQueryResult actual3 = PqlManager::executeQuery(query3, format, ui, true);
     FormattedQueryResult expected3("porLaMananaAprendenEspanol porLaTardeAprendeEspanol porLaNocheAprendenEspanol");
     REQUIRE(actual3 == expected3);
 }
@@ -3344,7 +3344,7 @@ TEST_CASE("(vacuously true) query with such that Next clause, left operand line 
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -3376,7 +3376,7 @@ TEST_CASE("(vacuously true) query with such that Next* clause, left operand line
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "3, 4, 5, 6, 7, 8";
@@ -3417,7 +3417,7 @@ TEST_CASE("(vacuously true) query with such that Affects clause, left operand li
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "4, 5";
@@ -3458,7 +3458,7 @@ TEST_CASE("(vacuously true) query with such that Affects* clause, left operand l
     UiStub ui;
 
     // === Execute test method ===
-    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui);
+    FormattedQueryResult formattedQueryResult = PqlManager::executeQuery(query, format, ui, true);
 
     // === Expected test results ===
     String expectedResultsStr = "4, 5";

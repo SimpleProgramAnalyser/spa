@@ -1,6 +1,7 @@
 #include "GroupedClauses.h"
 
 #include <functional>
+#include <iterator>
 #include <numeric>
 
 #include "OptimiserUtils.h"
@@ -25,7 +26,7 @@ GroupedClauses::GroupedClauses(AbstractQuery& abstractQuery): abstractQuery(abst
 int GroupedClauses::addGroup()
 {
     listOfGroups.emplace_back();
-    return listOfGroups.size() - 1;
+    return static_cast<int>(listOfGroups.size()) - 1;
 }
 
 /**
@@ -35,7 +36,7 @@ int GroupedClauses::getNoSynonymGroupIndex()
 {
     if (noSynonymGroup == -1) {
         listOfGroups.emplace_back();
-        noSynonymGroup = listOfGroups.size() - 1;
+        noSynonymGroup = static_cast<int>(listOfGroups.size()) - 1;
     }
     return noSynonymGroup;
 }
@@ -327,7 +328,7 @@ void GroupedClauses::sortGroups()
 
     // apply permutation
     Vector<Vector<Integer>> newListOfGroups;
-    for (int i = 0; i < listOfGroups.size(); i++) {
+    for (std::size_t i = 0; i < listOfGroups.size(); i++) {
         newListOfGroups.push_back(listOfGroups[indexList[i]]);
     }
     listOfGroups = newListOfGroups;
@@ -345,7 +346,7 @@ const Vector<Integer>& GroupedClauses::getGroup(int groupIndex) const
     return listOfGroups[groupIndex];
 }
 
-void GroupedClauses::applyArrangementToGroup(std::queue<uint> arrangement, int groupIndex)
+void GroupedClauses::applyArrangementToGroup(std::queue<unsigned int> arrangement, int groupIndex)
 {
     Vector<int> newGroup;
     while (!arrangement.empty()) {
@@ -358,8 +359,9 @@ void GroupedClauses::applyArrangementToGroup(std::queue<uint> arrangement, int g
 
 void GroupedClauses::cleanUpEmptyGroups()
 {
-    if (listOfGroups.size() == 1)
+    if (listOfGroups.size() == 1) {
         return;
+    }
 
     int index = 0;
     while (index < listOfGroups.size()) {

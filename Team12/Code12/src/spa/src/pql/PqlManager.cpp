@@ -9,13 +9,16 @@
 #include "pql/preprocessor/Preprocessor.h"
 #include "pql/projector/Projector.h"
 
-FormattedQueryResult PqlManager::executeQuery(const String& query, QueryResultFormatType format, Ui& ui)
+FormattedQueryResult PqlManager::executeQuery(const String& query, QueryResultFormatType format, Ui& ui,
+                                              Boolean optimise)
 {
     // Call the Preprocessor to parse the query
     AbstractQuery abstractQuery = Preprocessor::processQuery(query);
 
-    // Optimise the query
-    optimiseQuery(abstractQuery);
+    if (optimise) {
+        // Optimise the query
+        optimiseQuery(abstractQuery);
+    }
 
     /*
      * Pass the parsed query (AbstractQuery) to the PQL
