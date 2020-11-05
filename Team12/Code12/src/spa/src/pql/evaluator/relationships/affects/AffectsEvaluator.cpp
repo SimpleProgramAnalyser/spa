@@ -220,111 +220,6 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
     return nextNode;
 }
 
-CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevModifierStmtNum)
-{
-    // Check if statement number has been explored in star cache table
-    if (exploredModifierStarAssigns.isCached(stmtNum)) {
-        if (partiallyCacheModifierStarTable.isCached(stmtNum)) {
-            Vector<StatementNumber> allPartiallyCachedStatements
-                = partiallyCacheModifierStarTable.get(stmtNum).toList();
-            CacheSet additionalCacheSet;
-            for (StatementNumber i : allPartiallyCachedStatements) {
-                CacheSet completedCacheSet = getCacheModifierStarStatement(i, stmtNum);
-                additionalCacheSet.combine(completedCacheSet);
-            }
-            cacheModifierStarTable.get(stmtNum).combine(additionalCacheSet);
-            partiallyCacheModifierStarTable.remove(stmtNum);
-        }
-        return cacheModifierStarTable.get(stmtNum);
-    }
-
-    if (visitedModifierStarAssigns.isCached(stmtNum)) {
-        // evaluation is still processing in a while loop,
-        // and encountered a statement that is also currently
-        // being processed in the recursion stack, hence it
-        // is unable to determine its completed Modifier CacheSet
-        partiallyCacheModifierStarTable.insertPartial(prevModifierStmtNum, stmtNum);
-        return CacheSet();
-    }
-
-    visitedModifierStarAssigns.insert(stmtNum);
-
-    // if the statement has not been evaluated before, evaluate it
-    if (!exploredModifierAssigns.isCached(stmtNum)) {
-        cacheModifierAssigns(stmtNum);
-    }
-
-    Vector<StatementNumber> allUserStatements = cacheModifierTable.get(stmtNum).toList();
-    CacheSet currentCacheSet(allUserStatements);
-    for (StatementNumber userStatement : allUserStatements) {
-        if (userStatement == stmtNum) {
-            continue;
-        }
-
-        CacheSet nextModifierCacheSet = getCacheModifierStarStatement(userStatement, stmtNum);
-        currentCacheSet.combine(nextModifierCacheSet);
-    }
-
-    cacheModifierStarTable.insert(stmtNum, currentCacheSet);
-    exploredModifierStarAssigns.insert(stmtNum);
-    return currentCacheSet;
-}
-
-CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevUserStmtNum)
-{
-    // Check if statement number has been explored in star cache table
-    if (exploredUserStarAssigns.isCached(stmtNum)) {
-        if (partiallyCacheUserStarTable.isCached(stmtNum)) {
-            Vector<StatementNumber> allPartiallyCachedStatements = partiallyCacheUserStarTable.get(stmtNum).toList();
-            CacheSet additionalCacheSet;
-            for (StatementNumber i : allPartiallyCachedStatements) {
-                CacheSet completedCacheSet = getCacheUserStarStatement(i, stmtNum);
-                additionalCacheSet.combine(completedCacheSet);
-            }
-            cacheUserStarTable.get(stmtNum).combine(additionalCacheSet);
-            partiallyCacheUserStarTable.remove(stmtNum);
-        }
-        return cacheUserStarTable.get(stmtNum);
-    }
-
-    if (visitedUserStarAssigns.isCached(stmtNum)) {
-        // evaluation is still processing in a while loop,
-        // and encountered a statement that is also currently
-        // being processed in the recursion stack, hence it
-        // is unable to determine its completed User CacheSet
-        partiallyCacheUserStarTable.insertPartial(prevUserStmtNum, stmtNum);
-        return CacheSet();
-    }
-
-    visitedUserStarAssigns.insert(stmtNum);
-
-    // if the statement has not been evaluated before, evaluate it
-    if (!exploredUserAssigns.isCached(stmtNum)) {
-        Vector<String> usedFromPkb = facade->getUsed(stmtNum);
-        if (usedFromPkb.empty()) {
-            // this assign uses no variables, cannot possibly have anything Affecting it
-            return CacheSet();
-        }
-        cacheUserAssigns(stmtNum, usedFromPkb);
-    }
-
-    Vector<StatementNumber> allModifierStatements = cacheUserTable.get(stmtNum).toList();
-    CacheSet currentCacheSet(allModifierStatements);
-    for (StatementNumber modifierStatement : allModifierStatements) {
-        // TODO: will the order of iteration affect the partially cached results? should it be sorted?
-        if (modifierStatement == stmtNum) {
-            continue;
-        }
-
-        CacheSet nextUserCacheSet = getCacheUserStarStatement(modifierStatement, stmtNum);
-        currentCacheSet.combine(nextUserCacheSet);
-    }
-
-    cacheUserStarTable.insert(stmtNum, currentCacheSet);
-    exploredUserStarAssigns.insert(stmtNum);
-    return currentCacheSet;
-}
-
 Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef)
 {
     if (facade->getType(leftRefVal) != AssignmentStatement || !isAffectable(rightRef)) {
@@ -447,7 +342,7 @@ Void AffectsEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference
     }
 
     CacheSet modifierStarAnyStmtResults
-        = getCacheModifierStarStatement(leftRefVal, -1); // -1 is used to indicate no previous statement
+        = evaluateModifierStar(leftRefVal, -1); // -1 is used to indicate no previous statement
     ClauseResult clauseResult = modifierStarAnyStmtResults.toClauseResult();
     resultsTable.storeResultsOne(rightRef, clauseResult);
 }
@@ -459,8 +354,7 @@ Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer 
         return;
     }
 
-    CacheSet userStarAnyStmtResults
-        = getCacheUserStarStatement(rightRefVal, -1); // -1 is used to indicate no previous statement
+    CacheSet userStarAnyStmtResults = evaluateUserStar(rightRefVal, -1); // -1 is used to indicate no previous statement
     ClauseResult clauseResult = userStarAnyStmtResults.toClauseResult();
     resultsTable.storeResultsOne(leftRef, clauseResult);
 }
@@ -520,7 +414,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
     if (leftRef == rightRef) {
         // return all that has a Affects* with itself
         for (StatementNumber stmtNum : allAssignStatements) {
-            CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(stmtNum, -1);
+            CacheSet modifierStarAnyStmtResults = evaluateModifierStar(stmtNum, -1);
             if (modifierStarAnyStmtResults.isCached(stmtNum)) {
                 results.push_back(stmtNum);
             }
@@ -534,7 +428,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
     // leftRef != rightRef && both != wildcard
     Vector<Pair<Integer, Integer>> pairedResults;
     for (StatementNumber stmtNum : allAssignStatements) {
-        CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(stmtNum, -1);
+        CacheSet modifierStarAnyStmtResults = evaluateModifierStar(stmtNum, -1);
         Vector<StatementNumber> resultsList = modifierStarAnyStmtResults.toList();
         for (auto result : resultsList) {
             Pair<Integer, Integer> pairResult = std::make_pair(stmtNum, result);
@@ -551,7 +445,7 @@ Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRe
         resultsTable.storeResultsZero(false);
         return;
     }
-    CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(leftRefVal, -1);
+    CacheSet modifierStarAnyStmtResults = evaluateModifierStar(leftRefVal, -1);
     resultsTable.storeResultsZero(modifierStarAnyStmtResults.isCached(rightRefVal));
 }
 
@@ -705,7 +599,7 @@ CacheSet AffectsEvaluator::getModifierAssigns(Integer stmtNum)
 AffectsEvaluator::AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade):
     cacheUserTable(), cacheModifierTable(), exploredUserAssigns(), exploredModifierAssigns(), allModifierAssigns(),
     allUserAssigns(), allAffectsTuples(), cacheFullyPopulated(false), cacheUserStarTable(), cacheModifierStarTable(),
-    partiallyCacheUserStarTable(), partiallyCacheModifierStarTable(), exploredUserStarAssigns(),
+    partiallyCacheUserStarSet(), partiallyCacheModifierStarSet(), exploredUserStarAssigns(),
     exploredModifierStarAssigns(), visitedUserStarAssigns(), visitedModifierStarAssigns(), resultsTable(resultsTable),
     facade(facade)
 {}
@@ -743,5 +637,133 @@ Void AffectsEvaluator::evaluateAffectsStarClause(const Reference& leftRef, const
     } else {
         throw std::runtime_error(
             "Error in AffectsEvaluator::evaluateAffectsStarClause: No synonyms or integers in Affects* clause");
+    }
+}
+
+CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevModifierStmtNum)
+{
+    // Check if statement number has been explored
+    if (exploredModifierStarAssigns.isCached(stmtNum)) {
+        return cacheModifierStarTable.get(stmtNum);
+    }
+
+    if (visitedModifierStarAssigns.isCached(stmtNum)) {
+        // evaluation is still processing in a while loop,
+        // and encountered a statement that is also currently
+        // being processed in the recursion stack, hence it
+        // is unable to determine its completed Modifier CacheSet
+        partiallyCacheModifierStarSet.insert(stmtNum);
+        return cacheModifierStarTable.get(stmtNum);
+    }
+
+    visitedModifierStarAssigns.insert(stmtNum);
+
+    // if the statement has not been evaluated before, evaluate it
+    if (!exploredModifierAssigns.isCached(stmtNum)) {
+        cacheModifierAssigns(stmtNum);
+    }
+
+    Vector<StatementNumber> allUserStatements = cacheModifierTable.get(stmtNum).toList();
+    CacheSet currentCacheSet(allUserStatements);
+    cacheModifierStarTable.insert(stmtNum, currentCacheSet);
+    for (StatementNumber userStatement : allUserStatements) {
+        if (userStatement == stmtNum) {
+            continue;
+        }
+
+        CacheSet nextModifierCacheSet = getCacheModifierStarStatement(userStatement, stmtNum);
+        currentCacheSet.combine(nextModifierCacheSet);
+    }
+
+    cacheModifierStarTable.getReference(stmtNum)->combine(currentCacheSet);
+    exploredModifierStarAssigns.insert(stmtNum);
+    return cacheModifierStarTable.get(stmtNum);
+}
+
+CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevUserStmtNum)
+{
+    // Check if statement number has been explored
+    if (exploredUserStarAssigns.isCached(stmtNum)) {
+        return cacheUserStarTable.get(stmtNum);
+    }
+
+    if (visitedUserStarAssigns.isCached(stmtNum)) {
+        // evaluation is still processing in a while loop,
+        // and encountered a statement that is also currently
+        // being processed in the recursion stack, hence it
+        // is unable to determine its completed User CacheSet
+        partiallyCacheUserStarSet.insert(stmtNum);
+        return CacheSet();
+    }
+
+    visitedUserStarAssigns.insert(stmtNum);
+
+    // if the statement has not been evaluated before, evaluate it
+    if (!exploredUserAssigns.isCached(stmtNum)) {
+        Vector<String> usedFromPkb = facade->getUsed(stmtNum);
+        if (usedFromPkb.empty()) {
+            // this assign uses no variables, cannot possibly have anything Affecting it
+            return CacheSet();
+        }
+        cacheUserAssigns(stmtNum, usedFromPkb);
+    }
+
+    Vector<StatementNumber> allModifierStatements = cacheUserTable.get(stmtNum).toList();
+    CacheSet currentCacheSet(allModifierStatements);
+    cacheUserStarTable.insert(stmtNum, currentCacheSet);
+    for (StatementNumber modifierStatement : allModifierStatements) {
+        // TODO: will the order of iteration affect the partially cached results? should it be sorted?
+        if (modifierStatement == stmtNum) {
+            continue;
+        }
+
+        CacheSet nextUserCacheSet = getCacheUserStarStatement(modifierStatement, stmtNum);
+        currentCacheSet.combine(nextUserCacheSet);
+    }
+
+    cacheUserStarTable.getReference(stmtNum)->combine(currentCacheSet);
+    exploredUserStarAssigns.insert(stmtNum);
+    return cacheUserStarTable.get(stmtNum);
+}
+
+CacheSet AffectsEvaluator::evaluateModifierStar(StatementNumber stmtNum, StatementNumber prevModifierStmtNum)
+{
+    CacheSet results = getCacheModifierStarStatement(stmtNum, prevModifierStmtNum);
+    cleanup(partiallyCacheModifierStarSet, cacheModifierStarTable);
+    return results;
+}
+
+CacheSet AffectsEvaluator::evaluateUserStar(StatementNumber stmtNum, StatementNumber prevUserStmtNum)
+{
+    CacheSet results = getCacheUserStarStatement(stmtNum, prevUserStmtNum);
+    cleanup(partiallyCacheUserStarSet, cacheUserStarTable);
+    return results;
+}
+
+/**
+ * Combines statements who have partially evaluated statements
+ * in the CacheTable, with the now fully evaluated statements'
+ * Affects* statements.
+ *
+ * @param partiallyCacheSet Either Modifier or User partial set.
+ * @param cacheTable        Either Modifier or User cache table.
+ */
+void AffectsEvaluator::cleanup(CacheSet& partiallyCacheSet, CacheTable& cacheTable)
+{
+    std::unordered_set<StatementNumber> keys = cacheTable.keys();
+    Vector<StatementNumber> wasPartiallyEvaluatedList = partiallyCacheSet.toVector();
+    for (StatementNumber wasPartiallyEvaluated : wasPartiallyEvaluatedList) {
+        CacheSet fullyEvaluatedCacheSet = cacheTable.get(wasPartiallyEvaluated);
+        Vector<StatementNumber> fullEvaluatedCacheVector = fullyEvaluatedCacheSet.toVector();
+        for (StatementNumber cachedStmt : fullEvaluatedCacheVector) {
+            if (keys.find(cachedStmt) == keys.end()) {
+                continue;
+            }
+
+            CacheSet* cachedStmtSet = cacheTable.getReference(cachedStmt);
+            if (cachedStmtSet->isCached(wasPartiallyEvaluated)) {
+                cachedStmtSet->combine(fullyEvaluatedCacheSet);
+            }
+        }
     }
 }

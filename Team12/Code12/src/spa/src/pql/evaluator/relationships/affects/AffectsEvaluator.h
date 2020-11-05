@@ -58,8 +58,8 @@ private:
     // Cache for Affects*(modifierStar, userStar)
     CacheTable cacheUserStarTable;
     CacheTable cacheModifierStarTable;
-    CacheTable partiallyCacheUserStarTable;
-    CacheTable partiallyCacheModifierStarTable;
+    CacheSet partiallyCacheUserStarSet;
+    CacheSet partiallyCacheModifierStarSet;
     CacheSet exploredUserStarAssigns;
     CacheSet exploredModifierStarAssigns;
     CacheSet visitedUserStarAssigns;
@@ -73,6 +73,9 @@ private:
     // Helper methods for Affects*
     CacheSet getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
     CacheSet getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
+    CacheSet evaluateModifierStar(StatementNumber stmtNum, StatementNumber prevModifierStmtNum);
+    CacheSet evaluateUserStar(StatementNumber stmtNum, StatementNumber prevUserStmtNum);
+    static void cleanup(CacheSet& partiallyCacheSet, CacheTable& cacheTable);
 
 protected:
     ResultsTable& resultsTable;
