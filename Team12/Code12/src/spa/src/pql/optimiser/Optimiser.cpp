@@ -19,8 +19,8 @@
  */
 Void optimiseQuery(AbstractQuery& abstractQuery)
 {
-    // check if query is invalid
-    if (abstractQuery.isInvalid()) {
+    // check if query is invalid, or 1 clause and less
+    if (abstractQuery.isInvalid() || abstractQuery.getClauses().count() <= 1) {
         return;
     }
 

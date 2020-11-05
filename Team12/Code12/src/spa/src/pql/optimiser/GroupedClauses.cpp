@@ -359,8 +359,9 @@ void GroupedClauses::applyArrangementToGroup(std::queue<unsigned int> arrangemen
 
 void GroupedClauses::cleanUpEmptyGroups()
 {
-    if (listOfGroups.size() == 1)
+    if (listOfGroups.size() == 1) {
         return;
+    }
 
     auto it = listOfGroups.begin();
     while (it != listOfGroups.end()) {
