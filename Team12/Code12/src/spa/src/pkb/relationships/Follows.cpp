@@ -177,7 +177,7 @@ void FollowsTable::addFollowsRelationshipsStar(Integer before, StatementType bef
  */
 Boolean FollowsTable::checkIfFollowsHolds(Integer before, Integer after)
 {
-    return stmtAfterMap[before].first == after;
+    return stmtAfterMap.find(before) != stmtAfterMap.end() && stmtAfterMap[before].first == after;
 }
 
 /**
@@ -189,6 +189,9 @@ Boolean FollowsTable::checkIfFollowsHolds(Integer before, Integer after)
  */
 Boolean FollowsTable::checkIfFollowsHoldsStar(Integer before, Integer after)
 {
+    if (stmtAfterStarSet.find(before) == stmtAfterStarSet.end()) {
+        return false;
+    }
     auto stmtSet = stmtAfterStarSet[before].byType[AnyStatement];
     return stmtSet.find(after) != stmtSet.end();
 }

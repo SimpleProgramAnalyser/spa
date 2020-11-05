@@ -88,6 +88,9 @@ void NextBipTable::addNextBipRelationships(Integer previous, StatementType previ
  */
 Boolean NextBipTable::checkIfNextBipHolds(Integer previous, Integer next)
 {
+    if (stmtNextBipSet.find(previous) == stmtNextBipSet.end()) {
+        return false;
+    }
     auto targetSet = stmtNextBipSet[previous].byType[AnyStatement];
     return targetSet.find(next) != targetSet.end();
 }

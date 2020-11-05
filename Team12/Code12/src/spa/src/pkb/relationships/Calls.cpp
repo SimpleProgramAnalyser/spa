@@ -83,7 +83,8 @@ void CallsTable::addCallerRelationshipsStar(const ProcedureName& caller, const P
  */
 Boolean CallsTable::checkIfCallsHolds(const ProcedureName& caller, const ProcedureName& callee)
 {
-    return procCallerSet[callee].find(caller) != procCallerSet[callee].end();
+    return procCalleeSet.find(callee) != procCalleeSet.end()
+           && procCallerSet[callee].find(caller) != procCallerSet[callee].end();
 }
 
 /**
@@ -95,7 +96,8 @@ Boolean CallsTable::checkIfCallsHolds(const ProcedureName& caller, const Procedu
  */
 Boolean CallsTable::checkIfCallsHoldsStar(const ProcedureName& caller, const ProcedureName& callee)
 {
-    return procCallerSetStar[callee].find(caller) != procCallerSetStar[callee].end();
+    return procCalleeSetStar.find(callee) != procCalleeSetStar.end()
+           && procCallerSetStar[callee].find(caller) != procCallerSetStar[callee].end();
 }
 
 /**
