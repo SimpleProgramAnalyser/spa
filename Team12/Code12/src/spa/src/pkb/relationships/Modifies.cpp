@@ -72,12 +72,18 @@ void ModifiesTable::addModifiesRelationships(Integer stmtNum, StatementType stmt
 
 Boolean ModifiesTable::checkIfProcedureModifies(const String& procName, const String& varName)
 {
+    if (procVarsetMap.find(procName) == procVarsetMap.end()) {
+        return false;
+    }
     auto varSet = procVarsetMap[procName];
     return varSet.find(varName) != varSet.end();
 }
 
 Boolean ModifiesTable::checkIfStatementModifies(Integer stmt, const String& varName)
 {
+    if (stmtVarsetMap.find(stmt) == stmtVarsetMap.end()) {
+        return false;
+    }
     auto varSet = stmtVarsetMap[stmt];
     return varSet.find(varName) != varSet.end();
 }
