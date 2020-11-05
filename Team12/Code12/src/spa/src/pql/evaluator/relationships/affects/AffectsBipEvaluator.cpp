@@ -116,36 +116,41 @@ public:
  *                         the index to begin searching the AST
  *                         statement nodes of the CFG starting node.
  * @param statement The statement to be found.
- * @param visitedCfgNodes The set of visitedCfgNodes, to prevent
- *                        infinite recursion over a while loop.
+ * @param visitedCfgPositions The set of visitedCfgPositions, to prevent
+ *                            infinite recursion over a while loop.
  *
  * @return Pair of pointer to the CFG node with the index
  *         of the statement in the CFG, if found.
  *         Otherwise, if not found, nullptr and -1.
  *         The pair is represented as a StatementPosition.
  */
-StatementPositionInCfg findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
-                                             std::unordered_set<CfgNode*>& visitedCfgNodes)
+StatementPositionInCfg
+findCorrespondingNode(StatementPositionInCfg startingPosition, Integer statementToFind,
+                      std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedCfgPositions)
 {
     CfgNode* startingNode = startingPosition.getNodePosition();
     Integer startingIndex = startingPosition.getStatementIndex();
 
     // if visited before, we could not find the statementToFind here
-    if (visitedCfgNodes.find(startingNode) != visitedCfgNodes.end()) {
+    if (visitedCfgPositions.find(startingPosition) != visitedCfgPositions.end()) {
         return {nullptr, -1};
     }
+    visitedCfgPositions.insert(startingPosition);
 
     // first, try to search the untraversed statements
     Integer maxLength = startingNode->statementNodes->size();
     for (Integer i = startingIndex + 1; i < maxLength; i++) {
         if (startingNode->statementNodes->at(i)->getStatementNumber() == statementToFind) {
             return {startingNode, i};
+        } else {
+            visitedCfgPositions.insert({startingNode, i});
         }
     }
 
     // else, search the children recursively
     for (CfgNode* child : *startingNode->childrenNodes) {
-        StatementPositionInCfg resultsFromChild = findCorrespondingNode({child, -1}, statementToFind, visitedCfgNodes);
+        StatementPositionInCfg resultsFromChild
+            = findCorrespondingNode({child, -1}, statementToFind, visitedCfgPositions);
         if (resultsFromChild.getNodePosition() != nullptr) {
             return resultsFromChild;
         }
@@ -181,7 +186,7 @@ Vector<StatementPositionInCfg> AffectsBipEvaluator::findAllCorrespondingPosition
         if (startingNode == nullptr) {
             continue;
         }
-        std::unordered_set<CfgNode*> uniqueStatementsVisited;
+        std::unordered_set<StatementPositionInCfg, StatementPositionHasher> uniqueStatementsVisited;
         StatementPositionInCfg positionInProcedure
             = findCorrespondingNode({startingNode, -1}, statementToFind, uniqueStatementsVisited);
         if (positionInProcedure.getNodePosition() != nullptr) {
@@ -237,7 +242,7 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
     // Terminate when endValue is found
     Boolean foundEndValue = false;
     for (Integer affectedStatement : affectedBipStatements) {
-        std::unordered_set<CfgNode*> uniqueStatementsVisited;
+        std::unordered_set<StatementPositionInCfg, StatementPositionHasher> uniqueStatementsVisited;
         StatementPositionInCfg correspondingPosition
             = findCorrespondingNode(startingPosition, affectedStatement, uniqueStatementsVisited);
         Boolean foundCorrespondingNode = correspondingPosition.getNodePosition() != nullptr;

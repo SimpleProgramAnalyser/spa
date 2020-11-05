@@ -78,6 +78,7 @@ Vector<ProcedureName> ProcedureTable::getContainingProcedure(StatementNumber sta
         toReturn.push_back(upperBoundIT->second);
         return toReturn;
     }
+    return Vector<ProcedureName>();
 }
 
 // Variable Table
