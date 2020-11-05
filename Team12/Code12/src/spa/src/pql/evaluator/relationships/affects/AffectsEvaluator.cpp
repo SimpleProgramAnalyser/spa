@@ -174,15 +174,18 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
             assert(cfg->childrenNodes->size() == 2); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             const CfgNode* afterIf = affectsSearch(cfg->childrenNodes->at(0), affectsMap, resultsLists);
             const CfgNode* afterElse = affectsSearch(cfg->childrenNodes->at(1), elseCopy, resultsLists);
-            // if and else should eventually point to
+            const CfgNode* joinNode = cfg->ifJoinNode;
+            assert(joinNode != nullptr); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+            // if and else should eventually point to joinNode
             while (afterIf != afterElse) {
-                bool isIfFurtherBehind = afterIf->nodeNumber < afterElse->nodeNumber; // else path is possibly end node
-                if (isIfFurtherBehind) {
+                bool isIfFinished = afterIf == joinNode; // preferentially evaluate if first
+                if (!isIfFinished) {
                     afterIf = affectsSearch(afterIf, affectsMap, resultsLists);
                 } else {
                     afterElse = affectsSearch(afterElse, elseCopy, resultsLists);
                 }
             }
+            assert(afterElse == joinNode); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
             // combine both maps
             combineIntoFirst(affectsMap, elseCopy);
             nextNode = afterIf;
