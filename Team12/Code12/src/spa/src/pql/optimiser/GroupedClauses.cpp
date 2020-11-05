@@ -346,7 +346,7 @@ const Vector<Integer>& GroupedClauses::getGroup(int groupIndex) const
     return listOfGroups[groupIndex];
 }
 
-void GroupedClauses::applyArrangementToGroup(std::queue<uint> arrangement, int groupIndex)
+void GroupedClauses::applyArrangementToGroup(std::queue<unsigned int> arrangement, int groupIndex)
 {
     Vector<int> newGroup;
     while (!arrangement.empty()) {
