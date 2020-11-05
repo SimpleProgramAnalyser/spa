@@ -30,6 +30,9 @@ public:
 
     CacheSet get(StatementNumber stmtNum);
 
+    // Same as get, but gets actual reference
+    CacheSet* getReference(StatementNumber stmtNum);
+
     /**
      * Checks if key -> value is TRUE (both in the table). If
      * not in the table (either key or value), returns FALSE.
@@ -37,6 +40,9 @@ public:
     Boolean check(StatementNumber key, StatementNumber value);
 
     Void remove(StatementNumber stmtNum);
+
+    // Returns all keys of the map in a set
+    std::unordered_set<StatementNumber> keys() const;
 };
 
 #endif // SPA_PQL_CACHE_TABLE_H

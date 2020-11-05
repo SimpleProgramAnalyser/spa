@@ -29,6 +29,14 @@ CacheSet CacheTable::get(StatementNumber stmtNum)
     return table.find(stmtNum)->second;
 }
 
+CacheSet* CacheTable::getReference(StatementNumber stmtNum)
+{
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    assert(table.find(stmtNum) != table.end());
+
+    return &(table.find(stmtNum)->second);
+}
+
 Boolean CacheTable::check(StatementNumber key, StatementNumber value)
 {
     return table.find(key) != table.end() && table[key].isCached(value);
@@ -37,4 +45,14 @@ Boolean CacheTable::check(StatementNumber key, StatementNumber value)
 Void CacheTable::remove(StatementNumber stmtNum)
 {
     table.erase(stmtNum);
+}
+
+std::unordered_set<StatementNumber> CacheTable::keys() const
+{
+    std::unordered_set<StatementNumber> keys;
+    for (auto k : table) {
+        keys.insert(k.first);
+    }
+
+    return keys;
 }
