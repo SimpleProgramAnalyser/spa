@@ -53,7 +53,7 @@ Vector<unsigned int> getReachableNodes(bitmap nodesReachable)
     unsigned int count = startingNode;
     while (nodesReachable) {
         // if LSD is 1, push it into the vector
-        if ((unsigned int)1 & nodesReachable) {
+        if (static_cast<unsigned int>(1) & nodesReachable) {
             toReturn.push_back(count);
         }
         nodesReachable = nodesReachable >> static_cast<unsigned int>(1);
