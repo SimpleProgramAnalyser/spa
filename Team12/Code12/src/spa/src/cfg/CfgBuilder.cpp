@@ -139,8 +139,8 @@ CfgNode* buildCfgWithStatementNode(StatementNode* statementNodePtr, CfgNode* cur
         CfgNode* ifDummyNode = createCfgNode(wholeStmtListSize, currentNumberOfNodes);
         (*ifNode->childrenNodes).push_back(ifDummyNode);
         (*elseNode->childrenNodes).push_back(ifDummyNode);
-        ifNode->ifJoinNode = ifDummyNode;
-        elseNode->ifJoinNode = ifDummyNode;
+        // Connect the fork node to the join node for Affects Evaluator
+        ifNewNode->ifJoinNode = ifDummyNode;
         return ifDummyNode;
     }
     default:
