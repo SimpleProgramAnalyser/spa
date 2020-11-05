@@ -22,7 +22,7 @@ Boolean findAllNextBipFromCfgNode(CfgNode* currentCfgNode, StatementNumber start
     Vector<StatementNode*> stmtList = *(currentCfgNode->statementNodes);
     for (StatementNode* stmtNode : stmtList) {
         StatementNumber stmtNum = stmtNode->getStatementNumber();
-        hasVisitedStartingNode = stmtNum == startingStmtNum;
+        hasVisitedStartingNode = hasVisitedStartingNode || (stmtNum == startingStmtNum);
         results.insert(stmtNum);
     }
 
