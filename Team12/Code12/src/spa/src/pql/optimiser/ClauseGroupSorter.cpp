@@ -39,7 +39,7 @@ bitmap updateReachableBitmap(bitmap nodesLeft, unsigned int currentNode, bitmap 
     }
     // 2. remove current node
     // finally remove currentNode by AND with 11111011111
-    nodesReachable &= ~((unsigned int)1 << currentNode);
+    nodesReachable &= ~(static_cast<unsigned int>(1) << currentNode);
 
     // 3. remove nodesLeft
     // say nodesLeft is 1110001, just AND it with nodesReachable
