@@ -91,14 +91,22 @@ Void substituteClauseList(List<Clause>& clauseList, const Reference& target, con
     }
 }
 
-bool isCallProcName(const Reference& reference)
+bool canInitiateSubstitution(Reference& reference)
 {
-    return reference.getReferenceType() == AttributeRefType && reference.getDesignEntity().getType() == CallType
-           && reference.getAttribute().getType() == ProcNameType;
+    std::unordered_map<DesignEntityType, AttributeType> bannedTarget{
+        {ReadType, VarNameType}, {PrintType, VarNameType}, {CallType, ProcNameType}};
+
+    auto designEntityType = reference.getDesignEntity().getType();
+    auto referenceType = reference.getReferenceType();
+    bool isProgLine = referenceType == SynonymRefType && designEntityType == Prog_LineType;
+    bool isAllowedTarget = referenceType == AttributeRefType
+                           && !(bannedTarget.count(designEntityType)
+                                && bannedTarget.at(designEntityType) == reference.getAttribute().getType());
+    return isProgLine || isAllowedTarget;
 }
 
 /**
- * For with clauses such as s.stmt# = 5, substitute all occurences of the synonym "s" with the value 5.
+ * For with clauses such as s.stmt# = 5, substitute all occurrences of the synonym "s" with the value 5.
  *
  * @param abstractQuery The PQL query to substitute in.
  */
@@ -119,9 +127,9 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
             WithClause* withClause = static_cast<WithClause*>(clause);
             auto leftRef = withClause->getLeftReference();
             auto rightRef = withClause->getRightReference();
-            if (isValue(leftRef) && hasSynonym(rightRef) && !isCallProcName(rightRef)) {
+            if (isValue(leftRef) && canInitiateSubstitution(rightRef)) {
                 substituteClauseList(clauseList, rightRef, leftRef, i);
-            } else if (isValue(rightRef) && hasSynonym(leftRef) && !isCallProcName(leftRef)) {
+            } else if (isValue(rightRef) && canInitiateSubstitution(leftRef)) {
                 substituteClauseList(clauseList, leftRef, rightRef, i);
             }
             break;
@@ -160,7 +168,7 @@ Void deleteDuplicateClauses(AbstractQuery& abstractQuery)
         }
     }
 
-    // create a new ClauseVector objectj
+    // create a new ClauseVector object
     ClauseVector newClauseVector;
     for (Clause* clause : clauses) {
         newClauseVector.add(clause);
@@ -229,8 +237,8 @@ std::map<Integer, std::set<Integer>> createAdjacencyList(GroupedClauses& grouped
  * @param nodes
  * @param adjList
  *
- * @return A hash map, where keys are the nodes (represented by int), and the values are the components in the graph,
- * labelled from 0 onwards.
+ * @return A hash map, where keys are the nodes (represented by int), and the values are the components in the
+ * graph, labelled from 0 onwards.
  */
 std::unordered_map<int, int> BFS(Vector<int> nodes, std::map<Integer, std::set<Integer>> adjList)
 {
