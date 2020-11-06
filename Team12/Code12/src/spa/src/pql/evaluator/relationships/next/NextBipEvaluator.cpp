@@ -13,7 +13,14 @@ Boolean findAllNextBipFromCfgNode(CfgNode* currentCfgNode, StatementNumber start
 {
     size_t currentNodeNumber = currentCfgNode->nodeNumber;
     if (visited.find(currentNodeNumber) != visited.end()) {
-        return false;
+        // Still need to check if starting number visited itself
+        Boolean hasVisitedStartingNode = false;
+        Vector<StatementNode*> stmtList = *(currentCfgNode->statementNodes);
+        for (StatementNode* stmtNode : stmtList) {
+            StatementNumber stmtNum = stmtNode->getStatementNumber();
+            hasVisitedStartingNode = hasVisitedStartingNode || (stmtNum == startingStmtNum);
+        }
+        return hasVisitedStartingNode;
     } else {
         visited.insert(currentNodeNumber);
     }
@@ -56,11 +63,11 @@ CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
             = findAllNextBipFromCfgNode(startingCfgNode, leftRefVal, true, visited, results) || hasNextBipToItself;
     }
 
-    // Since we only added those Next* statements in the same statement list,
-    // those Previous* statements in the same statement list will not be added if
-    // the starting Node is in a while loop. Hence, if it has a NextBip* relationship
-    // with itself, we need to add those Previous* statements that we didn't add
-    // previously.
+    // Since we added both Next* and Previous* statements in the same statement list,
+    // those Previous* statements in the same statement list should not be added if
+    // the starting Node is in not a while loop. Hence, if it does not have a NextBip*
+    // relationship with itself, we need to remove those Previous* statements that we
+    // added previously.
     Vector<StatementNode*> stmtList = *(allCgfNodes.at(0).getNodePosition()->statementNodes);
     for (StatementNode* stmtNode : stmtList) {
         StatementNumber stmtNum = stmtNode->getStatementNumber();

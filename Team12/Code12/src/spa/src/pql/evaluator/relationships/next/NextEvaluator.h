@@ -15,8 +15,8 @@ private:
     // caching of intermediate Next* clauses results
     CacheTable cacheNextStarTable;
     CacheTable cachePrevStarTable;
-    CacheSet exploredNextStatements;
-    CacheSet exploredPrevStatements;
+    CacheSet exploredNextStarStatements;
+    CacheSet exploredPrevStarStatements;
 
     // case where left is known (integer), right is variable
     Void evaluateLeftKnown(Integer leftRefVal, const Reference& rightRef) const;
