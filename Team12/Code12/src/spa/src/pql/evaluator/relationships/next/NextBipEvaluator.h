@@ -11,6 +11,7 @@
 class NextBipEvaluator: public NextEvaluator {
 private:
     NextBipFacade* bipFacade;
+    CacheTable cacheNextBipStarTable;
 
     // Methods for NextBip*
     Void evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef) override;

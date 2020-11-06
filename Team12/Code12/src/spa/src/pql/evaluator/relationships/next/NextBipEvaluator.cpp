@@ -48,11 +48,17 @@ Boolean findAllNextBipFromCfgNode(CfgNode* currentCfgNode, StatementNumber start
 
 CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
 {
+    if (cacheNextBipStarTable.isCached(leftRefVal)) {
+        return cacheNextBipStarTable.get(leftRefVal);
+    }
+
     Vector<StatementPositionInCfg> allCgfNodes = findAllCorrespondingPositions(leftRefVal, *bipFacade);
     CacheSet results;
 
     if (allCgfNodes.empty()) {
-        return CacheSet();
+        CacheSet emptyCacheSet;
+        cacheNextBipStarTable.insert(leftRefVal, emptyCacheSet);
+        return emptyCacheSet;
     }
 
     Boolean hasNextBipToItself = false; // if the node has a NextBip* relationship with itself
@@ -76,6 +82,7 @@ CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
         }
     }
 
+    cacheNextBipStarTable.insert(leftRefVal, results);
     return results;
 }
 
