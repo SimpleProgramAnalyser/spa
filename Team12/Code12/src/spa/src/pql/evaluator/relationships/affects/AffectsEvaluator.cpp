@@ -341,8 +341,7 @@ Void AffectsEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference
         return;
     }
 
-    CacheSet modifierStarAnyStmtResults
-        = evaluateModifierStar(leftRefVal); // -1 is used to indicate no previous statement
+    CacheSet modifierStarAnyStmtResults = evaluateModifierStar(leftRefVal);
     ClauseResult clauseResult = modifierStarAnyStmtResults.toClauseResult();
     resultsTable.storeResultsOne(rightRef, clauseResult);
 }
@@ -354,7 +353,7 @@ Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer 
         return;
     }
 
-    CacheSet userStarAnyStmtResults = evaluateUserStar(rightRefVal); // -1 is used to indicate no previous statement
+    CacheSet userStarAnyStmtResults = evaluateUserStar(rightRefVal);
     ClauseResult clauseResult = userStarAnyStmtResults.toClauseResult();
     resultsTable.storeResultsOne(leftRef, clauseResult);
 }
