@@ -115,7 +115,7 @@ Select s such that Modifies (s, "y")
 5000
 24 - Modifies statement with 1 unknown synonym, Select based on LHS
 while s;
-Select s such that Modifies (s, "y") (While contains call)
+Select s such that Modifies (s, "y")
 none
 5000
 25 - Modifies statement with 1 unknown synonym, Select based on LHS
