@@ -1,0 +1,180 @@
+procedure proc1NoNesting {
+1	modified4Layers = 0;
+2	modified3Layers = modified4Layers + 3;
+3	modified2Layers = modified3Layers * 3;
+4	modified1Layers = modified2Layers * modified3Layers;
+5	call proc1aIf; 
+6	a = d;
+7	call proc1aWhile; #For NExt* while and if
+8	print a; 
+9	call proc1aIf;
+10	read modified4Layers;
+}
+
+procedure proc1aIf {
+11	if ((modified1Layers == 0) && (modified1Layers != 0)) then {
+12		read modified2Layers;
+13		modified1Layers = modified2Layers * (modified3Layers / modified1Layers); #AffectsBip(15,15)
+14		call proc1aWhile;
+	} else {
+15		call proc1aNoTransitive;
+16		call proc1aNoTransitive;
+17		call proc1aNoTransitive; #(AffectsBip 35, 32 = false)
+	}
+18	print useless;
+}
+
+procedure proc1aWhile {
+19	while((modified2Layers < 0 ) || (modified2Layers >= 0)) {
+20		call proc1aTransitive; #AffectsBip 42 39 true
+	}
+21	call proc1aTransitive;
+22	print y;
+}
+
+procedure proc1aNoTransitive {
+23	  d = a;
+24    a = b;
+25    b = c;
+26     c = d;
+}
+
+procedure proc1aTransitive {
+27	  d = a;
+28    a = b;
+29    b = c;
+30    c = d;
+31    call proc1IfElseAffects;
+32    call proc1IfElseAffects;
+33	  print y;
+}
+
+procedure proc1IfElseAffects {
+34	if (a < 0) then {
+35		a = 100 * c; #affects both
+	} else {
+36		c = a * 200;
+	}
+}
+
+procedure proc2NestingIfWhile {
+37	read x;
+38	modified4Layers = 0;
+39	modified3Layers = modified4Layers + 3;
+40	if ((!(a >= 0))) then {
+41		call callOnceButIsCalledTwice;
+42		modified1Layers = modified2Layers * modified3Layers;
+	} else {
+43		modified2Layers = modified3Layers * 3;
+44		call callOnceButIsCalledTwice; 	
+45		while ((!(a > 0)) && (sien < 0)) {
+46			modified1Layers = modified1Layers  + modified2Layers;
+47			print modified4Layers;
+		}
+48		modified1Layers = modified1Layers * 3 + 4;
+	}
+49	call callOnceButIsCalledTwice;
+50	print modified4Layers;
+51	call callOnceButIsCalledTwice;
+52	print useless;
+}
+
+procedure callOnceButIsCalledTwice {
+53	read notImportantVar;
+54	print notImportantVar;
+55	if (a < 0) then {
+56		notImportantVar = 0; #affects both
+57		call procThatsCalledTwice;
+	} else {
+58		c = a * 200;
+59		call procThatsCalledTwice;
+	}
+}
+
+procedure procThatsCalledTwice {
+60	modified2Layers = 3 * modified4Layers + 3 + modified1Layers;
+61	modified1Layers = notImportantVar;
+}
+
+procedure proc2NestingWhileIf {
+62	read y;
+63	modified4Layers = 99;
+64	modified3Layers = 3 + modified4Layers;
+65	while (a < b) {
+66		read b;
+67		if ((modified4Layers < 0) && (modified3Layers > 0)) then {
+68			call callOnceButIsCalledTwice;
+69			print w;
+		} else {
+70			print w;
+71			call callOnceButIsCalledTwice;
+		}
+	}
+72	modified1Layers = 4 * modified2Layers; 
+}
+
+procedure proc2NestingIfIf {
+73	read y;
+74	modified4Layers = 99;
+75	modified3Layers = 3 + modified4Layers;
+76	if ((!(modified3Layers < 0)) && ((modified4Layers < 0) || (!(modified2Layers >= 0)))) then {
+77		call callOnceButIsCalledTwice;
+78		if (modified3Layers == 0) then {
+79			read callOnceButIsCalledTwice;
+80			call callOnceButIsCalledTwice;
+81			print help;
+		} else {
+82			print help;
+83			call callOnceButIsCalledTwice;
+		}
+84		call proc2NestingWhileWhile;
+	} else {
+85		call callOnceButIsCalledTwice;
+86		if (modified2Layer != 0) then {
+87			modified2Layers = 3 + modified4Layers * 3;
+88			call callOnceButIsCalledTwice;
+		} else {
+89			call callOnceButIsCalledTwice;
+		}
+	}
+90	print useless;	
+}
+
+procedure proc2NestingWhileWhile {
+91	print y;
+92	while ((!(modified3Layers < 0)) && ((modified4Layers < 0) || (!(modified2Layers >= 0)))) {
+93		call callOnceButIsCalledTwice; 
+94		while (modified1Layers >= 0) {
+95			call calledInfiniteNumber;
+		}
+	}
+96	print useless;
+}
+
+procedure calledInfiniteNumber {
+97	infinite4 = infinite3 * 4;
+98	read infinite4;
+99	if (infinite4 < 0) then {
+100		infinite3 = infinite2 / 4;
+	} else {
+101		infinite2 = infinite1 * 3;
+	}
+102	while (infinite1 < 0) { 
+103		infinite0 = 3 + infinite1 * 3;	
+104		infinite1 = infinite1 + 3 * infinite0;
+	}
+}
+procedure B {
+105	call C;
+106	call C;
+107	call C;
+}
+
+
+
+procedure C {
+108	d = a;
+109	a = b;
+110	b = c;
+111	c = d; 
+}
