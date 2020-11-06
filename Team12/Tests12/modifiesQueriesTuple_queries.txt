@@ -135,12 +135,12 @@ mainPrint 23, readPoint 23, computeCentroid 23, mainPrint 31, readPoint 31, comp
 5000
 28 - Modifies statement with 1 unknown synonym, Select based on LHS
 while w; procedure p;
-Select <w, p> such that Modifies (w, "y") (While contains call)
+Select <w, p> such that Modifies (w, "y")
 none
 5000
 29 - Modifies statement with 1 unknown synonym, Select based on LHS
 while w; procedure p;
-Select <s, p> such that Modifies (w, "y") (While contains call)
+Select <s, p> such that Modifies (w, "y")
 none
 5000
 30 - Modifies statement with 1 unknown synonym, Select based on LHS
