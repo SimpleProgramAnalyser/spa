@@ -342,7 +342,7 @@ Void AffectsEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference
     }
 
     CacheSet modifierStarAnyStmtResults
-        = evaluateModifierStar(leftRefVal, -1); // -1 is used to indicate no previous statement
+        = evaluateModifierStar(leftRefVal); // -1 is used to indicate no previous statement
     ClauseResult clauseResult = modifierStarAnyStmtResults.toClauseResult();
     resultsTable.storeResultsOne(rightRef, clauseResult);
 }
@@ -354,7 +354,7 @@ Void AffectsEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer 
         return;
     }
 
-    CacheSet userStarAnyStmtResults = evaluateUserStar(rightRefVal, -1); // -1 is used to indicate no previous statement
+    CacheSet userStarAnyStmtResults = evaluateUserStar(rightRefVal); // -1 is used to indicate no previous statement
     ClauseResult clauseResult = userStarAnyStmtResults.toClauseResult();
     resultsTable.storeResultsOne(leftRef, clauseResult);
 }
@@ -414,7 +414,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
     if (leftRef == rightRef) {
         // return all that has a Affects* with itself
         for (StatementNumber stmtNum : allAssignStatements) {
-            CacheSet modifierStarAnyStmtResults = evaluateModifierStar(stmtNum, -1);
+            CacheSet modifierStarAnyStmtResults = evaluateModifierStar(stmtNum);
             if (modifierStarAnyStmtResults.isCached(stmtNum)) {
                 results.push_back(stmtNum);
             }
@@ -428,7 +428,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
     // leftRef != rightRef && both != wildcard
     Vector<Pair<Integer, Integer>> pairedResults;
     for (StatementNumber stmtNum : allAssignStatements) {
-        CacheSet modifierStarAnyStmtResults = evaluateModifierStar(stmtNum, -1);
+        CacheSet modifierStarAnyStmtResults = evaluateModifierStar(stmtNum);
         Vector<StatementNumber> resultsList = modifierStarAnyStmtResults.toList();
         for (auto result : resultsList) {
             Pair<Integer, Integer> pairResult = std::make_pair(stmtNum, result);
@@ -445,7 +445,7 @@ Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRe
         resultsTable.storeResultsZero(false);
         return;
     }
-    CacheSet modifierStarAnyStmtResults = evaluateModifierStar(leftRefVal, -1);
+    CacheSet modifierStarAnyStmtResults = evaluateModifierStar(leftRefVal);
     resultsTable.storeResultsZero(modifierStarAnyStmtResults.isCached(rightRefVal));
 }
 
@@ -640,7 +640,7 @@ Void AffectsEvaluator::evaluateAffectsStarClause(const Reference& leftRef, const
     }
 }
 
-CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevModifierStmtNum)
+CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
     if (exploredModifierStarAssigns.isCached(stmtNum)) {
@@ -671,7 +671,7 @@ CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum
             continue;
         }
 
-        CacheSet nextModifierCacheSet = getCacheModifierStarStatement(userStatement, stmtNum);
+        CacheSet nextModifierCacheSet = getCacheModifierStarStatement(userStatement);
         currentCacheSet.combine(nextModifierCacheSet);
     }
 
@@ -680,7 +680,7 @@ CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum
     return cacheModifierStarTable.get(stmtNum);
 }
 
-CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevUserStmtNum)
+CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
     if (exploredUserStarAssigns.isCached(stmtNum)) {
@@ -717,7 +717,7 @@ CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, St
             continue;
         }
 
-        CacheSet nextUserCacheSet = getCacheUserStarStatement(modifierStatement, stmtNum);
+        CacheSet nextUserCacheSet = getCacheUserStarStatement(modifierStatement);
         currentCacheSet.combine(nextUserCacheSet);
     }
 
@@ -726,16 +726,16 @@ CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, St
     return cacheUserStarTable.get(stmtNum);
 }
 
-CacheSet AffectsEvaluator::evaluateModifierStar(StatementNumber stmtNum, StatementNumber prevModifierStmtNum)
+CacheSet AffectsEvaluator::evaluateModifierStar(StatementNumber stmtNum)
 {
-    CacheSet results = getCacheModifierStarStatement(stmtNum, prevModifierStmtNum);
+    CacheSet results = getCacheModifierStarStatement(stmtNum);
     cleanup(partiallyCacheModifierStarSet, cacheModifierStarTable);
     return results;
 }
 
-CacheSet AffectsEvaluator::evaluateUserStar(StatementNumber stmtNum, StatementNumber prevUserStmtNum)
+CacheSet AffectsEvaluator::evaluateUserStar(StatementNumber stmtNum)
 {
-    CacheSet results = getCacheUserStarStatement(stmtNum, prevUserStmtNum);
+    CacheSet results = getCacheUserStarStatement(stmtNum);
     cleanup(partiallyCacheUserStarSet, cacheUserStarTable);
     return results;
 }

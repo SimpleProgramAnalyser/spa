@@ -71,10 +71,10 @@ private:
                                  AffectsTuple& resultsLists);
 
     // Helper methods for Affects*
-    CacheSet getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
-    CacheSet getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevStmtNum);
-    CacheSet evaluateModifierStar(StatementNumber stmtNum, StatementNumber prevModifierStmtNum);
-    CacheSet evaluateUserStar(StatementNumber stmtNum, StatementNumber prevUserStmtNum);
+    CacheSet getCacheModifierStarStatement(StatementNumber stmtNum);
+    CacheSet getCacheUserStarStatement(StatementNumber stmtNum);
+    CacheSet evaluateModifierStar(StatementNumber stmtNum);
+    CacheSet evaluateUserStar(StatementNumber stmtNum);
     static void cleanup(CacheSet& partiallyCacheSet, CacheTable& cacheTable);
 
 protected:
