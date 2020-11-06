@@ -3,7 +3,7 @@
  */
 #include "CacheTable.h"
 
-Boolean CacheTable::hasCached(StatementNumber num) const
+Boolean CacheTable::isCached(StatementNumber num) const
 {
     return table.find(num) != table.end();
 }
@@ -32,7 +32,7 @@ CacheSet CacheTable::get(StatementNumber stmtNum)
 
 Boolean CacheTable::check(StatementNumber key, StatementNumber value)
 {
-    return table.find(key) != table.end() && table[key].hasCached(value);
+    return table.find(key) != table.end() && table[key].isCached(value);
 }
 
 Void CacheTable::remove(StatementNumber stmtNum)

@@ -223,8 +223,8 @@ const CfgNode* AffectsEvaluator::affectsSearch(const CfgNode* cfg,
 CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum, StatementNumber prevModifierStmtNum)
 {
     // Check if statement number has been explored in star cache table
-    if (exploredModifierStarAssigns.hasCached(stmtNum)) {
-        if (partiallyCacheModifierStarTable.hasCached(stmtNum)) {
+    if (exploredModifierStarAssigns.isCached(stmtNum)) {
+        if (partiallyCacheModifierStarTable.isCached(stmtNum)) {
             Vector<StatementNumber> allPartiallyCachedStatements
                 = partiallyCacheModifierStarTable.get(stmtNum).toList();
             CacheSet additionalCacheSet;
@@ -238,7 +238,7 @@ CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum
         return cacheModifierStarTable.get(stmtNum);
     }
 
-    if (visitedModifierStarAssigns.hasCached(stmtNum)) {
+    if (visitedModifierStarAssigns.isCached(stmtNum)) {
         // evaluation is still processing in a while loop,
         // and encountered a statement that is also currently
         // being processed in the recursion stack, hence it
@@ -250,7 +250,7 @@ CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum
     visitedModifierStarAssigns.insert(stmtNum);
 
     // if the statement has not been evaluated before, evaluate it
-    if (!exploredModifierAssigns.hasCached(stmtNum)) {
+    if (!exploredModifierAssigns.isCached(stmtNum)) {
         cacheModifierAssigns(stmtNum);
     }
 
@@ -273,8 +273,8 @@ CacheSet AffectsEvaluator::getCacheModifierStarStatement(StatementNumber stmtNum
 CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, StatementNumber prevUserStmtNum)
 {
     // Check if statement number has been explored in star cache table
-    if (exploredUserStarAssigns.hasCached(stmtNum)) {
-        if (partiallyCacheUserStarTable.hasCached(stmtNum)) {
+    if (exploredUserStarAssigns.isCached(stmtNum)) {
+        if (partiallyCacheUserStarTable.isCached(stmtNum)) {
             Vector<StatementNumber> allPartiallyCachedStatements = partiallyCacheUserStarTable.get(stmtNum).toList();
             CacheSet additionalCacheSet;
             for (StatementNumber i : allPartiallyCachedStatements) {
@@ -287,7 +287,7 @@ CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, St
         return cacheUserStarTable.get(stmtNum);
     }
 
-    if (visitedUserStarAssigns.hasCached(stmtNum)) {
+    if (visitedUserStarAssigns.isCached(stmtNum)) {
         // evaluation is still processing in a while loop,
         // and encountered a statement that is also currently
         // being processed in the recursion stack, hence it
@@ -299,7 +299,7 @@ CacheSet AffectsEvaluator::getCacheUserStarStatement(StatementNumber stmtNum, St
     visitedUserStarAssigns.insert(stmtNum);
 
     // if the statement has not been evaluated before, evaluate it
-    if (!exploredUserAssigns.hasCached(stmtNum)) {
+    if (!exploredUserAssigns.isCached(stmtNum)) {
         Vector<String> usedFromPkb = facade->getUsed(stmtNum);
         if (usedFromPkb.empty()) {
             // this assign uses no variables, cannot possibly have anything Affecting it
@@ -332,7 +332,7 @@ Void AffectsEvaluator::evaluateLeftKnown(Integer leftRefVal, const Reference& ri
         return;
     }
 
-    if (!exploredModifierAssigns.hasCached(leftRefVal)) {
+    if (!exploredModifierAssigns.isCached(leftRefVal)) {
         cacheModifierAssigns(leftRefVal);
     }
 
@@ -352,7 +352,7 @@ Void AffectsEvaluator::evaluateRightKnown(const Reference& leftRef, Integer righ
         return;
     }
     // cache if needed
-    if (!exploredUserAssigns.hasCached(rightRefVal)) {
+    if (!exploredUserAssigns.isCached(rightRefVal)) {
         cacheUserAssigns(rightRefVal, usedFromPkb);
     }
     resultsTable.storeResultsOne(leftRef, cacheUserTable.get(rightRefVal).toClauseResult());
@@ -477,7 +477,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
     if (leftRef.isWildCard() && rightRef.isWildCard()) {
         // return true if there are any normal modifies
         for (StatementNumber stmtNum : allAssignStatements) {
-            if (!exploredModifierAssigns.hasCached(stmtNum)) {
+            if (!exploredModifierAssigns.isCached(stmtNum)) {
                 cacheModifierAssigns(stmtNum);
             }
 
@@ -500,13 +500,13 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
         // return all that has a normal modifies
         if (leftRef.isWildCard()) {
             for (StatementNumber stmtNum : allAssignStatements) {
-                if (exploredUserAssigns.hasCached(stmtNum) && !cacheUserTable.get(stmtNum).empty()) {
+                if (exploredUserAssigns.isCached(stmtNum) && !cacheUserTable.get(stmtNum).empty()) {
                     results.push_back(stmtNum);
                 }
             }
         } else {
             for (StatementNumber stmtNum : allAssignStatements) {
-                if (exploredModifierAssigns.hasCached(stmtNum) && !cacheModifierTable.get(stmtNum).empty()) {
+                if (exploredModifierAssigns.isCached(stmtNum) && !cacheModifierTable.get(stmtNum).empty()) {
                     results.push_back(stmtNum);
                 }
             }
@@ -521,7 +521,7 @@ Void AffectsEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
         // return all that has a Affects* with itself
         for (StatementNumber stmtNum : allAssignStatements) {
             CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(stmtNum, -1);
-            if (modifierStarAnyStmtResults.hasCached(stmtNum)) {
+            if (modifierStarAnyStmtResults.isCached(stmtNum)) {
                 results.push_back(stmtNum);
             }
         }
@@ -552,7 +552,7 @@ Void AffectsEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRe
         return;
     }
     CacheSet modifierStarAnyStmtResults = getCacheModifierStarStatement(leftRefVal, -1);
-    resultsTable.storeResultsZero(modifierStarAnyStmtResults.hasCached(rightRefVal));
+    resultsTable.storeResultsZero(modifierStarAnyStmtResults.isCached(rightRefVal));
 }
 
 Void AffectsEvaluator::cacheAll()

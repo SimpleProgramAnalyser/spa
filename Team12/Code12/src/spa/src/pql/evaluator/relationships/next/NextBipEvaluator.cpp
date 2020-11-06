@@ -48,7 +48,7 @@ Boolean findAllNextBipFromCfgNode(CfgNode* currentCfgNode, StatementNumber start
 
 CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
 {
-    if (cacheNextBipStarTable.hasCached(leftRefVal)) {
+    if (cacheNextBipStarTable.isCached(leftRefVal)) {
         return cacheNextBipStarTable.get(leftRefVal);
     }
 
@@ -108,7 +108,7 @@ Void NextBipEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer 
     CacheSet results;
     for (StatementNumber stmtNum : allLeftStatements) {
         CacheSet allNextBipStarOfLeftRef = processLeftKnownStar(stmtNum);
-        if (allNextBipStarOfLeftRef.hasCached(rightRefVal)) {
+        if (allNextBipStarOfLeftRef.isCached(rightRefVal)) {
             results.insert(stmtNum);
         }
     }
@@ -179,7 +179,7 @@ Void NextBipEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
         for (StatementNumber stmtNum : prevTypeStatements) {
 
             CacheSet nextStarAnyStmtResults = processLeftKnownStar(stmtNum);
-            if (nextStarAnyStmtResults.hasCached(stmtNum)) {
+            if (nextStarAnyStmtResults.isCached(stmtNum)) {
                 results.push_back(stmtNum);
             }
         }
@@ -207,7 +207,7 @@ Void NextBipEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
 Void NextBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
 {
     CacheSet results = processLeftKnownStar(leftRefVal);
-    resultsTable.storeResultsZero(results.hasCached(rightRefVal));
+    resultsTable.storeResultsZero(results.isCached(rightRefVal));
 }
 
 NextBipEvaluator::NextBipEvaluator(ResultsTable& resultsTable, NextBipFacade* facade):
