@@ -161,7 +161,7 @@ Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVa
 }
 
 NextEvaluator::NextEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade):
-    cacheNextStarTable(), cachePrevStarTable(), exploredNextStatements(), exploredPrevStatements(),
+    cacheNextStarTable(), cachePrevStarTable(), exploredNextStarStatements(), exploredPrevStarStatements(),
     resultsTable(resultsTable), facade(facade)
 {}
 
@@ -203,7 +203,7 @@ Void NextEvaluator::evaluateNextStarClause(const Reference& leftRef, const Refer
 CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
-    if (exploredNextStatements.isCached(stmtNum)) {
+    if (exploredNextStarStatements.isCached(stmtNum)) {
         return cacheNextStarTable.get(stmtNum);
     }
 
@@ -249,11 +249,11 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
         // have the same set of Next* Relationships.
         for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
             cacheNextStarTable.insert(i, currentCacheSet);
-            exploredNextStatements.insert(i);
+            exploredNextStarStatements.insert(i);
         }
 
         cacheNextStarTable.insert(stmtNum, currentCacheSet);
-        exploredNextStatements.insert(stmtNum);
+        exploredNextStarStatements.insert(stmtNum);
         return currentCacheSet;
     } else {
         for (auto nextStmtNum : nextStatementList) {
@@ -262,7 +262,7 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
         }
 
         cacheNextStarTable.insert(stmtNum, currentCacheSet);
-        exploredNextStatements.insert(stmtNum);
+        exploredNextStarStatements.insert(stmtNum);
         return currentCacheSet;
     }
 }
@@ -270,7 +270,7 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
 CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
-    if (exploredPrevStatements.isCached(stmtNum)) {
+    if (exploredPrevStarStatements.isCached(stmtNum)) {
         return cachePrevStarTable.get(stmtNum);
     }
 
@@ -297,7 +297,7 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
         // have the same set of Next* Relationships.
         for (int i = stmtNum + 1; i <= lastStatementNumberInWhileLoop; i++) {
             cachePrevStarTable.insert(i, currentCacheSet);
-            exploredPrevStatements.insert(i);
+            exploredPrevStarStatements.insert(i);
         }
     } else {
         for (auto prevStmtNum : prevStatementList) {
@@ -307,6 +307,6 @@ CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
     }
 
     cachePrevStarTable.insert(stmtNum, currentCacheSet);
-    exploredPrevStatements.insert(stmtNum);
+    exploredPrevStarStatements.insert(stmtNum);
     return currentCacheSet;
 }
