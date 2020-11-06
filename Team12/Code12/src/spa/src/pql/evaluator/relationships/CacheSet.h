@@ -62,7 +62,7 @@ public:
     Vector<Integer> toVector() const;
 
     // Checks if StatementNumber is already cached
-    Boolean isCached(StatementNumber stmtNum) const;
+    Boolean hasCached(StatementNumber stmtNum) const;
 
     // Returns a CacheSet with the StatementNumber filtered for stmtType
     CacheSet filterStatementType(StatementType stmtType) const;

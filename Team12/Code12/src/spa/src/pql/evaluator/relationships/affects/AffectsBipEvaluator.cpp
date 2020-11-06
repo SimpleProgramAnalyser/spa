@@ -152,7 +152,7 @@ Void AffectsBipEvaluator::evaluateBothKnown(Integer leftRefVal, Integer rightRef
 {
     cacheAll();
     CacheSet resultsForLeft = getModifierAssigns(leftRefVal);
-    resultsTable.storeResultsZero(resultsForLeft.isCached(rightRefVal));
+    resultsTable.storeResultsZero(resultsForLeft.hasCached(rightRefVal));
 }
 
 Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Reference& rightRef)
@@ -162,7 +162,7 @@ Void AffectsBipEvaluator::evaluateLeftKnownStar(Integer leftRefVal, const Refere
         return;
     }
 
-    if (!exploredModifierBipStarAssigns.isCached(leftRefVal)) {
+    if (!exploredModifierBipStarAssigns.hasCached(leftRefVal)) {
         cacheModifierBipStarAssigns(leftRefVal);
     }
 

@@ -40,7 +40,7 @@ Vector<Integer> CacheSet::toVector() const
     return Vector<Integer>(set.begin(), set.end());
 }
 
-Boolean CacheSet::isCached(StatementNumber stmtNum) const
+Boolean CacheSet::hasCached(StatementNumber stmtNum) const
 {
     return set.find(stmtNum) != set.end();
 }

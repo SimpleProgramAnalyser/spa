@@ -48,11 +48,17 @@ Boolean findAllNextBipFromCfgNode(CfgNode* currentCfgNode, StatementNumber start
 
 CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
 {
+    if (cacheNextBipStarTable.hasCached(leftRefVal)) {
+        return cacheNextBipStarTable.get(leftRefVal);
+    }
+
     Vector<StatementPositionInCfg> allCgfNodes = findAllCorrespondingPositions(leftRefVal, *bipFacade);
     CacheSet results;
 
     if (allCgfNodes.empty()) {
-        return CacheSet();
+        CacheSet emptyCacheSet;
+        cacheNextBipStarTable.insert(leftRefVal, emptyCacheSet);
+        return emptyCacheSet;
     }
 
     Boolean hasNextBipToItself = false; // if the node has a NextBip* relationship with itself
@@ -76,6 +82,7 @@ CacheSet NextBipEvaluator::processLeftKnownStar(Integer leftRefVal)
         }
     }
 
+    cacheNextBipStarTable.insert(leftRefVal, results);
     return results;
 }
 
@@ -101,7 +108,7 @@ Void NextBipEvaluator::evaluateRightKnownStar(const Reference& leftRef, Integer 
     CacheSet results;
     for (StatementNumber stmtNum : allLeftStatements) {
         CacheSet allNextBipStarOfLeftRef = processLeftKnownStar(stmtNum);
-        if (allNextBipStarOfLeftRef.isCached(rightRefVal)) {
+        if (allNextBipStarOfLeftRef.hasCached(rightRefVal)) {
             results.insert(stmtNum);
         }
     }
@@ -172,7 +179,7 @@ Void NextBipEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
         for (StatementNumber stmtNum : prevTypeStatements) {
 
             CacheSet nextStarAnyStmtResults = processLeftKnownStar(stmtNum);
-            if (nextStarAnyStmtResults.isCached(stmtNum)) {
+            if (nextStarAnyStmtResults.hasCached(stmtNum)) {
                 results.push_back(stmtNum);
             }
         }
@@ -200,7 +207,7 @@ Void NextBipEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Refer
 Void NextBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
 {
     CacheSet results = processLeftKnownStar(leftRefVal);
-    resultsTable.storeResultsZero(results.isCached(rightRefVal));
+    resultsTable.storeResultsZero(results.hasCached(rightRefVal));
 }
 
 NextBipEvaluator::NextBipEvaluator(ResultsTable& resultsTable, NextBipFacade* facade):

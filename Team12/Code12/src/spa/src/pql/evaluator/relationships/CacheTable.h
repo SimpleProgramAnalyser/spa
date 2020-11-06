@@ -15,7 +15,7 @@ private:
 
 public:
     // checks if evaluation of statement has already been cached
-    Boolean isCached(StatementNumber num) const;
+    Boolean hasCached(StatementNumber num) const;
 
     /**
      * Inserts multiple table entries stmtNum -> {v1, v2, ..., vn}

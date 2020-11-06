@@ -129,7 +129,7 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
         Vector<StatementNumber> results;
         for (StatementNumber stmtNum : prevTypeStatements) {
             CacheSet nextStarAnyStmtResults = getCacheNextStatement(stmtNum);
-            if (nextStarAnyStmtResults.isCached(stmtNum)) {
+            if (nextStarAnyStmtResults.hasCached(stmtNum)) {
                 results.push_back(stmtNum);
             }
         }
@@ -157,7 +157,7 @@ Void NextEvaluator::evaluateBothAnyStar(const Reference& leftRef, const Referenc
 Void NextEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer rightRefVal)
 {
     CacheSet nextStarAnyStmtResults = getCacheNextStatement(leftRefVal);
-    resultsTable.storeResultsZero(nextStarAnyStmtResults.isCached(rightRefVal));
+    resultsTable.storeResultsZero(nextStarAnyStmtResults.hasCached(rightRefVal));
 }
 
 NextEvaluator::NextEvaluator(ResultsTable& resultsTable, NextEvaluatorFacade* facade):
@@ -203,7 +203,7 @@ Void NextEvaluator::evaluateNextStarClause(const Reference& leftRef, const Refer
 CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
-    if (exploredNextStarStatements.isCached(stmtNum)) {
+    if (exploredNextStarStatements.hasCached(stmtNum)) {
         return cacheNextStarTable.get(stmtNum);
     }
 
@@ -270,7 +270,7 @@ CacheSet NextEvaluator::getCacheNextStatement(StatementNumber stmtNum)
 CacheSet NextEvaluator::getCachePrevStatement(StatementNumber stmtNum)
 {
     // Check if statement number has been explored
-    if (exploredPrevStarStatements.isCached(stmtNum)) {
+    if (exploredPrevStarStatements.hasCached(stmtNum)) {
         return cachePrevStarTable.get(stmtNum);
     }
 
