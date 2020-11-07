@@ -1,5 +1,10 @@
 #include "OptimiserUtils.h"
 
+#include <set>
+
+#include "GroupedClauses.h"
+#include "Optimiser.h"
+
 bool hasSynonym(Clause* clause)
 {
     switch (clause->getType()) {
@@ -113,4 +118,31 @@ bool shareSynonym(Clause* clause1, Clause* clause2)
     // there are shared synonym between two clauses iff the combined set is smaller than the
     // original - intersection is non-empty.
     return synonyms.size() < synonyms1.size() + synonyms2.size();
+}
+
+bool canInitiateSubstitution(Reference& reference)
+{
+    std::unordered_map<DesignEntityType, AttributeType> bannedTarget{
+        {ReadType, VarNameType}, {PrintType, VarNameType}, {CallType, ProcNameType}};
+
+    auto designEntityType = reference.getDesignEntity().getType();
+    auto referenceType = reference.getReferenceType();
+    bool isProgLine = referenceType == SynonymRefType && designEntityType == Prog_LineType;
+    bool isAllowedTarget = referenceType == AttributeRefType
+                           && !(bannedTarget.count(designEntityType)
+                                && bannedTarget.at(designEntityType) == reference.getAttribute().getType());
+    return isProgLine || isAllowedTarget;
+}
+
+bool canBeSubstituted(Reference& reference)
+{
+    std::unordered_map<DesignEntityType, AttributeType> bannedTarget{
+        {ReadType, VarNameType}, {PrintType, VarNameType}, {CallType, ProcNameType}};
+
+    auto designEntityType = reference.getDesignEntity().getType();
+    auto referenceType = reference.getReferenceType();
+    bool isAllowedTarget = referenceType == AttributeRefType
+                           && !(bannedTarget.count(designEntityType)
+                                && bannedTarget.at(designEntityType) == reference.getAttribute().getType());
+    return referenceType == SynonymRefType || isAllowedTarget;
 }

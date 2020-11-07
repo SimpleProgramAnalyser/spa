@@ -43,10 +43,10 @@ Void substituteSuchThat(SuchThatClause* suchThatClause, const Reference& target,
     // whose synonym matches target, and replace it with value.
     auto leftRef = suchThatClause->getRelationship().getLeftRef();
     auto rightRef = suchThatClause->getRelationship().getRightRef();
-    if (hasSynonym(leftRef) && leftRef.getValue() == target.getValue()) {
+    if (canBeSubstituted(leftRef) && leftRef.getValue() == target.getValue()) {
         suchThatClause->getRelationshipUnsafe().setLeftRef(value);
     }
-    if (hasSynonym(rightRef) && rightRef.getValue() == target.getValue()) {
+    if (canBeSubstituted(rightRef) && rightRef.getValue() == target.getValue()) {
         suchThatClause->getRelationshipUnsafe().setRightRef(value);
     }
 }
@@ -55,10 +55,10 @@ Void substituteWith(WithClause* withClause, const Reference& target, const Refer
 {
     auto leftRef = withClause->getLeftReference();
     auto rightRef = withClause->getRightReference();
-    if (hasSynonym(leftRef) && leftRef.getValue() == target.getValue()) {
+    if (canBeSubstituted(leftRef) && leftRef.getValue() == target.getValue()) {
         withClause->setLeftReference(value);
     }
-    if (hasSynonym(rightRef) && rightRef.getValue() == target.getValue()) {
+    if (canBeSubstituted(rightRef) && rightRef.getValue() == target.getValue()) {
         withClause->setRightReference(value);
     }
 }
@@ -91,20 +91,6 @@ Void substituteClauseList(List<Clause>& clauseList, const Reference& target, con
     }
 }
 
-bool canInitiateSubstitution(Reference& reference)
-{
-    std::unordered_map<DesignEntityType, AttributeType> bannedTarget{
-        {ReadType, VarNameType}, {PrintType, VarNameType}, {CallType, ProcNameType}};
-
-    auto designEntityType = reference.getDesignEntity().getType();
-    auto referenceType = reference.getReferenceType();
-    bool isProgLine = referenceType == SynonymRefType && designEntityType == Prog_LineType;
-    bool isAllowedTarget = referenceType == AttributeRefType
-                           && !(bannedTarget.count(designEntityType)
-                                && bannedTarget.at(designEntityType) == reference.getAttribute().getType());
-    return isProgLine || isAllowedTarget;
-}
-
 /**
  * For with clauses such as s.stmt# = 5, substitute all occurrences of the synonym "s" with the value 5.
  *
@@ -117,7 +103,6 @@ Void substituteWithValues(AbstractQuery& abstractQuery)
      * 1. One side is integer, eg s.stmt# = 5
      * 2. One side is identifier, eg v.varName = "hello"
      */
-    // FIXME: calls.stmt# and calls.procName are substituted without distinction
     List<Clause>& clauseList = abstractQuery.getClausesUnsafe().getAllUnsafe();
     for (std::size_t i = 0; i < clauseList.size(); i++) {
         Clause* clause = clauseList[i].get();

@@ -31,6 +31,8 @@ inline bool hasSynonym(const Reference& reference)
     return reference.getReferenceType() == AttributeRefType || reference.getReferenceType() == SynonymRefType;
 }
 
+bool canInitiateSubstitution(Reference& reference);
+bool canBeSubstituted(Reference& reference);
 bool hasSynonym(Clause* clause);
 unsigned int countSynonym(Clause* clause);
 bool shareSynonym(Clause* clause1, Clause* clause2);
