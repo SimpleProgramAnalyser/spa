@@ -831,6 +831,7 @@ std::pair<CfgNode*, size_t> getProgram20Cfg_raymarch()
     ifNewCfgNode->statementNodes->push_back(
         createIfNode(11, createLtExpr(createRefExpr("dist"), createRefExpr("epsilon")), createStmtlstNode(ifStatements),
                      createStmtlstNode(elseStatements)));
+    ifNewCfgNode->ifJoinNode = ifDummyNode;
     firstWhileCfgChildrenNode->childrenNodes->push_back(ifNewCfgNode);
 
     ifCfgNode->statementNodes->push_back(createAssignNode(12, Variable("done"), createRefExpr("depth")));
@@ -1024,6 +1025,7 @@ std::pair<CfgNode*, size_t> getProgram20CfgBip_multipleProceduresSpheresdf()
     ifNewCfgNode->statementNodes->push_back(
         createIfNode(11, createLtExpr(createRefExpr("dist"), createRefExpr("epsilon")),
                      createStmtlstNode(raymarchIfStatements), createStmtlstNode(raymarchElseStatements)));
+    ifNewCfgNode->ifJoinNode = ifDummyNode;
     spheresdfWhileDummyCfgNode->childrenNodes->push_back(ifNewCfgNode);
 
     ifCfgNode->statementNodes->push_back(createAssignNode(12, Variable("done"), createRefExpr("depth")));

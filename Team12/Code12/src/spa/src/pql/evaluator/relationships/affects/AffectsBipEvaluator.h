@@ -24,9 +24,10 @@ private:
     bool bipStarCacheFullyPopulated;
 
     // Helper methods for AffectsBip*
-    Boolean affectsBipSearch(Integer startingStmtNum, StatementPositionInCfg startingPosition, Boolean ignoreStarting,
-                             std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns,
-                             MaybeStatementNumber endValue);
+    Boolean affectsBipStarSearch(Integer startingStmtNum, StatementPositionInCfg startingPosition,
+                                 Boolean ignoreStarting,
+                                 std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns,
+                                 MaybeStatementNumber endValue);
     Vector<Integer> cacheModifierBipStarAssigns(Integer leftRefVal);
     Void cacheAllBipStar();
 
@@ -74,6 +75,11 @@ public:
      *               of the lifetime of the parent AffectsBipEvaluator).
      */
     explicit AffectsBipEvaluator(ResultsTable& resultsTable, AffectsBipFacade* facade);
+
+    // Methods for unit testing, to expose private methods
+    Void affectsBipStarSearchForUnitTesting(
+        StatementPositionInCfg position,
+        std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns);
 };
 
 #endif // SPA_PQL_AFFECTS_BIP_EVALUATOR_H

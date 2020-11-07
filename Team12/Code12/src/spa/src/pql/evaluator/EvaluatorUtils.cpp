@@ -83,6 +83,27 @@ std::size_t SynonymWithValueHasher::operator()(const SynonymWithValue& swv) cons
     return std::hash<std::string>()(swv.synonym);
 }
 
+ResultsRelation::ResultsRelation(String v1, String v2): value1(std::move(v1)), value2(std::move(v2)) {}
+
+bool ResultsRelation::operator==(const ResultsRelation& rr) const
+{
+    return this->value1 == rr.value1 && this->value2 == rr.value2;
+}
+
+std::size_t ResultsRelationHasher::operator()(const ResultsRelation& rr) const
+{
+    std::hash<std::string> stringHasher;
+    std::size_t hashedA = stringHasher(rr.value1);
+    return (hashedA ^ (stringHasher(rr.value2) + uint32_t(2654435769) + (hashedA * 64) + (hashedA / 4)));
+}
+
+std::size_t IntegerPairHasher::operator()(const Pair<Integer, Integer>& intPair) const
+{
+    std::hash<Integer> intHasher;
+    std::size_t hashedFirst = intHasher(intPair.first);
+    return (hashedFirst ^ (intHasher(intPair.second) + uint32_t(2654435769) + (hashedFirst * 64) + (hashedFirst / 4)));
+}
+
 ClauseResult convertToClauseResult(const Vector<Integer>& intList)
 {
     ClauseResult strList;
