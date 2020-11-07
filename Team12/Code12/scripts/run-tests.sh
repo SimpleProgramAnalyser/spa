@@ -111,7 +111,7 @@ for sourcefile in ${testdir}/*_source.txt; do
   DUMMY=$("$autotester" "$sourcefile" "$queryfile" "$outfile")
 
   # Check if all test passed
-  if grep -q "<failed>" "$outfile"; then
+  if grep -q "<failed>" "$outfile" || grep -q "<exception/>" "$outfile"; then
       echo "System test failed: ${testdescription} :("
       ((TESTSFAILED=TESTSFAILED+1))
   fi
