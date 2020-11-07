@@ -136,7 +136,7 @@ mainPrint 23, readPoint 23, computeCentroid 23, mainPrint 31, readPoint 31, comp
 28 - Modifies statement with 1 unknown synonym, Select based on LHS
 while w; procedure p;
 Select <w, p> such that Modifies (w, "y")
-none
+17 computeCentroid, 17 mainPrint, 17 readPoint, 24 computeCentroid, 24 mainPrint, 24 readPoint, 30 computeCentroid, 30 mainPrint, 30 readPoint
 5000
 29 - Modifies statement with 1 unknown synonym, Select based on LHS
 while w; procedure p;
