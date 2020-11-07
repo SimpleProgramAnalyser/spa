@@ -36,7 +36,7 @@ public:
 
     /**
      * Returns a list of procedures that calls or indirectly
-     * calls the procedureName given.s
+     * calls the procedureName given.
      */
     virtual Vector<String> getCallersStar(const String& procedureName);
 };

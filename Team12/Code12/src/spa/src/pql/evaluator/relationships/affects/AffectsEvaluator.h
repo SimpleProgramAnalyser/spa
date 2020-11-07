@@ -5,6 +5,8 @@
 #ifndef SPA_PQL_AFFECTS_EVALUATOR_H
 #define SPA_PQL_AFFECTS_EVALUATOR_H
 
+#include <utility>
+
 #include "AffectsEvaluatorFacade.h"
 #include "cfg/CfgTypes.h"
 #include "pql/evaluator/ResultsTable.h"
@@ -17,9 +19,26 @@ class AffectsTuple {
 private:
     std::unordered_set<Integer> modifyingStatementResults;
     std::unordered_set<Integer> usingStatementResults;
-    Vector<Pair<Integer, Integer>> affectsResults;
+    std::unordered_set<Pair<Integer, Integer>, IntegerPairHasher> affectsResults;
 
 public:
+    /**
+     * Constructs an empty AffectsTuple.
+     */
+    AffectsTuple();
+
+    /**
+     * Constructs an AffectsTuple with already known values.
+     * This method is used in unit tests.
+     */
+    AffectsTuple(std::unordered_set<Integer> modifyingStatements, std::unordered_set<Integer> usingStatements,
+                 std::unordered_set<Pair<Integer, Integer>, IntegerPairHasher> tuples);
+
+    /**
+     * Checks whether two AffectsTuples stores the same result lists.
+     */
+    bool operator==(const AffectsTuple& at) const;
+
     /**
      * Adds an Affects relationship to the results lists.
      */
@@ -149,6 +168,11 @@ public:
     explicit AffectsEvaluator(ResultsTable& resultsTable, AffectsEvaluatorFacade* facade);
     Void evaluateAffectsClause(const Reference& leftRef, const Reference& rightRef);
     Void evaluateAffectsStarClause(const Reference& leftRef, const Reference& rightRef);
+
+    // Methods for unit testing, to expose private methods
+    Void affectsSearchForUnitTesting(const CfgNode* cfg,
+                                     std::unordered_map<String, std::unordered_set<Integer>>& affectsMap,
+                                     AffectsTuple& resultsLists);
 };
 
 #endif // SPA_PQL_AFFECTS_EVALUATOR_H

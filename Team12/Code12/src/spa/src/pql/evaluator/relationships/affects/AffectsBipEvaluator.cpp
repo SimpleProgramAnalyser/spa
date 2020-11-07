@@ -62,7 +62,7 @@ public:
  *                 searched, and always return false.
  * @return True, if the endValue is found.
  */
-Boolean AffectsBipEvaluator::affectsBipSearch(
+Boolean AffectsBipEvaluator::affectsBipStarSearch(
     Integer startingStmtNum, StatementPositionInCfg startingPosition, Boolean ignoreStarting,
     std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns, MaybeStatementNumber endValue)
 {
@@ -94,7 +94,7 @@ Boolean AffectsBipEvaluator::affectsBipSearch(
         if (foundCorrespondingNode) {
             // did not find end value, but there are still nodes we can search
             for (StatementPositionInCfg position : correspondingPositions) {
-                foundEndValue = affectsBipSearch(affectedStatement, position, false, visitedAssigns, endValue);
+                foundEndValue = affectsBipStarSearch(affectedStatement, position, false, visitedAssigns, endValue);
                 if (foundEndValue) {
                     break;
                 }
@@ -118,7 +118,8 @@ Vector<Integer> AffectsBipEvaluator::cacheModifierBipStarAssigns(Integer leftRef
     std::unordered_set<Integer> matchingStatements;
     for (StatementPositionInCfg position : allPositions) {
         std::unordered_set<StatementPositionInCfg, StatementPositionHasher> visitedAssignsWithinProcedure;
-        affectsBipSearch(leftRefVal, position, true, visitedAssignsWithinProcedure, MaybeStatementNumber::nothing());
+        affectsBipStarSearch(leftRefVal, position, true, visitedAssignsWithinProcedure,
+                             MaybeStatementNumber::nothing());
         for (const StatementPositionInCfg& visitedAssigns : visitedAssignsWithinProcedure) {
             matchingStatements.insert(visitedAssigns.getStatementNumber());
         }
@@ -212,8 +213,8 @@ Void AffectsBipEvaluator::evaluateBothKnownStar(Integer leftRefVal, Integer righ
     Boolean matchedRightRef = false;
     for (StatementPositionInCfg position : allPositions) {
         std::unordered_set<StatementPositionInCfg, StatementPositionHasher> visitedAssignsWithinProcedure;
-        if (affectsBipSearch(leftRefVal, position, true, visitedAssignsWithinProcedure,
-                             MaybeStatementNumber::just(rightRefVal))) {
+        if (affectsBipStarSearch(leftRefVal, position, true, visitedAssignsWithinProcedure,
+                                 MaybeStatementNumber::just(rightRefVal))) {
             matchedRightRef = true;
             break;
         }
@@ -247,3 +248,9 @@ AffectsBipEvaluator::AffectsBipEvaluator(ResultsTable& resultsTable, AffectsBipF
     exploredModifierBipStarAssigns(), allModifierBipStarAssigns(), allUserBipStarAssigns(), allAffectsBipStarTuples(),
     bipStarCacheFullyPopulated(false)
 {}
+
+// This method is for unit testing only!
+Vector<Integer> AffectsBipEvaluator::affectsBipStarSearchForUnitTesting(Integer startingStmtNum)
+{
+    return cacheModifierBipStarAssigns(startingStmtNum);
+}
