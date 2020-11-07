@@ -250,10 +250,7 @@ AffectsBipEvaluator::AffectsBipEvaluator(ResultsTable& resultsTable, AffectsBipF
 {}
 
 // This method is for unit testing only!
-Void AffectsBipEvaluator::affectsBipStarSearchForUnitTesting(
-    StatementPositionInCfg position,
-    std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns)
+Vector<Integer> AffectsBipEvaluator::affectsBipStarSearchForUnitTesting(Integer startingStmtNum)
 {
-    affectsBipStarSearch(position.getStatementNumber(), position, true, visitedAssigns,
-                         MaybeStatementNumber::nothing());
+    return cacheModifierBipStarAssigns(startingStmtNum);
 }

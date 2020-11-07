@@ -77,9 +77,7 @@ public:
     explicit AffectsBipEvaluator(ResultsTable& resultsTable, AffectsBipFacade* facade);
 
     // Methods for unit testing, to expose private methods
-    Void affectsBipStarSearchForUnitTesting(
-        StatementPositionInCfg position,
-        std::unordered_set<StatementPositionInCfg, StatementPositionHasher>& visitedAssigns);
+    Vector<Integer> affectsBipStarSearchForUnitTesting(Integer startingStmtNum);
 };
 
 #endif // SPA_PQL_AFFECTS_BIP_EVALUATOR_H
