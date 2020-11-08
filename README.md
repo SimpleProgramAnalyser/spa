@@ -103,7 +103,7 @@ autotester.exe  ../../../../../Tests12/patternSource_source.txt  ../../../../../
 
 autotester.exe  ../../../../../Tests12/patternSourceTuple_source.txt  ../../../../../Tests12/patternQueriesTuple_queries.txt ../../../../tests/patternSourceTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/singlePatternWithSource_source.txt  ../../../../../Tests12/patternQueries_queries.txt ../../../../tests/patternSource.xml
+autotester.exe  ../../../../../Tests12/singlePatternWithSource_source.txt  ../../../../../Tests12/singlePatternWithQueries_queries.txt ../../../../tests/singlePatternWithSource.xml
 
 autotester.exe  ../../../../../Tests12/usesSource_source.txt  ../../../../../Tests12/usesQueries_queries.txt ../../../../tests/usesSource.xml
 
@@ -121,7 +121,7 @@ autotester.exe  ../../../../../Tests12/multipleSuchThatPatternWithAffectsSource_
 ## Stress Tests
 
 ```
-autotester.exe  ../../../../../Tests12/StressTests/stressSource_source.txt  ../../../../../Tests12/StressTests/stressTestQueries_queries.txt ../../../../tests/stressTestSource_source.xml
+autotester.exe  ../../../../../Tests12/StressTests/stressTestSource_source.txt  ../../../../../Tests12/StressTests/stressTestQueries_queries.txt ../../../../tests/stressTestSource_source.xml
 ```
 
 ## BIP Extension
