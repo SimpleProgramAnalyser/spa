@@ -1,0 +1,100 @@
+1 - Select Based on LHS Two such that 0 common synonym
+if s; prog_line s1; while w;
+Select s such that NextBip*(s, 61) such that NextBip(s1, w)
+40, 55, 67, 77, 79, 87, 100
+5000
+2 - Select Two such that 1 common synonym
+if s; prog_line s1; while w;
+Select <s1, w> such that NextBip*(s1, w) such that AffectsBip*(61, s1)
+46 45, 60 45, 60 65, 60 93, 60 95, 60 103
+5000
+3 - Select Two such that 1 common synonym
+if s; prog_line s1; while w;
+Select <s1, w> such that NextBip*(s1, w) such that Affects*(61, s1)
+none
+5000
+4 - Select Two such that 2 common synonym
+call s; prog_line s1; while w;
+Select <s1, w> such that NextBip*(s1, w) such that Parent*(w, s1)
+20 19, 46 45, 47 45, 66 65, 67 65, 68 65, 69 65, 70 65, 71 65, 94 93, 95 93, 96 93, 96 95, 104 103, 105 103, 109 108, 110 108, 111 108, 112 108, 112 111, 113 108, 113 111, 114 108, 124 123, 127 126, 128 126, 128 127, 129 126
+5000
+5 - Select Two such that 2 common synonym
+if s; prog_line s1; while w;
+Select <s, w> such that NextBip*(s, w) such that NextBip*(w, s)
+11 19, 34 19, 55 45, 55 65, 55 93, 55 95, 55 103, 67 65, 100 93, 100 95, 100 103
+5000
+6 - Select Based on LHS 3 such that 0 common synonym
+if s; prog_line s1; while w; procedure p;
+Select s such that NextBip*(s, 61) such that NextBip(s1, w) such that Modifies(p, "noModify")
+none
+5000
+7 - Select 3 such that 1 common synonym (1,3, 2, 3)
+if s; prog_line s1; while w; assign a1;
+Select <s1, w, a1> such that NextBip*(s1, w) such that AffectsBip*(a1, s1) such that Uses(a1, "modified4Layers")
+3 19 2, 4 19 2, 13 19 2, 43 45 39, 46 45 60, 60 45 39, 60 45 60, 60 65 39, 60 65 60, 60 93 39, 60 93 60, 60 95 39, 60 95 60, 60 103 39, 60 103 60
+5000
+8 - Select 3 such that 1 common synonym (1,3, 2, 3)
+if s,i ; prog_line s1; while w; assign a1; variable v;
+Select <s, i, v> such that NextBip*(s, i) such that Modifies(i, v) such that Uses(s, v)
+11 11 a, 11 11 b, 11 11 c, 11 11 d, 11 11 modified1Layers, 11 11 modified2Layers, 11 34 a, 11 34 c, 34 11 a, 34 11 c, 34 34 a, 34 34 c, 40 55 modified1Layers, 40 55 modified2Layers, 40 55 notImportantVar, 55 55 modified1Layers, 55 55 notImportantVar, 55 67 modified1Layers, 55 67 notImportantVar, 55 79 modified1Layers, 55 79 notImportantVar, 55 87 modified1Layers, 55 87 notImportantVar, 67 55 modified1Layers, 67 55 notImportantVar, 67 67 modified1Layers, 67 67 notImportantVar, 77 55 modified1Layers, 77 55 modified2Layers, 77 55 notImportantVar, 77 79 modified1Layers, 77 79 modified2Layers, 77 79 notImportantVar, 77 87 modified1Layers, 77 87 modified2Layers, 77 87 notImportantVar, 77 100 infinite2, 77 100 infinite3, 79 55 modified1Layers, 79 55 notImportantVar, 87 55 modified1Layers, 87 55 notImportantVar, 100 100 infinite2
+5000
+9 - Select 3 such that 2 common synonym
+call s; prog_line s1; while w;
+Select <s1, w> such that NextBip*(s1, w) such that Parent*(w, s1) such that Next*(w, s1)
+20 19, 46 45, 47 45, 66 65, 67 65, 68 65, 69 65, 70 65, 71 65, 94 93, 95 93, 96 93, 96 95, 104 103, 105 103, 109 108, 110 108, 111 108, 112 108, 112 111, 113 108, 113 111, 114 108, 124 123, 127 126, 128 126, 128 127, 129 126
+5000
+10 - Select 3 such that 2 common synonym
+if s; prog_line s1; while w;
+Select BOOLEAN such that NextBip(s, w) such that Parent*(w, s1) such that Next*(w, s1)
+FALSE
+5000
+11 - Select Based on LHS Two such that 0 common synonym
+if s; prog_line s1; while w; procedure p1, p2;
+Select s such that NextBip*(s, 61) such that Calls(p1, p2) with p1.procName = "pco3Part2a"
+none
+5000
+12 - Select Two such that 1 common synonym 1 with 1 pattern
+if s; assign s1; while w; variable v; constant const;
+Select <s1, w> such that NextBip*(s1, w) such that Uses(w, v) pattern s1(v, _"infinite1 * 3"_) with s1.stmt# = const.value
+109 108, 109 111
+5000
+13 - Select Two such that 1 common synonym
+call s; prog_line s1; while w; assign a; variable v;
+Select <s1, s, a> such that NextBip(s1, s) such that AffectsBip*(s1, a) pattern a (v, _"modified4Layers + 3"_) with s.procName = "callOnceButIsCalledTwice"
+42 49 60, 48 49 60
+5000
+14 - Select 3 such that 2 common synonym
+call s; prog_line s1; if w; while i; variable v;
+Select <w, s> such that NextBip*(s, w) such that Parent*(w, s) such that Next*(s, w) pattern w (v,_, _) with v.varName = "modified4Layers"
+67 68, 67 71
+5000
+15 - Select Two such that 2 common synonym
+call s; prog_line s1; read w; variable v; while w1;
+Select <s, w, v> such that NextBip(s, w) such that Modifies(w, v) such that Uses(s, v) pattern w1("a", _) pattern w1("b", _) with w1.stmt# = 65
+41 53 notImportantVar, 44 53 notImportantVar, 49 53 notImportantVar, 51 53 notImportantVar, 68 53 notImportantVar, 71 53 notImportantVar, 72 53 notImportantVar, 78 53 notImportantVar, 81 53 notImportantVar, 84 53 notImportantVar, 86 53 notImportantVar, 89 53 notImportantVar, 90 53 notImportantVar, 94 53 notImportantVar
+5000
+16 - Select Based on LHS 3 such that 0 common synonym
+call c; print s; procedure p1, p2; variable v;
+Select BOOLEAN such that NextBip*(s, c) such that Calls*(p1, p2) such that Modifies(p1, v) with v.varName = p1.procName
+FALSE
+5000
+17 - Select 3 such that 1 common synonym (1,3, 2, 3)
+print p; prog_line s1; while w; assign a1, a2, a3; variable v;
+Select <a1.stmt#, a2, a3> such that NextBip(a1, p) such that AffectsBip(a1, a2) such that AffectsBip(a2, a3) with a3.stmt# = 24 pattern a2(v, _) with v.varName = "b"
+26 25 24, 26 29 24, 36 25 24, 36 29 24
+5000
+18 - Select 3 such that 1 common synonym (1,3, 2, 3)
+if s,i ; prog_line s1; while w; assign a1; variable v, v1; constant const; 
+Select <s, i, v, a1> such that NextBip*(s, i) such that Next*(i, a1) such that Uses(s, v) pattern a1 (_, _"infinite1 * 3"_) pattern i(v1, _, _) with v1.varName = v.varName
+77 100 infinite4 102, 100 100 infinite4 102
+5000
+19 - Select 3 such that 2 common synonym
+read s; prog_line s1; while w; procedure p1, p2;
+Select <s, w> such that NextBip*(w, s) such that Follows*(w, s) such that Next*(w, s) with p1.procName = p2.procName
+118 108
+5000
+20 - Select 3 such that 2 common synonym
+if s; prog_line s1; while w; procedure p1, p2; call c;
+Select BOOLEAN such that NextBip(s1, w) such that Follows(w, s1) such that Next(w, s1) pattern w ("doesnmatter", _) with c.procName = p1.procName
+FALSE
+5000

@@ -1,0 +1,180 @@
+procedure proc1NoNesting {
+	modified4Layers = 0;
+	modified3Layers = modified4Layers + 3;
+	modified2Layers = modified3Layers * 3;
+	modified1Layers = modified2Layers * modified3Layers;
+	call proc1aIf; 
+	a = d;
+	call proc1aWhile;
+	print a; 
+	call proc1aIf;
+	read modified4Layers;
+}
+
+procedure proc1aIf {
+	if ((modified1Layers == 0) && (modified1Layers != 0)) then {
+		read modified2Layers;
+		modified1Layers = modified2Layers * (modified3Layers / modified1Layers); 
+		call proc1aWhile;
+	} else {
+		call proc1aNoTransitive;
+		call proc1aNoTransitive;
+		call proc1aNoTransitive; 
+	}
+	print useless;
+}
+
+procedure proc1aWhile {
+	while((modified2Layers < 0 ) || (modified2Layers >= 0)) {
+		call proc1aTransitive;
+	}
+	call proc1aTransitive;
+	print y;
+}
+
+procedure proc1aNoTransitive {
+	  d = a;
+      a = b;
+      b = c;
+      c = d;
+}
+
+procedure proc1aTransitive {
+	  d = a;
+      a = b;
+      b = c;
+      c = d;
+      call proc1IfElseAffects;
+      call proc1IfElseAffects;
+      print y;
+}
+
+procedure proc1IfElseAffects {
+	if (a < 0) then {
+		a = 100 * c; 
+	} else {
+		c = a * 200;
+	}
+}
+
+procedure proc2NestingIfWhile {
+	read x;
+	modified4Layers = 0;
+	modified3Layers = modified4Layers + 3;
+	if ((!(a >= 0))) then {
+		call callOnceButIsCalledTwice;
+		modified1Layers = modified2Layers * modified3Layers;
+	} else {
+		modified2Layers = modified3Layers * 3;
+		call callOnceButIsCalledTwice; 	
+		while ((!(a > 0)) && (sien < 0)) {
+			modified1Layers = modified1Layers  + modified2Layers;
+			print modified4Layers;
+		}
+		modified1Layers = modified1Layers * 3 + 4;
+	}
+	call callOnceButIsCalledTwice;
+	print modified4Layers;
+	call callOnceButIsCalledTwice;
+	print useless;
+}
+
+procedure callOnceButIsCalledTwice {
+	read notImportantVar;
+	print notImportantVar;
+	if (a < 0) then {
+		notImportantVar = 0;
+		call procThatsCalledTwice;
+	} else {
+		c = a * 200;
+		call procThatsCalledTwice;
+	}
+}
+
+procedure procThatsCalledTwice {
+	modified2Layers = 3 * (modified4Layers + 3) + modified1Layers;
+	modified1Layers = notImportantVar;
+}
+
+procedure proc2NestingWhileIf {
+	read y;
+	modified4Layers = 99;
+	modified3Layers = 3 + modified4Layers;
+	while (a < b) {
+		read b;
+		if ((modified4Layers < 0) && (modified3Layers > 0)) then {
+			call callOnceButIsCalledTwice;
+			print w;
+		} else {
+			print w;
+			call callOnceButIsCalledTwice;
+		}
+	}
+	modified1Layers = 4 * modified2Layers;
+}
+
+procedure proc2NestingIfIf {
+	read y;
+	modified4Layers = 99;
+	modified3Layers = 3 * modified4Layers;
+	if ((!(modified3Layers < 0)) && ((modified4Layers < 0) || (!(modified2Layers >= 0)))) then {
+		call callOnceButIsCalledTwice;
+		if (modified3Layers == 0) then {
+			read callOnceButIsCalledTwice;
+			call callOnceButIsCalledTwice;
+			print help;
+		} else {
+			print help;
+			call callOnceButIsCalledTwice;
+		}
+		call proc2NestingWhileWhile;
+	} else {
+		call callOnceButIsCalledTwice;
+		if (modified2Layer != 0) then {
+			modified2Layers = 3 * modified4Layers + 3;
+			call callOnceButIsCalledTwice;
+		} else {
+			call callOnceButIsCalledTwice;
+		}
+	}
+	print useless;
+}
+
+procedure proc2NestingWhileWhile {
+	print y;
+	while ((!(modified3Layers < 0)) && ((modified4Layers < 0) || (!(modified2Layers >= 0)))) {
+		call callOnceButIsCalledTwice; 
+		while (modified1Layers >= 0) {
+			call calledInfiniteNumber;
+		}
+	}
+	print useless;	
+}
+
+procedure calledInfiniteNumber {
+	infinite4 = infinite3 * 4;
+	read infinite4;
+	if (infinite4 < 0) then {
+		infinite3 = (infinite2 * 4);
+	} else {
+		infinite2 = infinite1 * 3;
+	}
+	while (infinite1 < 0) {
+		infinite0 = (3 + infinite1) * 3 / infinite1;	
+		infinite1 = infinite1 % 104 * infinite0  - 101 / 61;
+	}
+}
+procedure B {
+	call C;
+	call C;
+	call C;
+}
+
+
+
+procedure C {
+	d = a;
+	a = b;
+	b = c;
+	c = d; 
+}
