@@ -107,8 +107,6 @@ autotester.exe  ../../../../../Tests12/singlePatternWith_source.txt  ../../../..
 
 autotester.exe  ../../../../../Tests12/uses_source.txt  ../../../../../Tests12/uses_queries.txt ../../../../tests/uses.xml
 
-autotester.exe  ../../../../../Tests12/usesTuple_source.txt  ../../../../../Tests12/parentTuple_queries.txt ../../../../tests/parentTuple_source.xml
-
 autotester.exe  ../../../../../Tests12/usesTuple_source.txt  ../../../../../Tests12/usesTuple_queries.txt ../../../../tests/usesTuple_source.xml
 
 autotester.exe  ../../../../../Tests12/affects_source.txt  ../../../../../Tests12/affects_queries.txt ../../../../tests/affects.xml
