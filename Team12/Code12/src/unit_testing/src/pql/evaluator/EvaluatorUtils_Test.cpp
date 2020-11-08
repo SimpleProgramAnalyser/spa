@@ -16,7 +16,7 @@ void requireThrowRuntimeError(const std::function<void(void)>& procedure)
     try {
         procedure();
         REQUIRE(false);
-    } catch (const std::runtime_error& e) {
+    } catch (const std::runtime_error&) {
         REQUIRE(true);
     }
 }
