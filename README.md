@@ -125,4 +125,4 @@ autotester.exe  ../../../../../Tests12/nextBipMultipleSuchThatPatternWithSource_
 
 autotester.exe  ../../../../../Tests12/nextBipSource_source.txt  ../../../../../Tests12/nextBipQueries_queries.txt ../../../../tests/nextBipSource.xml
 
-autotester.exe  ../../../../../Tests12/StressTests/stressSource_source.txt  ../../../../../Tests12/StressTests/stressQueries_queries.txt ../../../../tests/stressSource.xml
+autotester.exe  ../../../../../Tests12/StressTests/stressSource_source.txt  ../../../../../Tests12/StressTests/stressTestQueries_queries.txt ../../../../tests/stressTestSource_source.xml
