@@ -333,6 +333,14 @@ void GroupedClauses::sortGroups()
     }
     listOfGroups = newListOfGroups;
 }
+
+/**
+ * Move a clause, given its number in clauseVector, from a group to another.
+ *
+ * @param originalGroupIndex
+ * @param destGroupIndex
+ * @param clauseNumber
+ */
 void GroupedClauses::moveClauseAcrossGroup(int originalGroupIndex, int destGroupIndex, int clauseNumber)
 {
     auto originalGroup = listOfGroups[originalGroupIndex];
@@ -341,11 +349,24 @@ void GroupedClauses::moveClauseAcrossGroup(int originalGroupIndex, int destGroup
                           listOfGroups[destGroupIndex].size());
 }
 
+/**
+ * Return the internal representation view of a group of clauses in GroupedClauses.
+ *
+ * @param groupIndex
+ * @return
+ */
 const Vector<Integer>& GroupedClauses::getGroup(int groupIndex) const
 {
     return listOfGroups[groupIndex];
 }
 
+/**
+ * Given an arrangement as a queue, sort the group at groupIndex according to the arrangement. The first element in the
+ * queue to pop is the element to be at index 0.
+ *
+ * @param arrangement
+ * @param groupIndex
+ */
 void GroupedClauses::applyArrangementToGroup(std::queue<unsigned int> arrangement, int groupIndex)
 {
     Vector<int> newGroup;
@@ -357,6 +378,9 @@ void GroupedClauses::applyArrangementToGroup(std::queue<unsigned int> arrangemen
     listOfGroups[groupIndex] = newGroup;
 }
 
+/**
+ * Utility function to clean up the empty groups. Idempotent.
+ */
 void GroupedClauses::cleanUpEmptyGroups()
 {
     if (listOfGroups.size() <= 1) {

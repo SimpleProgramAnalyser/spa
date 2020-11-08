@@ -5,6 +5,12 @@
 #include "GroupedClauses.h"
 #include "Optimiser.h"
 
+/**
+ * Checks if a clause contains synonym, which can be either just synonyms or with attributes.
+ *
+ * @param clause
+ * @return
+ */
 bool hasSynonym(Clause* clause)
 {
     switch (clause->getType()) {
@@ -63,6 +69,12 @@ unsigned int countSynonym(Clause* clause)
     }
 }
 
+/**
+ * Returns the set of synonyms found in clause, either from synonyms or attributes.
+ *
+ * @param clause
+ * @return
+ */
 std::set<Synonym> getSynonyms(Clause* clause)
 {
     std::set<Synonym> toReturn;
@@ -107,6 +119,13 @@ std::set<Synonym> getSynonyms(Clause* clause)
     return toReturn;
 }
 
+/**
+ * Checks if two clauses save any synonym in constant time.
+ *
+ * @param clause1
+ * @param clause2
+ * @return
+ */
 bool shareSynonym(Clause* clause1, Clause* clause2)
 {
     // push all synonyms
@@ -120,6 +139,14 @@ bool shareSynonym(Clause* clause1, Clause* clause2)
     return synonyms.size() < synonyms1.size() + synonyms2.size();
 }
 
+/**
+ * A reference in a clause can initiate substitution if
+ * 1. it is a ProgLine synonym
+ * 2. it is an attribute but not read.varName, print.varName, call.procName.
+ *
+ * @param reference
+ * @return
+ */
 bool canInitiateSubstitution(Reference& reference)
 {
     std::unordered_map<DesignEntityType, AttributeType> bannedTarget{
@@ -134,6 +161,14 @@ bool canInitiateSubstitution(Reference& reference)
     return isProgLine || isAllowedTarget;
 }
 
+/**
+ * A reference in a clause can accept substitution if
+ * 1. It is a synonym
+ * 2. it is an attribute but not read.varName, print.varName, call.procName.
+ *
+ * @param reference
+ * @return
+ */
 bool canBeSubstituted(Reference& reference)
 {
     std::unordered_map<DesignEntityType, AttributeType> bannedTarget{
