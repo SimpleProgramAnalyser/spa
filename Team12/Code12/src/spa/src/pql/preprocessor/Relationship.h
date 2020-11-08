@@ -11,7 +11,7 @@
 #include "Reference.h"
 
 // All the Relationship Types.
-enum RelationshipType : char {
+enum class RelationshipType : char {
     FollowsType,
     FollowsStarType,
     ParentType,

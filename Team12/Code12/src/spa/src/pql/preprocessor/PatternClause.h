@@ -13,7 +13,7 @@
 #include "Reference.h"
 
 // All the types of PatternClause.
-enum PatternStatementType : char { AssignPatternType, WhilePatternType, IfPatternType };
+enum class PatternStatementType : char { AssignPatternType, WhilePatternType, IfPatternType };
 
 // Hash function for PatternStatementType.
 template <>

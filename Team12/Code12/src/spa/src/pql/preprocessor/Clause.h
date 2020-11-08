@@ -10,7 +10,7 @@
 #include "AqTypesUtils.h"
 
 // All the types of Clauses.
-enum ClauseType : char { SuchThatClauseType, PatternClauseType, WithClauseType, NonExistentClauseType };
+enum class ClauseType : char { SuchThatClauseType, PatternClauseType, WithClauseType, NonExistentClauseType };
 
 // Hash function for ClauseType
 template <>

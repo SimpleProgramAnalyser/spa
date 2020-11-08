@@ -14,7 +14,7 @@
  * is 01, are Statements.
  */
 // t
-enum DesignEntityType : unsigned char {
+enum class DesignEntityType : unsigned char {
     // statement types: smallest bits are 01
     StmtType = 1,       // 0000 0001
     ReadType = 5,       // 0000 0101

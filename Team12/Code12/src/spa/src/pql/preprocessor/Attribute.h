@@ -10,7 +10,7 @@
 #include "DesignEntity.h"
 
 // All the different types of Attributes.
-enum AttributeType : char {
+enum class AttributeType : char {
     ProcNameType,
     VarNameType,
     ValueType,

@@ -29,7 +29,7 @@ typedef Vector<String> StringVector;
 template <typename T, typename U>
 using Pair = std::pair<T, U>;
 
-enum StatementType : char {
+enum class StatementType : char {
     AnyStatement = 0,
     AssignmentStatement = 1,
     CallStatement = 2,

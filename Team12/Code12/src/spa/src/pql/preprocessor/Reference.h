@@ -13,7 +13,7 @@
 #include "DesignEntity.h"
 
 // All the types of References.
-enum ReferenceType : char {
+enum class ReferenceType : char {
     SynonymRefType,
     WildcardRefType,
     LiteralRefType,
