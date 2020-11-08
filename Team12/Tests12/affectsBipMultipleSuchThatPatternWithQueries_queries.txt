@@ -196,7 +196,7 @@ Select <s1, a> such that AffectsBip*(s1,a) such that Affects*(a, s1) such that N
 38 - 3 Such That with 2 common unknown synonym
 stmt s1, s2, s3, s4; assign a, a1; while w, w1; if i; constant const, const1; variable v;
 Select <a1, a> such that AffectsBip(a1,a) such that NextBip*(a, a1) such that AffectsBip*(a1, a)  with a1.stmt# = const.value with a.stmt# = const1.value
-56 61, 61 46, 61 48, 101 100, 104 101, 109 108, 109 111, 109 112, 112 108, 112 109, 112 111
+56 61, 61 46, 61 48, 101 100, 104 101, 109 108, 109 111, 109 112, 112 108, 112 109, 112 111, 104 104,108 109,109 109,111 112,112 112,46 46
 5000
 39 - Two Such That with 1 common unknown synonym
 stmt s1, s2, s3, s4; variable v;
