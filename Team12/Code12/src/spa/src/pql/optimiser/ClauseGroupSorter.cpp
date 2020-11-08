@@ -44,10 +44,10 @@ bitmap updateReachableBitmap(bitmap nodesLeft, unsigned int currentNode, bitmap 
     for (auto neighbour : adj[currentNode]) {
         unsigned int u = neighbour;
         // the uth LSB in nodesLeft is set, which means it is to be visited
-        bool notVisited = (static_cast<unsigned int>(1) << u) & nodesLeft;
+        bool notVisited = (static_cast<bitmap>(1) << u) & nodesLeft;
         if (notVisited) {
             // set the uth bit in nodesReachable
-            nodesReachable |= (static_cast<unsigned int>(1) << u);
+            nodesReachable |= (static_cast<bitmap>(1) << u);
         }
     }
     // 2. remove current node
@@ -292,8 +292,8 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
             // nodesLeft is 1111111 as many 1s as groupSize, taken away the current node (which is it->second)
             unsigned int currentNode = it->second;
             // DO NOT SWAP THE TWO LINES BELOW. updateReachableBitmap assumes the currentNode is marked as visited
-            unsigned int nodesLeft = markVisited((static_cast<unsigned int>(1) << groupSize) - 1, currentNode);
-            unsigned int nodesReachable = updateReachableBitmap(nodesLeft, currentNode, 0);
+            unsigned int nodesLeft = markVisited((static_cast<bitmap>(1) << groupSize) - 1, currentNode);
+            unsigned int nodesReachable = updateReachableBitmap(nodesLeft, currentNode, static_cast<bitmap>(0));
             Arrangement currentArr;
             currentArr.push(it->second);
             auto results = arrange(nodesLeft, nodesReachable, groupSize - 1, it->first * groupSize, currentArr);
