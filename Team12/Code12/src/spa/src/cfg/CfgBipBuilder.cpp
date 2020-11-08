@@ -74,8 +74,6 @@ CfgNode* buildCfgBipWithNode(const CfgNode* const cfgNode, std::unordered_map<Na
             Name procName = callStmt->procedureName;
             CfgNode* calledProcCfgRootNode = proceduresCfg->at(procName);
 
-            CfgNode* calledNodeCfgBipPointer = visitedMap->at(procName).at(calledProcCfgRootNode->nodeNumber);
-
             visitedCfgProcedure->at(procName) = true;
             // Create new node to traverse the CFG of the called procedure
             CfgNode* newCfgBipNode = createCfgNode(calledProcCfgRootNode->statementNodes->size(), currentNumberOfNodes);
