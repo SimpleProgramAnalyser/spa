@@ -1,5 +1,3 @@
-set(CMAKE_BUILD_TYPE Debug)
-
 file(GLOB_RECURSE srcs
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/pql/*.cpp"
