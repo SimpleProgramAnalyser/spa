@@ -76,47 +76,25 @@ CfgNode* buildCfgBipWithNode(const CfgNode* const cfgNode, std::unordered_map<Na
 
             CfgNode* calledNodeCfgBipPointer = visitedMap->at(procName).at(calledProcCfgRootNode->nodeNumber);
 
-            bool needToCreateNewProcedure = false;
-
-            // The called procedure has been called
-            if (calledNodeCfgBipPointer != nullptr) {
-                size_t indexOfLastCfgNodeOfCalledProc = visitedMap->at(procName).size() - 1;
-                // Last node of the CfgBipNode of the called procedure, to add current cfgBipNode as the last node's
-                // child
-                CfgNode* lastCfgNodeCfgBipNode = visitedMap->at(procName).at(indexOfLastCfgNodeOfCalledProc);
-                if (lastCfgNodeCfgBipNode->childrenNodes->empty()) {
-                    returnedCfgBipNode->childrenNodes->push_back(calledNodeCfgBipPointer);
-                    returnedCfgBipNode = lastCfgNodeCfgBipNode;
-                } else {
-                    // create a new copy of procedure instead
-                    needToCreateNewProcedure = true;
+            visitedCfgProcedure->at(procName) = true;
+            // Create new node to traverse the CFG of the called procedure
+            CfgNode* newCfgBipNode = createCfgNode(calledProcCfgRootNode->statementNodes->size(), currentNumberOfNodes);
+            // New visited map for the new procedure, to prevent
+            // connection back to the old nodes
+            std::unordered_map<Name, Vector<CfgNode*>> newProcVisitedMap;
+            for (const std::pair<const Name, Vector<CfgNode*>>& mapEntry : *visitedMap) {
+                Vector<CfgNode*> visitedArray;
+                size_t arraySize = mapEntry.second.size();
+                for (size_t is = 0; is < arraySize; is++) {
+                    visitedArray.push_back(nullptr);
                 }
-            } else {
-                needToCreateNewProcedure = true;
+                newProcVisitedMap.insert({mapEntry.first, std::move(visitedArray)});
             }
-
-            if (needToCreateNewProcedure) {
-                visitedCfgProcedure->at(procName) = true;
-                // Create new node to traverse the CFG of the called procedure
-                CfgNode* newCfgBipNode
-                    = createCfgNode(calledProcCfgRootNode->statementNodes->size(), currentNumberOfNodes);
-                // New visited map for the new procedure, to prevent
-                // connection back to the old nodes
-                std::unordered_map<Name, Vector<CfgNode*>> newProcVisitedMap;
-                for (const std::pair<const Name, Vector<CfgNode*>>& mapEntry : *visitedMap) {
-                    Vector<CfgNode*> visitedArray;
-                    size_t arraySize = mapEntry.second.size();
-                    for (size_t is = 0; is < arraySize; is++) {
-                        visitedArray.push_back(nullptr);
-                    }
-                    newProcVisitedMap.insert({mapEntry.first, std::move(visitedArray)});
-                }
-                // Now, handle the building of new procedure nodes
-                returnedCfgBipNode->childrenNodes->push_back(newCfgBipNode);
-                returnedCfgBipNode
-                    = buildCfgBipWithNode(calledProcCfgRootNode, proceduresCfg, currentNumberOfNodes, newCfgBipNode,
-                                          &newProcVisitedMap, procName, visitedCfgProcedure, procNameOfRootNode);
-            }
+            // Now, handle the building of new procedure nodes
+            returnedCfgBipNode->childrenNodes->push_back(newCfgBipNode);
+            returnedCfgBipNode
+                = buildCfgBipWithNode(calledProcCfgRootNode, proceduresCfg, currentNumberOfNodes, newCfgBipNode,
+                                      &newProcVisitedMap, procName, visitedCfgProcedure, procNameOfRootNode);
             break;
         }
         default:
