@@ -52,6 +52,8 @@ the `autotester` system tests (manually), by following these steps:
 1. `cd` into autotester directory, i.e. `Team12/Code12/build_win/x86_Release/src/autotester`
 1. Run the commands below to run the various autotester test suites
 
+## Advanced SPA
+
 ```
 autotester.exe  ../../../../../Tests12/basicSource_source.txt  ../../../../../Tests12/basicQueries_queries.txt ../../../../tests/basicSource_source.xml
 
@@ -109,20 +111,27 @@ autotester.exe  ../../../../../Tests12/usesSourceTuple_source.txt  ../../../../.
 
 autotester.exe  ../../../../../Tests12/usesSourceTuple_source.txt  ../../../../../Tests12/usesQueriesTuple_queries.txt ../../../../tests/usesSourceTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/affectsBipMultipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/affectsBipMultipleSuchThatPatternWithQueries_queries.txt ../../../../tests/affectsBipMultipleSuchThatPatternWithSource.xml
-
 autotester.exe  ../../../../../Tests12/affectsSource_source.txt  ../../../../../Tests12/affectsQueries_queries.txt ../../../../tests/affectsSource.xml
 
 autotester.exe  ../../../../../Tests12/multipleSuchThatAffectsSource_source.txt  ../../../../../Tests12/multipleSuchThatAffectsQueries_queries.txt ../../../../tests/multipleSuchThatAffectsSource.xml
 
 autotester.exe  ../../../../../Tests12/multipleSuchThatPatternWithAffectsSource_source.txt  ../../../../../Tests12/multipleSuchThatPatternWithAffectsQueries_queries.txt ../../../../tests/multipleSuchThatPatternWithAffectsSource.xml
+```
 
-autotester.exe  ../../../../../Tests12/affectsBipMultipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/affectsBipMultipleSuchThatPatternWithQueries_queries.txt ../../../../tests/affectsBipMultipleSuchThatPatternWithSource.xml
+## Stress Tests
 
-autotester.exe  ../../../../../Tests12/affectsBipSource_source.txt  ../../../../../Tests12/affectsBipQueries_queries.txt ../../../../tests/affectsBipSource.xml
-
-autotester.exe  ../../../../../Tests12/nextBipMultipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/nextBipMultipleSuchThatPatternWithQueries_queries.txt ../../../../tests/nextBipMultipleSuchThatPatternWithSource.xml
-
-autotester.exe  ../../../../../Tests12/nextBipSource_source.txt  ../../../../../Tests12/nextBipQueries_queries.txt ../../../../tests/nextBipSource.xml
-
+```
 autotester.exe  ../../../../../Tests12/StressTests/stressSource_source.txt  ../../../../../Tests12/StressTests/stressTestQueries_queries.txt ../../../../tests/stressTestSource_source.xml
+```
+
+## BIP Extension
+
+```
+autotester.exe  ../../../../../Tests12/test_extensions/affectsBipMultipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/test_extensions/affectsBipMultipleSuchThatPatternWithQueries_queries.txt ../../../../tests/affectsBipMultipleSuchThatPatternWithSource.xml
+
+autotester.exe  ../../../../../Tests12/test_extensions/affectsBipSource_source.txt  ../../../../../Tests12/test_extensions/affectsBipQueries_queries.txt ../../../../tests/affectsBipSource.xml
+
+autotester.exe  ../../../../../Tests12/test_extensions/nextBipMultipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/test_extensions/nextBipMultipleSuchThatPatternWithQueries_queries.txt ../../../../tests/nextBipMultipleSuchThatPatternWithSource.xml
+
+autotester.exe  ../../../../../Tests12/test_extensions/nextBipSource_source.txt  ../../../../../Tests12/test_extensions/nextBipQueries_queries.txt ../../../../tests/nextBipSource.xml
+```
