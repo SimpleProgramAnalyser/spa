@@ -31,8 +31,8 @@ void sortWithinEachGroup(GroupedClauses& groupedClauses);
 /**
  * Constant declarations
  */
-const unsigned int INF = 2e9;
-const unsigned int startingNode = 0;
+const unsigned int INF = static_cast<unsigned int>(2e9);
+const unsigned int startingNode = static_cast<unsigned int>(0);
 
 /**
  * Type/struct declarations
