@@ -14,16 +14,29 @@ std::unordered_map<unsigned int, unsigned int> weights;
 DP dp;
 AdjacencyList adj;
 
-// digit at visited (LSD) should be 1. Mark it as 0.
+/**
+ * Digit at the visited position (LSD) in the nodesLeft bitmap should be 1. Mark it as 0.
+ *
+ * @param nodesLeft
+ * @param visited
+ * @return
+ */
 bitmap markVisited(bitmap nodesLeft, unsigned int visited)
 {
     return nodesLeft & ~(static_cast<unsigned int>(1) << visited);
 }
 
-// aim: update nodesReachable so it
-// 1. is all reachable
-// 2. does not contain currentNode
-// 3. does not contain anything from the zeroes of nodesLeft
+/**
+ * Updates the bitmap nodesReachable so it
+ * 1. contains all the nodes reachable from the current state as recorded in nodesLeft
+ * 2. but does not contain currentNode (it is already visited)
+ * 3. and does not contain any node marked as visited in nodesLeft.
+ *
+ * @param nodesLeft
+ * @param currentNode
+ * @param nodesReachable
+ * @return
+ */
 bitmap updateReachableBitmap(bitmap nodesLeft, unsigned int currentNode, bitmap nodesReachable)
 {
     // 1. make sure everything is reachable.
@@ -47,6 +60,12 @@ bitmap updateReachableBitmap(bitmap nodesLeft, unsigned int currentNode, bitmap 
     return nodesReachable;
 }
 
+/**
+ * Turn a bitmap recording reachable nodes into a set of unsigned integers for easy iteration.
+ *
+ * @param nodesReachable
+ * @return
+ */
 Vector<unsigned int> getReachableNodes(bitmap nodesReachable)
 {
     Vector<unsigned int> toReturn;
@@ -62,6 +81,14 @@ Vector<unsigned int> getReachableNodes(bitmap nodesReachable)
     return toReturn;
 }
 
+/**
+ * This method assumes that the DP table at nodesLeft already contains an optimal arrangement. An exception will be
+ * thrown otherwise. It is the user's job to check this condition.
+ *
+ * @param currArrangement
+ * @param nodesLeft
+ * @return
+ */
 Arrangement constructQueue(Arrangement currArrangement, bitmap nodesLeft)
 {
     if (nodesLeft == 0) {
@@ -71,9 +98,21 @@ Arrangement constructQueue(Arrangement currArrangement, bitmap nodesLeft)
     return constructQueue(currArrangement, markVisited(nodesLeft, dp[nodesLeft].next));
 }
 
-// an arrangement is a permutation of the n nodes.
-// this DP aims to MINIMIZE i * weights(p_i) where p_1, p_2, ... ,p_n represent the permutation
-// arrangementQueue is GREEDY: it contains the currentNode when called.
+/**
+ * The main driver for finding the optimal permutation that
+ * 1. Visits nodes that are reachable by currently visited nodes
+ * 2. Minimizes the cost of the permutation, defined by i * weights(p_i) where p_1, p_2, ... ,p_n represent the
+ * permutation
+ *
+ * Note: arrangementQueue is GREEDY: it contains the currentNode when called.
+ *
+ * @param nodesLeft current node is already marked visited
+ * @param nodesReachable not including the current node
+ * @param multiplier for the next node
+ * @param currentWeight for comparison
+ * @param arrangementQueue needs to be duplicated every recursive call.
+ * @return
+ */
 std::pair<Arrangement, unsigned int> arrange(bitmap nodesLeft, bitmap nodesReachable, unsigned int multiplier,
                                              unsigned int currentWeight, const Arrangement& arrangementQueue)
 {
@@ -116,9 +155,15 @@ std::pair<Arrangement, unsigned int> arrange(bitmap nodesLeft, bitmap nodesReach
     return std::make_pair(bestQueue, minWeight);
 }
 
-// weights of a clause is the estimated time it takes to evaluate.
+/**
+ * Weight of a clause is the estimated time it takes to evaluate.
+ *
+ * @param clause
+ * @return
+ */
 unsigned int getWeight(Clause* clause)
 {
+    // arbitrarily defined
     const unsigned int SYNONYM_COUNT_MULTIPLIER = 100, WITH = 0, FOLLOWS_MODIFIES = 2, PATTERN_REST = 4, AFFECTS = 100,
                        BIP = 150;
     unsigned int clauseWeight = 0;
@@ -259,7 +304,6 @@ Void sortWithinEachGroup(GroupedClauses& groupedClauses)
         }
         groupedClauses.applyArrangementToGroup(arr, i);
     }
-    // TODO: Move global variables into scope so they will be deleted automatically.
     dp.clear();
     weights.clear();
     adj.clear();

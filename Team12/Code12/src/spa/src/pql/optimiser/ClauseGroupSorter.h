@@ -37,15 +37,31 @@ const unsigned int startingNode = 0;
 /**
  * Type/struct declarations
  */
+/**
+ * IntWithNext is the the type of entries in the DP table, which is default initializable, and acts similarly as a pair
+ * of unsigned integers.
+ */
 struct IntWithNext {
     unsigned int weight = INF;
     unsigned int next = -1;
 };
+/**
+ * An arrangement(or permutation) of objects can be described as a queue of the objects. Here each clause is represented
+ * as an unsigned int, which is its index in GroupedClauses.
+ */
 typedef std::queue<unsigned int> Arrangement;
-// DP is a matrix with rows a bitmap, columns the weights.
-// Each cells save the best ending weights along with the next node to visit
+/**
+ * DP is a matrix with rows a bitmap, columns the weights.
+ * Each cell saves the best ending weights along with the next node to visit
+ */
 typedef std::unordered_map<unsigned long long, IntWithNext> DP;
+/**
+ * An adjacency list for unweighted edges.
+ */
 typedef std::unordered_map<unsigned int, std::unordered_set<unsigned int>> AdjacencyList;
+/**
+ * A bitmap is used to represent the state of the clauses chosen, using 1s and 0s.
+ */
 typedef unsigned long long bitmap;
 
 #endif // SPA_PQL_CLAUSE_GROUP_SORTER_H

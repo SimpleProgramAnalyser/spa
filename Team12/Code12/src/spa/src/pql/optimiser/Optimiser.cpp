@@ -37,6 +37,14 @@ Void optimiseQuery(AbstractQuery& abstractQuery)
     sortClauses(groupedClauses, abstractQuery);
 }
 
+/**
+ * Substitute occurrences of target in suchThatClause with value.
+ *
+ * @param suchThatClause
+ * @param target
+ * @param value
+ * @return
+ */
 Void substituteSuchThat(SuchThatClause* suchThatClause, const Reference& target, const Reference& value)
 {
     // target is either synonym or attribute. In any case, search for synonym/attribute
@@ -51,6 +59,14 @@ Void substituteSuchThat(SuchThatClause* suchThatClause, const Reference& target,
     }
 }
 
+/**
+ * Substitute occurrences of target in withClause with value.
+ *
+ * @param suchThatClause
+ * @param target
+ * @param value
+ * @return
+ */
 Void substituteWith(WithClause* withClause, const Reference& target, const Reference& value)
 {
     auto leftRef = withClause->getLeftReference();
@@ -63,6 +79,16 @@ Void substituteWith(WithClause* withClause, const Reference& target, const Refer
     }
 }
 
+/**
+ * Substitute occurrences of target in clauseList with value. Do not substitute the current clause,
+ * which is the clause that initiates substitution.
+ *
+ * @param clauseList
+ * @param target
+ * @param value
+ * @param current
+ * @return
+ */
 Void substituteClauseList(List<Clause>& clauseList, const Reference& target, const Reference& value, int current)
 {
     for (auto it = clauseList.begin(); it != clauseList.end(); it++) {
