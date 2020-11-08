@@ -75,11 +75,25 @@ void combineIntoFirst(std::unordered_map<String, std::unordered_set<Integer>>& f
     }
 }
 
+AffectsTuple::AffectsTuple() = default;
+
+AffectsTuple::AffectsTuple(std::unordered_set<Integer> modifyingStatements, std::unordered_set<Integer> usingStatements,
+                           std::unordered_set<Pair<Integer, Integer>, IntegerPairHasher> tuples):
+    modifyingStatementResults(std::move(modifyingStatements)),
+    usingStatementResults(std::move(usingStatements)), affectsResults(std::move(tuples))
+{}
+
+bool AffectsTuple::operator==(const AffectsTuple& at) const
+{
+    return this->modifyingStatementResults == at.modifyingStatementResults
+           && this->usingStatementResults == at.usingStatementResults && this->affectsResults == at.affectsResults;
+}
+
 Void AffectsTuple::addAffects(Integer modifyingStmt, Integer usingStmt)
 {
     modifyingStatementResults.insert(modifyingStmt);
     usingStatementResults.insert(usingStmt);
-    affectsResults.emplace_back(modifyingStmt, usingStmt);
+    affectsResults.emplace(modifyingStmt, usingStmt);
 }
 
 Vector<Integer> AffectsTuple::getModifyingStatements() const
@@ -94,7 +108,7 @@ Vector<Integer> AffectsTuple::getUsingStatements() const
 
 Vector<Pair<Integer, Integer>> AffectsTuple::getAffects() const
 {
-    return affectsResults;
+    return Vector<Pair<Integer, Integer>>(affectsResults.begin(), affectsResults.end());
 }
 
 /**
@@ -764,5 +778,16 @@ void AffectsEvaluator::cleanup(CacheSet& partiallyCacheSet, CacheTable& cacheTab
                 cachedStmtSet->combine(fullyEvaluatedCacheSet);
             }
         }
+    }
+}
+
+// This method is for unit testing only!
+Void AffectsEvaluator::affectsSearchForUnitTesting(const CfgNode* const cfg,
+                                                   std::unordered_map<String, std::unordered_set<Integer>>& affectsMap,
+                                                   AffectsTuple& resultsLists)
+{
+    const CfgNode* currentNode = cfg;
+    while (currentNode != nullptr) {
+        currentNode = affectsSearch(currentNode, affectsMap, resultsLists);
     }
 }
