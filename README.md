@@ -55,83 +55,83 @@ the `autotester` system tests (manually), by following these steps:
 ## Advanced SPA
 
 ```
-autotester.exe  ../../../../../Tests12/basicSource_source.txt  ../../../../../Tests12/basicQueries_queries.txt ../../../../tests/basicSource_source.xml
+autotester.exe  ../../../../../Tests12/basic_source.txt  ../../../../../Tests12/basic_queries.txt ../../../../tests/basic_source.xml
 
-autotester.exe  ../../../../../Tests12/basicSourceTuple_source.txt  ../../../../../Tests12/basicQueriesTuple_queries.txt ../../../../tests/basicSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/basicTuple_source.txt  ../../../../../Tests12/basicTuple_queries.txt ../../../../tests/basicTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/callSource_source.txt  ../../../../../Tests12/callQueries_queries.txt ../../../../tests/callSource_source.xml
+autotester.exe  ../../../../../Tests12/call_source.txt  ../../../../../Tests12/call_queries.txt ../../../../tests/call_source.xml
 
-autotester.exe  ../../../../../Tests12/callSourceTuple_source.txt  ../../../../../Tests12/callQueriesTuple_queries.txt ../../../../tests/callSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/callTuple_source.txt  ../../../../../Tests12/callTuple_queries.txt ../../../../tests/callTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/complexSource_source.txt  ../../../../../Tests12/complexQueries_queries.txt ../../../../tests/complexSource.xml
+autotester.exe  ../../../../../Tests12/complex_source.txt  ../../../../../Tests12/complex_queries.txt ../../../../tests/complex.xml
 
-autotester.exe  ../../../../../Tests12/complexSource2_source.txt ../../../../../Tests12/complexQueries2_queries.txt ../../../../tests/complexSource2.xml
+autotester.exe  ../../../../../Tests12/complex2_source.txt ../../../../../Tests12/complex2_queries.txt ../../../../tests/complex2.xml
 
-autotester.exe  ../../../../../Tests12/complexSource3_source.txt ../../../../../Tests12/complexQueries3_queries.txt ../../../../tests/complexSource3.xml
+autotester.exe  ../../../../../Tests12/complex3_source.txt ../../../../../Tests12/complex3_queries.txt ../../../../tests/complex3.xml
 
-autotester.exe  ../../../../../Tests12/sampleSource_source.txt  ../../../../../Tests12/sampleQueries_queries.txt ../../../../tests/sampleSource_source.xml
+autotester.exe  ../../../../../Tests12/sample_source.txt  ../../../../../Tests12/sample_queries.txt ../../../../tests/sample_source.xml
 
-autotester.exe  ../../../../../Tests12/followsSource_source.txt  ../../../../../Tests12/followsQueries_queries.txt ../../../../tests/followsSource.xml
+autotester.exe  ../../../../../Tests12/follows_source.txt  ../../../../../Tests12/follows_queries.txt ../../../../tests/follows.xml
 
-autotester.exe  ../../../../../Tests12/followsSourceTuple_source.txt  ../../../../../Tests12/followsQueriesTuple_queries.txt ../../../../tests/followsSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/followsTuple_source.txt  ../../../../../Tests12/followsTuple_queries.txt ../../../../tests/followsTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/invalidSource_source.txt  ../../../../../Tests12/invalidQueries_queries.txt ../../../../tests/invalidSource.xml
+autotester.exe  ../../../../../Tests12/invalid_source.txt  ../../../../../Tests12/invalid_queries.txt ../../../../tests/invalid.xml
 
-autotester.exe  ../../../../../Tests12/modifiesSource_source.txt  ../../../../../Tests12/modifiesQueries_queries.txt ../../../../tests/modifiesSource.xml
+autotester.exe  ../../../../../Tests12/modifies_source.txt  ../../../../../Tests12/modifies_queries.txt ../../../../tests/modifies.xml
 
-autotester.exe  ../../../../../Tests12/modifiesSourceTuple_source.txt  ../../../../../Tests12/modifiesQueriesTuple_queries.txt ../../../../tests/modifiesSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/modifiesTuple_source.txt  ../../../../../Tests12/modifiesTuple_queries.txt ../../../../tests/modifiesTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/multiplePatternSource_source.txt  ../../../../../Tests12/multiplePatternQueries_queries.txt ../../../../tests/multiplePatternSource.xml
+autotester.exe  ../../../../../Tests12/multiplePattern_source.txt  ../../../../../Tests12/multiplePattern_queries.txt ../../../../tests/multiplePattern.xml
 
-autotester.exe  ../../../../../Tests12/multipleSuchThatParentOnlySource_source.txt  ../../../../../Tests12/multipleSuchThatParentOnlyQueries_queries.txt ../../../../tests/multipleSuchThatParentOnlySource.xml
+autotester.exe  ../../../../../Tests12/multipleSuchThatParentOnly_source.txt  ../../../../../Tests12/multipleSuchThatParentOnly_queries.txt ../../../../tests/multipleSuchThatParentOnly.xml
 
-autotester.exe  ../../../../../Tests12/multipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/multipleSuchThatPatternWithQueries_queries.txt ../../../../tests/multipleSuchThatPatternWithSource.xml
+autotester.exe  ../../../../../Tests12/multipleSuchThatPatternWith_source.txt  ../../../../../Tests12/multipleSuchThatPatternWith_queries.txt ../../../../tests/multipleSuchThatPatternWith.xml
 
-autotester.exe  ../../../../../Tests12/multipleSuchThatSource_source.txt  ../../../../../Tests12/multipleSuchThatQueries_queries.txt ../../../../tests/multipleSuchThatSource.xml
+autotester.exe  ../../../../../Tests12/multipleSuchThat_source.txt  ../../../../../Tests12/multipleSuchThat_queries.txt ../../../../tests/multipleSuchThat.xml
 
-autotester.exe  ../../../../../Tests12/multipleWithThatSource_source.txt  ../../../../../Tests12/multipleWithThatQueries_queries.txt ../../../../tests/multipleWithThatSource.xml
+autotester.exe  ../../../../../Tests12/multipleWithThat_source.txt  ../../../../../Tests12/multipleWithThat_queries.txt ../../../../tests/multipleWithThat.xml
 
-autotester.exe  ../../../../../Tests12/nextSource_source.txt  ../../../../../Tests12/nextQueries_queries.txt ../../../../tests/nextSource.xml
+autotester.exe  ../../../../../Tests12/next_source.txt  ../../../../../Tests12/next_queries.txt ../../../../tests/next.xml
 
-autotester.exe  ../../../../../Tests12/nextSourceTuple_source.txt  ../../../../../Tests12/nextQueriesTuple_queries.txt ../../../../tests/nextSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/nextTuple_source.txt  ../../../../../Tests12/nextTuple_queries.txt ../../../../tests/nextTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/parentSource_source.txt  ../../../../../Tests12/parentQueries_queries.txt ../../../../tests/parentSource.xml
+autotester.exe  ../../../../../Tests12/parent_source.txt  ../../../../../Tests12/parent_queries.txt ../../../../tests/parent.xml
 
-autotester.exe  ../../../../../Tests12/parentSourceTuple_source.txt  ../../../../../Tests12/parentQueriesTuple_queries.txt ../../../../tests/parentSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/parentTuple_source.txt  ../../../../../Tests12/parentTuple_queries.txt ../../../../tests/parentTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/patternSource_source.txt  ../../../../../Tests12/patternQueries_queries.txt ../../../../tests/patternSource.xml
+autotester.exe  ../../../../../Tests12/pattern_source.txt  ../../../../../Tests12/pattern_queries.txt ../../../../tests/pattern.xml
 
-autotester.exe  ../../../../../Tests12/patternSourceTuple_source.txt  ../../../../../Tests12/patternQueriesTuple_queries.txt ../../../../tests/patternSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/patternTuple_source.txt  ../../../../../Tests12/patternTuple_queries.txt ../../../../tests/patternTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/singlePatternWithSource_source.txt  ../../../../../Tests12/singlePatternWithQueries_queries.txt ../../../../tests/singlePatternWithSource.xml
+autotester.exe  ../../../../../Tests12/singlePatternWith_source.txt  ../../../../../Tests12/singlePatternWith_queries.txt ../../../../tests/singlePatternWith.xml
 
-autotester.exe  ../../../../../Tests12/usesSource_source.txt  ../../../../../Tests12/usesQueries_queries.txt ../../../../tests/usesSource.xml
+autotester.exe  ../../../../../Tests12/uses_source.txt  ../../../../../Tests12/uses_queries.txt ../../../../tests/uses.xml
 
-autotester.exe  ../../../../../Tests12/usesSourceTuple_source.txt  ../../../../../Tests12/parentQueriesTuple_queries.txt ../../../../tests/parentSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/usesTuple_source.txt  ../../../../../Tests12/parentTuple_queries.txt ../../../../tests/parentTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/usesSourceTuple_source.txt  ../../../../../Tests12/usesQueriesTuple_queries.txt ../../../../tests/usesSourceTuple_source.xml
+autotester.exe  ../../../../../Tests12/usesTuple_source.txt  ../../../../../Tests12/usesTuple_queries.txt ../../../../tests/usesTuple_source.xml
 
-autotester.exe  ../../../../../Tests12/affectsSource_source.txt  ../../../../../Tests12/affectsQueries_queries.txt ../../../../tests/affectsSource.xml
+autotester.exe  ../../../../../Tests12/affects_source.txt  ../../../../../Tests12/affects_queries.txt ../../../../tests/affects.xml
 
-autotester.exe  ../../../../../Tests12/multipleSuchThatAffectsSource_source.txt  ../../../../../Tests12/multipleSuchThatAffectsQueries_queries.txt ../../../../tests/multipleSuchThatAffectsSource.xml
+autotester.exe  ../../../../../Tests12/multipleSuchThatAffects_source.txt  ../../../../../Tests12/multipleSuchThatAffects_queries.txt ../../../../tests/multipleSuchThatAffects.xml
 
-autotester.exe  ../../../../../Tests12/multipleSuchThatPatternWithAffectsSource_source.txt  ../../../../../Tests12/multipleSuchThatPatternWithAffectsQueries_queries.txt ../../../../tests/multipleSuchThatPatternWithAffectsSource.xml
+autotester.exe  ../../../../../Tests12/multipleSuchThatPatternWithAffects_source.txt  ../../../../../Tests12/multipleSuchThatPatternWithAffects_queries.txt ../../../../tests/multipleSuchThatPatternWithAffects.xml
 ```
 
 ## Stress Tests
 
 ```
-autotester.exe  ../../../../../Tests12/StressTests/stressTestSource_source.txt  ../../../../../Tests12/StressTests/stressTestQueries_queries.txt ../../../../tests/stressTestSource_source.xml
+autotester.exe  ../../../../../Tests12/StressTests/stressTest_source.txt  ../../../../../Tests12/StressTests/stressTest_queries.txt ../../../../tests/stressTest_source.xml
 ```
 
 ## BIP Extension
 
 ```
-autotester.exe  ../../../../../Tests12/test_extensions/affectsBipMultipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/test_extensions/affectsBipMultipleSuchThatPatternWithQueries_queries.txt ../../../../tests/affectsBipMultipleSuchThatPatternWithSource.xml
+autotester.exe  ../../../../../Tests12/test_extensions/affectsBipMultipleSuchThatPatternWith_source.txt  ../../../../../Tests12/test_extensions/affectsBipMultipleSuchThatPatternWith_queries.txt ../../../../tests/affectsBipMultipleSuchThatPatternWith.xml
 
-autotester.exe  ../../../../../Tests12/test_extensions/affectsBipSource_source.txt  ../../../../../Tests12/test_extensions/affectsBipQueries_queries.txt ../../../../tests/affectsBipSource.xml
+autotester.exe  ../../../../../Tests12/test_extensions/affectsBip_source.txt  ../../../../../Tests12/test_extensions/affectsBip_queries.txt ../../../../tests/affectsBip.xml
 
-autotester.exe  ../../../../../Tests12/test_extensions/nextBipMultipleSuchThatPatternWithSource_source.txt  ../../../../../Tests12/test_extensions/nextBipMultipleSuchThatPatternWithQueries_queries.txt ../../../../tests/nextBipMultipleSuchThatPatternWithSource.xml
+autotester.exe  ../../../../../Tests12/test_extensions/nextBipMultipleSuchThatPatternWith_source.txt  ../../../../../Tests12/test_extensions/nextBipMultipleSuchThatPatternWith_queries.txt ../../../../tests/nextBipMultipleSuchThatPatternWith.xml
 
-autotester.exe  ../../../../../Tests12/test_extensions/nextBipSource_source.txt  ../../../../../Tests12/test_extensions/nextBipQueries_queries.txt ../../../../tests/nextBipSource.xml
+autotester.exe  ../../../../../Tests12/test_extensions/nextBip_source.txt  ../../../../../Tests12/test_extensions/nextBip_queries.txt ../../../../tests/nextBip.xml
 ```
